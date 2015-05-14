@@ -159,7 +159,7 @@ Vahideh Zadeh-Darian  F   moveitnice           seller    Silk Road 1            
 Mohammed Abdolahi     M   moveitnice           seller    Silk Road 1                 Canada                     cocaine                               TRUE  2012-05-14 2013-11-12
 Yasmine Abdolahi      F   moveitnice           seller    Silk Road 1                 Canada                     cocaine                               TRUE  2012-05-14 2013-11-12
                           alllove              seller    Silk Road 1                 USA                        marijuana                             FALSE 2012-05-19 2015-02-05    alllove's bust is known solely from incidental use of his SR1 account in Ulbricht trial; dated to earliest mention of his disappearance I found.
-Callum Fay            M                        seller    Silk Road 1                 UK                         cocaine, MDMA, meth, heroin, ketamine TRUE 2012-06-28 2015-05-11
+Callum Fay            M                        seller    Silk Road 1                 UK                         cocaine, MDMA, meth, heroin, ketamine TRUE  2012-06-28 2015-05-11
 Isaac Patiari Maki    M                        buyer     Silk Road 1                 NZ                         MDMA                                  TRUE  2012-06-28 2013-02-20
                       M                        buyer     Silk Road 1                 NZ                         meth                                  TRUE  2012-07-11 2012-07-14    Exact date unknown other than it was in 2012 sometime before 11 July; this is for the Customs officer
 Paul Leslie Howard    M   Shadh1               seller    Silk Road 1 Shadh1          Australia                  MDMA, cocaine                         TRUE  2012-07-12 2013-02-03
@@ -260,7 +260,7 @@ Mohammed F.A. Barham  M   SweExpress           seller    Silk Road 1            
                       M   XTCExpress           seller    Silk Road 1                 Netherlands                MDMA                                  TRUE  2013-10-09 2013-10-15
                       M   XTCExpress           seller    Silk Road 1                 Netherlands                MDMA                                  TRUE  2013-10-09 2013-10-15
                                                buyer     Silk Road 1    NOD          USA                        heroin                                FALSE 2013-10-10 2013-10-10
-Peter James Grossett  M                        buyer     Silk Road 1                 NZ                         meth, LSD, marijuana                 TRUE  2013-11-01 2014-07-05    Apparently busted sometime in November 2013 but not more specifically or what the non-SR1 market he used was.
+Peter James Grossett  M                        buyer     Silk Road 1                 NZ                         meth, LSD, marijuana                  TRUE  2013-11-01 2014-07-05    Apparently busted sometime in November 2013 but not more specifically or what the non-SR1 market he used was.
                       M   Blackjack021         seller    Silk Road 1                 Austria                    marijuana, opium, amphetamine         TRUE  2013-11-04 2015-03-01    The Austria article says it was a father-son pair who were arrested as the seller.
                       M   Blackjack021         seller    Silk Road 1                 Austria                    marijuana, opium, amphetamine         TRUE  2013-11-04 2015-03-01
                                                buyer     Silk Road 1 Blackjack021    Austria                    marijuana, opium, amphetamine         FALSE 2013-11-04 2015-03-01     The Austria article seems to mention that 6, presumably Austrian, of the pair's customers were arrested
@@ -390,7 +390,7 @@ Jasen Crisp           M                        buyer                            
                                                                                      NZ                                                               TRUE  2014-06-15 2015-02-28
                                                                                      NZ                                                               TRUE  2014-06-15 2015-02-28
                                                                                      NZ                                                               TRUE  2014-06-15 2015-02-28
-                          weaponsguy           seller    Agora                       USA                        gun                                   TRUE  2014-08-17 2015-04-06    Arrest inferred from the Justin Moreira undercover-sale case; exact arrest date best estimate based on Agora feedback.
+                          weaponsguy           seller    Agora                       USA                        gun                                   TRUE  2014-09-01 2015-04-06    Arrest inferred from the Justin Moreira undercover-sale case; exact arrest date best estimate based on Australian press release "September 2014"
 Andrew Graham Hodgson M                        buyer     Silk Road 2                 NZ                         meth, marijuana, NBOMe                TRUE  2014-09-01 2014-12-08    Arrested as part of Operation Hyderabad, which kicked off 1 September 2014, so he was probably arrested on the 1st/2nd.
 Stephen Jones         M                        buyer     Evolution   weedybusnis     USA         Georgia        MDMA                                  TRUE  2014-10-02 2014-12-20
 Cynthia Jones         F                        buyer     Evolution   weedybusnis     USA         Georgia        MDMA                                  TRUE  2014-10-02 2014-12-20
@@ -456,6 +456,22 @@ Steven Locke          M                        seller    Evolution   Hubbard    
 Michael Regan         M                        buyer                                 USA         New Jersey     LSD                                   TRUE  2015-03-26 2015-03-28
 Ryan Andrew Backer    M                        buyer                                 USA         Alabama        LSD                                   TRUE  2015-03-26 2015-03-28
 Justin Moreira        M   jd497                buyer     Agora       weaponsguy      USA         Massachusetts  gun                                   FALSE 2015-04-02 2015-04-03
+                                               buyer     Agora       weaponsguy      Australia                  gun                                   TRUE  2015-02-01 2015-05-13     16 other weaponsguy arrests are known: 4 AU, 13 "across the United Kingdom, Europe and North America" (inclusive of Moreira).
+                                               buyer     Agora       weaponsguy      Australia                  gun                                   TRUE  2015-02-01 2015-05-13     Since the 4 AU arrests stemmed from "the execution of 15 search warrants in February and March", I've assigned 2 to each month.
+                                               buyer     Agora       weaponsguy      Australia                  gun                                   TRUE  2015-03-01 2015-05-13
+                                               buyer     Agora       weaponsguy      Australia                  gun                                   TRUE  2015-03-01 2015-05-13
+                                               buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
+                                               buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
+                                               buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
+                                               buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
+                                               buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
+                                               buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
+                                               buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
+                                               buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
+                                               buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
+                                               buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
+                                               buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
+                                               buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
 Basil Assaf           M                        seller                                UK                                                               TRUE             2015-04-14     These are the 5 Manchester men whose charges were announced on Twitter, but no details on them beyond names and "supplying drugs globally via DarkWeb forums".
 Jamie Roden           M                        seller                                UK                                                               TRUE             2015-04-14
 Elliot Hyams          M                        seller                                UK                                                               TRUE             2015-04-14
@@ -464,12 +480,20 @@ Joshua Morgan         M                        seller                           
 
 # Confirmed
 ## Agora
-## Denmark
+### Australia
+
+4 Australians [were arrested for](http://newsroom.customs.gov.au/releases/four-australians-charged-in-international-illegal-firearm-sting) trying to buy guns from US LE-controlled seller "weaponsguy" February - March 2015, searches also turning up "Four illegal firearms, ammunition, two clandestine laboratories, precursor chemicals, methamphetamines, pseudoephedrine, steroids".
+
+### Denmark
 
 A longtime steroids vendor "Diamonddweller" (active on [SR1](http://antilop.cc/sr/vendors/1929a34c8c.htm), SR2, Evolution, and finally Agora) sold a variety of substances sourced from the "Diamond Pharma" underground lab (shipping from somewhere in the eastern EU), but went silent (including [his Reddit account](https://www.reddit.com/user/Diamonddweller)) around March 2015.
 A Redditor who has dealt with them [claims](https://www.reddit.com/r/DarkNetMarkets/comments/34z5xi/list_of_known_dnm_arrests/cr2de2t) it was a team of 2 men, that the Diamond Pharma website is likewise silent, and they sometimes wrote in Danish.
 On 12 March 2015, Danish police announced [a historic](http://ekstrabladet.dk/sport/anden_sport/danmarkshistoriens-stoerste-dopingsag-et-ton-steroider-fundet/5479263 "Danmarkshistoriens største dopingsag: Et ton steroider fundet; Betjente har fundet over et ton steroider et sted i omegnen af København") [arrest of 2](http://politiken.dk/sport/ECE2585439/danmarkshistoriens-stoerste-dopingsag-betjente-finder-over-et-ton-steroider/ "Danmarkshistoriens største dopingsag: Betjente finder over et ton steroider: Kæmpefangst af doping er et direkte resultat af en ny, strammere lov.") [men in Copenhagen](http://jyllands-posten.dk/indland/politiretsvaesen/ECE7542044/To+m%C3%A6nd+afsl%C3%B8ret+med+over+et+ton+doping/ " To mænd afsløret med over et ton doping: I stor dopingaktion slog politiet til flere steder på Sjælland. Bagmænd risikerer op til seks års fængsel") with searches turning up anywhere up to 1000kg of substances, the end-result of an investigation sparked by customs intercepts of packages shipping out internationally in September 2014 to meet "an extensive illegal trade of anabolic steroids on the Internet" sold on "both open and closed forums".
 Given the timing and niche product and other similarities, I agree with the Redditor that this Denmark bust was highly likely Diamonddweller.
+
+### EU
+
+An unknown number (<10) of European buyers were arrested for buying guns from the US LE-controlled seller "weaponsguy", sometime between September 2014 & May 2015.
 
 ### Germany
 
@@ -499,19 +523,25 @@ He had been uncovered after an American user of his counterfeit currency was det
 'Stone Island'/StoneIsland, linked to OD deaths http://www.bbc.com/news/uk-wales-30317747 http://www.dailymail.co.uk/news/article-3059414/Coroner-writes-Home-Secretary-online-drug-dealers-hide-dark-web-student-brothers-died-taking-massive-overdose-ecstasy.html https://www.reddit.com/r/DarkNetMarkets/comments/346n4d/psaarticle_agorda_brothers_died_side_by_side_from/
 -->
 
+### UK
+
+An unknown number of UK buyers (<10) were arrested for buying guns from the US LE-controlled seller "weaponsguy", sometime between September 2014 & May 2015.
+
 ### USA
 
 In mid-2014, the Agora guns & weapon seller "weaponsguy" began receiving complaints of packages not arriving & being a scammer; in November 2014, he returned from a vacation, got the complaining buyer to vouch for him, and resumed selling guns & related equipment.
 I have identified "weaponsguy" as the ATF-controlled account which did undercover sales to Justin Moreira in March-April 2015, in which case it seems likely to me that weaponsguy followed the same lifecycle as Dark_Mart and other FBI-controlled accounts on Evolution and was busted sometime around or after the complaints began, cooperated and his account began to be operated by LE (ATF in this case).
+An [Australian press release](http://newsroom.customs.gov.au/releases/four-australians-charged-in-international-illegal-firearm-sting "Four Australians charged in international illegal firearm sting") writes "In September 2014, the HSI investigation led to the identification of a 33-year-old man in Montana for the operation of the online alias account...In September 2014, HSI agents commenced a covert operation using the online alias account."
 
 In January 2015, [Austin Frembling was arrested](http://www.fresnobee.com/2015/02/20/4389411/fresno-man-indicted-for-possession.html) in Fresno, California, for buying \$3k of MDMA off Agora from a Canadian seller ([press release](http://www.justice.gov/usao/cae/news/docs/2015/2015_02/02-19-15Frembling.html); [complaint](/docs/sr/2015-frembling-caed-03307884002.pdf); [docket](/docs/sr/2015-02-22-agora-fremblingdocket.maff); [previous record](http://mugshot-record-search.com/mugshot/CA/Fresno-County-Sheriff-Office/2013-Feb-07/4023889/BRYAN-FREMBLING)).
 His package was intercepted by Customs (possibly due to inadequate stealth), then a controlled delivery was done to his PO box.
 
 On 2015-04-02, the Massachusetts man Justin Moreira ("jd497") was arrested for ordering a handgun & silencer from an ATF-controlled seller on a black-market ([press release](http://www.justice.gov/usao-ma/pr/hyannis-man-charged-bitcoin-purchase-firearm-and-silencer-darknet "Hyannis Man Charged With Bitcoin Purchase of Firearm and Silencer on 'Darknet'"); [complaint](/docs/sr/agora-moreira-mad-09506722843.pdf)).
-The complaint does not specify the market or seller, but [some careful searching](https://www.reddit.com/r/DarkNetMarkets/comments/31afi7/psaarticle_hyannis_man_charged_with_bitcoin/cq3ejul) reveals that the market was Agora and the seller was highly likely to be "weaponsguy".
+The complaint does not specify the market or seller, but [some careful searching](https://www.reddit.com/r/DarkNetMarkets/comments/31afi7/psaarticle_hyannis_man_charged_with_bitcoin/cq3ejul) reveals that the market was Agora and the seller was highly likely to be "weaponsguy", who seemed to have been arrested and flipped possibly in November 2014, running a gun sting afterwards with several sales on Agora (but that feedback could have been padded).
+The Australian press release implies that there may have been up to 9 other arrests in the USA, and narrows the date down to September 2014.
 
 ## Black Market Reloaded
-## Germany/Netherlands
+### Germany/Netherlands
 
 See the Utopia section.
 
@@ -1215,6 +1245,7 @@ The [Drugs Global Incident Map](http://drugs.globalincidentmap.com/) features ma
     - ["Waukesha man accused of using UPS to get marijuana from California"](http://www.wisn.com/news/waukesha-man-accused-of-using-ups-to-get-marijuana-from-california/32711932)
     - ["5 Arrested in Maine for 'Molly' drugs by mail operation"](http://www.postal-reporter.com/blog/5-arrested-in-maine-for-molly-drugs-by-mail-operation/)
     - ["Second man arrested in 300-gram shipment of marijuana"](http://www.dailycommercial.com/news/article_b455cbb6-84b7-5cf1-a0bf-a0de19842e59.html)
+    - ["Winona postal inspector sniffs out dope"](http://www.winonadailynews.com/news/local/crime-and-courts/winona-postal-inspector-sniffs-out-dope/article_1b24cfe9-75ef-5407-9d02-a916907f7259.html)
 
 Most are likely unrelated to the black-markets, and some rumors are wrong or flatly made up (for example, a seller may be covering up an exit scam with a fake story about being busted, or one seller may be trying to hurt another's sales eg [the TedDanzig incident](https://www.reddit.com/r/SilkRoad/comments/1xq97t/teddanzig_arrested/) or the 4lb PureFireMeds FUD), but of course, some will turn out to be real.
 
@@ -1251,7 +1282,7 @@ On 5 July 2013, [Israeli police announced 30 arrests](http://www.police.gov.il/a
 
 Posts on the SR2F claimed that the MDMA seller "Checkpoint" had been busted and customers raided; see his [review thread](/docs/sr/sr2f-20141106-3717-checkpointreviewthread.html) and [a customer claim of raid](/docs/sr/sr2f-20141104-52461-checkpointcustomerraid.html) due to poor stealth.
 
-<!-- https://www.reddit.com/r/DarkNetMarkets/comments/35kwq7/complaintwarning_another_reason_why_not_to_order/ ??? -->
+<!-- https://www.reddit.com/r/DarkNetMarkets/comments/35kwq7/complaintwarning_another_reason_why_not_to_order/ http://www.deepdotweb.com/2015/05/12/translation-hunt-underway-on-drug-crew-operating-on-the-darknet/ ??? -->
 
 ## New Zealand (NZ)
 
@@ -1385,6 +1416,7 @@ Some evidence points weakly at how comprehensive this table may be:
 - in Operation Onymous, the joint press release specified the total number of arrests; many are still unknown
 - the Ross Ulbricht trial revealed several unknown arrests (at a minimum: Deezletime, alllove, Richard Bates) which would likely have never surfaced if Ulbricht had plea-bargained and avoided trial
 - Australian police have sometimes quoted aggregate Silk Road-related figures; an example is the statement that 6 Australians were arrested in June 2013 for SR1-related activities, yet, information about only one has been uncovered so far.
+- the long-running "weaponsguy" Agora gun sting yielded, according to a press release, 17 arrests globally; only 1 arrest is known otherwise.
 
 In aggregate, I would guess that the completeness of the table is highly unlikely to be >25% and more likely to be <=10% (but the completeness is probably much higher for site operators, then staff, then sellers, and least of all buyers).
 
@@ -1392,7 +1424,8 @@ In aggregate, I would guess that the completeness of the table is highly unlikel
 
 ~~~{.R}
 library(XML)
-arrests <- readHTMLTable("http://www.gwern.net/Black-market%20arrests#table",
+# http://www.gwern.net/Black-market%20arrests
+arrests <- readHTMLTable("/tmp/burl29628ugp.html",
     colClasses = c("character", "factor", "character", "factor", "factor", "character", "factor",
                    "factor", "character", "logical", as.Date, as.Date, "character"))[[1]]
 # replace all empty-fields/""s with NAs
