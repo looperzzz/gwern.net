@@ -75,7 +75,7 @@ Meetups; inconsistent
 HPMOR; consistent?
 
 ~~~{.R}
-# 2009: http://lesswrong.com/lw/fk/survey_results/ / https://docs.google.com/forms/d/1X-tr2qzvvHzWpRtZNeXHoeBr30uCms7SlMkhbCmuT4Q/viewform?formkey=cF9KNGNtbFJXQ1JKM0RqTkxQNUY3Y3c6MA..
+# 2009: http://lesswrong.com/lw/fk/survey_results/ / https://docs.google.com/forms/d/1X-tr2qzvvHzWpRtZNeXHoeBr30uCms7SlMkhbCmuT4Q/viewform?formkey=cF9KNGNtbFJXQ1JKM0RqTkxQNUY3Y3c6MA
 survey2009 <- read.csv("~/wiki/docs/lwsurvey/2009.csv", header=TRUE)
 s2009 <- with(survey2009, data.frame(Year=2009, PCryonics=Probability..Cryonics, KarmaScore=LW.Karma, CryonicsStatus=Cryonics, Sequences=OB.posts, TimeonLW=Time.per.day))
 s2009$Meetups <- NA; s2009$LessWrongUse <- NA; s2009$HPMOR <- NA
@@ -101,7 +101,7 @@ survey2013$CryonicsStatus <- survey2013$Cryonics.Status
 survey2013$TimeonLW <- survey2013$Time.on.LW
 s2013 <- subset(survey2013, Previous.Surveys.1!="Yes", select=c(PCryonics, KarmaScore, CryonicsStatus, LessWrongUse, Sequences, TimeonLW, Meetups, HPMOR))
 s2013$Year <- 2013
-# 2014: http://lesswrong.com/lw/lhg/2014_survey_results/ /
+# 2014: http://lesswrong.com/lw/lhg/2014_survey_results/ / https://docs.google.com/forms/d/1h4IisKq7p8CRRVT_UXMSiKW6RE5U5nl1PLT_MvpbX2I/viewform
 survey2014 <- read.csv("~/wiki/docs/lwsurvey/2014.csv", header=TRUE)
 s2014 <- subset(survey2014, PreviousSurveys!="Yes", select=c(PCryonics, KarmaScore, CryonicsStatus, LessWrongUse, Sequences, TimeonLW, Meetups, HPMOR))
 s2014$Year <- 2014
@@ -161,11 +161,15 @@ minP <- min(cryonics$PCryonics[cryonics$PCryonics>0], na.rm=TRUE)
 cryonics[!is.na(cryonics$PCryonics) & cryonics$PCryonics==0,]$PCryonics <- minP
 cryonics[!is.na(cryonics$PCryonics) & cryonics$PCryonics==1,]$PCryonics <- maxP
 ### now that the probabilities are real, convert them into logits to avoid decimal's distortion of extremes
-cryonics$PCryonicsLogit <- log(cryonics$PCryonics /(1 - cryonics$PCryonics))
+cryonics$PCryonicsLogit <- log(cryonics$PCryonics / (1 - cryonics$PCryonics))
 
 ## visualize
 library(ggplot2)
 qplot(CryonicsStatusN, PCryonics, color=KarmaScoreLog, data=cryonics) + geom_point(size=I(3))
+
+## the funnel effect, indicating a convergence on an estimated probability ~10%, is striking:
+qplot(KarmaScoreLog, PCryonicsLogit, color=CryonicsStatusN, data=cryonics) + geom_point(size=I(3))
+# https://i.imgur.com/XJJ0DQ6.png
 
 ## two possible dichotomizations:
 cryonics$CryonicsStatusPbroad <- cryonics$CryonicsStatusN > 8
@@ -239,3 +243,7 @@ Cryonics.fit3.d.n <- sem(model = Cryonics.model3.d.n, link="logit",  missing="fi
 summary(Cryonics.fit3.d.n)
 
 ~~~
+
+TODO:
+
+- age, degree, physics specialty? http://slatestarscratchpad.tumblr.com/post/114103150216/su3su2u1-i-was-more-referring-to-the-further http://slatestarscratchpad.tumblr.com/post/114100766461/su3su2u1-slatestarscratchpad-when-i-defined http://slatestarscratchpad.tumblr.com/post/114097328806/thinkingornot-su3su2u1-thinkingornot-maybe-you (can steal degree unfolding from [EA donations]())
