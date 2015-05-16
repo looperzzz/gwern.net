@@ -456,10 +456,10 @@ Steven Locke          M                        seller    Evolution   Hubbard    
 Michael Regan         M                        buyer                                 USA         New Jersey     LSD                                   TRUE  2015-03-26 2015-03-28
 Ryan Andrew Backer    M                        buyer                                 USA         Alabama        LSD                                   TRUE  2015-03-26 2015-03-28
 Justin Moreira        M   jd497                buyer     Agora       weaponsguy      USA         Massachusetts  gun                                   FALSE 2015-04-02 2015-04-03
-                                               buyer     Agora       weaponsguy      Australia                  gun                                   TRUE  2015-02-01 2015-05-13     16 other weaponsguy arrests are known: 4 AU, 13 "across the United Kingdom, Europe and North America" (inclusive of Moreira).
-                                               buyer     Agora       weaponsguy      Australia                  gun                                   TRUE  2015-02-01 2015-05-13     Since the 4 AU arrests stemmed from "the execution of 15 search warrants in February and March", I've assigned 2 to each month.
-                                               buyer     Agora       weaponsguy      Australia                  gun                                   TRUE  2015-03-01 2015-05-13
-                                               buyer     Agora       weaponsguy      Australia                  gun                                   TRUE  2015-03-01 2015-05-13
+                      M                        buyer     Agora       weaponsguy      Australia   NSW            gun                                   TRUE  2015-02-01 2015-05-13     16 other weaponsguy arrests are known: 4 AU, 13 "across the United Kingdom, Europe and North America" (inclusive of Moreira). <!-- 25yo -->
+                      M                        buyer     Agora       weaponsguy      Australia   Queensland     gun                                   TRUE  2015-02-01 2015-05-13     Since the 4 AU arrests stemmed from "the execution of 15 search warrants in February and March", I've assigned 2 to each month. <!-- 26yo -->
+                      M                        buyer     Agora       weaponsguy      Australia   ACT            gun                                   TRUE  2015-03-01 2015-05-13 <!-- 24yo -->
+                      M                        buyer     Agora       weaponsguy      Australia   ACT            gun                                   TRUE  2015-03-01 2015-05-13 <!-- 25yo -->
                                                buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
                                                buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
                                                buyer     Agora       weaponsguy                                 gun                                   TRUE             2015-05-13
@@ -482,7 +482,9 @@ Joshua Morgan         M                        seller                           
 ## Agora
 ### Australia
 
-4 Australians [were arrested for](http://newsroom.customs.gov.au/releases/four-australians-charged-in-international-illegal-firearm-sting) trying to buy guns from US LE-controlled seller "weaponsguy" February - March 2015, searches also turning up "Four illegal firearms, ammunition, two clandestine laboratories, precursor chemicals, methamphetamines, pseudoephedrine, steroids".
+4 Australians [were arrested for](http://newsroom.customs.gov.au/releases/four-australians-charged-in-international-illegal-firearm-sting) [trying to buy guns](http://motherboard.vice.com/en_uk/read/dark-web-guns-bust-over-a-dozen-arrested-in-undercover-operation) from US LE-controlled seller "weaponsguy" February - March 2015, searches also turning up "Four illegal firearms, ammunition, two clandestine laboratories, precursor chemicals, methamphetamines, pseudoephedrine, steroids".
+
+<!-- https://www.reddit.com/r/DarkNetMarkets/comments/3623m0/complaintwarning_australian_vendor_i_dont_know_is/ 'i_dont_know' was one of the 4 and the account has been flipped? -->
 
 ### Denmark
 
