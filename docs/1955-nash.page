@@ -10,7 +10,7 @@ belief: log
 
 # Primary
 
-The following transcript was prepared from a [PDF of correspondence](http://www.nsa.gov/public_info/_files/nash_letters/nash_letters1.pdf) with the [NSA](!Wikipedia "National Security Agency") declassified in 2012; I have attempted to reproduce the math as exactly as possible, and the language, correcting only the most obvious spelling errors. [John Nash](!Wikipedia)'s diagrams are edited screenshots from the PDF. Editorial notes, such as pages, are in brackets. All hyperlinks are my own insertion. (The ordering of sections is roughly the same as the PDF but with a more logical order.) --Editor
+The following transcript was prepared from a [PDF of correspondence](http://www.nsa.gov/public_info/_files/nash_letters/nash_letters1.pdf) with the [NSA](!Wikipedia "National Security Agency") declassified in 2012; I have attempted to reproduce the math as exactly as possible, and the language, correcting spelling errors. [John Nash](!Wikipedia)'s diagrams are edited screenshots from the PDF. Editorial notes, such as pages, are in brackets. All hyperlinks are my own insertion. (The ordering of sections is roughly the same as the PDF but with a more logical order.) --Editor
 
 ## Nash
 ### To Major Grosjean
@@ -327,7 +327,7 @@ Cryptographer [Ron Rivest](!Wikipedia) implemented Nash's cryptosystem [in Pytho
 
 Bloggers on the significance of the letter; [Aaron Roth](http://aaronsadventures.blogspot.com/2012/02/amazing-new-declassified-document.html):
 
-> In it, John Nash makes the distinction between polynomial time and exponential time, conjectures that there are problems that -cannot- be solved faster than in exponential time, and uses this conjecture as the basis on which  the security of a cryptosystem (of his own design) relies. He also anticipates that proving complexity lower bounds is a difficult mathematical problem...These letters predate even [Gödel's letter to Von Neumann](http://rjlipton.wordpress.com/the-gdel-letter/), which goes into much less detail about complexity, and yet has also been taken to anticipate complexity theory and the P vs. NP problem.
+> In it, John Nash makes the distinction between polynomial time and exponential time, conjectures that there are problems that -cannot- be solved faster than in exponential time, and uses this conjecture as the basis on which  the security of a cryptosystem (of his own design) relies. He also anticipates that proving complexity lower bounds is a difficult mathematical problem...These letters predate even [Gödel's [1956] letter to Von Neumann](http://rjlipton.wordpress.com/the-gdel-letter/ "The Gödel Letter"), which goes into much less detail about complexity, and yet has also been taken to anticipate complexity theory and the P vs. NP problem.
 
 [Noam Nisan](http://agtb.wordpress.com/2012/02/17/john-nashs-letter-to-the-nsa/):
 
@@ -340,6 +340,8 @@ Bloggers on the significance of the letter; [Aaron Roth](http://aaronsadventures
 [Geoffrey Watson](http://agtb.wordpress.com/2012/02/17/john-nashs-letter-to-the-nsa/#comment-5465) agrees:
 
 > This is very interesting as a historical document, but not sure that it supports the interpretations being put on it...a reasonable historical conclusion is that these ideas were just going around in the usual way. The "conjecture" is a pretty muddled bit of thinking. It presumably means that Nash thinks that there are such exponentially hard ciphers, but to convert "almost all sufficiently complex types of enciphering, especially where the instructions given by different portions of the key interact complexly with each other in the determination of their ultimate effects on the enciphering" into a prescient anticipation of complexity theory is a big ask.
+
+[Shiro Kawai](http://blog.practical-scheme.net/gauche/20120715-nash-cipherer "Working with generators - John Nash's Cipherer") implemented Nash's system in Scheme.
 
 [Philonus Atio](http://agtb.wordpress.com/2012/02/17/john-nashs-letter-to-the-nsa/#comment-5458) comments that (as one might expect for very early work):
 
