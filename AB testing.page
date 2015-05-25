@@ -2800,6 +2800,7 @@ The CSS changes:
 On 5 February 2015, the top variant (`meta5`) outperformed the bottom one (`meta1`, corresponding to my expectation that the taller variants would be worse than the compactest ones), so the worst was deleted.
 On 8 February 2015, the new top variant (`meta6`) now outperformed (`meta4`), so I deleted it.
 On 22 March 2015, it outperformed `none`.
+On 25 May 2015, the difference was not statistically-significant but I decided to delete `meta3` anyway.
 
 ### Analysis
 
