@@ -10,7 +10,8 @@ belief: log
 
 # Primary
 
-The following transcript was prepared from a [PDF of correspondence](http://www.nsa.gov/public_info/_files/nash_letters/nash_letters1.pdf) with the [NSA](!Wikipedia "National Security Agency") declassified in 2012; I have attempted to reproduce the math as exactly as possible, and the language, correcting spelling errors. [John Nash](!Wikipedia)'s diagrams are edited screenshots from the PDF. Editorial notes, such as pages, are in brackets. All hyperlinks are my own insertion. (The ordering of sections is roughly the same as the PDF but with a more logical order.) --Editor
+The following transcript was prepared from a [PDF of correspondence](http://www.nsa.gov/public_info/_files/nash_letters/nash_letters1.pdf) with the [NSA](!Wikipedia "National Security Agency") declassified in 2012; I have attempted to reproduce the math as exactly as possible, and the language (correcting spelling errors). [John Nash](!Wikipedia)'s diagrams are edited screenshots from the PDF. Editorial notes, such as pages, are in brackets. All hyperlinks are my own insertion. (The ordering of sections is roughly the same as the PDF but with a more logical order.)
+An [independent LaTeX/PDF transcript](http://web.engr.oregonstate.edu/%7Erosulekm/pubs/nash.pdf) was also created by Mike Rosulek in 2012. --Editor
 
 ## Nash
 ### To Major Grosjean
