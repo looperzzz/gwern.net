@@ -7,6 +7,8 @@ status: finished
 belief: highly likely
 ...
 
+# Background
+
 ["Portrait of EAs I know"](http://su3su2u1.tumblr.com/post/117473264133/portrait-of-eas-i-know), su3su2u1:
 
 > But I note from googling for surveys that the median charitable donation for an EA in the Less Wrong survey was 0.
@@ -14,6 +16,25 @@ belief: highly likely
 [Yvain](http://slatestarscratchpad.tumblr.com/post/117484095321/portrait-of-eas-i-know):
 
 > Two years ago I got a paying residency, and since then I’ve been donating 10% of my salary, which works out to about \$5,000 a year. In two years I’ll graduate residency, start making doctor money, and then I hope to be able to donate maybe eventually as much as \$25,000 - \$50,000 per year. But if you’d caught me five years ago, I would have been one of those people who wrote a lot about it and was very excited about it but put down \$0 in donations on the survey.
+
+If self-reported EAers donate a similar total/average amount as the non-EAers, this would imply that the respondents are likely hypocrites and that the movement is not succeeding in its goals.
+(While there are ways to contribute beyond donating money and there are legitimate reasons to donate only small amounts, it's clear that for most people the optimal approach is donating money and in general First Worlders, particularly intelligent ones, can spare a large fraction of their income without dying or catastrophic loss of their quality of life.)
+
+# Data
+
+The LW survey run by Yvain has, in the 2013 and 2014 surveys (but not previously), asked one or two questions about whether respondents self-identify as [Effective Altruists](!Wikipedia) and also how much they have donated that year to charity.
+The surveys also ask if one has responded to a previous survey, and ask about various things that might plausibly predict donations: employment status, profession, educational attainment, age, and of course, income.
+
+So to investigate the claim of su3su2u1 that median self-reported donation is \$0 and Yvain's claims that donations increase substantially with age & EAers are in the low-income/age portion of their lives, we can
+
+1. combine the 2013 & 2014 surveys for maximal data, filtering out people who answered both surveys
+2. include year as a fixed effect in case of temporal changes
+3. log-transform heavily-skewed monetary variables like donations & income
+4. test the simplest possible form of su3su2u1's claim using a non-parametric test of medians between EAers/non-EAers
+5. and then try more sophisticated regressions, regressing the various demographic factors on log-donations, to see what the EA factor predicts after including the others as predictors (I also try treating the two EA questions as measures of a latent variable of EAness, which turns out to not much matter)
+
+## Analysis
+### Preparation
 
 Data preparation:
 
@@ -88,6 +109,8 @@ survey <- cbind(survey, mtabulate(strsplit(gsub(" ", "", as.character(survey$Deg
 write.csv(survey, file="2013-2014-lw-ea.csv", row.names=FALSE)
 ~~~
 
+### Statistical analysis
+
 Analysis:
 
 ~~~{.R}
@@ -113,13 +136,22 @@ wilcox.test(Charity ~ EffectiveAltruism, conf.int=TRUE, data=survey)
 ##           -19.99996543
 
 library(ggplot2)
-qplot(Age, CharityLog, color=EffectiveAltruism, data=survey) + geom_point(size=I(3))
-## https://i.imgur.com/wd5blg8.png
-qplot(Age, CharityLog, color=EffectiveAltruism,
-      data=na.omit(subset(survey, select=c(Age, CharityLog, EffectiveAltruism)))) +
- geom_point(size=I(3)) + stat_smooth()
-## https://i.imgur.com/UGqf8wn.png
+qplot(jitter(Age), Charity, color=EffectiveAltruism, data=survey) + labs(x = "Age", colour ="EA") +
+ geom_point(size=I(3)) +
+ scale_y_continuous(breaks=round(exp(1:10))) + coord_trans(y="log1p")
+~~~
 
+![2013-2014 LW surveyors' reported donations over age, colored by self-identifying as EA](/images/lwsurvey/ea-donationsvsage.png)
+
+~~~{.R}
+qplot(jitter(Age), jitter(CharityLog,a=0.1), color=EffectiveAltruism,
+      data=na.omit(subset(survey, select=c(Age, CharityLog, EffectiveAltruism))), alpha=I(0.5)) +
+ labs(x = "Age", y = "Charity", colour ="EA") +  geom_point(size=I(3)) + stat_smooth()
+~~~
+
+![Reported donations over age, colored by EA; with GAM-smoothed curves of EA vs non-EA age-charity trend](/images/lwsurvey/ea-donationsvsage-smoothed.png)
+
+~~~{.R}
 # you might think that we can't treat Age linearly because this looks like a quadratic or
 # logarithm, but when I fitted some curves, charity donations did not seem to flatten out
 # appropriately, and the GAM/loess wiggly-but-increasing line seems like a better summary.
@@ -139,11 +171,8 @@ qplot(Age, CharityLog, color=EffectiveAltruism,
 ## points(predict(l1, newdata=data.frame(Age=0:70)), col="blue")
 ## points(predict(l2, newdata=data.frame(Age=0:70)), col="red")
 #
-# So I will treat Age as a linear additive sort of thing.
+# So I will treat Age as a linear/additive sort of thing.
 ~~~
-
-![2013-2014 LW survey respondents: self-reported charity donation vs self-reported age, split by self-identifying as EA or not](https://i.imgur.com/fscMfsX.png)
-![Likewise, but with GAM-smoothed curves for EA vs non-EA](https://i.imgur.com/SSQ4qnU.png)
 
 ~~~{.R}
 # for the regression, we want to combine EffectiveAltruism/EffectiveAltruism2 into a single measure, EA, so
@@ -285,3 +314,15 @@ summary(lm(CharityLog ~ EffectiveAltruism + EffectiveAltruism2 + Age + IncomeLog
 ~~~
 
 Note these increases are on a log-dollars scale.
+
+# Conclusion
+
+In all the analyses, median donations are >\$0, and EAers report donating more.
+There is also Yvain's predicted correlation of age with donation amount.
+
+That said, the increase for EA donations is not as large as I would have expected: the median donation is increased by something like ~\$1-50, and the simplest regression estimate is a factor of natural-log +1.3 or `exp(1.3) ~> 3`, which is much more impressive but I am not confident in this holding up because the scatter-plots suggest that this may wind up being an increase in donations while young but there are hardly any old EAers to judge from, so the net increase in donations over time may wind up being minimal as EAers converge with non-EAers with age.
+(That is, it's great that a 20yo donates \$60 rather than \$20 and EA views may be causing this increase, but if at age 50 that 20yo would be donating \$50,000 whether or not he had ever encountered EA, then EA has not done much good in the end.)
+
+# External links
+
+- [LW discussion](http://lesswrong.com/r/discussion/lw/m6o/lw_survey_effective_altruists_and_donations/#comments)
