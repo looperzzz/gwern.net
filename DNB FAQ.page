@@ -637,7 +637,7 @@ Westerberg 2007, ["Changes in cortical activity after training of working memory
 
 Brain Workshop includes a special 'Jaeggi mode' which replicates almost exactly the settings described for the "Brain Twister" software used in the study.
 
-No study is definitive, of course, but Jaeggi 2008 is still one of the major studies that must be cited in any DNB discussion. There are some issues - not as many subjects as one would like, and the researchers (quoted in the _Wired_ article) obviously don't know if the WM or _Gf_ gains are durable; more technical issues like the administered _Gf_ IQ tests being speeded and thus reduced in validity (speeding IQ tests [reduces the influence of Gf & increases WM](/docs/dnb/2013-chuderski.pdf "'When are fluid intelligence and working memory isomorphic and when are they not?', Chuderski 2013")) have been raised by [Moody](#moody-2009-re-jaeggi-2008).
+No study is definitive, of course, but Jaeggi 2008 is still one of the major studies that must be cited in any DNB discussion. There are some issues - not as many subjects as one would like, and the researchers (quoted in the _Wired_ article) obviously don't know if the WM or _Gf_ gains are durable; more technical issues like the administered _Gf_ IQ tests being speeded and thus possibly reduced in validity have been raised by [Moody](#moody-2009-re-jaeggi-2008) and others.
 
 ### Qiu 2009
 
@@ -1010,6 +1010,12 @@ Shipstead, Redick, & Engle 2012 elaborate on how, while matrix-style IQ tests ar
 > ...far transfer tasks are not perfect measures of ability. In many training studies, Raven's Progressive Matrices (Ravens; Raven, 1990, 1995, 1998) serves as the sole indicator of Gf. This "matrix reasoning" task presents test takers with a series of abstract pictures that are arranged in a grid. One piece of the grid is missing, and the test taker must choose an option (from among several) that completes the sequence. Jensen (1998) estimates that 64% of the variance in Ravens performance can be explained by Gf. Similarly, Figure 3 indicates that in the study of Kane et al. (2004), 58% of the Ravens variance was explained by Gf. It is clear that Ravens is strongly related to Gf. However, 30%-40% of the variance in Ravens is attributable to other influences. Thus, when Ravens (or any other task) serves as the sole indicator of far transfer, performance improvements can be explained without assuming that a general ability has changed. Instead, it can be parsimoniously concluded that training has influenced something that is specific to performing Ravens, but not necessarily applicable to other reasoning contexts (Carroll, 1993; Jensen, 1998; Moody, 2009; Schmiedek et al., 2010; te Nijenhuis, van Vianen, & van der Flier, 2007).
 >
 > ...Preemption of criticisms such as Moody's (2009) is, however, readily accomplished through demonstration of transfer to several measures of an ability. Unfortunately, the practice of equating posttest improvement on one task with change to cognitive abilities is prevalent within the WM training literature (cf. Jaeggi et al., 2008; Klingberg, 2010). This is partially driven by the time and monetary costs associated with conducting multisession, multiweek studies. Regardless, training studies can greatly improve the persuasiveness of their results by measuring transfer via several tasks that differ in peripheral aspects but converge on an ability of interest (e.g., a verbal, Gf, and spatial task from Figure 3). If a training effect is robust, it should be apparent in all tasks.
+
+Explicit attempts at measuring speeding:
+
+- Chuderski 2013, ["When are fluid intelligence and working memory isomorphic and when are they not?"](/docs/dnb/2013-chuderski.pdf)
+- Colom et al 2015, ["Fluid intelligence and working memory capacity: Is the time for working on intelligence problems relevant for explaining their large relationship?"](/docs/dnb/2015-colom.pdf)
+- Chuderski 2015, ["The broad factor of working memory is virtually isomorphic to fluid intelligence tested under time pressure"](/docs/dnb/2015-chuderski.pdf)
 
 ### Seidler 2010
 
