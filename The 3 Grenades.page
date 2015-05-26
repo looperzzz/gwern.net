@@ -207,6 +207,11 @@ So to determine the grenade color if 4 colors are possible in 4 questions, if in
 
 When you get your answers, look up a square in the grid, and whatever color it is, is the color of the ball.
 
+# See also
+
+- [Ulam's game](!Wikipedia) (and ["Searching games with errors - fifty years of coping with liars"](/docs/2002-pelc.pdf), Pelc 2002)
+- [Twenty Questions](!Wikipedia)
+
 # External links
 
 - ["Error correcting codes: Why your texts don’t end up as gibberish"](https://nolaymanleftbehind.wordpress.com/2011/07/11/error-correcting-codes-why-your-texts-dont-end-up-as-gibberish/)
