@@ -108,6 +108,7 @@ Area51                   2014-06-20 2015-01-24 FALSE scam      FALSE    `fiftyon
 Panacea                  2014-10-27 2015-02-13 FALSE voluntary FALSE    `panaceaz4give75l.onion` TRUE     FALSE TRUE    FALSE    FALSE    FALSE    Cloud-9    FALSE  FALSE 1     TRUE    [Reddit ANN](https://www.reddit.com/r/DarkNetMarkets/comments/2kevg6/panacea_flower_sanctuary_the_light_at_the_end_of/); forums: `flower777wpnxpkj.onion`; cannabis-only; admin "PyroWolf" was reportedly doxed by the cannabis seller EastCoastCollective ([likely](https://www.reddit.com/r/DarkNetMarkets/comments/2khn4h/ecc_eastcoastcollective_runs_cannabis_road_both/) the operator of CR2/CR3, and possibly CR1 as well), who he was a former customer of. Closure obscure - staff blames an AWOL developer and the multisig coins to be safe, but [a throwaway](https://www.reddit.com/user/panacea_DEATH_STAR) claims to've hacked it.
 evolution                2014-01-14 2015-03-14 FALSE scam       FALSE    `k5zq47j6wd3wdvjq.onion` FALSE   FALSE TRUE    FALSE    FALSE    FALSE    Laravel    TRUE   TRUE  0     FALSE   [Announced on Reddit](http://www.reddit.com/r/DarkNetMarkets/comments/1vmufh/latest_news_from_tcf/) 20 Jan, but forums [claim first sale on 14 January](http://i25c62nvu4cgeqyz.onion/viewtopic.php?pid=121#p121); forums: `i25c62nvu4cgeqyz.onion`; new url: `nifgk5szbodg7qbo.onion`; claimed [multisig](http://www.reddit.com/r/DarkNetMarkets/comments/24vio2/market_announcement_multisignature_escrow_has/) but on further investigation, seems to be [the weak kind](https://www.reddit.com/r/DarkNetMarkets/comments/24vio2/z/chcx3t7). [PHP framework](https://www.reddit.com/r/DarkNetMarkets/comments/2ox10x/humorevo_exposed/). Site & forums went down 2015-03-18 but large withdrawals began failing ~2015-03-14, marking the start of the exit scam. Former employee claims [฿130k](http://www.deepdotweb.com/2015/03/18/interview-with-nswgreat-evolution-staff-member/ "Evolution Market Staff Member: 130,000BTC Were Stolen") lost.
 Ironclad                 2015-03-17 2015-03-25 FALSE scam      FALSE    `ironcladcoc3chq6.onion` FALSE    FALSE TRUE     FALSE    FALSE     FALSE  custom     TRUE   TRUE  0     FALSE   [ANN](https://www.reddit.com/r/DarkNetMarkets/comments/2zdo8e/ironclad_new_market_opening/); forums: `forum.ironcladcoc3chq6.onion`. Disappeared without notice during the post-Evolution chaos & Tor DoS attacks in March 2015; as a centralized market, all escrow & deposits are presumed stolen.
+Kiss                     2015-02-19 2015-05-16 FALSE scam      FALSE    `kissmpg5zave56f4.onion` FALSE    FALSE TRUE     FALSE    FALSE    FALSE   custom     FALSE  FALSE 1     FALSE   [ANN](https://www.reddit.com/r/DarkNetMarkets/comments/2vo5qi/kiss_marketplace/); forum: `6bssxspijk7n2ioh.onion`; [Kiss](https://i.imgur.com/jzZKreU.png) [moderator claims](https://www.reddit.com/r/DarkNetMarkets/comments/37dcqp/the_details_of_what_happened_at_kiss/) hacked 2015-05-21 then operator decided to exit-scam. I date to 2015-05-16, however, as I was unable to log in starting then.
 Dream Market             2013-11-15            TRUE            FALSE    `ltxocqh4nvwkofil.onion` FALSE    FALSE TRUE    FALSE    FALSE    FALSE    unknown    FALSE  TRUE  0     FALSE   Site claims to've opened 15 November 2013; first mention of it I found was on 7 January 2014.
 Agora                    2013-12-03            TRUE            FALSE    `agorahooawayyfoe.onion` FALSE    FALSE TRUE    FALSE    FALSE    FALSE    custom     TRUE   TRUE  0     FALSE   Forums: `lacbzxobeprssrfx.onion` <!-- any exploits of CSRF claim? https://www.reddit.com/r/AgMarketplace/comments/2wgrg4/agora_marketplace_csrf_to_steal_bitcoins/ http://seclists.org/fulldisclosure/2015/Feb/64 -->
 Outlaw Market            2013-12-29            TRUE            FALSE    `drugs26ucskmvcef.onion` FALSE    FALSE TRUE    FALSE    FALSE    FALSE    custom     TRUE   FALSE 2     FALSE   Open date based on the date of the ["Welcome" post on the OM forum](http://hmxutiksabsj4ozi.onion/index.php?topic=2.msg0); apparently formerly "Drugs'n'Bets". Site was hacked & user PMs released in 2013; site [shut down 31 July 2014](http://www.deepdotweb.com/2014/08/01/outlaw-market-down-possibily-compromised/) after an attack blame on former admins when "A SESSION-hack was performed and a couple of datasets manipulated but not much damage created". They claim in [an interview](http://www.deepdotweb.com/2014/01/23/interview-with-outlaw-market-admin/) it's custom software; this is confirmed by a [leak of PHP source which does not call any frameworks/CRMs](/docs/sr/2015-01-15-outlawmarket-index.php). Policies based on no apparent hits among mirrors.
@@ -120,7 +121,6 @@ AlphaBay                 2014-12-22            TRUE            FALSE    `pwoah7f
 Silk Road Reloaded       2015-01-13            TRUE            FALSE    `silkroadreloaded.i2p`   FALSE    TRUE  TRUE    TRUE     TRUE     TRUE     custom     FALSE  TRUE  0     FALSE   Full I2P address: `hyn3mwmyeovcn2paujxur2eury2ufqpoahvbbqshfoggljn25tra.b32.i2p`
 Tochka       FALSE       2015-01-30            TRUE            FALSE    `tochka3evlj3sxdv.onion` FALSE    FALSE TRUE    TRUE     TRUE     TRUE     custom     FALSE  FALSE 0     FALSE   [Announced on Reddit](https://www.reddit.com/r/DarkNetMarkets/comments/2u8dm2/tochka_new_mobilefirst_anonymous_marketplace/); site rules ban "Counterfeit documents" which I interpret as banning carding in general.
 Crypto                   2015-02-14            TRUE            FALSE    `cryptomktgxdn2zd.onion` FALSE    FALSE TRUE     FALSE    FALSE    FALSE   custom     TRUE   TRUE  0     FALSE   [ANN](https://www.reddit.com/r/DarkNetMarkets/comments/2vvhtc/crypto_market/); CM is run on / by Diabolus and not entirely separate.
-Kiss                     2015-02-19            TRUE            FALSE    `kissmpg5zave56f4.onion` FALSE    FALSE TRUE     FALSE    FALSE    FALSE   custom     FALSE  FALSE 0     FALSE   [ANN](https://www.reddit.com/r/DarkNetMarkets/comments/2vo5qi/kiss_marketplace/); forum: `6bssxspijk7n2ioh.onion`
 Mr Nice Guy 2            2015-02-21            TRUE            FALSE    `niceguyfa3xkuuoq.onion` FALSE    FALSE TRUE     FALSE    FALSE    FALSE   custom     FALSE  FALSE 0     TRUE    [Operator claims doxing was just of "a volunteer"](https://www.reddit.com/r/DarkNetMarkets/comments/2ztsg9/opseccomputer_psa_the_owner_of_mr_nice_guy_market/)
 Havana/Absolem           2015-04-13            TRUE            FALSE    `havana3cofejesta.onion` TRUE     FALSE TRUE     FALSE    FALSE    FALSE              FALSE  FALSE 0     FALSE   [Opened initially invite-code-only](https://www.reddit.com/r/havanamarket/comments/32e7eb/beta_invite_codes/); forums: `forumz4usxavgyri.onion`
 TheRealDeal              2015-04-09            TRUE            FALSE    `trdealmgn4uvm42g.onion` TRUE     FALSE TRUE     FALSE    FALSE    FALSE   Bitwasp    TRUE   TRUE  0     FALSE   [Interview](http://www.deepdotweb.com/2015/04/08/therealdeal-dark-net-market-for-code-0days-exploits/), [ANN](https://www.reddit.com/r/DarkNetMarkets/comments/322hro/introduction_therealdeal_code_mostly_market/); forums: `forum5cijl4suew6.onion`
@@ -200,6 +200,7 @@ Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
 Pragma: no-cache
 Location: index.php -->
 <!-- Panacea: down, hacked? went down during 12 February 2015, still down as of 31 March 2015 -->
+<!-- SRR i2p: last mirror 2015-05-04; scrape began failing that day, so mark it dead then? -->
 
 # Analysis
 
@@ -213,7 +214,7 @@ TODO: <!-- ping Vespco about results -->
 
 ~~~{.R}
 library(XML)
-black <- readHTMLTable("/tmp/burl29802X4P.html", colClasses = c("factor", as.Date, as.Date, "logical", "factor", "logical", "character", "logical", "logical", "logical", "logical", "logical", "logical", "factor", "logical", "logical", "integer", "logical", "character"))[[1]]
+black <- readHTMLTable("http://www.gwern.net/Black-market%20survival", colClasses = c("factor", as.Date, as.Date, "logical", "factor", "logical", "character", "logical", "logical", "logical", "logical", "logical", "logical", "factor", "logical", "logical", "integer", "logical", "character"))[[1]]
 black[black$Codebase=="",]$Codebase <- "unknown"
 black$Start <- as.Date(black$Start); black$End <- as.Date(black$End)
 black[is.na(black$End),]$End <- Sys.Date() # assuming the table is up to date
@@ -232,10 +233,14 @@ levels(black$Closure) <- c("alive", "hacked", "raided", "scam", "voluntary") # s
 library(survival)
 # plot(survfit(Surv(Age, Alive, type="right") ~ 1, data=black), xlab="Days active", ylab="Fraction of markets still active")
 
+library(lubridate)
+cmodel <- coxph(Surv(Age, Alive) ~ year(black$Start) + Multisig + I2P + Bitcoin+Litecoin+Dogecoin+Darkcoin + Codebase + Guns + Fraud + Hacks + Doxed, data = black); cmodel
 
-cmodel <- coxph(Surv(Age, Alive) ~ Multisig + I2P + Bitcoin+Litecoin+Dogecoin+Darkcoin + Codebase + Guns + Fraud + Hacks + Doxed, data = black); cmodel
+survdiff(Surv(Age,Alive)~strata(as.factor(year(black$Start))))
 
-cmodel2 <- coxph(Surv(Age, Alive) ~ ridge(Multisig, I2P, Bitcoin,Litecoin,Dogecoin,Darkcoin, Codebase, Guns, Fraud, Hacks, Doxed), data = black); cmodel2
+cmodel2 <- coxph(Surv(Age, Alive) ~ as.factor(year(black$Start)) + ridge(Multisig, I2P, Bitcoin,Litecoin,Dogecoin,Darkcoin, Codebase, Guns, Fraud, Hacks, Doxed), data = black); summary(cmodel2)
+
+cmodel <- coxph(Surv(Age, Alive) ~ strata(year(black$Start)), data = black); cmodel
 
 black$End <- black$Start <- black$URL <- black$Notes <- black$Market <- NULL
 ~~~
