@@ -3163,7 +3163,7 @@ So I need to find a piece of wood and tweak it into a suitable form, while avoid
 My first approach was to take a short narrow plank about the width of my shoulders and saw V-shaped notches in each end, then bevel and sand the edges of the notches so they wouldn't fray the nylon cords.
 This was easy enough, and then one simply sticks it in between the two cords on one end.
 It turns out that the plank slips out very easily, and the pressure causes it to slide up halfway to form a diamond configuration, which doesn't accomplish the goal of spreading the hammock, since the hammock is still dangling from a point where one wants a perpendicular line.
-I could force it down the strings towards the end of the hammock, spreading out the hammock, but the instant any pressure was placed on the system (such as by getting in), the plank'd either collapse or revert to a diamond and point.
+I could force it down the strings towards the end of the hammock, spreading out the hammock, but the instant any pressure was placed on the system (such as by getting in), the plank would either collapse or revert to a diamond+point.
 
 So if it kept slipping, I'd *force* it to stay.
 This time, I drilled two holes through opposite ends of the plan, fed the two ends of the nylon cord through the two holes, drew the cord as tight as possible, then put a knot behind/above each hole in the plank.
@@ -3176,6 +3176,14 @@ Combined with an intermediate looseness of hang (it turns out tighter is not alw
 I gave sleeping in hammock a few more nights of trying, and ran into a new problem: the same feature that makes hammocks so good for hot climates also makes them problematic in the winter, ie you're exposed to the air.
 The chill woke me up early in the morning twice, even after I added in a fuzzy blanket to sleep on top of.
 Probably I could fix this by adding a thicker blanket underneath, but I decided to pack up the hammock (which takes very little space) and retry again in spring when my room starts getting warm again.
+
+In May 2015, after it became warm enough again that I needed air conditioning on at night, I set the hammock back up and gave it another try.
+After 3 failed nights, I gave up: the coldness was great, but no position or tension seemed to give my shoulders enough room to move and let me roll over.
+I moved the hammock outside - whatever its problems for sleeping in, it's great for napping and infinitely more comfortable than the common rope lawn hammock.
+
+A partial solution to the cold is foam earplugs; another interesting possibility is a [bamboo wife](!Wikipedia), a hollow pillow or framework which reduces the need for a thick blanket/pillow to clutch and support one while laying on one's side.
+(I don't know what to do about the neck issues.
+Probably just put up with it as I always have.)
 
 <!-- R conversion routine for merging old and new Zeo Data:
 # need to delete redundant entries
@@ -4353,10 +4361,36 @@ April
 29: 0 0
 30: 0 0
 May
-01:
+01: 0 0
+02: 0 1
+03: 0 0
+04: 0 0
+05: 0 0
+06: 1 0
+07: 0 0
+08: 0 0
+09: 0 0
+10: 1 0
+11: 0 0
+12: 0 0
+13: 1 0
+14: 1 1
+15: 1 1
+16: 0 0
+17: 1 0
+18: 0 1
+19: 1 0
+20: 0 0
+21: 0 1
+22: 1 0
+23: 1 1
+24: 0 1
+25: 0 0
+26: 0 1
+27: 0 0?
 -->
 
-<!-- Alcohol log: 18, 22, 23, 24, 26, 27, 30 July 2014; 1, 4, 5, 8, 11, 12, 14, 16, 17, 19, 21, 23, 25, 27, 30 August 2014; 3, 4, 6, 9, 10, 12, 15, 18, 19, 20, 27 September 2014; 1, 8, 9, 10, 12, 20, 22, 24, 29 October; 3, 4, 6, 8, 10, 13, 14, 15, 16, 20, 21, 22, 24, 25, 26, 27 November 2014; 1, 22 December 2014; 2015: 05, 07, 09, 12, 14, 16, 30, 31 January; 7, 14 February; 9 March; 2, 3, 4, 5 April -->
+<!-- Alcohol log: 18, 22, 23, 24, 26, 27, 30 July 2014; 1, 4, 5, 8, 11, 12, 14, 16, 17, 19, 21, 23, 25, 27, 30 August 2014; 3, 4, 6, 9, 10, 12, 15, 18, 19, 20, 27 September 2014; 1, 8, 9, 10, 12, 20, 22, 24, 29 October; 3, 4, 6, 8, 10, 13, 14, 15, 16, 20, 21, 22, 24, 25, 26, 27 November 2014; 1, 22 December 2014; 2015: 05, 07, 09, 12, 14, 16, 30, 31 January; 7, 14 February; 9 March; 2, 3, 4, 5 April; 22, 23 May -->
 <!-- melatonin: last night of Now's melatonin+niacin+B6+magnesium 19 Feb 2014; began Nature's Bounty 1mg 21 March 2014 -->
 <!-- vitamin D: last day 4 August 2014 -->
 <!-- added aluminum foil to bedroom, 9 August 2014 -->
