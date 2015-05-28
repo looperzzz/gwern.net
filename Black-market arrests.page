@@ -31,6 +31,10 @@ If you're curious, you could look at known sales/users numbers for SR1 and try t
 
 The indictment/complaint says that Feb 2011 - July 2013, there were 957k total accounts, 1.229m transactions from 147k buyer accounts, 9.5m btc sales volume; Christin says among other things that "Over the measurement interval February 3, 2012- July 24, 2012, we indeed found 1,239 distinct sellers".
 
+http://ia801506.us.archive.org/27/items/gov.uscourts.nysd.422824/gov.uscourts.nysd.422824.256.0.pdf :
+
+> Silk Road was an online black market of unprecedented scope. By the time it was shuttered in October 2013, over 13,000 offerings were listed on its homepage for illegal drugs of every conceivable variety. (PSR ¶ 25; GX- 910). A wide variety of other illicit goods and services were sold on the site as well, including fake IDs and passports, computer-hacking tools and services, counterfeit goods and pirated media, criminal guidebooks and instruction manuals, and money laundering services. (PSR ¶¶ 29, 32, 34; see also Ex. A (sample screenshots)). 1 In total, over 1.5 million transactions were conducted over Silk Road, involving over 100,000 buyer accounts and nearly 4,000 seller accounts. (PSR ¶ 59). Those transactions had a total value of nearly $214 million in U.S. currency. (Id.) Nearly 95% of those sales were for illegal drugs – including at least $8.9 million in sales of heroin, $17.3 million in sales of cocaine, and $8.1 million in sales of methamphetamine. (Id.) The buyers and sellers involved in these transactions were spread across the world, from Argentina to Australia, from the United States to the Ukraine. (Id.; GX-940F; GX-940-G).
+
 So quickly dividing by month, that gives:
 
 total accounts: 33k/month; buyer accounts: 5.1k/month; new sellers: 73/month; transactions: 42k/month; turnover: 327k/month
@@ -145,7 +149,7 @@ As of 7 May 2015, there is publicly-known & included in my table (although many,
 
 ## Data
 
-Name                  Sex Pseudonym            Role      Market      Seller          Country     State          Product                               INTL  Arrest    Known         Notes
+Name                  Sex Pseudonym            Role      Market      Seller          Country     State          Product                               INTL  Date      Date Known    Notes
 --------------------- --- ---------------      -------   ----------- --------------- ----------- -------------- ------------------------------        ----- --------- ----------    -----
 Stacy Litz            F                        buyer     Silk Road 1                 USA         Pennsylvania   MDMA, LSD                             FALSE 2011-09-01 2013-01-13
                                                          Silk Road 1                 USA         Maryland                                                   2011-12-29 2015-04-18   Inferred from internal timeline; Baltimore CI
@@ -195,7 +199,7 @@ Wyatt Silverman       M                        buyer     Silk Road 1 luckylucian
 Tele Benoni           M   MedicalM             seller    Silk Road 1                 Netherlands                MDMA                                  TRUE  2013-04-05 2013-09-03
 Sander V.             M   MedicalM             seller    Silk Road 1                 Netherlands                MDMA                                  TRUE  2013-04-05 2013-09-03
 Bernd S.              M   MedicalM             seller    Silk Road 1                 Netherlands                MDMA                                  TRUE  2013-04-05 2013-09-03
-Frans W. Groningen    M   MedicalM             seller    Silk Road 1                 Netherlands                MDMA                                  TRUE  2013-04-05 2013-09-03
+Frans W.              M   MedicalM             seller    Silk Road 1                 Netherlands Groningen      MDMA                                  TRUE  2013-04-05 2013-09-03
                       M   MedicalM             seller    Silk Road 1                 Netherlands                MDMA                                  TRUE  2013-04-05 2013-09-03
                       M   MedicalM             seller    Silk Road 1                 Netherlands                MDMA                                  TRUE  2013-04-05 2013-09-03
 Eric Daniel Hughes    M   Casey Jones          seller    Silk Road 1                 USA         South Carolina marijuana, clonazepam, DMT            FALSE 2013-04-12 2013-06-23     May have sold internationally but a SR1F post refers to him as a domestic seller.
@@ -534,6 +538,7 @@ An unknown number of UK buyers (<10) were arrested for buying guns from the US L
 In mid-2014, the Agora guns & weapon seller "weaponsguy" began receiving complaints of packages not arriving & being a scammer; in November 2014, he returned from a vacation, got the complaining buyer to vouch for him, and resumed selling guns & related equipment.
 I have identified "weaponsguy" as the ATF-controlled account which did undercover sales to Justin Moreira in March-April 2015, in which case it seems likely to me that weaponsguy followed the same lifecycle as Dark_Mart and other FBI-controlled accounts on Evolution and was busted sometime around or after the complaints began, cooperated and his account began to be operated by LE (ATF in this case).
 An [Australian press release](http://newsroom.customs.gov.au/releases/four-australians-charged-in-international-illegal-firearm-sting "Four Australians charged in international illegal firearm sting") writes "In September 2014, the HSI investigation led to the identification of a 33-year-old man in Montana for the operation of the online alias account...In September 2014, HSI agents commenced a covert operation using the online alias account."
+(HSI, NCA, and the Australians have declined to comment on my identification of the seller as weaponsguy.)
 
 In January 2015, [Austin Frembling was arrested](http://www.fresnobee.com/2015/02/20/4389411/fresno-man-indicted-for-possession.html) in Fresno, California, for buying \$3k of MDMA off Agora from a Canadian seller ([press release](http://www.justice.gov/usao/cae/news/docs/2015/2015_02/02-19-15Frembling.html); [complaint](/docs/sr/2015-frembling-caed-03307884002.pdf); [docket](/docs/sr/2015-02-22-agora-fremblingdocket.maff); [previous record](http://mugshot-record-search.com/mugshot/CA/Fresno-County-Sheriff-Office/2013-Feb-07/4023889/BRYAN-FREMBLING)).
 His package was intercepted by Customs (possibly due to inadequate stealth), then a controlled delivery was done to his PO box.
@@ -1280,6 +1285,8 @@ It's unknown whether RedBull was one of them or remains at liberty.
 
 On 5 July 2013, [Israeli police announced 30 arrests](http://www.police.gov.il/articlePage.aspx?aid=1587 "30 נעצרו בחשד שסחרו בסמים מסוכנים ברשת: במהלך החקירה הסמויה ביצעו החוקרים קניות מבוימות מאתרים שונים בהם השתמשו החשודים, לצורך הסחר בסמים"); Google Translate indicates that these arrests were related to online sellers of "dangerous drugs" using the "darknet" and possibly Bitcoins after Israeli law enforcement made undercover purchases, but no market is specified and it seems hard to believe that as many as 30 people could be busted without any notice being taken on SR1/BMR (the main markets in July 2013).
 
+The Israeli man [Petah Tikva was CDed 12 May 2015](http://www.xn--4dbcyzi5a.com/2015/05/%D7%9E%D7%94%D7%95%D7%9C%D7%A0%D7%93-%D7%91%D7%90%D7%94%D7%91%D7%94-%D7%A0%D7%AA%D7%A4%D7%A1-%D7%A6%D7%A2%D7%99%D7%A8-%D7%A9%D7%94%D7%96%D7%9E%D7%99%D7%9F-%D7%97%D7%91%D7%99%D7%9C%D7%95%D7%AA-%D7%A7/ "מהולנד באהבה: נתפס צעיר שהזמין חבילות קנאביס בדואר") for marijuana sent from the Netherlands. <!-- 24yo -->
+
 ## Netherlands
 
 Posts on the SR2F claimed that the MDMA seller "Checkpoint" had been busted and customers raided; see his [review thread](/docs/sr/sr2f-20141106-3717-checkpointreviewthread.html) and [a customer claim of raid](/docs/sr/sr2f-20141104-52461-checkpointcustomerraid.html) due to poor stealth.
@@ -1427,11 +1434,13 @@ In aggregate, I would guess that the completeness of the table is highly unlikel
 ~~~{.R}
 library(XML)
 # http://www.gwern.net/Black-market%20arrests
-arrests <- readHTMLTable("/tmp/burl29628ugp.html",
+arrests <- readHTMLTable("http://www.gwern.net/Black-market%20arrests",
     colClasses = c("character", "factor", "character", "factor", "factor", "character", "factor",
                    "factor", "character", "logical", as.Date, as.Date, "character"))[[1]]
 # replace all empty-fields/""s with NAs
 arrests[1:10][arrests[1:10] == ""] <- NA
+# include most probable date of all XK arrests
+arrests[!is.na(arrests$Seller) & arrests$Seller=="Xanax King" & is.na(arrests$Date),]$Date <- as.Date("2014-06-02")
 
 # look for similar but not identical drug lists to respell or recapitalize them in the table:
 sort(unique(sub("^ ", "", unlist(strsplit(levels(arrests$Product), ",")))))
@@ -1452,7 +1461,7 @@ arrests[arrests$Sex=="F" & !is.na(arrests$Sex),]$Name
 # least I can be fairly confident that I've captured many of the public cases and I won't
 # be, say, suddenly overwhelmed next year by a ton of SR1 cases from 2012 popping up and
 # undermining conclusions
-hist(as.integer(na.omit(with(arrests, Known - Arrest))))
+hist(as.integer(na.omit(with(arrests, Date.Known - Date))))
 
 # summary statistics:
 nrow(arrests) # total arrest
@@ -1467,6 +1476,20 @@ sort(table(sub("^ ", "", unlist(strsplit(levels(arrests$Product), ",")))), decre
 black <- readHTMLTable("http://www.gwern.net/Black-market%20survival")[[1]]
 nrow(black)
 sum(arrests$Role=="operator", na.rm=TRUE) / nrow(black)
+
+arrests$YearMonth <- strftime(arrests$Date, format="%Y-%m")
+arrests$Year <- strftime(arrests$Date, format="%Y")
+x <- data.frame(with(arrests, table(Country, YearMonth)))
+x2 <- data.frame(with(arrests, table(Country, Year)))
+library(ggplot2)
+
+# simple plot: arrests over time as a monthly barchart/histogram, internally split by country: https://i.imgur.com/LFg9xhg.png
+qplot(Date, color=Country, data=arrests)
+# what if we plot lines for each country? but most countries are represented by a handful of arrests and the modal data is 0
+# arrests per month: https://i.imgur.com/ys1qGgh.png
+qplot(YearMonth, log1p(Freq), data=x) + facet_grid(Country ~ .)
+# try stacking the other way: https://i.imgur.com/YeQNNUn.png
+qplot(YearMonth, log1p(Freq), color=Country, facets=. ~ Country, data=x)
 ~~~
 
 # External links
