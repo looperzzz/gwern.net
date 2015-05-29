@@ -66,7 +66,7 @@ Similarly, if there were >60 buyer arrests (I double because there seem to be mo
 > "Philosophy in any case always comes on the scene too late...When philosophy paints its gloomy picture then a form of life has grown old. It cannot be rejuvenated by the gloomy picture, but only understood. Only when the dusk starts to fall does the owl of Minerva spread its wings and fly."
 
 - Role: buyer, seller, staff, or market founder/operator; each has distinct risks and LE interest and should be distinguished
-- Market: the black-market a person was most affiliated with or last active on
+- Market: the black-market a person was most affiliated with, last active on, or busted because of
 
     For example, a Silk Road 1 employee working at Silk Road 2 would be classified as SR1-related because he had provided DPR1 his dox and was busted as a consequence of SR1, not because he worked at SR2 when he was arrested; oppositely, a seller like California Cannabis, who had sold on SR1 but was busted after being deanonymized by the undercover agent through the SR2 seller portal, would be classified as SR2-related. And a seller who sold on a market but was busted through his own off-market sales will be marked with the relevant market.
 - Product: the main 3-4 drugs they were dealing in or possessed
@@ -481,6 +481,7 @@ Jamie Roden           M                        seller                           
 Elliot Hyams          M                        seller                                UK                                                               TRUE             2015-04-14
 Jaikishen Patel       M                        seller                                UK                                                               TRUE             2015-04-14
 Joshua Morgan         M                        seller                                UK                                                               TRUE             2015-04-14
+Beau Wattigney        M   PurpleLotus          seller   Silk Road 1                  USA         Louisiana      counterfeit coupons                   FALSE 2015-05-28 2015-05-28   <!-- 30yo -->
 
 # Confirmed
 ## Agora
@@ -917,6 +918,7 @@ A [New York man Nicholas C Moffitt was prosecuted in August 2013](http://poststa
 
 Also in August 2013, the large Dutch MDMA seller SuperTrips was arrested ([forfeiture](http://www.justice.gov/usao/iln/pr/chicago/2014/pr0424_01a.pdf); [press release](http://www.justice.gov/usao/iln/pr/chicago/2014/pr0424_01.html); [plea agreement](/docs/sr/sr1-supertrips-pleaagreement.pdf)); profiling of his packages and fingerprints provided enough grounds that when he tried to visit the USA, he was detained at the airport, his unencrypted laptop examined and all his records found (including all buyer addresses), whereupon he confessed & began cooperating (helping bust his collaborator UnderGroundSyndicate in October 2013).
 (His account would be [used by a DHS undercover agent](http://arstechnica.com/tech-policy/2015/01/silk-road-trial-federal-agent-explains-how-he-trapped-ulbricht/) until SR1 was raided 2 months later.)
+He was sentenced to [10 years prison](http://www.bloomberg.com/news/articles/2015-05-28/silk-road-s-biggest-drug-dealer-sentenced-to-10-years-in-prison "Silk Road's Top Drug Dealer Gets Prison as Dread Pirate Up Next").
 
 Also in September 2013, a [Vermont student Sid Hammer was charged with drug possession](https://web.archive.org/web/20140518105328/http://www.vermontcynic.com/news/student-busted-for-silk-road-purchase-1.2841435 "Student busted for Silk Road purchase"); he had purchased them off SR for [local resale](http://www.wptz.com/news/vermont-new-york/burlington/bitcoin-boom/23169748), and was reported to police through complaints of "smells of burnt marijuana".
 
@@ -965,6 +967,10 @@ In addition, on the last purchase, the agent social-engineered CALIGIRL into acc
 This all fed into a comprehensive investigation of CALIGIRL's life which drew on information from (but likely not exclusive to):
 Facebook; Amazon shopping logs and IP; `#bitcoin-otc` IP & transactions; Local Bitcoin transactions; domain names and telephone; cellphone apps (Ding) usage & callers & IPs; Post Office photos (from automated postal machine); the landlord for his post box; travel records; electronic toll records recording movements of his car; hotels he stayed at (he used places he stayed or was near as return addresses); and financial records from: Xoom (and IP addresses), Wells Fargo, JP Morgan Chase, Western Union, & MoneyGram.
 There are currently no known controlled deliveries or arrests of CALIGIRL customers (possibly the SR1 bust eliminated most of his business).
+
+On 28 May 2015, charges were announced against 30yo Louisiana man Beau Wattigney for being the SR1/2 "PurpleLotus" seller of counterfeit coupons ([complaint](/docs/sr/sr2-purplelotus-complaint.pdf); [press release](http://www.justice.gov/opa/pr/new-orleans-man-charged-conspiracy-commit-wire-fraud-and-conspiracy-commit-trademark "New Orleans Man Charged With Conspiracy to Commit Wire Fraud and Conspiracy to Commit Trademark Counterfeiting Using the 'Silk Road'1 Online Marketplace"); [media](http://www.wired.com/2015/05/inside-a-million-dollar-dark-web-coupon-counterfeiting-scheme/ "Inside a Giant Dark-Web Scheme to Sell Counterfeit Coupons")).
+PurpleLotus had retired well before May 2015; the complaint says only that he was caught in part based on "forensic analysis of images of servers seized during the dismantlement of Silk Road 1.0, the Federal Bureau of Investigation ('FBI') was able to recover, among other things, transaction histories and private message communications associated with Silk Road 1.0 users." and also quotes a (unencrypted) PM from PurpleLotus to a buyer explaining how to use counterfeit coupons.
+A Redditor claiming to be [SR1 seller RXMan](http://antilop.cc/sr/vendors/6b5ed4c1fc.htm) [says](https://www.reddit.com/r/DarkNetMarkets/comments/37n0lr/purple_lotus_arrested/cro763z) that he remembers trading prescription pills for coupons and that PurpleLotus provided, via unencrypted PMs, the name Beau Wattigney & a mailing address.
 
 ## Silk Road 2 (SR2)
 ### Indonesia
