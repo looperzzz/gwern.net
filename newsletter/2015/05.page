@@ -2,7 +2,7 @@
 title: May news
 created: 30 April 2015
 tags: newsletter
-status: in progress
+status: finished
 belief: log
 ...
 
@@ -10,6 +10,10 @@ This is the May 2015 edition of [the `gwern.net` newsletter](http://eepurl.com/K
 This is a summary of the revision-history RSS feed, overlapping with [Changelog](http://gwern.net/Changelog) & [Google+](https://plus.google.com/103530621949492999968) & [LW media threads](http://lesswrong.com/r/discussion/tag/media_thread/); brought to you by my donors <!-- on [Gratipay](https://gratipay.com/gwern/). -->
 
 # Writings
+
+- [black-market arrests compilation](http://www.gwern.net/Black-market%20arrests) finished & summaries calculated
+- analysis of [Effective Altruists' donations as reported in the LW survey](http://www.gwern.net/EA%20donations)
+
 # Media
 ## Links
 
@@ -20,46 +24,89 @@ Everything is heritable:
 
 Politics/religion:
 
+- ["Misperceiving Inequality"](https://www.dropbox.com/s/0q5c6fbplpcz8fx/2015-gimpelson.pdf), Gimpelson & Treisman 2015 ([excerpts](http://econlog.econlib.org/archives/2015/05/systematically_3.html "'Systematically Biased Beliefs About Inequality', Bryan Caplan"))
+- ["Land without Plea Bargaining: How the Germans Do It"](http://digitalcommons.law.yale.edu/cgi/viewcontent.cgi?article=1532&context=fss_papers), Langbein 1979 (how the German legal system avoids our own reliance on plea-bargaining to send most defendants to jail without trial)
+- ["The Nitrous Oxide Philosopher"](http://www.theatlantic.com/magazine/archive/1996/05/the-nitrous-oxide-philosopher/376581/ "Do drugs make religious experience possible? They did for James and for other philosopher-mystics of his day. James's experiments with psychoactive drugs raise difficult questions about belief and its conditions")
+- ["The Science of Sex Abuse: Is it right to imprison people for heinous crimes they have not yet committed?"](http://www.newyorker.com/magazine/2013/01/14/the-science-of-sex-abuse?currentPage=all)
+- ["Why the future won’t be genetically homogeneous"](https://blogs.discovermagazine.com/gnxp/2013/01/why-the-future-wont-be-genetically-homogeneous/)
+- ["Aged Heterogeneity: Fact or Fiction? The Fate of Diversity in Gerontological Research"](http://dl.dropbox.com/u/85192141/1992-nelson.pdf), Nelson & Dannefer 1992
+
 Statistics/AI/meta-science:
 
 - ["End-to-End Training of Deep Visuomotor Policies"](http://arxiv.org/pdf/1504.00702 ), Levine et al 2015 ([demo](https://www.youtube.com/watch?v=JeVppkoloXs); [talk](https://www.youtube.com/watch?v=EtMyH_--vnU))
 - ["The Unreasonable Effectiveness of Recurrent Neural Networks"](https://karpathy.github.io/2015/05/21/rnn-effectiveness/)
 - ["Using N-of-1 Trials to Improve Patient Management and Save Costs"](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2917656/), Scuffham 2010
+- ["Assessing Kurzweil: the results"](http://lesswrong.com/lw/gbi/assessing_kurzweil_the_results/)
+- ["A survey of Bayesian predictive methods for model assessment, selection and comparison"](http://projecteuclid.org/DPubS/Repository/1.0/Disseminate?view=body&id=pdfview_1&handle=euclid.ssu/1356628931), Vehtari & Ojanen
+- ["The Nine Circles of Scientific Hell"](http://pps.sagepub.com/content/7/6/643.full)
+- ["Leaving Office Feet First: Death In Congress"](http://home.gwu.edu/~forrest/fmdeathincongressps.pdf), Maltzman et al 1996
+- ["Nuclear weapon statistics using monoids, groups, and modules in Haskell"](https://izbicki.me/blog/nuclear-weapon-statistics-using-monoids-groups-and-modules-in-haskell)
+- ["Flat Priors and Other Improbable Tales"](https://arcsecond.wordpress.com/2010/09/08/flat-priors-and-other-improbable-tales/)
 
 Psychology/biology:
 
 - ["Persistence of Long-Term Memory in Vitrified and Revived _C. elegans_"](http://online.liebertpub.com/doi/pdf/10.1089/rej.2014.1636), Vita-More & Barranco 2015 ([excerpts](https://plus.google.com/103530621949492999968/posts/5JC68h6GTSQ))
+- ["The effects of oral iron supplementation on cognition in older children and adults: a systematic review and meta-analysis"](https://www.biomedcentral.com/content/pdf/1475-2891-9-4.pdf), Falkingham et al 2010
+- ["Historical Review and Appraisal of Research on the Learning, Retention, and Transfer of Human Motor Skills"](http://dl.dropbox.com/u/85192141/1987-adams.pdf), Adams 1987
+- ["Programmer Interrupted"](http://blog.ninlabs.com/2013/01/programmer-interrupted/)
+- ["E unibus pluram: television and U.S. fiction"](http://www.thefreelibrary.com/E+unibus+pluram%3A+television+and+U.S.+fiction.-a013952319)
+- [2,4-Dinitrophenol](https://en.wikipedia.org/wiki/2,4-Dinitrophenol#Dieting_aid)
+- ["What’s in a Color? The Unique Human Health Effects of Blue Light"](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2831986/), Holzman 2010
+- ["Diving Deep into Danger"](http://www.nybooks.com/articles/archives/2013/feb/07/diving-deep-danger/?pagination=false)
+- ["Late Night Thoughts on Reading Scientology"](https://arcsecond.wordpress.com/2011/02/08/late-night-thoughts-on-reading-scientology/)
 
 Technology:
+
+- ["Epigrams in Programming"](http://www.cs.yale.edu/homes/perlis-alan/quotes.html), Alan Perlis
+- ["Implications of Historical Trends in the Electrical Efficiency of Computing"](http://dl.dropbox.com/u/85192141/2011-koomey.pdf), Koomey et al 2011
+- ["How Much of the Web Is Archived?"](http://arxiv.org/abs/1212.6177)
+- ["Actual Facebook Graph Searches"](http://actualfacebookgraphsearches.tumblr.com/)
 
 Economics:
 
 - ["Overkill: An avalanche of unnecessary medical care is harming patients physically and financially. What can we do about it?"](http://www.newyorker.com/magazine/2015/05/11/overkill-atul-gawande)
+- ["The Insourcing Boom"](http://www.theatlantic.com/magazine/archive/2012/12/the-insourcing-boom/309166/?single_page=true "After years of offshore production, General Electric is moving much of its far-flung appliance-manufacturing operations back home. It is not alone. An exploration of the startling, sustainable, just-getting-started return of industry to the United States."); ["The March of Robots Into Chinese Factories"](http://www.bloomberg.com/bw/articles/2012-11-29/the-march-of-robots-into-chinese-factories#r=else-fs)
+- ["Jerven on Measuring African Poverty and Progress"](http://www.econtalk.org/archives/2013/01/jerven_on_measu.html)
+- ["Online price discrimination: Conspicuous by its absence"](http://33bits.org/2013/01/08/online-price-discrimination-conspicuous-by-its-absence/)/["Price Discrimination and the Illusion of Fairness"](http://33bits.org/2013/01/22/price-discrimination-and-the-illusion-of-fairness/)
 - ["On the front lines of humanity’s high-tech, global war on rats"](https://www.theverge.com/2015/5/13/8592817/rat-patrol-new-york-alberta-canada-south-georgia-eradication)
+- ["Smart Machines and Long-Term Misery"](http://dl.dropbox.com/u/85192141/2013-sachs.pdf), Sachs & Kotlikoff ([excerpts](https://plus.google.com/103530621949492999968/posts/W5KNcYP7bUy)); ["The Ricardo effect in Europe (Germany fact of the day)"](http://marginalrevolution.com/marginalrevolution/2013/01/the-ricardo-effect-in-europe-germany-fact-of-the-day.html); ["Four Futures: One thing we can be certain of is that capitalism will end"](https://www.jacobinmag.com/2011/12/four-futures/); ["Has the ideas machine broken down?"](http://www.economist.com/news/briefing/21569381-idea-innovation-and-new-technology-have-stopped-driving-growth-getting-increasing "The idea that innovation and new technology have stopped driving growth is getting increasing attention. But it is not well founded"); ["The Post-Productive Economy"](http://kk.org/thetechnium/2013/01/the-post-produc)
+- ["Harder Choices Matter Less"](http://lesswrong.com/lw/th/harder_choices_matter_less/)
 
 Philosophy:
 
+- ["The time resolution of the St Petersburg paradox"](http://rsta.royalsocietypublishing.org/content/369/1956/4913.full.pdf), Peters 2011
+- ["The Space Child’s Mother Goose"](http://blog.regehr.org/archives/881)
+
 Fiction:
 
-<!-- Back to 22 January 2013 -->
+- ["Man And The Echo"](http://famouspoetsandpoems.com/poets/william_butler_yeats/poems/10349)
+- ["Single-Bit Error"](http://thoughtcrime.crummy.com/2009/Error.html)
+- ["Toward an Algorithmic Criticism"](http://dho.ie/sites/default/files/Toward_an_Algorithmic_Criticism.pdf), Ramsay 2003
+
+Misc:
+
+- ["A Rockslide in Action: An Arch Falls into the Sea"](http://fernwanderweg.blogspot.ch/2013/01/a-rockslide-in-action-arch-falls-into.html)
+
+<!-- Back to 30 Dec 2012 -->
 
 ## Books
 
 Fiction:
 
-- _Ready Player One_ ([review](https://www.goodreads.com/review/show/1269872117))
-- _Floornight_, nostalgebraist
+- [_Ready Player One_](https://en.wikipedia.org/wiki/Ready_Player_One), Cline 2011  ([review](https://www.goodreads.com/review/show/1269872117))
+- [_A Shropshire Lad_](https://en.wikipedia.org/wiki/A_Shropshire_Lad), Housman 1896 ([review](https://www.goodreads.com/review/show/372533270))
+- [_Floornight_](https://archiveofourown.org/works/2372021/chapters/5238359), nostalgebraist (recommended [on SSC](http://slatestarcodex.com/2015/05/08/links-515-tall-and-linky/); overall cool - interesting concepts and developments and various bright spots compensate for some of the issues like pacing and wooden writing)
 
 Nonfiction:
 
-- _Drift into Failure_, Dekker ([review](https://www.goodreads.com/review/show/1268234991))
+- [_Drift into Failure_](http://www.amazon.com/Drift-into-Failure-Sidney-Dekker/dp/1409422216), Dekker ([review](https://www.goodreads.com/review/show/1268234991))
 
 
 ## Film/TV
 
 Live-action:
 
-- _[Pumping Iron](https://en.wikipedia.org/wiki/Pumping_Iron)_ 1977
+- _[Pumping Iron](https://en.wikipedia.org/wiki/Pumping_Iron)_ (1977 propaganda-documentary about American bodybuilders; it follows a young Arnold Schwarzenegger last competition and some rivals. It's interesting to watch Schwarzenegger before he became really famous, the insouciance with which he treats everyone & basks in admiration & blows off any slightly onerous obligations like his father's funeral and calculating choices sabotaging his rivals & self-promoting, as he prepares to jump ship to an acting career, his only apparent qualification the volume of his muscles. (I should note that the Wikipedia article for _PI_ notes that it's a bit controversial whether or not the funeral thing happened, but nevertheless, Schwarzenegger is clearly trying to build an image.) I'm not familiar with bodybuilders but they come off during the competition as freakish: so muscular that they often pass into the repulsive and I stared fascinated at the flexing meat on display. Of course, _PI_ is a very successful puff piece aimed at glamorizing bodybuilding - doesn't go anywhere near any questions of health issues or the steroid abuse although everyone is of course juicing like crazy, or into any details about how bodybuilders can get so large or what motivates them to do this, aside from one interview segment touching on childhood bullying, which had an almost Charles Atlas vibe.)
 
 Anime:
 
@@ -70,13 +117,10 @@ Anime:
 Touhou:
 
 - ["Old Fantasia"](https://www.youtube.com/watch?v=WxFQWI7Thsw) (Sound of Swing; _In Walked Cat's_ {C86}) [jazz]
-
 - ["恋と水と石炭と"](http://otokei-douj.in/tlmc//%5B%E3%81%97%E3%81%97%E3%81%BE%E3%81%84%E3%83%96%E3%83%A9%E3%82%B6%E3%83%BC%E3%82%BA%5D%20Sisimai-brothers/2009.12.30%20%5BSSM-009%5D%20%E5%A4%A7%E6%A5%BD%E7%AC%A6%20%5BC77%5D/01%20%5B%E3%81%97%E3%81%97%E3%81%BE%E3%81%84%E4%B8%89%E5%8F%B7%5D%20%E6%81%8B%E3%81%A8%E6%B0%B4%E3%81%A8%E7%9F%B3%E7%82%AD%E3%81%A8.mp3) (ししまい三号; _大楽符_ {C77}) [classical]
 - ["水彩人形"](http://otokei-douj.in/tlmc//%5B%E3%81%97%E3%81%97%E3%81%BE%E3%81%84%E3%83%96%E3%83%A9%E3%82%B6%E3%83%BC%E3%82%BA%5D%20Sisimai-brothers/2009.12.30%20%5BSSM-009%5D%20%E5%A4%A7%E6%A5%BD%E7%AC%A6%20%5BC77%5D/03%20%5B%E3%81%97%E3%81%97%E3%81%BE%E3%81%84%E4%B8%89%E5%8F%B7%5D%20%E6%B0%B4%E5%BD%A9%E4%BA%BA%E5%BD%A2.mp3) (ししまい三号; _大楽符_ {C77}) [classical]
 - ["空の間に間に"](http://otokei-douj.in/tlmc//%5B%E3%81%97%E3%81%97%E3%81%BE%E3%81%84%E3%83%96%E3%83%A9%E3%82%B6%E3%83%BC%E3%82%BA%5D%20Sisimai-brothers/2009.12.30%20%5BSSM-009%5D%20%E5%A4%A7%E6%A5%BD%E7%AC%A6%20%5BC77%5D/09%20%5B%E3%81%97%E3%81%97%E3%81%BE%E3%81%84%E4%B8%89%E5%8F%B7%5D%20%E7%A9%BA%E3%81%AE%E9%96%93%E3%81%AB%E9%96%93%E3%81%AB.mp3) (ししまい三号; _大楽符_ {C77}) [classical]
-
 - ["Dazzling You"](https://www.youtube.com/watch?v=a_nQMmi_cH8) (Maurits"禅"Cornelis feat. Vivienne; _Origin of Love_ {C87}) [jazz]
-
 - ["少女綺想曲"](https://www.dropbox.com/s/31lgdtw0hjk18mu/tam%C3%97keigokanzaki-%E6%9D%B1%E6%96%B9%E3%83%90%E3%82%A4%E3%82%AA%E3%83%AA%E3%83%B3%E3%83%AD%E3%83%83%E3%82%AF%E6%B0%B8nagarae-maidenscapriccio.ogg) (TAM×KEIGO KANZAKI; _東方バイオリンロック永-NAGARAE-_ {C87}) [instrumental rock]
 - ["エクステンドアッシュ"](https://www.dropbox.com/s/86m42ktwm90ofhq/tam%C3%97keigokanzaki-%E6%9D%B1%E6%96%B9%E3%83%90%E3%82%A4%E3%82%AA%E3%83%AA%E3%83%B3%E3%83%AD%E3%83%83%E3%82%AF%E6%B0%B8nagarae-extendash.ogg) (TAM×KEIGO KANZAKI; _東方バイオリンロック永-NAGARAE-_ {C87}) [instrumental rock]
 - ["月見草"](https://www.dropbox.com/s/hj9k4x5wcq9bgri/tam%C3%97keigokanzaki-%E6%9D%B1%E6%96%B9%E3%83%90%E3%82%A4%E3%82%AA%E3%83%AA%E3%83%B3%E3%83%AD%E3%83%83%E3%82%AF%E6%B0%B8nagarae-eveningprimrose.ogg) (TAM×KEIGO KANZAKI; _東方バイオリンロック永-NAGARAE-_ {C87}) [instrumental rock]
