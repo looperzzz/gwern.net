@@ -232,9 +232,16 @@ black[is.na(black$Guns),]$Guns   <- as.logical(median(black$Fraud, na.rm=T))
 
 # for competing-risks modeling
 levels(black$Closure) <- c("alive", "hacked", "raided", "scam", "voluntary") # sets "" to "alive"
+black <- black[order(black$Start),]
 
 library(survival)
 # plot(survfit(Surv(Age, Alive, type="right") ~ 1, data=black), xlab="Days active", ylab="Fraction of markets still active")
+
+# timeline of black-market openings/closing:
+library(ggplot2)
+ggplot(black, aes(colour=Closure)) +
+    geom_segment(aes(x=Start, xend=End, y=reorder(Market,Start), yend=reorder(Market,Start)), size=3) +
+    xlab("Open") + ylab("Market")
 
 library(lubridate)
 cmodel <- coxph(Surv(Age, Alive) ~ year(black$Start) + Multisig + I2P + Bitcoin+Litecoin+Dogecoin+Darkcoin + Codebase + Guns + Fraud + Hacks + Doxed, data = black); cmodel
