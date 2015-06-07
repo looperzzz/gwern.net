@@ -122,7 +122,7 @@ Nucleus Marketplace      2014-10-24            TRUE            FALSE    `nucleus
 Abraxas                  2014-12-13            TRUE            FALSE    `abraxasdegupusel.onion` FALSE    FALSE TRUE    FALSE    FALSE    TRUE     Laravel    FALSE  TRUE  0     FALSE   forums: `abraxasgacelesox.onion` <!-- de-anonymized? https://www.reddit.com/r/DarkNetMarkets/comments/3096bn/dont_use_abraxas_leaked_clearnet_ip/ -->
 AlphaBay                 2014-12-22            TRUE            FALSE    `pwoah7foa6au2pul.onion` FALSE    FALSE TRUE    FALSE    FALSE    FALSE    custom     TRUE   TRUE  0     FALSE   [Announced on Reddit](https://www.reddit.com/r/DarkNetMarkets/comments/2q2foj/new_darknet_market_alphabay_market/)
 Silk Road Reloaded       2015-01-13            TRUE            FALSE    `silkroadreloaded.i2p`   FALSE    TRUE  TRUE    TRUE     TRUE     TRUE     custom     FALSE  TRUE  0     FALSE   Full I2P address: `hyn3mwmyeovcn2paujxur2eury2ufqpoahvbbqshfoggljn25tra.b32.i2p`
-Tochka       FALSE       2015-01-30            TRUE            FALSE    `tochka3evlj3sxdv.onion` FALSE    FALSE TRUE    TRUE     TRUE     TRUE     custom     FALSE  FALSE 0     FALSE   [Announced on Reddit](https://www.reddit.com/r/DarkNetMarkets/comments/2u8dm2/tochka_new_mobilefirst_anonymous_marketplace/); site rules ban "Counterfeit documents" which I interpret as banning carding in general.
+Tochka                   2015-01-30            TRUE            FALSE    `tochka3evlj3sxdv.onion` FALSE    FALSE TRUE    TRUE     TRUE     TRUE     custom     FALSE  FALSE 0     FALSE   [Announced on Reddit](https://www.reddit.com/r/DarkNetMarkets/comments/2u8dm2/tochka_new_mobilefirst_anonymous_marketplace/); site rules ban "Counterfeit documents" which I interpret as banning carding in general.
 Crypto                   2015-02-14            TRUE            FALSE    `cryptomktgxdn2zd.onion` FALSE    FALSE TRUE     FALSE    FALSE    FALSE   custom     TRUE   TRUE  0     FALSE   [ANN](https://www.reddit.com/r/DarkNetMarkets/comments/2vvhtc/crypto_market/); CM is run on / by Diabolus and not entirely separate.
 Mr Nice Guy 2            2015-02-21            TRUE            FALSE    `niceguyfa3xkuuoq.onion` FALSE    FALSE TRUE     FALSE    FALSE    FALSE   custom     FALSE  FALSE 0     TRUE    [Operator claims doxing was just of "a volunteer"](https://www.reddit.com/r/DarkNetMarkets/comments/2ztsg9/opseccomputer_psa_the_owner_of_mr_nice_guy_market/)
 TheRealDeal              2015-04-09            TRUE            FALSE    `trdealmgn4uvm42g.onion` TRUE     FALSE TRUE     FALSE    FALSE    FALSE   Bitwasp    TRUE   TRUE  0     FALSE   [Interview](http://www.deepdotweb.com/2015/04/08/therealdeal-dark-net-market-for-code-0days-exploits/), [ANN](https://www.reddit.com/r/DarkNetMarkets/comments/322hro/introduction_therealdeal_code_mostly_market/); forums: `forum5cijl4suew6.onion`
@@ -245,7 +245,7 @@ library(ggplot2)
 png(file="~/wiki/images/silkroad/marketlifetimes.png", width = 1500, height = 850)
 ggplot(black, aes(colour=Closure)) +
     geom_segment(aes(x=Start, xend=End, y=reorder(Market,Start), yend=reorder(Market,Start)), size=3) +
-    xlab("Open") + ylab("Market")
+    xlab("Open") + ylab("Market") + theme(legend.position="bottom", axis.text.y=element_text(hjust=1))
 invisible(dev.off())
 
 library(lubridate)
