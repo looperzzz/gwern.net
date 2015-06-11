@@ -44,7 +44,7 @@ Variables:
 
 ## Table
 
-A table of relevant markets (5 June 2015):
+A table of relevant markets (11 June 2015):
 
 Market                   Start       End       Alive Closure   Arrested URL                      Multisig I2P   Bitcoin Litecoin Dogecoin Darkcoin Codebase   Guns   Fraud Hacks Doxed Notes
 ----------------------   ---------- ---------  ----- --------- -------- ------------------------ -------- ----- ------- -------- -------- -------- ---------- -----  ----- ----- ----- -------------
@@ -132,7 +132,8 @@ Haven                    2015-05-05            TRUE            FALSE    `havenpg
 Anarchia                 2015-05-07            TRUE            FALSE    `tkmlejimlt72jnkm.onion` FALSE    FALSE TRUE     FALSE    FALSE    FALSE   Bitwasp    TRUE   TRUE  0     FALSE   [ANN](https://www.reddit.com/r/DarkNetMarkets/comments/357d9f/anarchia_bitcoin_marketplace/)
 Zanzibar Spice           2015-05-07            TRUE            FALSE    `mithrakushhvfyto.onion` FALSE    FALSE TRUE     FALSE    FALSE    FALSE   custom     FALSE  FALSE 0     FALSE   [ANN](https://www.reddit.com/r/DarkNetMarkets/comments/354wh5/marketplace_announcement_zanzibar_spice_market_is/)
 Darknet Heroes League    2015-05-27            TRUE            FALSE    `darkheroesq46awl.onion` FALSE    FALSE TRUE     FALSE    FALSE    FALSE                           0     FALSE   Not explicitly announced.
-Poseidon                 2015-06-02            TRUE            FALSE    `poseidonzskufuwb.onion` FALSE     FALSE TRUE    FALSE    FALSE    FALSE              TRUE   TRUE  0     TRUE    [Server de-anonymized by TheRealDeal & was in Latvia](http://www.deepdotweb.com/2015/06/02/poseidon-market-doxxed-hosting-location-revealed/).
+Poseidon                 2015-06-02            TRUE            FALSE    `poseidonzskufuwb.onion` FALSE    FALSE TRUE     FALSE    FALSE    FALSE              TRUE   TRUE  0     TRUE    [Server de-anonymized by TheRealDeal & was in Latvia](http://www.deepdotweb.com/2015/06/02/poseidon-market-doxxed-hosting-location-revealed/).
+Amazon Dark              2015-06-08            TRUE            FALSE    `amazon435hm6h3ye.onion`  TRUE    FALSE TRUE     FALSE    FALSE    FALSE              FALSE  FALSE 0     FALSE   [ANN](https://www.reddit.com/r/DarkNetMarkets/comments/392vkg/amazon_dark_new_market_announcement/)
 
 See also [DeepDotWeb's list](http://www.deepdotweb.com/2013/10/28/updated-llist-of-hidden-marketplaces-tor-i2p/ "Updated: List of Hidden Marketplaces (Tor & I2P)") ([changelog](http://www.deepdotweb.com/hidden-marketplace-list-changelog/)), the [DNM market list](http://www.reddit.com/r/DarkNetMarkets/wiki/index/sidebar), and the [Hidden Wiki](/docs/sr/2014-08-30-hiddenwiki-comparisiondarknetmarkets.mht) (last updated 30 August 2014).
 
