@@ -278,8 +278,10 @@ Peter James Grossett  M                        buyer     Silk Road 1            
 Matthew Crisafi       M   Gun Wise             seller    BMR                               USA         New Hampshire  gun                                   TRUE  2013-11-06 2013-11-07
 Brandon Howell        M                        seller                                      USA         North Carolina MDMA, mescaline, marijuana            TRUE  2013-11-25 2013-11-30
 Katherine Westbrook   F                        seller                                      USA         North Carolina MDMA, mescaline, marijuana            TRUE  2013-11-25 2013-11-30
-                      M   Livefromsweden       seller    Sheep                             Sweden                     amphetamine, MDMA, cocaine, marijuana FALSE 2013-11-27 2015-05-06
-                      M   Livefromsweden       seller    Sheep                             Sweden                     amphetamine, MDMA, cocaine, marijuana FALSE 2013-11-27 2015-05-06
+                      M   Livefromsweden       seller    Sheep                             Sweden      Kristianstad   amphetamine, MDMA, cocaine, marijuana FALSE 2013-11-27 2015-05-06      <!-- 25yo -->
+                      M   Livefromsweden       seller    Sheep                             Sweden      Kristianstad   amphetamine, MDMA, cocaine, marijuana FALSE 2013-11-27 2015-05-06      <!-- 22yo -->
+                      M   Livefromsweden       seller    Sheep                             Sweden      Helsingborg    amphetamine, MDMA, cocaine, marijuana FALSE 2013-11-01 2015-06-11      Arrested before first two; these latter two may not be LFS.
+                      M   Livefromsweden       seller    Sheep                             Sweden      Malmo          amphetamine, MDMA, cocaine, marijuana FALSE 2013-12-01 2015-06-11      Arrested after first two.
 Olivia Bolles         F   MDpro                seller    Silk Road 1                       USA         Delaware       Oxycontin, Valium                     FALSE 2013-11-21 2013-11-22
 Alexandra Gold        F   MDpro                seller    Silk Road 1                       USA         Delaware       Oxycontin, Valium                     FALSE 2013-11-21 2013-11-22
                       M                        buyer                                       NZ                         MDMA, LSD, meth, NBOMe                TRUE  2013-12-11 2013-12-17     Wellington triplet.
@@ -485,6 +487,10 @@ Jamie Roden           M                        seller                           
 Elliot Hyams          M                        seller                                      UK                                                               TRUE             2015-04-14
 Jaikishen Patel       M                        seller                                      UK                                                               TRUE             2015-04-14
 Joshua Morgan         M                        seller                                      UK                                                               TRUE             2015-04-14
+                                               seller                                      Sweden                                                                            2015-06-10 Imputed seller arrest; 4 known seller groups arrested, yet Swedish police statement 22 May 2015 that "8 of them has already been charged."
+                                               seller                                      Sweden                                                                            2015-06-10
+                                               seller                                      Sweden                                                                            2015-06-10
+                                               seller                                      Sweden                                                                            2015-06-10
 Beau Wattigney        M   PurpleLotus          seller    Silk Road 1                       USA         Louisiana      counterfeit coupons                   FALSE 2015-05-28 2015-05-28      <!-- 30yo -->
 Thor Bache-Wiig       M                        seller                                      Norway                     marijuana                             TRUE  2015-06-09 2015-06-09      <!-- 29yo; rest are 29-31 -->
                       M                        seller                                      Norway                     marijuana                             TRUE  2015-06-09 2015-06-09
@@ -607,7 +613,7 @@ Shiny Flakes had not purged his customers' data, and in conjunction with the pro
 
 ### Sweden
 
-On 27 March 2015, [Swedish police announced](https://polisen.se/Aktuellt/Pressmeddelanden/Vasterbotten/Polisen-stoppar-omfattande-narkotikahandel-via-Darknet/ "Polisen stoppar omfattande narkotikahandel via Darknet: Polisen har i ett framgångsrikt samarbete tillsammans med Åklagarmyndigheten stoppat en omfattande försäljning av narkotiska preparat via Darknet") that they had detained 7 or 8 suspects who were selling drugs (principally: marijuana, LSD, & MDMA) online using "Silk Road and Evolution...from 2012 onward...to recipients in Sweden and to other countries worldwide"  and arrested 4.
+On 27 March 2015, [Swedish police](https://polisen.se/Aktuellt/Nyheter/2015/Mars/Polisen-stoppade-droghandel-pa-natet/) [announced](https://polisen.se/Aktuellt/Pressmeddelanden/Vasterbotten/Polisen-stoppar-omfattande-narkotikahandel-via-Darknet/ "Polisen stoppar omfattande narkotikahandel via Darknet: Polisen har i ett framgångsrikt samarbete tillsammans med Åklagarmyndigheten stoppat en omfattande försäljning av narkotiska preparat via Darknet") that they had detained 7 or 8 suspects who were selling drugs (principally: marijuana, LSD, & MDMA) online using "Silk Road and Evolution...from 2012 onward...to recipients in Sweden and to other countries worldwide"  and arrested 4.
 [6 of them were charged in June 2015](http://norran.se/nyheter/blaljus-nyheter/harifran-skotte-han-storsta-narkotikaligan-408757 "Härifrån skötte han största narkotikaligan: Härifrån skötte den 26-årige Skelleftebon Sveriges största narkotikaliga. I dag åtalas sex män. Klockan 10.00 hålls presskonferens – Norran rapporterar direkt") [and identified](http://kuriren.nu/nknyheter/tre-man-fran-lanet-i-stor-knarkharva-8328809.aspx "Tre män från länet i stor knarkhärva") as the seller "Alexandrus", who sold on 6 markets but primarily Evolution; the police press conference indicates that after 3 packages of marijuana fudge/brownies were searched, an investigation was launched and after surveilling post offices, one of the men was observed dropping off some of Alexandrus' packages ("up to 60 per day").
 
 ### UK
@@ -657,6 +663,8 @@ I ignore Freedom Express (sold only Xanax), Sweetkush (only amphetamine), KurtsD
 swelease did sell amphetamine, MDMA, and Ritalin (which could be "pills"), but my mirror says he was last logged in "10 hours ago", which is not very consistent with having been arrested;
 in contrast, LFS is almost a perfect match as they sold a great deal of amphetamine, cocaine, weed, and two pill listings ("tilnoct, swedish pharmacy, 10mg", "Tramadol, 100mg, Hexal"), so they match except for not selling MDMA, and they boast that "on SR i was topp [sic] 10% domestic seller in Sweden with many transactions made."; and finally, they were last logged in "4 days ago", or around when the two men were arrested.
 Hence, I identify these two men as being the SR1/Sheep seller Livefromsweden.
+Complicating the narrative, the LFS bust may have only been half the story; a [Swedish police article](https://polisen.se/Aktuellt/Nyheter/Gemensam/2014/okt/Sa-stoppade-Skanepolisen-internetlangarna/) describes the bust of a seller in Helsingborg (he was sentenced to 8 years), then 2 young men who are clearly LFS from the timing & location & age & sentences, then a fourth arrest in Malmo (he was sentenced to 7 years).
+While the Helsingborg and Malmo men sound like they were part of LFS, I am a little doubtful because none of the initial LFS media coverage mentioned 2 others being charged.
 
 ## Silk Road 1 (SR1)
 ### Australia
@@ -1109,6 +1117,9 @@ Which country or when this MDMA buyer was arrested & fined is unclear.
 
 [Swedish police](http://snpf.org/wp-content/uploads/2015/04/SNPF_1-15.pdf "Svenska Narkotika: POLISFÖRENINGENS TIDSKRIFT Nr 1/2015: Många som säljer droger på darknet åker faktiskt fast... Darknet är den mörka och anonyma del av internet som kan nås via inloggning på TOR-nätverket. Här säljs bland annat narkotika och andra droger. Från att ha varit närmast osårbart, är myndigheternas möjligheter nu mycket större att komma åt den illegala handeln på darknet.") (pg19) claimed in February 2015:  "Swedish police work actively at identifying vendors. A large chunk of the Swedes who sell drugs on DNMs have been caught, and nearly half of the known nicknames believed to be Swedish have been caught, either by local drug police or by cyberpolice.".
 It's unclear what they consider "known nicknames" and no specific numbers are mentioned, but it could indicate that more Swedish sellers have been arrested than are publicly known.
+
+[A 22 May 2015 police article](https://polisen.se/Aktuellt/Nyheter/2015/Maj/Atal-mot-forsaljare-av-narkotika-pa-natet--/ "Åtal mot försäljare av narkotika på nätet: Allt fler säljare av narkotika på internet identifieras och döms, Sverige ligger långt före andra länder i Europa gällande lagföring av brottet. Idag åtalas en av de största svenska säljarna, och den här brottsligheten ska bli mer prioriterad av polisen") is more specific: "Swedish police has identified 12 of the 20 biggest Swedish vendors on Silk Road (out of 100). 8 of them has already been charged."
+4 Swedish sellers are currently known to have been arrested: Speedsweden, SweExpress, Livefromsweden, Alexandrus. That leaves 4 missing.
 
 ### UK
 
