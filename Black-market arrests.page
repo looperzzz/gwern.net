@@ -401,6 +401,7 @@ Jasen Crisp           M                        buyer                            
 Nicholas P. Heatley   M                        buyer                                       NZ                         LSD, MDMA, Ritalin, weed, marijuana   TRUE  2014-08-11 2015-02-22
                           weaponsguy           seller    Agora                             USA                        gun                                   TRUE  2014-09-01 2015-04-06    Arrest inferred from the Justin Moreira undercover-sale case; exact arrest date best estimate based on Australian press release "September 2014"
 Andrew Graham Hodgson M                        buyer     Silk Road 2                       NZ                         meth, marijuana, NBOMe                TRUE  2014-09-01 2014-12-08    Arrested as part of Operation Hyderabad, which kicked off 1 September 2014, so he was probably arrested on the 1st/2nd.
+Ryan James Norman     M   MagicAU              seller    Silk Road 2                       Australia   South          NBOMe, LSD, MDMA, steroids            TRUE  2014-09-26 2015-06-12 <!-- 21yo -->
 Stephen Jones         M                        buyer     Evolution   weedybusnis           USA         Georgia        MDMA                                  TRUE  2014-10-02 2014-12-20
 Cynthia Jones         F                        buyer     Evolution   weedybusnis           USA         Georgia        MDMA                                  TRUE  2014-10-02 2014-12-20
 Blake Benthall        M   Defcon               operator  Silk Road 2                       USA         California                                           FALSE 2014-11-05 2014-11-05
@@ -423,7 +424,7 @@ Ryan Gustafson        M   Willy.Clock          seller    Agora                  
                       M                        buyer                                       Cyprus                     marijuana                             TRUE  2014-12-15 2014-12-20
                       M                        buyer                                       Cyprus                     marijuana                             TRUE  2014-12-15 2014-12-20
 Cheng Le              M   fnufnu               seller    Evolution   Dark\_Mart            USA         New York       ricin                                 FALSE 2014-12-23 2015-01-20
-                      M   HollandOnline        seller    Agora                             Netherlands                LSD, MDMA, ketamine                   TRUE  2014-12-26 2015-03-12
+                      M   HollandOnline        seller    Agora                             Netherlands                LSD, MDMA, ketamine                   TRUE  2014-12-26 2015-03-12    <!-- 55yo -->
 Ryan Jensen           M                        buyer     Evolution   Hubbard               USA         North Dakota   fentanyl, Xanax, heroin, MDMA         FALSE 2015-01-03 2015-03-14
 Kain Daniel Schwandt  M                        buyer     Evolution   Hubbard               USA         North Dakota   fentanyl                              FALSE 2015-01-03 2015-03-14
 David Todd Noye Jr.   M                        buyer     Evolution   Hubbard               USA         North Dakota   fentanyl                              FALSE 2015-01-03 2015-03-14
@@ -997,6 +998,11 @@ PurpleLotus had retired well before May 2015; the complaint says only that he wa
 A Redditor claiming to be [SR1 seller RXMan](http://antilop.cc/sr/vendors/6b5ed4c1fc.htm) [says](https://www.reddit.com/r/DarkNetMarkets/comments/37n0lr/purple_lotus_arrested/cro763z) that he remembers trading prescription pills for coupons and that PurpleLotus provided, via unencrypted PMs, the name Beau Wattigney & a mailing address.
 
 ## Silk Road 2 (SR2)
+### Australia
+
+On 26 September 2014, the South Australia man Ryan James Norman was raided after [Customs intercepted a shipment](http://www.adelaidenow.com.au/news/south-australia/man-arrested-after-220000-worth-of-wizard-drug-25inbome-intercepted/story-fni6uo1m-1227075205971 "Man arrested after $220,000 worth of ‘wizard' drug 25i-NBOMe intercepted") of ~5000 doses of 25i-NBOMe from Canada.
+It later emerged that he was [a seller on SR2](http://www.abc.net.au/news/2015-06-12/drug-trafficking-on-silk-road-site-shut-down-by-fbi/6541596 "'Naive' drug trafficker used own name on website now shut down by FBI, Adelaide court hears"); I have [identified Norman as the SR2 seller "MagicAU"](https://www.reddit.com/r/SilkRoad/comments/39m4sc/sr2_arrest_australian_seller_magicauryan_james/) based on similar products and MagicAU vanishing from SR2 during 26-28 September 2014, immediately after Norman was raided.
+
 ### Indonesia
 
 In late January 2014, a [Canadian man T.S. & Indonesian woman L.A.](http://news.detik.com/read/2014/01/22/133657/2474783/10/ "Selundupkan Ekstasi, Guru Bule dan Kekasihnya Ditangkap") [were arrested](https://www.reddit.com/r/DarkNetMarkets/comments/2u26ij/uncategorized_i_bought_100_superman_pills_from/) after a package of MDMA (100 Superman pills) from the Netherlands (which she had ordered from "pillbay" on Silk Road 2) was intercepted by customs & his West Jakarta residence searched; they were sentenced to 10 & 5 years respectively.
