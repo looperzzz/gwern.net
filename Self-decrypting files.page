@@ -178,6 +178,8 @@ Or if you are worried about people 'skipping ahead' and targeting a future key s
 
 A timelock altcoin could incentivize participation in unlocking files and be more predictable than solo hash-chain files.
 
+(A similar idea may or may not have been proposed in the Chinese-language publication [Ke et al 2014](http://www.sciencemeta.com/index.php/jsjyjyfz/article/download/40505/56707 "'Research on Timed-Release Encryption', 40505-40237-1-PB.pdf").)
+
 ## Bitcoin as a clock
 ### Obfuscation
 
@@ -198,6 +200,10 @@ The blackbox could be combined with the encrypted archive and a Internet API to 
 The blackbox approach is the best of all worlds and could be said to entirely solve time-lock crypto.
 
 Unfortunately, obfuscation (like homomorphic encryption) is so cutting-edge that it may still be insecure, and the current constructions seem to be computationally infeasible to run.
+
+#### Random encodings
+
+[Bitansky et al 2015](https://eprint.iacr.org/2015/514.pdf "Time-Lock Puzzles from Randomized Encodings") show that given obfuscation, one can construct a normal proof-of-work time-lock without using an external clock, where the blackbox stalls for many time-steps before spitting out the key, but without the potentially-expensive setup of chained-hashes.
 
 ### Witnesses
 
