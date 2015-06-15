@@ -9,7 +9,7 @@ belief: highly likely
 
 > In cryptography, it is easy to adjust encryption of data so that one, some, or all people can decrypt it, or some combination thereof. It is not so easy to achieve adjustable decryptability over *time*, a "time-lock crypto": for some uses (data escrow, leaking, insurance, last-resort Bitcoin backups etc), one wants data which is distributed only after a certain point in time.
 >
-> Proposals often resort to trusted-third-parties, which are vulnerabilities. A better time-lock crypto proposal replaces trusted-third-parties with forcibly serial proof-of-work using number squaring and guaranteeing unlocking not after a certain point in time but after sufficient computation-time has been spent; it's unclear how well number-squaring resists optimization or shortcuts. I suggest a new time-lock crypto based on chained hashes; hashes have been heavily attacked for other purposes, and may be safer than number-squaring.
+> I survey techniques for time-lock crypto. Proposals often resort to trusted-third-parties, which are vulnerabilities. A better time-lock crypto proposal replaces trusted-third-parties with forcibly serial proof-of-work using number squaring and guaranteeing unlocking not after a certain point in time but after sufficient computation-time has been spent; it's unclear how well number-squaring resists optimization or shortcuts. I suggest a new time-lock crypto based on chained hashes; hashes have been heavily attacked for other purposes, and may be safer than number-squaring. Finally, I cover obfuscation & witness-encryption which, combined with proof-of-work, can be said to solve time-lock crypto but currently remain infeasible.
 
 Julian Assange/Wikileaks made some [headlines](http://www.wired.com/threatlevel/2010/07/wikileaks-insurance-file/) in 2010 when they released an "insurance file", an 1.4GB [AES-256](!Wikipedia)-encrypted file available through BitTorrent. It's generally assumed that copies of the encryption key have been left with Wikileaks supporters who will, in the appropriate contingency like Assange being assassinated, leak the key online to the thousands of downloaders of the insurance file, who will then read and publicize whatever contents as in it (speculated to be additional US documents Manning gave Wikileaks); this way, if the worst happens and Wikileaks cannot afford to keep digesting the files to eventually release them at its leisure in the way it calculates will have the most impact, the files will still be released and someone will be very unhappy.
 
@@ -23,7 +23,7 @@ This sort of cryptography would be useful for many things; from ["Time-Lock Puzz
 
 > In addition to the basic use of 'sending messages to the future', there are many other potential uses of timed-release crypto. Rivest, Shamir and Wagner 1996 suggest, among other uses, delayed [digital cash](!Wikipedia) payments, [sealed-bid auctions](http://crypto.stackexchange.com/questions/2507/can-i-encrypt-user-input-in-a-way-i-cant-decrypt-it-for-a-certain-period-of-tim) and [key escrow](!Wikipedia). [Boneh & Naor 2000](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.108.7127&rep=rep1&type=pdf "Timed Commitments") define timed commitments and timed signatures and show that they can be used for fair contract signing, honesty-preserving auctions and more.
 
-[Document embargoes](http://www.cs.odu.edu/~mln/pubs/ms/haq-ms-2008.pdf "'Using timed-release cryptography to mitigate preservation risk of embargo periods', Haq 2008") (eg. legal or classified documents or confessions or [coercible diaries](http://www2.warwick.ac.uk/fac/soc/law/elj/jilt/2001_3/miller/ "'Creating A Subpoena-Proof Diary: A Technological Solution to A Legal Problem', Miller & Gao 2001")), [Receipt-free voting](/docs/2002-magkos.pdf "'Software-based Receipt-freeness in On-line Elections', Magkos et al 2002"), [paying for low-latency networking](http://arxiv.org/abs/1412.4638 "'Kadupul: Livin` on the Edge with Virtual Currencies and Time-Locked Puzzles', Skjegstad et al 2014"), and other applications; a cute (albeit useless) application is ["Offline Submission with RSA Time-Lock Puzzles"](https://wwwcn.cs.uni-duesseldorf.de/publications/publications/library/Jerschow2010a.pdf), Jerschow & Mauve 2010:
+[Document embargoes](http://www.cs.odu.edu/~mln/pubs/ms/haq-ms-2008.pdf "'Using timed-release cryptography to mitigate preservation risk of embargo periods', Haq 2008") (eg. legal or classified documents or confessions or [coercible diaries](http://www2.warwick.ac.uk/fac/soc/law/elj/jilt/2001_3/miller/ "'Creating A Subpoena-Proof Diary: A Technological Solution to A Legal Problem', Miller & Gao 2001"), or security researchers who are often threatened), [Receipt-free voting](/docs/2002-magkos.pdf "'Software-based Receipt-freeness in On-line Elections', Magkos et al 2002"), [paying for low-latency networking](http://arxiv.org/abs/1412.4638 "'Kadupul: Livin` on the Edge with Virtual Currencies and Time-Locked Puzzles', Skjegstad et al 2014"), and other applications; a cute (albeit useless) application is ["Offline Submission with RSA Time-Lock Puzzles"](https://wwwcn.cs.uni-duesseldorf.de/publications/publications/library/Jerschow2010a.pdf), Jerschow & Mauve 2010:
 
 > Our main contribution is an offline submission protocol which enables an author being currently offline to commit to his document before the deadline by continuously solving an RSA puzzle based on that document. When regaining Internet connectivity, he submits his document along with the puzzle solution which is a proof for the timely completion of the document.
 
@@ -161,6 +161,7 @@ It's hard to see. At least, I haven't thought of anything clever. [Homomorphic e
 2. and in any case, homomorphic encryption as of 2013 is a net computational loss: it takes as much or more time to create such a program as it would take to run the program, and is no good.
 
 # Distributed time-lock systems
+## Pooling key-cracking
 
 [Gregory Maxwell has a February 2013 sketch for](https://en.bitcoin.it/w/index.php?title=User%3AGmaxwell%2Falt_ideas&action=historysubmit&diff=35540&oldid=35539) an altcoin which allows cooperative distributed solving of time-locks (as opposed to solo efforts to tick through a hash-chain):
 
@@ -176,6 +177,40 @@ To explain this idea in a little less jargony form, as best as I understand it: 
 Or if you are worried about people 'skipping ahead' and targeting a future key specifically, the protocol could be that each file is encrypted to all successive keys (so it would be an onion of encryption layers: #1(#2(#3(...(#12(plaintext file))))), so it can only be directly attacked by a loner when the first 11 keys have been cracked).
 
 A timelock altcoin could incentivize participation in unlocking files and be more predictable than solo hash-chain files.
+
+## Bitcoin as a clock
+### Obfuscation
+
+If one could create a program which is a blackbox such that running the program reveals nothing about its contents besides its output, then one has the start of a time-lock: create a normal encrypted archive, create a blackbox which only emits its content after certain conditions are met, stick the key inside the blackbox, and distribute both the blackbox and the archive.
+The encrypted archive is uncrackable on its own, and if the blackbox really does obfuscate its contents beyond recognition, the key is safe too. But once the proper conditions are met, anyone with a copy of both can reveal the data.
+
+What are proper conditions and how does a program tell the true time?
+The local computer's clock is a lie, and trusting any timestamp servers reintroduces trusted third-parties.
+But this is the same problem as digital currency faces, and the solution can be the same: rely on proof-of-work as embodied in the Bitcoin blockchain!
+The blackbox can ask a copy of the blockchain and check that _n_ blocks have passed and thus a ungodly number of hashes have been spent to create this blockchain; to the extent that no entity has as much hashpower as the Bitcoin blockchain's miners collectively do, this is a reliable and trustworthy 'clock'.
+(Amusingly, anyone who wanted to spend hashpower to try to open the blackbox early, would be best off becoming a Bitcoin miner, to cause a short speedup of blocks until the mining difficulty ratchets up to compensate and to defray their expenses.)
+So time is redefined as blocks which happen every ~10 minutes, so someone who wants to release data timed for a year from now would include the current block's hash and specify that the blackbox wants at least 52596 more valid blocks before it will unlock & print the decryption key^[Or one could instead define time as difficulty/hashes invested, to avoid a possible attack where a fake blockchain is created where each block drops in difficulty as much as possible to make creating very long blockchains easy. The downside is that while # of blocks over time is fairly tightly predictable, hashpower will change over time based on the Bitcoin economy and the error in your forecast accumulate. Probably the best approach would be setting a minimum number of blocks *and* hashpower, to get the benefit of precise timing while only needing a loose estimate of hashpower to avoid giving an attacker much of an advantage.].
+
+Such a blackbox could be created by "indistinguishability obfuscation" (related to [homomorphic encryption](!Wikipedia)) as pointed out by [Liu et al 2015](http://eprint.iacr.org/2015/482.pdf "Time-release Protocol from Bitcoin and Witness Encryption for SAT"), which [recently](https://www.quantamagazine.org/20140130-perfecting-the-art-of-sensible-nonsense/ "Perfecting the Art of Sensible Nonsense: A new cryptographic scheme obfuscates computer programs by transforming them into something akin to a jigsaw puzzle in which random elements make each individual piece look meaningless.") been developed.
+
+This scheme gains several benefits over chained-hashes/multiple-weak-keys/successive-squaring/Maxwell's-distributed-key-cracking: no one needs to invest computations to create the time-lock (aside from creating the blackbox), no one (much less redundant decrypters) needs to invest computations to unlock it on schedule (as long as the Bitcoin blockchain keeps ticking, it will unlock 'on its own'), and the timing can be made much more precise (likely down to the day given the stochastic nature of finding blocks which uncertainty is much less than that in how much computing powers decrypters would invest or how optimized their implementations of squaring etc would be).
+The blackbox could be combined with the encrypted archive and a Internet API to the blockchain to create a truly secure, one-click, self-decrypting file.
+The blackbox approach is the best of all worlds and could be said to entirely solve time-lock crypto.
+
+Unfortunately, obfuscation (like homomorphic encryption) is so cutting-edge that it may still be insecure, and the current constructions seem to be computationally infeasible to run.
+
+### Witnesses
+
+Fortunately, indistinguishability obfuscation may be overkill.
+A weaker but more computable crypto, [witness encryption](https://eprint.iacr.org/2013/258.pdf "'Witness Encryption and its Applications', Garg et al 2013"), has also recently popped up: where an obfuscated blackbox can make its computation/requirement arbitrarily complicated and is Turing-complete, witness encryption instead lets one encrypt a file such that the decryption key is the solution to a (possibly unsolved) [NP-complete](!Wikipedia) problem like 3SAT.
+b
+This raises the question: is it possible to encode a check of future Bitcoin blockchain length as a NP problem and thus create an encrypted file which can only be decrypted after enough ticks of the Bitcoin clock?
+
+Jager in his 2015 paper ["How to Build Time-Lock Encryption"](https://eprint.iacr.org/2015/478.pdf) and [Liu et al 2015](http://eprint.iacr.org/2015/482.pdf "Time-release Protocol from Bitcoin and Witness Encryption for SAT") answer: yes!
+Jager shows that a check of the blockchain (specifically, that the SHA-256 hash included in each block represents adequate proof-of-work) can be encoded, and so the construction is at least possible (although feasibility remains unclear), and Liu et al 2015 provide a C program to check proof-of-work which can be compiled into a [conjunctive normal form](!Wikipedia) formula whose solution is NP-complete and hence is usable as a witness encryption.
+
+Unfortunately, the current implementations of witness encryption seem to be slow enough that like obfuscation, witnesses are not yet a viable solution.
+However, witness encryption seems likely to be optimized much further and it is possible that there are more specialized solutions for blockchains, so it is an approach well worth watching.
 
 ## Vulnerability of one-way functions
 
