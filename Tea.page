@@ -6,21 +6,31 @@ status: in progress
 belief: log
 ...
 
-I order a lot[^orders] from [Upton Tea Imports](!Wikipedia) because they specialize in loose tea & I'm a sucker for their catalogue. Their prices seem pretty reasonable too, so I don't bother shopping around^[Which is pretty unusual for me. On the other hand, in ages past, back when I was on the `rec.food.drink.tea` Usenet group, a fair number of other people also ordered from Upton.], even buying my tea kettle from them.^[How does an electric tea kettle differ from ordinary [electric kettles](!Wikipedia)? Principally they have temperature settings - a little knob to choose between temperatures for black, oolong, green, and [white tea](!Wikipedia). The less oxidized the tea, the cooler the water should be - white tea water should be dozens of degrees cooler than black tea water.] Upton allows reviews if you've bought at least a certain quantity, but otherwise your notes are private. This strikes me as a little unfair (a sampler of 10g is more than enough to judge a tea!) and my reviews are a valuable guide to me in ordering, so I keep local copies of my reviews & notes.
+Tea is one of my favorite drinks: a remarkable variety of flavors, caffeinated but cheaper than coffee and healthier than soda, easily prepared, socially acceptable, with a long & rich history intertwined with geopolitics.
+I particularly favor greens, oolongs, & ku-ki chas; blacks tend to be too bitter and unpleasant for me, pu-erh tastes both strange and bitter, while whites strike me as subtle to the point of tastelessness.
+I sometimes enjoy herbal-teas/tisanes but they are not a focus.
+
+I order mostly[^orders] from the Massachusetts mail-order loose-leaf [Upton Tea Imports](!Wikipedia) because they specialize in loose tea (while not all loose leaf teas are good, almost all good teas are sold loose-leaf), I'm a sucker for browsing their catalogue & reading excerpts from books about the history of tea like the [Ancient Tea Horse Road](!Wikipedia "Ancient tea route"), their prices seem pretty reasonable, their selection is broad (they boast of having something like 400 kinds of tea at any time, which I can believe), and they offer small samples of almost all their teas (which is a fantastic way to taste scores of teas without having to buy \$20 of each tea which one may not like).
+In contrast I haven't been terribly happy with other retailers like the selection of loose teas on Amazon (surprisingly sparse) or Teavana (physically convenient to buy from but quite limited selection & overpriced).
+
+Upton allows reviews if you've bought at least a certain quantity, but otherwise your notes are private.
+This strikes me as a little unfair (a sampler of 10g is more than enough to judge a tea!) and my reviews are a valuable guide to me in ordering, so I keep local copies of my reviews & notes.
+(Note that Upton's recycles some listings so a hyperlink may not point where it should.)
 
 [^orders]: Looking through my history 2006-2012, I order tea on a roughly annual or semi-annual basis:
 
-    1. 10/16/2006 (\$19.30)
-    2. 12/17/2007 (\$19.70)
-    3. 1/8/2008 (\$43.80)
-    4. 2/15/2010 (\$34.92)
+    1. 2006-10-16 (\$19.30)
+    2. 2007-12-17 (\$19.70)
+    3. 2008-08-01 (\$43.80)
+    4. 2010-02-15 (\$34.92)
 
         Thinking back, that 2 year gap between orders #3 and #4 was probably due to a Christmas where I received more than *2* pounds of tea, which took me a very long time to drink.
-    5. 7/5/2010 (\$32.30)
-    6. 5/14/2011 (\$51.20)
-    7. 12/4/2011 (\$39.20)
-    8. 7/15/2012 (\$75.10)
+    5. 2010-07-05 (\$32.30)
+    6. 2011-05-14 (\$51.20)
+    7. 2011-04-12 (\$39.20)
+    8. 2012-07-15 (\$75.10)
     9. 2013, overall (\$87.37)
+    10. 2015-06-06 (\$89.50)
 
         I tried broadening my horizons and ordered 9 teas from a number of retailers through Amazon.com (principally Tao of Tea, Pure Herbal, & Summit Tea), and while some of Tao of Tea was good, overall I was not impressed.
 
@@ -47,7 +57,7 @@ In roughly chronological order:
 - [Formosa Heavy-Baked Ti-Guan-Yin](http://www.uptontea.com/shopcart/item.asp?itemID=TT80) (★☆☆☆☆)
 
     Far too bitter and dark and 'burnt' tasting!
-- [Formosa Jade Oolong Imperial](http://www.uptontea.com/shopcart/item.asp?itemID=TT89) (★★★★★)
+- [Formosa Jade Oolong Imperial](http://www.uptontea.com/shopcart/item.asp?itemID=TT89x2) (★★★★★)
 
     Extremely good! One of the, if not the best, oolongs I've ever had. But also tremendously expensive. But still so good I'm tempted to splurge on 100g anyway.
 - [Tie-Guan-Yin Oolong Second Grade](http://www.uptontea.com/shopcart/item.asp?itemID=ZO78) (★★★★☆)
@@ -425,18 +435,51 @@ The second order arrived working, and aside from the garish green-black coloring
 
 # TODO
 
-- Green (_[gyokuro](!Wikipedia)_ sounds interesting):
+- Upton's shopping list:
 
-    2. [Organic gyokuro](http://www.uptontea.com/shopcart/item.asp?itemID=ZG81)
-    3. [Bai Hao Imperial](http://www.uptontea.com/shopcart/Item.asp?itemID=ZO93)
-- the [ku-ki chas](http://www.uptontea.com/shopcart/searchResults.asp?sType=new&searchOptionMatchAll=1&searchOptionCategory=1&searchOptionItemName=1&searchOptionItemDescription=1&searchOptionDocuments=0) <!-- Minus the Organic China Ku-ki Cha  -->
-- oolong:
+    - TE98 Huang Shan Sunset Tea
+    - TJ06 Japanese Bancha First Grade Organic
+    - TJ10 Japanese Sencha
+    - TJ16 Japanese Sencha Special Grade
+    - TJ28 Japanese Matcha Gen-mai Cha Premium Organic
+    - TJ39 Ke-Kei Cha
+    - TJ87 88th Night Shincha
+    - TJ89 Kakegawa Matcha Organic
+    - TP42 China Rose Special Chun Mee
+    - TP70 China Jasmine
+    - ZG18 China Chun Mee _Moon Palace_
+    - ZG61 Pan Long Yin Hao
+    - ZG67 Lung-Ching (Long-Jing) Dragon Well Imperial
+    - ZG81 China Green Gyokuro Organic
+    - ZG82 Fujian Green Needle
+    - ZG90 Foucha Imperial Organic
+    - ZG94 Lung Jing Te Ji
+    - ZGP8 Pre-Chingming Lung Jing
+    - ZH80 Ancient Green Pu-Erh Tuo Cha Organic
+    - ZJ81 Yin-Hao Special Grade Jasmine
+    - ZM48 Jasmine Oolong
+    - ZO21 Floral Huang Jin Gui Oolong
+    - ZO40 Tie-Guan-Yin Standard Oolong
+    - ZO81 Premium Tie-Guan-Yin Oolong
+    - ZW99 China White Paklum Tips Reserve Organic
+    - ZWP2 Pre-Chingming Ya Bao Special
+- http://www.teabox.com/samples
+- try gyokuro & genmai from http://www.hibiki-an.com/ ?
 
-    - ["Select Tie-Guan-Yin Oolong"](http://www.uptontea.com/shopcart/item.asp?itemID=ZO97)
-    - ["Jasmine Oolong"](http://www.uptontea.com/shopcart/item.asp?itemID=ZM48)
+<!--
+bought:
+http://www.uptontea.com/shopcart/item.asp?from=catalog.asp&itemID=ZOP3&begin=0&parent=Teas%3EOolong%3EChina&category=Oolong&sortMethod=6&categoryID=0 ZOP3: Pre-Chingming "New Style" Fairy Oolong
+http://www.uptontea.com/shopcart/item.asp?from=catalog.asp&itemID=ZOP2&begin=0&parent=Teas%3EOolong%3EChina&category=Oolong&sortMethod=6&categoryID=0  ZOP2: Pre-Chingming Fenghuang Dan Cong
+Formosa Jade Oolong Imperial http://www.uptontea.com/shopcart/item.asp?UTid=186-21-23361005&afterCart=/shopcart/item.asp&itemID=TT89
+Select Tie-Guan-Yin Oolong http://www.uptontea.com/shopcart/item.asp?itemID=ZO97
+Jasmine Oolong http://www.uptontea.com/shopcart/item.asp?itemID=ZM48
+Japanese Ku-Ki Ho-Ji Cha (Roasted Ku-Ki Cha) http://www.uptontea.com/shopcart/item.asp?itemID=TJ31
+Organic Tamaryokucha http://www.uptontea.com/shopcart/item.asp?itemID=TJ88
+Organic Fukamushi Cha http://www.uptontea.com/shopcart/item.asp?itemID=TJ05
+Organic KuKi Cha Green Kamakura http://www.uptontea.com/shopcart/item.asp?itemID=TJ34
+Japanese Supersencha Kamakura http://www.uptontea.com/shopcart/item.asp?itemID=TJ20
+-->
 
-<!-- Order gyokuro & genmai from http://www.hibiki-an.com/ ? -->
-<!-- http://www.teabox.com/samples -->
 
 ![Taste-testing 9 teas side by side](/images/2011-teatasting-5.jpg "Taste-testing 9 teas side by side")
 
