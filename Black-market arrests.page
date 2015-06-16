@@ -35,9 +35,10 @@ http://ia801506.us.archive.org/27/items/gov.uscourts.nysd.422824/gov.uscourts.ny
 
 > Silk Road was an online black market of unprecedented scope. By the time it was shuttered in October 2013, over 13,000 offerings were listed on its homepage for illegal drugs of every conceivable variety. (PSR ¶ 25; GX- 910). A wide variety of other illicit goods and services were sold on the site as well, including fake IDs and passports, computer-hacking tools and services, counterfeit goods and pirated media, criminal guidebooks and instruction manuals, and money laundering services. (PSR ¶¶ 29, 32, 34; see also Ex. A (sample screenshots)). 1 In total, over 1.5 million transactions were conducted over Silk Road, involving over 100,000 buyer accounts and nearly 4,000 seller accounts. (PSR ¶ 59). Those transactions had a total value of nearly $214 million in U.S. currency. (Id.) Nearly 95% of those sales were for illegal drugs – including at least $8.9 million in sales of heroin, $17.3 million in sales of cocaine, and $8.1 million in sales of methamphetamine. (Id.) The buyers and sellers involved in these transactions were spread across the world, from Argentina to Australia, from the United States to the Ukraine. (Id.; GX-940F; GX-940-G).
 
-So quickly dividing by month, that gives:
+GX-940.pdf:
+1530252 sales total
 
-total accounts: 33k/month; buyer accounts: 5.1k/month; new sellers: 73/month; transactions: 42k/month; turnover: 327k/month
+let's see. there's 59 known SR1 buyer arrests. 10x to 590. there were 1530252 sales total, so 1 inferred arrest per 2593 purchases
 
 I haven't finished compiling into a table, but let's say that for SR1 there were >30 seller arrests, and SR1 lasted from February 2011 to September 2013 (counting only full months) or 32 months. Then there were 2336 unique sellers (73*32) of which >30 were arrested for a risk of >0.012 or >1.3%.
 
@@ -169,7 +170,6 @@ Isaac Patiari Maki    M                        buyer     Silk Road 1            
 Paul Leslie Howard    M   Shadh1               seller    Silk Road 1 Shadh1                Australia                  MDMA, cocaine                         TRUE  2012-07-12 2013-02-03
                       M                        buyer     Silk Road 1                       NZ                         MDMA                                  TRUE  2012-07-11 2012-07-14    Exact date unknown other than it was in 2012 sometime before 11 July; this is for the university student
 Ryan West             M                        buyer     Silk Road 1                       Australia                  MDMA                                  TRUE  2012-08-01 2012-12-06    Exact date unknown; in August.
-
 James Fowler          M   warweed              seller    Silk Road 1                       Canada       B.C.          psilocybin, marijuana, gun            TRUE  2012-08-02 2015-05-28    <!-- 26yo -->
                                                          Silk Road 1                       NZ                                                               TRUE  2012-08-12 2012-10-13    One of 5 unknown NZ arrested related to SR1 January-July 2012, reported in August media article.
                                                          Silk Road 1                       NZ                                                               TRUE  2012-08-12 2012-10-13
@@ -533,6 +533,14 @@ Given the Vice connection and the rash of German/Dutch arrests 2014-2015, it see
 
 The Dutch SR1/SR2/Agora LSD/MDMA/ketamine seller "HollandOnline" was arrested [26 December 2014](https://www.om.nl/actueel/nieuwsberichten/@88570/aanhoudingen/ "Aanhoudingen voor grootschalige drugshandel op ondergrondse marktplaatsen") ([translation](https://www.reddit.com/r/animemusic/comments/2zqcwx/%E3%83%90%E3%83%96%E3%83%AB%E3%82%AA%E3%83%96%E3%83%90%E3%83%96%E3%83%AB_ogre_you_asshole_%E3%82%B9%E3%83%9A%E3%83%BC%E3%82%B9%E3%83%80%E3%83%B3%E3%83%87%E3%82%A3ost2_boobies/cplw7ow)) a policeman (possibly part of the ongoing investigation of HollandOnline by Dutch police) observed a drug transfer between two men, one of was HollandOnline from Ijmuiden.
 Then later, on 9 March 2015, the other man (likely HollandOnline's supplier) and a business partner of his (the Amsterdam & Utrecht men) were also arrested.
+
+<!--
+### Sweden
+22 May 2015
+"another indictment, today, in Sweden. It's the vendor known as "Chrishash" and he was operating out of SR1, Agora, Sheep and also on the Swedish market known as Flugsvamp. Three people are indicted. They were operating out of Malmø and Stockholm."
+
+"you are also missing trampdyna / swedish cheeba."
+-->
 
 ### Uganda
 
@@ -1315,6 +1323,11 @@ The [Drugs Global Incident Map](http://drugs.globalincidentmap.com/) features ma
     - ["Racine man arrested after signing for shipment with more than 4 pounds of marijuana"](http://www.scrippsmedia.com/tmj4/news/Racine-man-busted-after-signing-for-shipment-with-more-than-4-pounds-of-marijuana-306055141.html)
     - ["Man picked up package with 12 pounds of pot worth $50,000 from post office, cops say"](https://www.newsday.com/news/region-state/robert-c-cardillo-jr-picked-up-12-pounds-of-pot-worth-50-000-from-post-office-cops-say-1.10526927)
     - ["E-publishing firm CEO orders cocaine worth Rs 20,000 via courier, held"](http://timesofindia.indiatimes.com/city/chennai/E-publishing-firm-CEO-orders-cocaine-worth-Rs-20000-via-courier-held/articleshow/47621320.cms)
+    - ["Soldier, wife face federal drug charges after delivery intercepted in Gulfport"](http://www.wlox.com/story/29277212/soldier-wife-face-federal-drug-charges-after-delivery-intercepted-in-gulfport)
+    - ["Charges broaden in postal meth case"](http://www.bgdailynews.com/news/charges-broaden-in-postal-meth-case/article_f1a181c1-c71e-5ea2-b87a-73a07dbb93d0.html)
+    - ["Cannabis worth €1m found hidden in soap"](http://utv.ie/News/2015/06/11/Cannabis-worth-1m-found-hidden-in-soap-38901)
+    - ["Fall River police intercept package of cocaine from Puerto Rico"](http://www.heraldnews.com/article/20150603/NEWS/150608405)
+    - ["Fewer Pot Packages Found in Mail As Legalization Takes Hold Pot intercepts dropped 12 percent as Colorado and Washington opened stores"](http://www.usnews.com/news/articles/2015/05/29/fewer-pot-packages-found-in-mail-as-legalization-takes-hold)
 
 Most are likely unrelated to the black-markets, and some rumors are wrong or flatly made up (for example, a seller may be covering up an exit scam with a fake story about being busted, or one seller may be trying to hurt another's sales eg [the TedDanzig incident](https://www.reddit.com/r/SilkRoad/comments/1xq97t/teddanzig_arrested/) or the 4lb PureFireMeds FUD), but of course, some will turn out to be real.
 
@@ -1496,7 +1509,7 @@ In aggregate, I would guess that the completeness of the table is highly unlikel
 ~~~{.R}
 library(XML)
 # http://www.gwern.net/Black-market%20arrests
-arrests <- readHTMLTable("http://www.gwern.net/Black-market%20arrests",
+arrests <- readHTMLTable("/tmp/burl2501752C.html",
     colClasses = c("character", "factor", "character", "factor", "factor", "character", "factor",
                    "factor", "character", "logical", as.Date, as.Date, "character"))[[1]]
 # replace all empty-fields/""s with NAs
