@@ -130,7 +130,10 @@ isbnDB = M.fromList [
      ("The Many-Coloured Land (Saga of Pliocene Exile, #1)", "1433224097"),
      ("Why I Am Not a Christian: Four Conclusive Reasons to Reject the Faith ", "1456588850"),
      ("Monstrous Regiment (Discworld, #31)", "0385603401"),
-     ("Sir Gawain and the Green Knight, Pearl, and Sir Orfeo", "978-0-345-27760-2")
+     ("Sir Gawain and the Green Knight, Pearl, and Sir Orfeo", "978-0-345-27760-2"),
+     ("The Fractal Prince (Jean le Flambeur, #2)", "0765336790"),
+     ("The Truth Machine", "0-517-30046-X"),
+     ("Time Enough for Love", "0-399-11151-4")
      ]
 urlDB = M.fromList [
      ("A Study in Emerald", "http://www.neilgaiman.com/mediafiles/exclusive/shortstories/emerald.pdf"),
@@ -190,5 +193,11 @@ urlDB = M.fromList [
      ("Orphan of the Helix", "http://en.wikipedia.org/wiki/Orphans_of_the_Helix"),
      ("Worm", "http://parahumans.wordpress.com/category/stories-arcs-1-10/arc-1-gestation/1-01/"),
      ("Excuse Me Sir, Would You Like to Buy a Kilo of Isopropyl Bromide?", "http://library.sciencemadness.org/library/books/gergel_isopropyl_bromide.pdf"),
-     ("The Metropolitan Man", "https://www.fanfiction.net/s/10360716/1/The-Metropolitan-Man")
+     ("The Metropolitan Man", "https://www.fanfiction.net/s/10360716/1/The-Metropolitan-Man"),
+     ("Pact", "https://pactwebserial.wordpress.com/table-of-contents/"),
+     ("Ra", "http://qntm.org/ra"),
+     ("More Poems", "http://wikilivres.ca/wiki/More_Poems"),
+     ("Fine Structure", "http://qntm.org/structure"),
+     ("Additional Poems", "http://wikilivres.ca/wiki/Additional_Poems"),
+     ("The Questions Of King Milinda - Part I", "http://www.sacred-texts.com/bud/sbe35/index.htm")
      ]
