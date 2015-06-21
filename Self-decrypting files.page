@@ -49,11 +49,57 @@ One approach is to focus on creating problems which can be solved with a large b
 
     On the other hand, a similar criticism could and has been made about [Bitcoin](Bitcoin is Worse is Better) (supporters/users must expend massive computing power constantly just to keep it working, with no computational advantage over attackers), and that system has worked well in practice.
 
-# Weak keys
-
 One could encrypt the file against information that will be known in the future, like stock prices - except wait, how can you find out what stock prices will be a year from now? You can't use anything that is public knowledge *now* because that'd let the file be decrypted immediately, and by definition you don't have access to information currently unknown but which will be known in the future, and if you generate the information yourself planning to release it, now you have problems - you can't even trust yourself (what if you are abruptly assassinated like [Gerald Bull](!Wikipedia)?) much less your confederates.
 
-The first approach that jumps to mind is to encrypt the file, but with a relatively short or weak key, one which will take years to bruteforce. Instead of a symmetrical key at 256 bits, perhaps one of 50 bits or 70 bits?
+# Successive squaring
+
+At this point, let's see what the crypto experts have to say. Googling to see what the existing literature was (after I'd thought of the above schemes), I found that the relevant term is "time-lock puzzles" (from analogy with the bank vault [time lock](!Wikipedia)). In particular, [Rivest](!Wikipedia "Ron Rivest")/[Shamir](!Wikipedia "Adi Shamir")/[Wagner](!Wikipedia "David A. Wagner") have published a 1996 paper on the topic, ["Time-lock puzzles and timed-release crypto"](http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.110.5709). Apparently the question was first raised by [Timothy C. May](!Wikipedia) on the [Cypherpunks mailing list](!Wikipedia) in an [email from 10 February 1993](http://cypherpunks.venona.com/date/1993/02/msg00129.html "Timed-Release Crypto"). May also discusses the topic briefly in his _[Cyphernomicon](!Wikipedia)_, [ch14.5](http://www.cypherpunks.to/faq/cyphernomicron/chapter14.html); unfortunately, May's solution (14.5.1) is essentially to punt to the legal system and rely on legal privilege and economic incentives to keep keys private. <!-- backup: http://cypherpunks.venona.com/date/1994/06/msg00481.html http://www.webcitation.org/6JhMIlgIF -->
+
+Rivest et al agree with us that
+
+> There are 2 natural approaches to implementing timed-release crypto:
+>
+> - Use 'time-lock puzzles' - computational problems that can not be solved without running a computer continuously for at least a certain amount of time.
+> - Use trusted agents who promise not to reveal certain information until a specified date.
+
+And that for time-lock puzzles:
+
+> Our goal is thus to design time-lock puzzles that, to the great extent possible, are 'intrinsically sequential' in nature, and can not be solved substantially faster with large investments in hardware. In particular, we want our puzzles to have the property that putting computers to work together in parallel doesn't speed up finding the solution. (Solving the puzzle should be like having a baby: two women can't have a baby in 4.5 months.)
+
+Rivest et al then points out that the most obvious approach - encrypt the file to a random short key, short enough that brute-forcing takes only a few months/years as opposed to eons - is flawed because brute-forcing a key is very [parallelizable](!Wikipedia "EFF DES cracker") and amenable to [special hardware](!Wikipedia "Custom hardware attack")[^hardware]. (And as well, the randomness of searching a key space means that the key might be found very early or very late; any estimate of how long it will take to brute force is just a guess.) One cute application of the same brute-forcing idea is [Merkle's Puzzles](!Wikipedia) where the time-lock puzzle is used to hide a key for a second-party to communicate with the first-party creator, but it has the same drawback: it has the creator make many time-lock puzzles (any of which could be used by the second-party) and raises the cost to the attacker (who might have to crack each puzzle), but can be defeated by a feasibly wealthy attacker, and offers only probabilistic guarantees (what if the attacker cracks the same puzzle the second-party happens to choose?).
+
+[^hardware]: Colin Percival's ["Insecurity in the Jungle (disk)"](http://www.daemonology.net/blog/2011-06-03-insecurity-in-the-jungle.html) presents a table giving times for brute-forcing [MD5](!Wikipedia) hashes given various hardware; most dramatically, <\$1m of custom [ASIC](!Wikipedia "Application-specific integrated circuit") hardware could bruteforce a random 10 character string in 2 hours. (Hardware reaps extreme performance gains [mostly when](http://www.yosefk.com/blog/its-done-in-hardware-so-its-cheap.html "`It's done in hardware so it's cheap`") when few memory accesses are required, and a few fast operations applied to small amounts of data; this is because flexibility imposes overhead, and when the overhead is incurred just to run fast instructions, the overhead dominates the entire operation. For example, graphics chips do just a relative handful of math to a frame, again and again, and so they gain orders of magnitude speedups by being specialized chips - as does any other program which is like that, which includes cryptographic hashes designed for speed like the ones Bitcoin uses.)
+
+    [Wikipedia](!Wikipedia "Key stretching#Strength and time") gives an older example using [FPGAs](!Wikipedia "Field-programmable gate array") (also [being](https://bitcointalk.org/index.php?topic=9047.0) [used](http://www.reddit.com/r/Bitcoin/comments/hhd4l/fpga_mining/) for Bitcoin hashing):
+
+    > An important consideration to be made is that CPU-bound hash functions are still vulnerable to hardware implementations. For example, the literature provides efficient hardware implementations of SHA-1 in as low as 5000 gates, and able to produce a result in less than 400 clock cycles^[2](http://rfidsec2013.iaik.tugraz.at/RFIDSec08/Papers/Publication/04%20-%20ONeill%20-%20Low%20Cost%20SHA-1%20-%20Paper.pdf "'Low-Cost SHA-1 Hash Function Architecture for RFID Tags', O'Neill")^. Since multi-million gate FPGAs can be purchased at less than \$100 price points^[3](http://www.xilinx.com/prs_rls/silicon_spart/0333spartan3.htm)^, it follows that an attacker can build a fully unrolled hardware cracker for about \$5000. Such a design, if clocked at 100MHz can try about 300,000 keys/second for the algorithm proposed above.
+
+Rivest et al propose a scheme in which one encrypts the file with a very strong key as usual, but then one encrypts the key in such a way that one must calculate $\text{encryptedKey}^{2^t} \text{mod}(n)$ where _t_ is the adjustable difficulty factor. With the original numbers, one can easily avoid doing the [successive squarings](http://mathworld.wolfram.com/SuccessiveSquareMethod.html). This has the nice property that the puzzle constructor invests only $O(log(n))$ computing power, but the solver has to spend $O(n^2)$ computing power. (This scheme works in the random oracle model, but [Barak & Mahmoody-Ghidary 2009](https://eprint.iacr.org/2008/032.pdf "Merkle puzzles are optimal—an o (n 2)-query attack on any key exchange from a random oracle") proves that is the best you can do.)
+
+Rivest [has actually used](http://people.csail.mit.edu/rivest/lcs35-puzzle-description.txt) this scheme for a time capsule commemorating the [MIT Computer Science and Artificial Intelligence Laboratory](!Wikipedia); he expects his puzzle to take ~35 years. As of 14 years later, [minimal progress](http://crypto.stackexchange.com/questions/5831/what-is-the-progress-on-the-mit-lcs35-time-capsule-crypto-puzzle "What is the progress on the MIT LCS35 Time Capsule Crypto-Puzzle?") seems to have been made; if anything, the breakdown of CPU clockspeeds seems to imply that it will take far more than 35 years[^Rivest-projection] Rivest offers some advice for anyone attempting to unlock this time-lock puzzle (may or may not be related to Mao's 2000 paper ["Time-Lock Puzzle with Examinable Evidence of Unlocking Time"](/docs/2000-mao.pdf)):
+
+> An interesting question is how to protect such a computation from errors. If you have an error in year 3 that goes undetected, you may waste the next 32 years of computing. Adi Shamir has proposed a slick means of checking your computation as you go, as follows. Pick a small (50-bit) prime _c_, and perform the computation modulo _cn_ rather than just modulo _n_. You can check the result modulo _c_ whenever you like; this should be a extremely effective check on the computation modulo _n_ as well.
+
+[^Rivest-projection]: As of 2013, the highest-frequency consumer CPU available, the AMD FX-9000, tops out at 5GHz with few prospects for substantial increases in frequency; Rivest projected 10GHz and increasing:
+
+    > Based on the SEMATECH National Technology Roadmap for Semiconductors (1997 edition), we can expect internal chip speeds to increase by a factor of approximately 13 overall up to 2012, when the clock rates reach about 10GHz.  After that improvements seem more difficult, but we estimate that another factor of five might be achievable by 2034. Thus, the overall rate of computation should go through approximately six doublings by 2034.
+
+    Moore's law, in the original formulation of transistors per dollar, may have continued post-1997, but the gains increasingly came by parallelism, which is not useful for repeated squaring.
+
+## Constant factors
+
+How well does this work? The complexity seems correct, but I worry about the constant factors. Back in 1996, computers were fairly homogeneous, and Rivest et al could reasonably write
+
+> We know of no obvious way to parallelize it to any large degree. (A small amount of parallelization may be possible *within* each squaring.) The degree of variation in how long it might take to solve the puzzle depends on the variation in the speed of single computers and not on one's total budget. Since the speed of hardware available to individual consumers is within a small constant factor of what is available to large intelligence organizations, the difference in time to solution is reasonably controllable.
+
+But I wonder how true this is. Successive squaring does not seem to be a very complex algorithm to implement in hardware. There are more exotic technologies than GPUs we might worry about, like [field-programmable gate array](!Wikipedia)s which may be specialized for successive squaring; if problems like the [n-body problem](!Wikipedia) can be [handled with custom chips](!Wikipedia "Gravity Pipe"), why not multiplication? Or, since squaring seems simple, is it relevant to forecasts of serial speed that there are [graphene](!Wikipedia) transistor prototypes going as high as [100GHz](http://www.pnas.org/content/109/29/11588.full "'High-frequency self-aligned graphene transistors with transferred gate stacks', Cheng et al 2012")? Offhand, I don't know of any compelling argument to the effect that there are no large constant-factor speedups possible for multiplication/successive-squaring. Indeed, the general approach of exponentiation and factoring has to worry about the fact that the complexity of factoring has never been proven (and could still be very fast) and that there are speedups with quantum techniques like [Shor's algorithm](!Wikipedia).
+
+[^rainbow]: eg. the 2008 Graves thesis, ["High performance password cracking by implementing rainbow tables on nVidia graphics cards (IseCrack)"](https://www.iac.iastate.edu/mediawiki/images/b/b3/Cryptohaze.pdf) claims a 100x speedup over CPU generation of rainbow tables, or the actively developed utility, [RainbowCrack](http://www.project-rainbowcrack.com/) (which you can even [buy](http://www.project-rainbowcrack.com/buy.php) the generated rainbow tables from).
+
+# Weak keys
+
+The first approach that jumps to mind and seems to be crypto folklor is to encrypt the file, but with a relatively short or weak key, one which will take years to bruteforce.
+Instead of a symmetrical key at 256 bits, perhaps one of 50 bits or 70 bits?
 
 This fails for two major reasons:
 
@@ -61,9 +107,6 @@ This fails for two major reasons:
 
     we realize that we can guarantee on average how much work it will take to bruteforce the key, but we cannot guarantee how much time it will take.
     A weak key could be cracked at any time given good luck, and across many uses of time-lock crypto, there will be instances where a weak key would be cracked almost immediately, to the potentially extreme harm of the encrypter.
-
-    We can solve the variance problem by requiring multiple short keys to decrypt; 1 short key will be cracked 'quickly' an unacceptable fraction of instances, but if 100 short keys are all required to decrypt, then the binomial probability of all 100 being cracked 'quickly' by chance is acceptably low.
-    (Requiring multiple keys can be done by multiple layers of encryption on the file, onion-style.)
 2. differing amounts of computing resources, particularly parallel computing: It may take a CPU years to bruteforce a chosen key-length, but take a cluster of CPUs just months.
 
     Or worse than that, without invoking clusters or supercomputers - devices can differ dramatically now even in the same computers; to take the example of [Bitcoin](!Wikipedia) mining, my laptop's 2GHz CPU can search for hashes at 4k/sec, or its single outdated GPU can search at 54*M*/second^[Actual numbers; the difference [really is](https://en.bitcoin.it/wiki/Why_a_GPU_mines_faster_than_a_CPU) that [large](https://en.bitcoin.it/wiki/Mining_hardware_comparison).].
@@ -73,6 +116,13 @@ This fails for two major reasons:
     Someone who tries to time-lock a file using a parallelizable form of work renders themselves vulnerable to any attackers like the NSA or botnets with large numbers of computers, but may also render themselves vulnerable to an ordinary computer-gamer with 2 new GPUs: it would not be very useful to have a time-lock which guarantees the file will be locked between a year and a millennium, depending on how many & what kind of people bother to attack it and whether Moore's law continues to increase the parallel-processing power available.
 
     There doesn't seem to be any obvious way to solve this with a key mechanism. Even if one is using 100 layers of encryption, each short key can be brute-forced almost arbitrarily fast by a well-resourced or even state-level actor.
+
+## Many weak keys
+
+We can solve the variance problem by requiring multiple short keys to decrypt; 1 short key will be cracked 'quickly' an unacceptable fraction of instances, but if 100 short keys are all required to decrypt, then the binomial probability of all 100 being cracked 'quickly' by chance is acceptably low.
+(Requiring multiple keys can be done by multiple layers of encryption on the file, onion-style, or by defining the decryption key as all the weak keys XORed together.)
+
+This doesn't solve the serial/computing-power objection: some actors will be able to crack each short key much faster by using highly parallel resources, and it makes little difference whether it's one weak key or many - they will still open it earlier than other actors.
 
 So public or symmetrical encryption may not be directly usable as the time-lock primitive.
 We want an approach which is inherently *serial* and unparallelizable.
@@ -190,16 +240,21 @@ What are proper conditions and how does a program tell the true time?
 The local computer's clock is a lie, and trusting any timestamp servers reintroduces trusted third-parties.
 But this is the same problem as digital currency faces, and the solution can be the same: rely on proof-of-work as embodied in the Bitcoin blockchain!
 The blackbox can ask a copy of the blockchain and check that _n_ blocks have passed and thus a ungodly number of hashes have been spent to create this blockchain; to the extent that no entity has as much hashpower as the Bitcoin blockchain's miners collectively do, this is a reliable and trustworthy 'clock'.
-(Amusingly, anyone who wanted to spend hashpower to try to open the blackbox early, would be best off becoming a Bitcoin miner, to cause a short speedup of blocks until the mining difficulty ratchets up to compensate and to defray their expenses.)
-So time is redefined as blocks which happen every ~10 minutes, so someone who wants to release data timed for a year from now would include the current block's hash and specify that the blackbox wants at least 52596 more valid blocks before it will unlock & print the decryption key^[Or one could instead define time as difficulty/hashes invested, to avoid a possible attack where a fake blockchain is created where each block drops in difficulty as much as possible to make creating very long blockchains easy. The downside is that while # of blocks over time is fairly tightly predictable, hashpower will change over time based on the Bitcoin economy and the error in your forecast accumulate. Probably the best approach would be setting a minimum number of blocks *and* hashpower, to get the benefit of precise timing while only needing a loose estimate of hashpower to avoid giving an attacker much of an advantage.].
+(Amusingly, anyone who wanted to spend hashpower to try to open the blackbox early, would be best off becoming a Bitcoin miner, to both defray their expenses and to cause a short speedup of blocks until the mining difficulty ratchets up to compensate.)
+With time is redefined as blocks which happen every ~10 minutes, someone who wants to release data in a year could include the current block's hash and specify that the blackbox wants at least 52596 more valid blocks before it will unlock & print the decryption key^[Or one could instead define time as difficulty/hashes invested, to avoid a possible attack where a fake blockchain is created where each block drops in difficulty as much as possible to make creating very long blockchains easy. The downside is that while # of blocks over time is fairly tightly predictable, hashpower will change over time based on the Bitcoin economy and the error in your forecast accumulate. Probably the best approach would be setting a minimum number of blocks *and* hashpower, to get the benefit of precise timing while only needing a loose estimate of hashpower to avoid giving an attacker much of an advantage.].
 
-Such a blackbox could be created by "indistinguishability obfuscation" (related to [homomorphic encryption](!Wikipedia)) as pointed out by [Liu et al 2015](http://eprint.iacr.org/2015/482.pdf "Time-release Protocol from Bitcoin and Witness Encryption for SAT"), which [recently](https://www.quantamagazine.org/20140130-perfecting-the-art-of-sensible-nonsense/ "Perfecting the Art of Sensible Nonsense: A new cryptographic scheme obfuscates computer programs by transforming them into something akin to a jigsaw puzzle in which random elements make each individual piece look meaningless.") been developed.
+Such a blackbox could be created by "indistinguishability obfuscation" ([recently](https://www.quantamagazine.org/20140130-perfecting-the-art-of-sensible-nonsense/ "Perfecting the Art of Sensible Nonsense: A new cryptographic scheme obfuscates computer programs by transforming them into something akin to a jigsaw puzzle in which random elements make each individual piece look meaningless.") developed & related to [homomorphic encryption](!Wikipedia)) as pointed out by [Liu et al 2015](http://eprint.iacr.org/2015/482.pdf "Time-release Protocol from Bitcoin and Witness Encryption for SAT").
 
 This scheme gains several benefits over chained-hashes/multiple-weak-keys/successive-squaring/Maxwell's-distributed-key-cracking: no one needs to invest computations to create the time-lock (aside from creating the blackbox), no one (much less redundant decrypters) needs to invest computations to unlock it on schedule (as long as the Bitcoin blockchain keeps ticking, it will unlock 'on its own'), and the timing can be made much more precise (likely down to the day given the stochastic nature of finding blocks which uncertainty is much less than that in how much computing powers decrypters would invest or how optimized their implementations of squaring etc would be).
-The blackbox could be combined with the encrypted archive and a Internet API to the blockchain to create a truly secure, one-click, self-decrypting file.
+The user wouldn't even need to install crypto software or download the full Bitcoin blockchain since the blackbox could be combined with the encrypted archive and a Internet API to the blockchain to create a secure, one-click convenient, self-decrypting self-extracting file.
 The blackbox approach is the best of all worlds and could be said to entirely solve time-lock crypto.
 
-Unfortunately, obfuscation (like homomorphic encryption) is so cutting-edge that it may still be insecure, and the current constructions seem to be computationally infeasible to run.
+Unfortunately, obfuscation (like homomorphic encryption) is
+
+1. so cutting-edge that it may still be insecure
+2. utterly computationally impractical as of 2015, and no one could ever successfully execute such a blackbox
+
+So it works in principle but not in practice.
 
 #### Random encodings
 
@@ -209,7 +264,7 @@ Unfortunately, obfuscation (like homomorphic encryption) is so cutting-edge that
 
 Fortunately, indistinguishability obfuscation may be overkill.
 A weaker but more computable crypto, [witness encryption](https://eprint.iacr.org/2013/258.pdf "'Witness Encryption and its Applications', Garg et al 2013"), has also recently popped up: where an obfuscated blackbox can make its computation/requirement arbitrarily complicated and is Turing-complete, witness encryption instead lets one encrypt a file such that the decryption key is the solution to a (possibly unsolved) [NP-complete](!Wikipedia) problem like 3SAT.
-b
+
 This raises the question: is it possible to encode a check of future Bitcoin blockchain length as a NP problem and thus create an encrypted file which can only be decrypted after enough ticks of the Bitcoin clock?
 
 Jager in his 2015 paper ["How to Build Time-Lock Encryption"](https://eprint.iacr.org/2015/478.pdf) and [Liu et al 2015](http://eprint.iacr.org/2015/482.pdf "Time-release Protocol from Bitcoin and Witness Encryption for SAT") answer: yes!
@@ -225,51 +280,6 @@ As it turns out, ["Time-Lock Puzzles in the Random Oracle Model"](http://people.
 > *A time-lock puzzle with a linear gap in parallel time.* Although our negative results rule out 'strong' time-lock puzzles, they still leave open the possibility for a weaker version: one that can be generated with _n_ parallel queries to the oracle but requires _n_ rounds of adaptive queries to solve. In a positive result, we show that such a puzzle can indeed be constructed...Although this work rules out black-box constructions (with a super-constant gap) from one-way permutations and collision-resistant hash functions, we have no reason to believe that time-lock puzzles based on other concrete problems (e.g., lattice-based problems) do not exist. Extending our approach to other general assumptions (e.g., trapdoor permutations) is also an interesting open problem.
 
 That is, the puzzle constructor can construct the puzzle in parallel, and the solver has to solve it serially.
-
-# Successive squaring
-
-At this point, let's see what the crypto experts have to say. Googling to see what the existing literature was (after I'd thought of the above schemes), I found that the relevant term is "time-lock puzzles" (from analogy with the bank vault [time lock](!Wikipedia)). In particular, [Rivest](!Wikipedia "Ron Rivest")/[Shamir](!Wikipedia "Adi Shamir")/[Wagner](!Wikipedia "David A. Wagner") have published a 1996 paper on the topic, ["Time-lock puzzles and timed-release crypto"](http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.110.5709). Apparently the question was first raised by [Timothy C. May](!Wikipedia) on the [Cypherpunks mailing list](!Wikipedia) in an [email from 10 February 1993](http://cypherpunks.venona.com/date/1993/02/msg00129.html "Timed-Release Crypto"). May also discusses the topic briefly in his _[Cyphernomicon](!Wikipedia)_, [ch14.5](http://www.cypherpunks.to/faq/cyphernomicron/chapter14.html); unfortunately, May's solution (14.5.1) is essentially to punt to the legal system and rely on legal privilege and economic incentives to keep keys private. <!-- backup: http://cypherpunks.venona.com/date/1994/06/msg00481.html http://www.webcitation.org/6JhMIlgIF -->
-
-Rivest et al agree with us that
-
-> There are 2 natural approaches to implementing timed-release crypto:
->
-> - Use 'time-lock puzzles' - computational problems that can not be solved without running a computer continuously for at least a certain amount of time.
-> - Use trusted agents who promise not to reveal certain information until a specified date.
-
-And that for time-lock puzzles:
-
-> Our goal is thus to design time-lock puzzles that, to the great extent possible, are 'intrinsically sequential' in nature, and can not be solved substantially faster with large investments in hardware. In particular, we want our puzzles to have the property that putting computers to work together in parallel doesn't speed up finding the solution. (Solving the puzzle should be like having a baby: two women can't have a baby in 4.5 months.)
-
-Rivest et al then points out that the most obvious approach - encrypt the file to a random short key, short enough that brute-forcing takes only a few months/years as opposed to eons - is flawed because brute-forcing a key is very [parallelizable](!Wikipedia "EFF DES cracker") and amenable to [special hardware](!Wikipedia "Custom hardware attack")[^hardware]. (And as well, the randomness of searching a key space means that the key might be found very early or very late; any estimate of how long it will take to brute force is just a guess.) One cute application of the same brute-forcing idea is [Merkle's Puzzles](!Wikipedia) where the time-lock puzzle is used to hide a key for a second-party to communicate with the first-party creator, but it has the same drawback: it has the creator make many time-lock puzzles (any of which could be used by the second-party) and raises the cost to the attacker (who might have to crack each puzzle), but can be defeated by a feasibly wealthy attacker, and offers only probabilistic guarantees (what if the attacker cracks the same puzzle the second-party happens to choose?).
-
-[^hardware]: Colin Percival's ["Insecurity in the Jungle (disk)"](http://www.daemonology.net/blog/2011-06-03-insecurity-in-the-jungle.html) presents a table giving times for brute-forcing [MD5](!Wikipedia) hashes given various hardware; most dramatically, <\$1m of custom [ASIC](!Wikipedia "Application-specific integrated circuit") hardware could bruteforce a random 10 character string in 2 hours. (Hardware reaps extreme performance gains [mostly when](http://www.yosefk.com/blog/its-done-in-hardware-so-its-cheap.html "`It's done in hardware so it's cheap`") when few memory accesses are required, and a few fast operations applied to small amounts of data; this is because flexibility imposes overhead, and when the overhead is incurred just to run fast instructions, the overhead dominates the entire operation. For example, graphics chips do just a relative handful of math to a frame, again and again, and so they gain orders of magnitude speedups by being specialized chips - as does any other program which is like that, which includes cryptographic hashes designed for speed like the ones Bitcoin uses.)
-
-    [Wikipedia](!Wikipedia "Key stretching#Strength and time") gives an older example using [FPGAs](!Wikipedia "Field-programmable gate array") (also [being](https://bitcointalk.org/index.php?topic=9047.0) [used](http://www.reddit.com/r/Bitcoin/comments/hhd4l/fpga_mining/) for Bitcoin hashing):
-
-    > An important consideration to be made is that CPU-bound hash functions are still vulnerable to hardware implementations. For example, the literature provides efficient hardware implementations of SHA-1 in as low as 5000 gates, and able to produce a result in less than 400 clock cycles^[2](http://rfidsec2013.iaik.tugraz.at/RFIDSec08/Papers/Publication/04%20-%20ONeill%20-%20Low%20Cost%20SHA-1%20-%20Paper.pdf "'Low-Cost SHA-1 Hash Function Architecture for RFID Tags', O'Neill")^. Since multi-million gate FPGAs can be purchased at less than \$100 price points^[3](http://www.xilinx.com/prs_rls/silicon_spart/0333spartan3.htm)^, it follows that an attacker can build a fully unrolled hardware cracker for about \$5000. Such a design, if clocked at 100MHz can try about 300,000 keys/second for the algorithm proposed above.
-
-Rivest et al propose a scheme in which one encrypts the file with a very strong key as usual, but then one encrypts the key in such a way that one must calculate $\text{encryptedKey}^{2^t} \text{mod}(n)$ where _t_ is the adjustable difficulty factor. With the original numbers, one can easily avoid doing the [successive squarings](http://mathworld.wolfram.com/SuccessiveSquareMethod.html). This has the nice property that the puzzle constructor invests only $O(log(n))$ computing power, but the solver has to spend $O(n^2)$ computing power. (This scheme works in the random oracle model, but [Barak & Mahmoody-Ghidary 2009](https://eprint.iacr.org/2008/032.pdf "Merkle puzzles are optimal—an o (n 2)-query attack on any key exchange from a random oracle") proves that is the best you can do.)
-
-Rivest [has actually used](http://people.csail.mit.edu/rivest/lcs35-puzzle-description.txt) this scheme for a time capsule commemorating the [MIT Computer Science and Artificial Intelligence Laboratory](!Wikipedia); he expects his puzzle to take ~35 years. As of 14 years later, [minimal progress](http://crypto.stackexchange.com/questions/5831/what-is-the-progress-on-the-mit-lcs35-time-capsule-crypto-puzzle "What is the progress on the MIT LCS35 Time Capsule Crypto-Puzzle?") seems to have been made; if anything, the breakdown of CPU clockspeeds seems to imply that it will take far more than 35 years[^Rivest-projection] Rivest offers some advice for anyone attempting to unlock this time-lock puzzle (may or may not be related to Mao's 2000 paper ["Time-Lock Puzzle with Examinable Evidence of Unlocking Time"](/docs/2000-mao.pdf)):
-
-> An interesting question is how to protect such a computation from errors. If you have an error in year 3 that goes undetected, you may waste the next 32 years of computing. Adi Shamir has proposed a slick means of checking your computation as you go, as follows. Pick a small (50-bit) prime _c_, and perform the computation modulo _cn_ rather than just modulo _n_. You can check the result modulo _c_ whenever you like; this should be a extremely effective check on the computation modulo _n_ as well.
-
-[^Rivest-projection]: As of 2013, the highest-frequency consumer CPU available, the AMD FX-9000, tops out at 5GHz with few prospects for substantial increases in frequency; Rivest projected 10GHz and increasing:
-
-    > Based on the SEMATECH National Technology Roadmap for Semiconductors (1997 edition), we can expect internal chip speeds to increase by a factor of approximately 13 overall up to 2012, when the clock rates reach about 10GHz.  After that improvements seem more difficult, but we estimate that another factor of five might be achievable by 2034. Thus, the overall rate of computation should go through approximately six doublings by 2034.
-
-    Moore's law, in the original formulation of transistors per dollar, may have continued post-1997, but the gains increasingly came by parallelism, which is not useful for repeated squaring.
-
-## Constant factors
-
-How well does this work? The complexity seems correct, but I worry about the constant factors. Back in 1996, computers were fairly homogeneous, and Rivest et al could reasonably write
-
-> We know of no obvious way to parallelize it to any large degree. (A small amount of parallelization may be possible *within* each squaring.) The degree of variation in how long it might take to solve the puzzle depends on the variation in the speed of single computers and not on one's total budget. Since the speed of hardware available to individual consumers is within a small constant factor of what is available to large intelligence organizations, the difference in time to solution is reasonably controllable.
-
-But I wonder how true this is. Successive squaring does not seem to be a very complex algorithm to implement in hardware. There are more exotic technologies than GPUs we might worry about, like [field-programmable gate array](!Wikipedia)s which may be specialized for successive squaring; if problems like the [n-body problem](!Wikipedia) can be [handled with custom chips](!Wikipedia "Gravity Pipe"), why not multiplication? Or, since squaring seems simple, is it relevant to forecasts of serial speed that there are [graphene](!Wikipedia) transistor prototypes going as high as [100GHz](http://www.pnas.org/content/109/29/11588.full "'High-frequency self-aligned graphene transistors with transferred gate stacks', Cheng et al 2012")? Offhand, I don't know of any compelling argument to the effect that there are no large constant-factor speedups possible for multiplication/successive-squaring. Indeed, the general approach of exponentiation and factoring has to worry about the fact that the complexity of factoring has never been proven (and could still be very fast) and that there are speedups with quantum techniques like [Shor's algorithm](!Wikipedia).
-
-[^rainbow]: eg. the 2008 Graves thesis, ["High performance password cracking by implementing rainbow tables on nVidia graphics cards (IseCrack)"](https://www.iac.iastate.edu/mediawiki/images/b/b3/Cryptohaze.pdf) claims a 100x speedup over CPU generation of rainbow tables, or the actively developed utility, [RainbowCrack](http://www.project-rainbowcrack.com/) (which you can even [buy](http://www.project-rainbowcrack.com/buy.php) the generated rainbow tables from).
 
 # Memory-bound hashes
 
