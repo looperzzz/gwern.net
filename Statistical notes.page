@@ -924,3 +924,127 @@ data.frame(Date = predictDays, Cost.per.Genome.predicted = exp(predict(nlmR, new
 ~~~
 
 http://www.unz.com/gnxp/the-intel-of-sequencing/#comment-677904
+
+# When Does The Mail Come?
+
+Consider a question of burning importance for all nerds: what time does the mailman come, bearing gifts?
+We could measure by going out in the morning at a random time to see if the mail has come yet, and estimate.
+(No one wants to sit around all morning to spot the *exact* time the mailman comes. At least, I don't.)
+
+Given a set of data like "2015-06-20 11:00AM: mail has not come yet; 2015-06-21 11:59AM: mail had come", how can we estimate?
+This is not a normal setup where we estimate a mean but our data is interestingly messed up: censored or truncated or an interval somehow.
+
+1. 2015-06-20 11:00AM: no
+
+ground truth from USPS delivery emails & personal observation:
+
+- 2015-06-10 10:34am
+- 2015-06-20 11:02am
+- 2014-09-29 11:15am
+- 2015-03-09 11:19am
+- 2010-05-12 11:31am
+- 2010-04-29 11:33am
+- 2014-12-15 12:02pm
+- 2014-08-20 12:14pm
+
+[Survival analysis](!Wikipedia) seems like the appropriate paradigm.
+This is not a simple survival analysis with "right-censoring" where each individual is followed up to a censoring time and the exact time of 'failure' is observed.
+(This would be right-censoring if instead we had gone out to the mailbox early in the morning and sat there waiting for the mailman to record when she came, occasionally getting bored around 10AM or 11AM and wandering off without seeing when the mail comes.)
+This isn't "left-censoring" either (for left-censoring, we'd go out to the mailbox late in the morning when the mail might already be there, and if it isn't, then wait until it does come).
+I don't think this is left or right truncation either, since each day data is collected and there's no sampling biases at play.
+What this is is interval censoring: when we go out to the mailbox at 11AM and discover the mail is there, we learn that the mail was delivered today sometime in the interval midnight-10:59AM, or if the mail isn't there, we learn it will be delivered later today sometime during the interval 11:01AM-midnight (hopefully closer to the first end than the second).
+Interval censoring comes up in biostatistics for situations like periodic checkups for cancer, which does resemble our mail situation.
+
+http://www.ctspedia.org/do/view/CTSpedia/IntervalCensoredAnalysis
+
+> Surv(time, time2, event, type='interval')
+>
+> 1. time: For interval data, the first argument is the starting time for the interval.
+> 2. time2: ending time of the interval for interval censored or counting process data only. Intervals are assumed to be open on the left and closed on the right, (start, end]. For counting process data, event indicates whether an event occurred at the end of the interval.
+> 3. event: The status indicator, normally 0=alive, 1=dead....For interval censored data, the status indicator is 0=right censored, 1=event at time, 2=left censored, 3=interval censored.
+>
+> Interval censored data can be represented in two ways. For the first use type = "interval" and the codes shown above. In that usage the value of the time2 argument is ignored unless event=3. The second approach is to think of each observation as a time interval with (-infinity, t) for left censored, (t, infinity) for right censored, (t,t) for exact and (t1, t2) for an interval. This is the approach used for type = interval2. Infinite values can be represented either by actual infinity (Inf) or NA. The second form has proven to be the more useful one.
+
+> a subject's data for the pair of columns in the dataset (time1, time2) is (t_e, t_e) if the event time t_e is known exactly; (t_l, NA) if right censored (where t_l is the censoring time); and (t_l, t_u) if interval censored (where t_l is the lower and t_u is the upper bound of the interval).
+
+midnight=0
+11AM=660
+noon=720
+midnight=1440
+
+~~~{.R}
+set.seed(2015-06-21)
+# simulate a scenario in which the mailman tends to come around 11AM and I tend to check around then,
+# and generate interval data for each time, bounded by end-of-day/midnight below & above, collecting ~1 month of data:
+simulateMailbox <- function(n, time) {
+    deliveryTime <- round(rnorm(n, mean = time, sd = 30))
+    checkTime <- round(rnorm(n, mean = time, sd = 60))
+    simulates <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
+                         checkTime, deliveryTime)
+    return(data.frame(Time1=simulates[1,], Time2=simulates[2,])) }
+mail <- simulateMailbox(30, 660); mail
+##        Time1 Time2
+## 1    569  1440
+## 2      0   664
+## 3    592  1440
+## 4    581  1440
+## 5    596  1440
+## 6      0   703
+## 7      0   705
+## 8    667  1440
+## ...
+~~~
+
+With a simulated dataset, we can see if the standard R survival library and a interval-censored model written in JAGS can recover the simulate parameters of 660:
+
+~~~{.R}
+surv <- Surv(mail$Time1, mail$Time2, type="interval2")
+s <- survfit(surv ~ 1, data=mail); summary(s)
+##  time   n.risk   n.event survival   std.err lower 95% CI upper 95% CI
+## 633.0 30.00000  7.503147 0.749895 0.0790680     0.609889     0.922041
+## 651.0 22.49685 12.188431 0.343614 0.0867071     0.209546     0.563458
+## 663.5 10.30842  0.611086 0.323245 0.0853927     0.192604     0.542496
+## 685.0  9.69734  9.697336 0.000000       NaN           NA           NA
+plot(s)
+## https://i.imgur.com/nzOHQT0.png
+sr <- survreg(surv ~ 1, dist="gaussian", data=mail); summary(sr)
+##                 Value Std. Error        z           p
+## (Intercept) 656.21819   7.324758 89.58906 0.00000e+00
+## Log(scale)    2.93664   0.444159  6.61169 3.79957e-11
+##
+## Scale= 18.8524
+##
+## Gaussian distribution
+## Loglik(model)= -7.1   Loglik(intercept only)= -7.1
+## Number of Newton-Raphson Iterations: 10
+## n= 30
+~~~
+
+An interval-censoring model in JAGS, with the usual mean value of 0 shifted to noon to reflect the 0-1440 range:
+
+~~~{.R}
+library(R2jags)
+model1 <- "model { for (i in 1:n){
+           y[i] ~ dinterval(t[i], dt[i,])
+           t[i] ~ dnorm(mu,tau)
+           }
+
+           mu ~ dnorm((1440/2),.00001)
+           tau ~ dgamma(.01,.01)
+           }"
+
+# y=1 means the same thing as Event=3 for `Surv`; it means the event is hidden inside the interval, not observed or left- or right-censored
+data <- list("dt"=mail, "n"=nrow(mail), "y"=rep(1, nrow(mail)))
+inits <- function() { list(mu=rnorm(1),tau=rgamma(1,.01,.01),t=as.vector(apply(mail,1,mean))) }
+params <- c("mu","tau")
+j1 <- jags(data,inits, params, textConnection(model1)); j1
+## Inference for Bugs model at "4", fit using jags,
+##  3 chains, each with 2000 iterations (first 1000 discarded)
+##  n.sims = 3000 iterations saved
+##          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
+## mu       657.428   8.610 641.991 652.190 656.608 662.006 675.903 1.013   350
+## tau        0.003   0.003   0.000   0.001   0.002   0.005   0.011 1.046    52
+## deviance   0.000   0.000   0.000   0.000   0.000   0.000   0.000 1.000     1
+~~~
+
+Both approaches' point-value of 656/657 come close to the true value of 660, validating the models.
