@@ -1020,7 +1020,10 @@ sr <- survreg(surv ~ 1, dist="gaussian", data=mail); summary(sr)
 ## n= 30
 ~~~
 
-An interval-censoring model in JAGS, with the usual mean value of 0 shifted to noon to reflect the 0-1440 range:
+We can also write an interval-censoring model in JAGS, which gives us the opportunity to use an informative prior about the mean time the mailman comes.
+
+They work normal 9-5 hours as far as I know, so we can rule out anything outside 540-1020.
+From past experience, I expect the mail to show up not before 10AM (600) and not after 1PM (780), with those extremes being rare and sometime around 11AM (660) being much more common; so not a uniform distribution over 600-780 but a normal one centered on 660 and then somewhat arbitrarily saying that 600-700 represent 3 SDs out from the mean of delivery times to get SD=40 minutes so in all, `dnorm(660, pow(30, -2))`
 
 ~~~{.R}
 library(R2jags)
@@ -1029,7 +1032,7 @@ model1 <- "model { for (i in 1:n){
            t[i] ~ dnorm(mu,tau)
            }
 
-           mu ~ dnorm((1440/2),.00001)
+           mu ~ dnorm(660, pow(30, -2))
            tau ~ dgamma(.01,.01)
            }"
 
@@ -1038,13 +1041,16 @@ data <- list("dt"=mail, "n"=nrow(mail), "y"=rep(1, nrow(mail)))
 inits <- function() { list(mu=rnorm(1),tau=rgamma(1,.01,.01),t=as.vector(apply(mail,1,mean))) }
 params <- c("mu","tau")
 j1 <- jags(data,inits, params, textConnection(model1)); j1
-## Inference for Bugs model at "4", fit using jags,
+## Inference for Bugs model at "13", fit using jags,
 ##  3 chains, each with 2000 iterations (first 1000 discarded)
 ##  n.sims = 3000 iterations saved
 ##          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
-## mu       657.428   8.610 641.991 652.190 656.608 662.006 675.903 1.013   350
-## tau        0.003   0.003   0.000   0.001   0.002   0.005   0.011 1.046    52
+## mu       657.668   7.985 642.789 652.612 657.204 662.418 674.584 1.008   390
+## tau        0.003   0.003   0.000   0.001   0.002   0.004   0.010 1.060    44
 ## deviance   0.000   0.000   0.000   0.000   0.000   0.000   0.000 1.000     1
+1/sqrt(0.003)
+# [1] 18.25741858
 ~~~
 
-Both approaches' point-value of 656/657 come close to the true value of 660, validating the models.
+Both approaches' point-value mean time of 656/657 (10:54AM) come close to the true simulation value of 660 (11AM), validating the models.
+The estimated standard deviation isn't as accurate (18 vs 30) but the credible interval reflects that it's a harder parameter to estimate and the estimate is still vague with only _n_=30.
