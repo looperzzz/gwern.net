@@ -935,6 +935,7 @@ Given a set of data like "2015-06-20 11:00AM: mail has not come yet; 2015-06-21 
 This is not a normal setup where we estimate a mean but our data is interestingly messed up: censored or truncated or an interval somehow.
 
 1. 2015-06-20 11:00AM: no
+2. 2015-06-21 11:06AM: no
 
 ground truth from USPS delivery emails & personal observation:
 
@@ -974,7 +975,7 @@ midnight=1440
 
 ~~~{.R}
 set.seed(2015-06-21)
-# simulate a scenario in which the mailman tends to come around 11AM and I tend to check around then,
+# simulate a scenario in which the mailman tends to come around 11AM (660) and I tend to check around then,
 # and generate interval data for each time, bounded by end-of-day/midnight below & above, collecting ~1 month of data:
 simulateMailbox <- function(n, time) {
     deliveryTime <- round(rnorm(n, mean = time, sd = 30))
@@ -993,9 +994,18 @@ mail <- simulateMailbox(30, 660); mail
 ## 7      0   705
 ## 8    667  1440
 ## ...
+library(ggplot2)
+png(file="~/wiki/images/maildelivery-simulated.png", width = 800, height = 500)
+ggplot(mail) + geom_segment(aes(x=Time1, xend=Time2, y=1:nrow(mail), yend=1:nrow(mail))) +
+    geom_vline(xintercept=660, color="blue") + ylab("Day") + xlab("Time")
+invisible(dev.off())
 ~~~
 
-With a simulated dataset, we can see if the standard R survival library and a interval-censored model written in JAGS can recover the simulate parameters of 660:
+Inferring the mean time of delivery might sound difficult with such extremely crude data of intervals 700 minutes wide or worse, but plotting the little simulated dataset and marking the true mean time of 660, we see it's not *that* bad - the mean time is probably whatever line passes through the most intervals:
+
+![The simulated overlapping-intervals data, with the true mean time drawn in blue](/images/maildelivery-simulated.png)
+
+And also with aoursimulated dataset, we can see if the standard R survival library and a interval-censored model written in JAGS can recover the 660:
 
 ~~~{.R}
 surv <- Surv(mail$Time1, mail$Time2, type="interval2")
@@ -1020,7 +1030,7 @@ sr <- survreg(surv ~ 1, dist="gaussian", data=mail); summary(sr)
 ## n= 30
 ~~~
 
-We can also write an interval-censoring model in JAGS, which gives us the opportunity to use an informative prior about the mean time the mailman comes.
+More Bayesianly, we can write an interval-censoring model in JAGS, which gives us the opportunity to use an informative prior about the mean time the mailman comes.
 
 They work normal 9-5 hours as far as I know, so we can rule out anything outside 540-1020.
 From past experience, I expect the mail to show up not before 10AM (600) and not after 1PM (780), with those extremes being rare and sometime around 11AM (660) being much more common; so not a uniform distribution over 600-780 but a normal one centered on 660 and then somewhat arbitrarily saying that 600-700 represent 3 SDs out from the mean of delivery times to get SD=40 minutes so in all, `dnorm(660, pow(30, -2))`
