@@ -934,19 +934,18 @@ We could measure by going out in the morning at a random time to see if the mail
 Given a set of data like "2015-06-20 11:00AM: mail has not come yet; 2015-06-21 11:59AM: mail had come", how can we estimate?
 This is not a normal setup where we estimate a mean but our data is interestingly messed up: censored or truncated or an interval somehow.
 
-1. 2015-06-20 11:00AM: no
-2. 2015-06-21 11:06AM: no
-
 ground truth from USPS delivery emails & personal observation:
 
-- 2015-06-10 10:34am
-- 2015-06-20 11:02am
-- 2014-09-29 11:15am
-- 2015-03-09 11:19am
-- 2010-05-12 11:31am
-- 2010-04-29 11:33am
-- 2014-12-15 12:02pm
-- 2014-08-20 12:14pm
+- 2015-06-10 10:34AM
+- 2015-06-24 10:53AM
+- 2015-06-23 10:58AM
+- 2015-06-20 11:02AM
+- 2014-09-29 11:15AM
+- 2015-03-09 11:19AM
+- 2010-05-12 11:31AM
+- 2010-04-29 11:33AM
+- 2014-12-15 12:02PM
+- 2014-08-20 12:14PM
 
 [Survival analysis](!Wikipedia) seems like the appropriate paradigm.
 This is not a simple survival analysis with "right-censoring" where each individual is followed up to a censoring time and the exact time of 'failure' is observed.
@@ -1033,7 +1032,7 @@ sr <- survreg(surv ~ 1, dist="gaussian", data=mail); summary(sr)
 More Bayesianly, we can write an interval-censoring model in JAGS, which gives us the opportunity to use an informative prior about the mean time the mailman comes.
 
 They work normal 9-5 hours as far as I know, so we can rule out anything outside 540-1020.
-From past experience, I expect the mail to show up not before 10AM (600) and not after 1PM (780), with those extremes being rare and sometime around 11AM (660) being much more common; so not a uniform distribution over 600-780 but a normal one centered on 660 and then somewhat arbitrarily saying that 600-700 represent 3 SDs out from the mean of delivery times to get SD=40 minutes so in all, `dnorm(660, pow(30, -2))`
+From past experience, I expect the mail to show up not before 10AM (600) and not after 1PM (780), with those extremes being rare and sometime around 11AM (660) being much more common; so not a uniform distribution over 600-780 but a normal one centered on 660 and then somewhat arbitrarily saying that 600-700 represent 3 SDs out from the mean of delivery times to get SD=~30 minutes so in all, `dnorm(660, pow(30, -2))`
 
 ~~~{.R}
 library(R2jags)
@@ -1064,3 +1063,46 @@ j1 <- jags(data,inits, params, textConnection(model1)); j1
 
 Both approaches' point-value mean time of 656/657 (10:54AM) come close to the true simulation value of 660 (11AM), validating the models.
 The estimated standard deviation isn't as accurate (18 vs 30) but the credible interval reflects that it's a harder parameter to estimate and the estimate is still vague with only _n_=30.
+
+~~~{.R}
+library(lubridate)
+clockS <- function(t){hour(t)*60 + minute(t) + second(t)/60}
+
+mail <- data.frame(Time=clockS(as.POSIXct(c("2015-06-20 11:00", "2015-06-21 11:06", "2015-06-23 11:03", "2015-06-24 11:05"), "EDT")),
+    Delivered=c(FALSE, FALSE, TRUE, TRUE))
+
+mail <- data.frame(Time1 = ifelse(mail$Delivered, 0, mail$Time),
+                           Time2 = ifelse(mail$Delivered,  mail$Time, 1440))
+
+library(R2jags)
+model1 <- "model { for (i in 1:n){
+           y[i] ~ dinterval(t[i], dt[i,])
+           t[i] ~ dnorm(mu,tau)
+           }
+
+           mu ~ dnorm(660, pow(30, -2))
+           tau ~ dgamma(.01,.01)
+           }"
+
+data <- list("dt"=mail, "n"=nrow(mail), "y"=rep(1, nrow(mail)))
+inits <- function() { list(mu=rnorm(1),tau=rgamma(1,.01,.01),t=as.vector(apply(mail,1,mean))) }
+params <- c("mu","tau")
+j1 <- jags(data,inits, params, textConnection(model1)); j1
+##          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
+## mu       664.967  26.722 608.773 648.572 665.531 682.334 715.034 1.001  3000
+## tau        0.003   0.023   0.000   0.000   0.000   0.000   0.019 1.017   120
+## deviance   0.000   0.000   0.000   0.000   0.000   0.000   0.000 1.000     1
+
+lower <- j1$BUGSoutput$summary[c(2),][3]
+mean  <- j1$BUGSoutput$mean$mu
+upper <- j1$BUGSoutput$summary[c(2),][7]
+reformat <- function (time) { paste0(as.character(round((time / 60))), ":",  as.character(round((time %% 60)))) }
+sapply(c(lower, mean, upper), reformat)
+
+library(ggplot2)
+ggplot(mail) + geom_segment(aes(x=Time1, xend=Time2, y=1:nrow(mail), yend=1:nrow(mail))) +
+    ylab("Day") + xlab("Time") +
+    geom_vline(xintercept=mean, color="blue") +
+    geom_vline(xintercept=lower, color="red") +
+    geom_vline(xintercept=upper, color="red")
+~~~
