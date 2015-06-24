@@ -1032,7 +1032,8 @@ sr <- survreg(surv ~ 1, dist="gaussian", data=mail); summary(sr)
 More Bayesianly, we can write an interval-censoring model in JAGS, which gives us the opportunity to use an informative prior about the mean time the mailman comes.
 
 They work normal 9-5 hours as far as I know, so we can rule out anything outside 540-1020.
-From past experience, I expect the mail to show up not before 10AM (600) and not after 1PM (780), with those extremes being rare and sometime around 11AM (660) being much more common; so not a uniform distribution over 600-780 but a normal one centered on 660 and then somewhat arbitrarily saying that 600-700 represent 3 SDs out from the mean of delivery times to get SD=~30 minutes so in all, `dnorm(660, pow(30, -2))`
+From past experience, I expect the mail to show up not before 10AM (600) and not after 1PM (780), with those extremes being rare and sometime around 11AM (660) being much more common; so not a uniform distribution over 600-780 but a normal one centered on 660 and then somewhat arbitrarily saying that 600-700 represent 3 SDs out from the mean of delivery times to get SD=~30 minutes so in all, `dnorm(660, pow(30, -2))`.
+The SD itself seems to me like it could range anywhere from a few minutes to an hour, but much beyond that is impossible (if the SD was over an hour, then every so often the mailman would have to come at 8AM!).
 
 ~~~{.R}
 library(R2jags)
@@ -1042,14 +1043,18 @@ model1 <- "model { for (i in 1:n){
            }
 
            mu ~ dnorm(660, pow(30, -2))
-           tau ~ dgamma(.01,.01)
+           sd ~ dunif(0, 60)
+           tau <- pow(1/sd, 2)
+
+           y.new ~ dnorm(mu, tau)
            }"
+
 
 # y=1 means the same thing as Event=3 for `Surv`; it means the event is hidden inside the interval, not observed or left- or right-censored
 data <- list("dt"=mail, "n"=nrow(mail), "y"=rep(1, nrow(mail)))
-inits <- function() { list(mu=rnorm(1),tau=rgamma(1,.01,.01),t=as.vector(apply(mail,1,mean))) }
-params <- c("mu","tau")
-j1 <- jags(data,inits, params, textConnection(model1)); j1
+inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mail,1,mean))) }
+params <- c("mu","tau", "y.new")
+j1 <- jags(data,inits, params, textConnection(model1), n.iter=1000000); j1
 ## Inference for Bugs model at "13", fit using jags,
 ##  3 chains, each with 2000 iterations (first 1000 discarded)
 ##  n.sims = 3000 iterations saved
@@ -1065,6 +1070,7 @@ Both approaches' point-value mean time of 656/657 (10:54AM) come close to the tr
 The estimated standard deviation isn't as accurate (18 vs 30) but the credible interval reflects that it's a harder parameter to estimate and the estimate is still vague with only _n_=30.
 
 ~~~{.R}
+set.seed(2015-06-24)
 library(lubridate)
 clockS <- function(t){hour(t)*60 + minute(t) + second(t)/60}
 
@@ -1081,28 +1087,39 @@ model1 <- "model { for (i in 1:n){
            }
 
            mu ~ dnorm(660, pow(30, -2))
-           tau ~ dgamma(.01,.01)
+           sd ~ dunif(0, 60)
+           tau <- pow(1/sd, 2)
+
+           y.new ~ dnorm(mu, tau)
            }"
 
 data <- list("dt"=mail, "n"=nrow(mail), "y"=rep(1, nrow(mail)))
-inits <- function() { list(mu=rnorm(1),tau=rgamma(1,.01,.01),t=as.vector(apply(mail,1,mean))) }
-params <- c("mu","tau")
-j1 <- jags(data,inits, params, textConnection(model1)); j1
+inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mail,1,mean))) }
+params <- c("mu","tau", "y.new")
+j1 <- jags(data,inits, params, textConnection(model1), n.iter=1000000); j1
 ##          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 ## mu       664.967  26.722 608.773 648.572 665.531 682.334 715.034 1.001  3000
 ## tau        0.003   0.023   0.000   0.000   0.000   0.000   0.019 1.017   120
 ## deviance   0.000   0.000   0.000   0.000   0.000   0.000   0.000 1.000     1
 
-lower <- j1$BUGSoutput$summary[c(2),][3]
-mean  <- j1$BUGSoutput$mean$mu
-upper <- j1$BUGSoutput$summary[c(2),][7]
+lowerMean <- j1$BUGSoutput$summary[c(2),][3]
+medianMean  <- j1$BUGSoutput$mean$mu
+upperMean <- j1$BUGSoutput$summary[c(2),][7]
+
+lowerPredictive <- j1$BUGSoutput$summary[c(4),][3]
+# medianMean ~= predictive mean in this case, so don't bother
+upperPredictive <- j1$BUGSoutput$summary[c(4),][7]
+
 reformat <- function (time) { paste0(as.character(round((time / 60))), ":",  as.character(round((time %% 60)))) }
-sapply(c(lower, mean, upper), reformat)
+sapply(c(lowerMean, medianMean, upperMean), reformat)
+sapply(c(lowerPredictive, upperPredictive), reformat)
 
 library(ggplot2)
 ggplot(mail) + geom_segment(aes(x=Time1, xend=Time2, y=1:nrow(mail), yend=1:nrow(mail))) +
     ylab("Day") + xlab("Time") +
-    geom_vline(xintercept=mean, color="blue") +
-    geom_vline(xintercept=lower, color="red") +
-    geom_vline(xintercept=upper, color="red")
+    geom_vline(xintercept=medianMean, color="blue") +
+    geom_vline(xintercept=lowerMean, color="green") +
+    geom_vline(xintercept=upperMean, color="green") +
+    geom_vline(xintercept=lowerPredictive, color="red") +
+    geom_vline(xintercept=upperPredictive, color="red")
 ~~~
