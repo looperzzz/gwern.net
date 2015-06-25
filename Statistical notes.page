@@ -1007,7 +1007,7 @@ Inferring the mean time of delivery might sound difficult with such extremely cr
 
 ![The simulated overlapping-intervals data, with the true mean time drawn in blue](/images/maildelivery-simulated.png)
 
-And also with aoursimulated dataset, we can see if the standard R survival library and a interval-censored model written in JAGS can recover the 660:
+And also with our simulated dataset, we can see if the standard R survival library and a interval-censored model written in JAGS can recover the 660:
 
 ~~~{.R}
 surv <- Surv(mail$Time1, mail$Time2, type="interval2")
@@ -1075,6 +1075,42 @@ Both approaches' point-value mean time of 656/657 (10:54AM) come close to the tr
 The estimated standard deviation isn't as accurate (18 vs 30) but the credible interval reflects that it's a harder parameter to estimate and the estimate is still vague with only _n_=30.
 
 ~~~{.R}
+mail <- simulateMailbox(70, 660); mail
+
+library(animation)
+saveGIF(
+for(n in 1:nrow(mail)){
+    data <- list("dt"=mail[1:n,], "n"=nrow(mail[1:n,]), "y"=rep(1, nrow(mail[1:n,])))
+    inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mail[1:n,],1,mean))) }
+    params <- c("mu","tau", "y.new")
+    j1 <- jags(data, inits, params, textConnection(model1))
+
+    lowerMean <- j1$BUGSoutput$summary[c(2),][3]
+    medianMean  <- j1$BUGSoutput$mean$mu
+    upperMean <- j1$BUGSoutput$summary[c(2),][7]
+
+    lowerPredictive <- j1$BUGSoutput$summary[c(4),][3]
+    upperPredictive <- j1$BUGSoutput$summary[c(4),][7]
+
+    # we need an environment call to use `ggplot` inside a function; see http://stackoverflow.com/a/29595312/329866
+    p <- ggplot(mail[1:n,]) +
+          coord_cartesian(xlim = c(7*60, 13*60)) +
+          ylab("Day") + xlab("Time") +
+          geom_segment(aes(x=mail[1:n,]$Time1, xend=mail[1:n,]$Time2, y=1:n, yend=1:n)) +
+          geom_vline(xintercept=medianMean, color="blue") +
+          geom_vline(xintercept=lowerMean, color="green") +
+          geom_vline(xintercept=upperMean, color="green") +
+          geom_vline(xintercept=lowerPredictive, color="red") +
+          geom_vline(xintercept=upperPredictive, color="red")
+    print(p)
+    }, interval = 0.7, ani.width = 800, ani.height=800, movie.name = "/home/gwern/wiki/images/mail-simulated-inferencesamplebysample.gif")
+~~~
+
+With a simulation and JAGS set up, we could also see how the posterior estimates of the mean, 95% CI of the mean, and predictive interval change as an additional datapoint is added:
+
+![Simulated data: posterior estimates evolving sample by sample](/images/mail-simulated-inferencesamplebysample.gif)
+
+~~~{.R}
 set.seed(2015-06-24)
 library(lubridate)
 clockS <- function(t){hour(t)*60 + minute(t) + second(t)/60}
@@ -1137,8 +1173,6 @@ invisible(dev.off())
 
 ![Overlapping-intervals data, with the estimated mean time in blue, 95% CI around the mean time in green, and 95% predictive intervals as to when the delivery is made](/images/maildelivery-real.png)
 
-TODO: maybe create an animated plot showing how the estimates change with each datapoint using http://rforpublichealth.blogspot.com/2014/12/animations-and-gifs-using-ggplot2.html http://cran.r-project.org/web/packages/animation/index.html ?
-
 ## ABC
 
 Because JAGS provides an interval-censored distribution in the form of `dinterval()` with a [likelihood function](!Wikipedia), we can use MCMC for backward inference (reasoning from data to the underlying process)
@@ -1180,6 +1214,8 @@ results <- Filter(function(x) {!is.null(x)}, mail_sim)
 results <- data.frame(t(sapply(results,c)))
 summary(results)
 ~~~
+
+<!-- $ -->
 
 The first thing to note is efficiency: I can get reasonable number of samples in reasonable amount of time for _n_=1-3, but at 4 datapoints, it becomes slow.
 There's so many possible datasets when 4 checks are simulated that almost all get rejected because they are not identical to the real dataset and it takes millions of samples and hours to run.
