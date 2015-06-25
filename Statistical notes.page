@@ -1123,3 +1123,73 @@ ggplot(mail) + geom_segment(aes(x=Time1, xend=Time2, y=1:nrow(mail), yend=1:nrow
     geom_vline(xintercept=lowerPredictive, color="red") +
     geom_vline(xintercept=upperPredictive, color="red")
 ~~~
+
+[ABC](!Wikipedia "Approximate Bayesian computation")
+["Tiny Data, Approximate Bayesian Computation and the Socks of Karl Broman"](http://www.sumsar.net/blog/2014/10/tiny-data-and-the-socks-of-karl-broman/)
+
+~~~{.R}
+simulateMailbox <- function(n, dTime, dSD) {
+    deliveryTime <- round(rnorm(n, mean = dTime, sd = dSD))
+    checkTime <- round(rnorm(n, mean = dTime, sd = dSD))
+    simulates <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
+                         checkTime, deliveryTime)
+    return(data.frame(Time1=simulates[1,], Time2=simulates[2,])) }
+
+# if both dataframes are sorted, comparison is easier
+mailSorted <- mail[order(mail$Time1),]
+
+mail_sim <- replicate(10000000, {
+    # mu ~ dnorm(660, 30)
+    mu <- rnorm(n=1, mean=660, sd=30)
+    # sd ~ dunif(0, 60)
+    sd <- runif(n=1, min=0, max=60)
+
+    newData <- simulateMailbox(nrow(mailSorted), mu, sd)
+    newDataSorted <- newData[order(newData$Time1),]
+
+    if (all(newDataSorted == mailSorted)) { return(c(Mu=mu, SD=sd)) }
+   }
+  )
+results <- Filter(function(x) {!is.null(x)}, mail_sim)
+results <- data.frame(t(sapply(results,c)))
+summary(results)
+~~~
+
+Efficiency is problematic. Can get reasonable number of samples in reasonable amount of time for _n_=1-3, but at 4 datapoints, it becomes slow.
+
+To run ABC more efficiently, you relax the requirement that the simulated data == real data and instead accept the pair of parameters if the simulated data is 'close enough' in some sense to the real data, close in terms of some summary statistic (hopefully sufficient) like the mean.
+I don't know what are the sufficient statistics for a set of interval-censored data, but I figure that if the means of the pairs of times are similar in both datasets, then they are probably close enough for ABC to work, so I can use that as a rejection tolerance; implementing that and playing around, it seems I can make the difference in means as tight as <1 while still running fast.
+
+~~~{.R}
+mail_abc <- function(samples) {
+    results <- list()
+    n <- 0
+    while (n<samples) {
+
+      # Priors:
+      ## mu ~ dnorm(660, 30)
+      mu <- rnorm(n=1, mean=660, sd=30)
+      ## sd ~ dunif(0, 60)
+      sd <- runif(n=1, min=0, max=60)
+
+      # generate new data set based on a pair of possible parameters:
+      newData <- simulateMailbox(nrow(mailSorted), mu, sd)
+
+      # see if some summaries of the new data were within tolerance ϵ of the real data:
+      if (abs(mean(newData$Time1) - mean(mailSorted$Time1)) < 1 &&
+          abs(mean(newData$Time2) - mean(mailSorted$Time2)) < 1)
+        { results <- list(c(Mu=mu, SD=sd), results); n <- n+1; }
+    }
+   return(results)
+  }
+sims <- mail_abc(1000)
+results <- matrix(unlist(sims), ncol=2, byrow=TRUE)
+summary(results)
+##        V1                 V2
+##  Min.   :607.1184   Min.   : 0.06293886
+##  1st Qu.:661.8798   1st Qu.: 1.90140834
+##  Median :663.2493   Median : 5.25558518
+##  Mean   :662.9731   Mean   :11.22631833
+##  3rd Qu.:664.6134   3rd Qu.:15.03439008
+##  Max.   :693.0969   Max.   :59.18031500
+~~~
