@@ -1102,8 +1102,8 @@ set.seed(2015-06-24)
 library(lubridate)
 clockS <- function(t){hour(t)*60 + minute(t) + second(t)/60}
 
-mail <- data.frame(Time=clockS(as.POSIXct(c("2015-06-20 11:00", "2015-06-21 11:06", "2015-06-23 11:03", "2015-06-24 11:05", "2015-06-25 11:00"), "EDT")),
-    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE))
+mail <- data.frame(Time=clockS(as.POSIXct(c("2015-06-20 11:00", "2015-06-21 11:06", "2015-06-23 11:03", "2015-06-24 11:05", "2015-06-25 11:00", "2015-06-26 10:56"), "EDT")),
+    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE))
 
 mail <- data.frame(Time1 = ifelse(mail$Delivered, 0, mail$Time),
                            Time2 = ifelse(mail$Delivered,  mail$Time, 1440))
@@ -1287,7 +1287,7 @@ summary(results)
 
 This summary, simple as it is, does much better in replicating the JAGS estimates.
 
-# Point data
+## Exact delivery-time data
 
 Halfway through compiling my notes, I realized that I *did* in fact have several exact times for deliveries: the USPS tracking emails for packages, while useless on the day of delivery for knowing when to check (since the alerts are only sent around 3-4PM), do include the exact time of delivery that day.
 And then while recording interval data, I did sometimes spot the mailman on her rounds; to keep things simple, I still recorded it as an interval.
@@ -1301,15 +1301,30 @@ clockS <- function(t){hour(t)*60 + minute(t) + second(t)/60}
 
 mailExact <- data.frame(Date=as.POSIXct(c("2010-04-29 11:33AM", "2010-05-12 11:31AM", "2014-08-20 12:14PM", "2014-09-29 11:15AM", "2014-12-15 12:02PM", "2015-03-09 11:19AM", "2015-06-10 10:34AM", "2015-06-20 11:02AM", "2015-06-23 10:58AM", "2015-06-24 10:53AM", "2015-06-25 10:55AM"), "EDT"))
 mailExact$TimeDelivered <- clockS(mailExact$Date)
-
+##                   Date TimeDelivered Group
+## 1  2010-04-29 11:33:00           693 FALSE
+## 2  2010-05-12 11:31:00           691 FALSE
+## 3  2014-08-20 12:14:00           734 FALSE
+## 4  2014-09-29 11:15:00           675 FALSE
+## 5  2014-12-15 12:02:00           722 FALSE
+## 6  2015-03-09 11:19:00           679  TRUE
+## 7  2015-06-10 10:34:00           634  TRUE
+## 8  2015-06-20 11:02:00           662  TRUE
+## 9  2015-06-23 10:58:00           658  TRUE
+## 10 2015-06-24 10:53:00           653  TRUE
+## 11 2015-06-25 10:55:00           655  TRUE
 mean(mailExact$TimeDelivered)
-# [1] 677.8181818
+## [1] 677.8181818
 sd(mailExact$TimeDelivered)
-# [1] 30.36714732
+## [1] 30.36714732
 library(ggplot2); qplot(Date, TimeDelivered, data=mailExact)
+## https://i.imgur.com/oJlGp6t.png
 ~~~
 
 Plotted over time, there's a troubling amount of heterogeneity: despite the sparsity of data (apparently I did not usually bother to set up USPS tracking alerts 2011-2014, to my loss) it's hard not to see two separate clusters there.
+
+### ML
+
 Besides the visual evidence, a t-test agrees with there being a difference between 2010-2014 and 2015
 
 ~~~{.R}
@@ -1326,17 +1341,58 @@ t.test(TimeDelivered ~ Group, data=mailExact)
 ## sample estimates:
 ## mean in group FALSE  mean in group TRUE
 ##         703.0000000         656.8333333
+mean(mailExact[mailExact$Group,]$TimeDelivered)
+## [1] 656.8333333
+sd(mailExact[mailExact$Group,]$TimeDelivered)
+## [1] 14.55220487
 ~~~
 
 Why might there be two clusters?
-Well, now that I think about it, I recall that my mailman used to be an older gentleman with white hair (I remember him quite vividly because in mid-August 2013 a package of fish oil was damaged in transit, and he showed up to explain it to me and offer suggestions on returns; Amazon didn't insist on a leaky fish oil bottle being shipped back and simply sent me a new one).
-But now my mailman is a younger middle-aged woman. That seems like a good reason for a shift in delivery times (perhaps she drives faster)
+Well, now that I think about it, I recall that my mailman used to be an older gentleman with white hair (I remember him vividly because in mid-August 2013 a package of fish oil was damaged in transit, and he showed up to explain it to me and offer suggestions on returns; Amazon didn't insist on a leaky fish oil bottle being shipped back and simply sent me a new one).
+But now my mailman is a younger middle-aged woman. That seems like a good reason for a shift in delivery times (perhaps she drives faster).
 
-<!-- TODO: ask when the mailman switch was -->
+### MCMC
 
 ~~~{.R}
-mean(mailExact[mailExact$Group,]$TimeDelivered)
-# [1] 656.8333333
-sd(mailExact[mailExact$Group,]$TimeDelivered)
-# [1] 14.55220487
+library(R2jags)
+model1 <- "model{
+  # I expect all deliveries ~11AM/660:
+  grand.mean ~ dnorm(660, pow(30, -2))
+
+  # different mailman/groups will deliver at different offsets, but not by more than 2 hours or so:
+  delta.between.group ~ dunif(0, 100)
+
+  # similarly, both mailman times and delivery times are reasonably precise within 2 hours or so:
+  tau.between.group <- pow(sigma.between.group, -2)
+  sigma.between.group ~ dunif(0, 100)
+
+  for(j in 1:K){
+   # let's say the group-level differences are also normally-distributed:
+   group.delta[j] ~ dnorm(delta.between.group, tau.between.group)
+   # and each group also has its own standard-deviation, potentially different from the others'
+   group.within.sigma[j] ~ dunif(0, 100)
+   group.within.tau[j] <- pow(group.within.sigma[j], -2)
+
+   # save the net combo for convenience & interpretability:
+   group.mean[j] <- grand.mean + group.delta[j]
+  }
+
+  for (i in 1:N) {
+   # each individual observation is from the grand-mean + group-offset, then normally distributed:
+   Y[i] ~ dnorm(grand.mean + group.delta[Group[i]], group.within.tau[Group[i]])
+  }}"
+data <- list(N=nrow(mailExact), Y=mailExact$TimeDelivered, K=max(mailExact$Group+1), Group=(mailExact$Group+1))
+params <- c("grand.mean","delta.between.group", "sigma.between.group", "group.delta", "group.mean", "group.within.sigma")
+j1 <- jags(data=data, parameters.to.save=params, inits=NULL, model.file=textConnection(model1)); j1
+##                       mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
+## delta.between.group    39.435  25.398   2.120  18.421  35.277  57.075  92.897 1.004   510
+## grand.mean            650.551  25.354 601.337 633.208 650.248 667.426 701.950 1.006   340
+## group.delta[1]         48.751  28.402  -8.001  29.126  48.571  67.956 104.437 1.005   460
+## group.delta[2]          8.542  26.788 -45.488  -9.510   9.095  26.338  59.247 1.004   580
+## group.mean[1]         699.302  16.314 663.215 690.396 700.385 708.990 730.555 1.001  3000
+## group.mean[2]         659.092  10.377 640.786 653.343 658.322 663.680 683.464 1.002  1400
+## group.within.sigma[1]  35.048  15.767  16.221  23.941  30.830  41.618  77.953 1.003  1200
+## group.within.sigma[2]  21.018  10.808   9.943  14.337  18.138  23.957  53.014 1.001  3000
+## sigma.between.group    48.012  24.095  10.639  28.634  44.631  65.673  95.790 1.004  1000
+## deviance               99.322   4.246  93.844  96.092  98.403 101.657 109.751 1.001  3000
 ~~~
