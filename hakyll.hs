@@ -160,12 +160,14 @@ staticImg x@(TagOpen "img" xs) = do let optimized = lookup "height" xs
             where uniq = nub . sort
 staticImg x = return x
 -- | Use FileStore util to run imageMagick's 'identify', & extract the dimensions
+-- Note that for animated GIFs, 'identify' returns width/height for each frame of the GIF, which in
+-- most cases will all be the same, so we take the first line of whatever dimensions 'identify' returns.
 imageMagick :: FilePath -> IO (String,String)
-imageMagick f = do (status,_,bs) <- runShellCommand "./" Nothing "identify" ["-format", "%h %w", f]
+imageMagick f = do (status,_,bs) <- runShellCommand "./" Nothing "identify" ["-format", "%h %w\n", f]
                    case status of
                      ExitFailure _ -> error f
-                     _ -> do let [height,width] = words (unpack bs)
-                             return (height,width)
+                     _ -> do let [height, width] = words $ head $ lines $ (unpack bs)
+                             return (height, width)
 
 
 -- INTERWIKI PLUGIN
