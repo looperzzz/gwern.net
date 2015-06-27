@@ -1,0 +1,504 @@
+---
+title: When Does The Mail Come
+description: Bayesian & max-likelihood analysis of local mail delivery times
+tags: statistics
+created: 21 June 2015
+status: in progress
+belief: possible
+...
+
+> Mail is delivered by the USPS mailman at a regular but not observed time; what is observed is whether the mail has been delivered at a time, yielding somewhat-unusual "interval-censored data".
+> I describe the problem of estimating when the mailman delivers, write a simulation of the data-generating process, and demonstrate analysis of interval-censored data in R using maximum-likelihood (the survival library), MMC (JAGS), and likelihood-free Bayesian inference (ABC using the simulation). This allows estimation of when to check the mailbox with a certain probability it will be there such as 95%.
+> Finally, I compare those estimates from the interval-censored data with estimates from a (smaller) set of exact delivery-times provided by USPS tracking, using a multilevel model to deal with heterogeneity apparently due to a change in USPS routes/postmen.
+
+Consider a question of burning importance: what time does the mailman come, bearing gifts?
+
+# Interval-censored data
+
+No one wants to sit around all morning to spot the *exact* time the mailman comes. At least, I don't.
+
+We could more easily measure by going out in the morning at a random time to see if the mail has come yet, and then (somehow) estimate.
+
+Given a set of data like "2015-06-20 11:00AM: mail has not come yet; 2015-06-21 11:59AM: mail had come", how can we estimate?
+This is not a normal setup where we estimate a mean but our data is interestingly messed up: censored or truncated or an interval somehow.
+
+[Survival analysis](!Wikipedia) seems like the appropriate paradigm.
+This is not a simple survival analysis with "right-censoring" where each individual is followed up to a censoring time and the exact time of 'failure' is observed.
+(This would be right-censoring if instead we had gone out to the mailbox early in the morning and sat there waiting for the mailman to record when she came, occasionally getting bored around 10AM or 11AM and wandering off without seeing when the mail comes.)
+This isn't "left-censoring" either (for left-censoring, we'd go out to the mailbox late in the morning when the mail might already be there, and if it isn't, then wait until it does come).
+I don't think this is left or right truncation either, since each day data is collected and there's no sampling biases at play.
+What this is is interval censoring: when we go out to the mailbox at 11AM and discover the mail is there, we learn that the mail was delivered today sometime in the interval midnight-10:59AM, or if the mail isn't there, we learn it will be delivered later today sometime during the interval 11:01AM-midnight (hopefully closer to the first end than the second).
+Interval censoring comes up in biostatistics for situations like periodic checkups for cancer, which does resemble our mail situation.
+
+## ML
+
+The R [`survival` library](http://cran.r-project.org/web/packages/survival/index.html) supports the usual right/left-censoring but also the interval-censoring.
+It supports two encodings of intervals, `interval` and `interval2`[^survival-interval-encoding]; I use the former, which format works well with both the `survival` library and also other tools like JAGS.
+Times are written as minutes since midnight, so they can be handled as positive numbers rather than date-times (ie midnight=0, 11AM=660, noon=720, midnight=1440, etc), and the upper and lower bounds on intervals are 0 and 1440 (so if I check the mail at 660 and it's there, then the interval is 0-660, and if it's not, 660-1440).
+
+[^survival-interval-encoding]: From the documentation:
+
+    > `Surv(time, time2, event, type="interval")`
+    >
+    > 1. `time`: For interval data, the first argument is the starting time for the interval.
+    > 2. `time2`: ending time of the interval for interval censored or counting process data only. Intervals are assumed to be open on the left and closed on the right, `(start, end]`. For counting process data, event indicates whether an event occurred at the end of the interval.
+    > 3. `event`: The status indicator, normally 0=alive, 1=dead....For interval censored data, the status indicator is 0=right censored, 1=event at time, 2=left censored, 3=interval censored.
+    >
+    > Interval censored data can be represented in two ways. For the first use `type = "interval"` and the codes shown above. In that usage the value of the `time2` argument is ignored unless `event=3`. The second approach is to think of each observation as a time interval with $({-\infty}, t)$ for left censored, $(t, \infty)$ for right censored, $(t,t)$ for exact and $(t_1, t_2)$ for an interval. This is the approach used for `type = "interval2"`. Infinite values can be represented either by actual infinity (`Inf`) or `NA`. The second form has proven to be the more useful one.
+    >
+    > ...a subject's data for the pair of columns in the dataset `(time1, time2)` is $(t_e, t_e)$ if the event time $t_e$ is known exactly; $(t_l, \text{NA})$ if right censored (where $t_l$ is the censoring time); and $(t_l, t_u)$ if interval censored (where $t_l$ is the lower and $t_u$ is the upper bound of the interval).
+
+~~~{.R}
+set.seed(2015-06-21)
+# simulate a scenario in which the mailman tends to come around 11AM (660) and I tend to check around then,
+# & generate interval data for each time, bounded by end-of-day/midnight below & above, collecting ~1 month:
+simulateMailbox <- function(n, time) {
+    deliveryTime <- round(rnorm(n, mean = time, sd = 30))
+    checkTime <- round(rnorm(n, mean = time, sd = 60))
+    simulates <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
+                         checkTime, deliveryTime)
+    return(data.frame(Time1=simulates[1,], Time2=simulates[2,])) }
+mailSim <- simulateMailbox(30, 660); mailSim
+##        Time1 Time2
+## 1    569  1440
+## 2      0   664
+## 3    592  1440
+## 4    581  1440
+## 5    596  1440
+## 6      0   703
+## 7      0   705
+## 8    667  1440
+## ...
+library(ggplot2)
+png(file="~/wiki/images/maildelivery-simulated.png", width = 800, height = 500)
+ggplot(mailSim) + geom_segment(aes(x=Time1, xend=Time2, y=1:nrow(mailSim), yend=1:nrow(mailSim))) +
+    geom_vline(xintercept=660, color="blue") + ylab("Day") + xlab("Time")
+invisible(dev.off())
+~~~
+
+Inferring the mean time of delivery might sound difficult with such extremely crude data of intervals 700 minutes wide or worse, but plotting the little simulated dataset and marking the true mean time of 660, we see it's not *that* bad - the mean time is probably whatever line passes through the most intervals:
+
+![The simulated overlapping-intervals data, with the true mean time drawn in blue](/images/maildelivery-simulated.png)
+
+And also with our simulated dataset, we can see if the standard R survival library and a interval-censored model written in JAGS can recover the 660:
+
+~~~{.R}
+surv <- Surv(mailSim$Time1, mailSim$Time2, type="interval2")
+s <- survfit(surv ~ 1, data=mailSim); summary(s)
+##  time   n.risk   n.event survival   std.err lower 95% CI upper 95% CI
+## 633.0 30.00000  7.503147 0.749895 0.0790680     0.609889     0.922041
+## 651.0 22.49685 12.188431 0.343614 0.0867071     0.209546     0.563458
+## 663.5 10.30842  0.611086 0.323245 0.0853927     0.192604     0.542496
+## 685.0  9.69734  9.697336 0.000000       NaN           NA           NA
+plot(s)
+## https://i.imgur.com/nzOHQT0.png
+sr <- survreg(surv ~ 1, dist="gaussian", data=mailSim); summary(sr)
+##                 Value Std. Error        z           p
+## (Intercept) 656.21819   7.324758 89.58906 0.00000e+00
+## Log(scale)    2.93664   0.444159  6.61169 3.79957e-11
+##
+## Scale= 18.8524
+##
+## Gaussian distribution
+## Loglik(model)= -7.1   Loglik(intercept only)= -7.1
+## Number of Newton-Raphson Iterations: 10
+## n= 30
+~~~
+
+## MCMC
+
+More Bayesianly, we can write an interval-censoring model in JAGS, which gives us the opportunity to use an informative prior about the mean time the mailman comes.
+
+They work normal 9-5 hours as far as I know, so we can rule out anything outside 540-1020.
+From past experience, I expect the mail to show up not before 10AM (600) and not after 1PM (780), with those extremes being rare and sometime around 11AM (660) being much more common; so not a uniform distribution over 600-780 but a normal one centered on 660 and then somewhat arbitrarily saying that 600-700 represent 3 SDs out from the mean of delivery times to get SD=~30 minutes so in all, `dnorm(660, pow(30, -2))`.
+The SD itself seems to me like it could range anywhere from a few minutes to an hour, but much beyond that is impossible (if the SD was over an hour, then every so often the mailman would have to come at 8AM!).
+
+~~~{.R}
+library(R2jags)
+model1 <- "model { for (i in 1:n){
+           y[i] ~ dinterval(t[i], dt[i,])
+           t[i] ~ dnorm(mu,tau)
+           }
+
+           mu ~ dnorm(660, pow(30, -2))
+           sd ~ dunif(0, 60)
+           tau <- pow(1/sd, 2)
+
+           y.new ~ dnorm(mu, tau)
+           }"
+# y=1 == Event=3 for `Surv`: event is hidden inside interval, not observed/left-/right-censored
+data <- list("dt"=mailSim, "n"=nrow(mailSim), "y"=rep(1, nrow(mailSim)))
+inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mailSim,1,mean))) }
+params <- c("mu", "sd", "y.new")
+j1 <- jags(data,inits, params, textConnection(model1)); j1
+##          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
+## mu       657.855   9.362 640.022 651.823 657.567 663.866 676.540 1.003  1100
+## sd        28.226  10.859  12.033  20.051  26.412  34.750  54.141 1.068    35
+## y.new    656.872  32.354 592.156 638.315 656.290 675.344 721.606 1.005  3000
+## deviance   0.000   0.000   0.000   0.000   0.000   0.000   0.000 1.000     1
+~~~
+
+Both approaches' point-value mean time of 656/657 (10:54AM) come close to the true simulation value of 660 (11AM) and the prediction interval of 592-721 also sounds right, validating the models.
+The estimated standard deviation isn't as accurate with a wide credible interval, reflecting that it's a harder parameter to estimate and the estimate is still vague with only _n_=30.
+
+~~~{.R}
+mailSim <- simulateMailbox(70, 660); mailSim
+
+# http://cran.r-project.org/web/packages/animation/index.html
+library(animation)
+saveGIF(
+    for(n in 1:nrow(mailSim)){
+        data <- list("dt"=mailSim[1:n,], "n"=nrow(mailSim[1:n,]), "y"=rep(1, nrow(mailSim[1:n,])))
+        inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mailSim[1:n,],1,mean))) }
+        params <- c("mu","tau", "y.new")
+        j1 <- jags(data, inits, params, textConnection(model1))
+
+        lowerMean <- j1$BUGSoutput$summary[c(2),][3]
+        medianMean  <- j1$BUGSoutput$mean$mu
+        upperMean <- j1$BUGSoutput$summary[c(2),][7]
+
+        lowerPredictive <- j1$BUGSoutput$summary[c(4),][3]
+        upperPredictive <- j1$BUGSoutput$summary[c(4),][7]
+
+        # need an environment call for `ggplot` inside a function: http://stackoverflow.com/a/29595312/329866
+        p <- ggplot(mailSim[1:n,]) +
+              coord_cartesian(xlim = c(7*60, 13*60)) +
+              ylab("Day") + xlab("Time") +
+              geom_segment(aes(x=mailSim[1:n,]$Time1, xend=mailSim[1:n,]$Time2, y=1:n, yend=1:n)) +
+              geom_vline(xintercept=medianMean, color="blue") +
+              geom_vline(xintercept=lowerMean, color="green") +
+              geom_vline(xintercept=upperMean, color="green") +
+              geom_vline(xintercept=lowerPredictive, color="red") +
+              geom_vline(xintercept=upperPredictive, color="red")
+        print(p)
+        },
+    interval = 0.7, ani.width = 800, ani.height=800,
+    movie.name = "/home/gwern/wiki/images/mail-simulated-inferencesamplebysample.gif")
+~~~
+
+With a simulation and JAGS set up, we could also see how the posterior estimates of the mean, 95% CI of the mean, and predictive interval change as an additional datapoint is added:
+
+![Simulated data: posterior estimates evolving sample by sample](/images/mail-simulated-inferencesamplebysample.gif)
+
+~~~{.R}
+set.seed(2015-06-24)
+library(lubridate)
+clockS <- function(t){hour(t)*60 + minute(t) + second(t)/60}
+
+mail <- data.frame(Time=clockS(as.POSIXct(c("2015-06-20 11:00", "2015-06-21 11:06", "2015-06-23 11:03",
+                                 "2015-06-24 11:05", "2015-06-25 11:00", "2015-06-26 10:56",
+                                 "2015-06-27 10:45"),
+                                "EDT")),
+    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE))
+
+mail <- data.frame(Time1 = ifelse(mail$Delivered, 0, mail$Time),
+                           Time2 = ifelse(mail$Delivered,  mail$Time, 1440))
+
+library(R2jags)
+model1 <- "model { for (i in 1:n){
+           y[i] ~ dinterval(t[i], dt[i,])
+           t[i] ~ dnorm(mu,tau)
+           }
+
+           mu ~ dnorm(660, pow(30, -2))
+           sd ~ dunif(0, 60)
+           tau <- pow(1/sd, 2)
+
+           y.new ~ dnorm(mu, tau)
+           }"
+
+data <- list("dt"=mail, "n"=nrow(mail), "y"=rep(1, nrow(mail)))
+inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mail,1,mean))) }
+params <- c("mu","sd", "y.new")
+j1 <- jags(data, inits, params, textConnection(model1)); j1
+##          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
+## mu       643.770  16.440 609.812 633.338 644.257 654.347 674.943 1.001  3000
+## sd        41.072  12.335  15.849  31.725  42.366  51.450  59.173 1.001  3000
+## y.new    643.003  45.034 550.865 615.279 643.776 671.716 730.792 1.001  3000
+## deviance   0.000   0.000   0.000   0.000   0.000   0.000   0.000 1.000     1
+
+lowerMean <- j1$BUGSoutput$summary[c(2),][3]
+medianMean  <- j1$BUGSoutput$mean$mu
+upperMean <- j1$BUGSoutput$summary[c(2),][7]
+
+lowerPredictive <- j1$BUGSoutput$summary[c(4),][3]
+# medianMean ~= predictive mean in this case, so don't bother
+upperPredictive <- j1$BUGSoutput$summary[c(4),][7]
+
+reformat <- function (time) {
+   paste0(as.character(round((time %/% 60))), ":",  as.character(round((time %% 60)))) }
+sapply(c(lowerMean, medianMean, upperMean), reformat)
+sapply(c(lowerPredictive, upperPredictive), reformat)
+
+library(ggplot2)
+
+png(file="~/wiki/images/maildelivery-real.png", width = 800, height = 500)
+ggplot(mail) + geom_segment(aes(x=Time1, xend=Time2, y=1:nrow(mail), yend=1:nrow(mail))) +
+    ylab("Day") + xlab("Time") +
+    geom_vline(xintercept=medianMean, color="blue") +
+    geom_vline(xintercept=lowerMean, color="green") +
+    geom_vline(xintercept=upperMean, color="green") +
+    geom_vline(xintercept=lowerPredictive, color="red") +
+    geom_vline(xintercept=upperPredictive, color="red")
+invisible(dev.off())
+~~~
+
+![Overlapping-intervals data, with the estimated mean time in blue, 95% CI around the mean time in green, and 95% predictive intervals as to when the delivery is made](/images/maildelivery-real.png)
+
+## ABC
+
+Because JAGS provides an interval-censored distribution in the form of `dinterval()` with a [likelihood function](!Wikipedia), we can use MCMC for inverse inference (reasoning from data to the underlying process)
+But if it didn't, I wouldn't know how to write one down for it and then the MCMC wouldn't work; but I was able to write a little simulation of how the underlying process of delivery-and-checking works, which, given a set of parameters, spits out simulated results generated by the process, which is probability or forward inference (reasoning from a version of an underlying process to see what it creates).
+This is a common situation: you can write a good simulation simply by describing how you think something works, but you can't write a likelihood function.
+
+[ABC](!Wikipedia "Approximate Bayesian computation") (exemplified in the fun example ["Tiny Data, Approximate Bayesian Computation and the Socks of Karl Broman"](http://www.sumsar.net/blog/2014/10/tiny-data-and-the-socks-of-karl-broman/)) is a remarkably simple and powerful idea which lets us take a forward simulation and use it to run backwards inference.
+
+The simplest ABC goes like this:
+You sample possible parameters from your prior, feed the set of parameters into your simulation, and if the result is identical to your data, you save that set of parameters.
+At the end, you're left with a bunch of sets and that's your posterior distribution which you can look at the histograms of and calculate 95% densities etc.
+
+So for the mail data, ABC goes like this:
+
+~~~{.R}
+simulateMailbox <- function(n, dTime, dSD) {
+    deliveryTime <- round(rnorm(n, mean = dTime, sd = dSD))
+    checkTime <- round(rnorm(n, mean = dTime, sd = dSD))
+    simulates <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
+                         checkTime, deliveryTime)
+    return(data.frame(Time1=simulates[1,], Time2=simulates[2,])) }
+
+# if both dataframes are sorted, comparison is easier
+mailSorted <- mail[order(mail$Time1),]
+
+mail_sim <- replicate(10000000, {
+    # mu ~ dnorm(660, 30)
+    mu <- rnorm(n=1, mean=660, sd=30)
+    # sd ~ dunif(0, 60)
+    sd <- runif(n=1, min=0, max=60)
+
+    newData <- simulateMailbox(nrow(mailSorted), mu, sd)
+    newDataSorted <- newData[order(newData$Time1),]
+
+    if (all(newDataSorted == mailSorted)) { return(c(Mu=mu, SD=sd)) }
+   }
+  )
+results <- Filter(function(x) {!is.null(x)}, mail_sim)
+results <- data.frame(t(sapply(results,c)))
+summary(results)
+~~~
+
+The first thing to note is efficiency: I can get reasonable number of samples in reasonable amount of time for _n_=1-3, but at 4 datapoints, it becomes slow.
+There's so many possible datasets when 4 checks are simulated that almost all get rejected because they are not identical to the real dataset and it takes millions of samples and hours to run.
+And this problem only gets worse for _n_=5 and bigger.
+
+To run ABC more efficiently, you relax the requirement that the simulated data == real data and instead accept the pair of parameters if the simulated data is 'close enough' in some sense to the real data, close in terms of some summary statistic (hopefully sufficient) like the mean.
+I don't know what are the sufficient statistics for a set of interval-censored data, but I figure that if the means of the pairs of times are similar in both datasets, then they are probably close enough for ABC to work, so I can use that as a rejection tolerance; implementing that and playing around, it seems I can make the difference in means as tight as <2 while still running fast.
+
+~~~{.R}
+mail_abc <- function(samples) {
+    results <- list()
+    n <- 0
+    while (n<samples) {
+
+      # Priors:
+      ## mu ~ dnorm(660, 30)
+      mu <- rnorm(n=1, mean=660, sd=30)
+      ## sd ~ dunif(0, 60)
+      sd <- runif(n=1, min=0, max=60)
+
+      # generate new data set based on a pair of possible parameters:
+      newData <- simulateMailbox(nrow(mail), mu, sd)
+
+      # see if some summaries of the new data were within tolerance ϵ<2 of the real data:
+      if (abs(mean(newData$Time1) - mean(mail$Time1)) < 2 &&
+          abs(mean(newData$Time2) - mean(mail$Time2)) < 2)
+        { results <- list(c(Mu=mu, SD=sd), results); n <- n+1; }
+    }
+   return(results)
+  }
+sims <- mail_abc(1000)
+results <- matrix(unlist(sims), ncol=2, byrow=TRUE)
+summary(results)
+##        V1                 V2
+##  Min.   :617.5109   Min.   : 0.07457698
+##  1st Qu.:651.3754   1st Qu.: 5.15522760
+##  Median :656.6510   Median :15.79521687
+##  Mean   :654.6066   Mean   :20.36306982
+##  3rd Qu.:658.8573   3rd Qu.:33.14659490
+##  Max.   :688.2603   Max.   :59.65391393
+~~~
+
+The mean value here is somewhat acceptable but the SD is considerably off from the JAGS estimate (which I assume to be correct).
+Post hoc, this makes some sense since my summary statistic *is* just means; it might make more sense to check the SD of each column as well (at the cost of more runtime).
+
+Another way to summarize the dataset occurs to me while looking at the graphs: the most striking visual feature of the interval-censored data is how the 'needles' overlap slightly and it is this slight overlap which determines where the mean is; the most informative set of data would be balanced exactly between needles that fall to the left and needles that fall to the right, leaving as little room as possible for the mean to 'escape' out into the wider intervals and be uncertain.
+(Imagine a set of data where all the needles fall to the left, because I only checked the mail at 2PM; I would then be extremely certain that the mail is not delivered after 2PM but I would have little more idea than when I started about when the mail is actually delivered in the morning and my posterior would repeat the prior.)
+So I could use the count of left or right intervals (it doesn't matter if I use `sum(Time1 == 0)` or `sum(Time2 == 1440)` since they are mutually exclusive) as the summary statistic.
+
+~~~{.R}
+mail_abc <- function(samples) {
+    results <- list()
+    n <- 0
+    while (n<samples) {
+
+      # Priors:
+      ## mu ~ dnorm(660, 30)
+      mu <- rnorm(n=1, mean=660, sd=30)
+      ## sd ~ dunif(0, 60)
+      sd <- runif(n=1, min=0, max=60)
+
+      # generate new data set based on a pair of possible parameters:
+      newData <- simulateMailbox(nrow(mail), mu, sd)
+
+      # see if a summary of the new data matches the old:
+      if (sum(mail$Time1 == 0) == sum(newData$Time1 == 0))
+        { results <- list(c(Mu=mu, SD=sd), results); n <- n+1; }
+    }
+   return(results)
+  }
+sims <- mail_abc(10000)
+results <- matrix(unlist(sims), ncol=2, byrow=TRUE)
+summary(results)
+##        V1                 V2
+##  Min.   :553.4688   Min.   : 0.385626
+##  1st Qu.:639.2079   1st Qu.:17.145015
+##  Median :659.3327   Median :31.471877
+##  Mean   :659.5980   Mean   :31.296899
+##  3rd Qu.:679.8369   3rd Qu.:45.743645
+##  Max.   :765.8880   Max.   :59.991264
+~~~
+
+This summary, simple as it is, does better in replicating the JAGS estimates.
+
+# Exact delivery-time data
+
+Halfway through compiling my notes, I realized that I *did* in fact have several exact times for deliveries: the USPS tracking emails for packages, while useless on the day of delivery for knowing when to check (since the alerts are only sent around 3-4PM), do include the exact time of delivery that day.
+And then while recording interval data, I did sometimes spot the mailman on her rounds; to keep things simple, I still recorded it as an interval.
+
+Exact data makes estimating a mean & SD trivial:
+
+~~~{.R}
+set.seed(2015-06-25)
+library(lubridate)
+clockS <- function(t){hour(t)*60 + minute(t) + second(t)/60}
+
+mailExact <- data.frame(Date=as.POSIXct(c("2010-04-29 11:33AM", "2010-05-12 11:31AM", "2014-08-20 12:14PM",
+                                          "2014-09-29 11:15AM", "2014-12-15 12:02PM", "2015-03-09 11:19AM",
+                                          "2015-06-10 10:34AM", "2015-06-20 11:02AM", "2015-06-23 10:58AM",
+                                          "2015-06-24 10:53AM", "2015-06-25 10:55AM"),
+                        "EDT"))
+mailExact$TimeDelivered <- clockS(mailExact$Date)
+##                   Date TimeDelivered Group
+## 1  2010-04-29 11:33:00           693 FALSE
+## 2  2010-05-12 11:31:00           691 FALSE
+## 3  2014-08-20 12:14:00           734 FALSE
+## 4  2014-09-29 11:15:00           675 FALSE
+## 5  2014-12-15 12:02:00           722 FALSE
+## 6  2015-03-09 11:19:00           679  TRUE
+## 7  2015-06-10 10:34:00           634  TRUE
+## 8  2015-06-20 11:02:00           662  TRUE
+## 9  2015-06-23 10:58:00           658  TRUE
+## 10 2015-06-24 10:53:00           653  TRUE
+## 11 2015-06-25 10:55:00           655  TRUE
+mean(mailExact$TimeDelivered)
+## [1] 677.8181818
+sd(mailExact$TimeDelivered)
+## [1] 30.36714732
+library(ggplot2); qplot(Date, TimeDelivered, data=mailExact)
+## https://i.imgur.com/oJlGp6t.png
+~~~
+
+Plotted over time, there's a troubling amount of heterogeneity: despite the sparsity of data (apparently I did not usually bother to set up USPS tracking alerts 2011-2014, to my loss) it's hard not to see two separate clusters there.
+
+## ML
+
+Besides the visual evidence, a _t_-test agrees with there being a difference between 2010-2014 and 2015
+
+~~~{.R}
+mailExact$Group <- year(mailExact$Date) > 2014
+t.test(TimeDelivered ~ Group, data=mailExact)
+##
+##  Welch Two Sample t-test
+##
+## data:  TimeDelivered by Group
+## t = 3.7348635, df = 6.3085711, p-value = 0.008834452
+## alternative hypothesis: true difference in means is not equal to 0
+## 95% confidence interval:
+##  16.27540251 76.05793082
+## sample estimates:
+## mean in group FALSE  mean in group TRUE
+##         703.0000000         656.8333333
+mean(mailExact[mailExact$Group,]$TimeDelivered)
+## [1] 656.8333333
+sd(mailExact[mailExact$Group,]$TimeDelivered)
+## [1] 14.55220487
+~~~
+
+Why might there be two clusters?
+Well, now that I think about it, I recall that my mailman used to be an older gentleman with white hair (I remember him vividly because in mid-August 2013 a package of fish oil was damaged in transit, and he showed up to explain it to me and offer suggestions on returns; Amazon didn't insist on a leaky fish oil bottle being shipped back and simply sent me a new one).
+But now my mailman is a younger middle-aged woman. That seems like a good reason for a shift in delivery times (perhaps she drives faster).
+
+## MCMC
+
+Estimating the two distributions separately in a simple multilevel/hierarchical model:
+
+~~~{.R}
+library(R2jags)
+model1 <- "model{
+  # I expect all deliveries ~11AM/660:
+  grand.mean ~ dnorm(660, pow(30, -2))
+
+  # different mailman/groups will deliver at different offsets, but not by more than 2 hours or so:
+  delta.between.group ~ dunif(0, 100)
+
+  # similarly, both mailman times and delivery times are reasonably precise within 2 hours or so:
+  tau.between.group <- pow(sigma.between.group, -2)
+  sigma.between.group ~ dunif(0, 100)
+
+  for(j in 1:K){
+   # let's say the group-level differences are also normally-distributed:
+   group.delta[j] ~ dnorm(delta.between.group, tau.between.group)
+   # and each group also has its own standard-deviation, potentially different from the others':
+   group.within.sigma[j] ~ dunif(0, 100)
+   group.within.tau[j] <- pow(group.within.sigma[j], -2)
+
+   # save the net combo for convenience & interpretability:
+   group.mean[j] <- grand.mean + group.delta[j]
+  }
+
+  for (i in 1:N) {
+   # each individual observation is from the grand-mean + group-offset, then normally distributed:
+   Y[i] ~ dnorm(grand.mean + group.delta[Group[i]], group.within.tau[Group[i]])
+  }
+
+  # prediction interval for the second group, the 2015 data, which is the one I care about:
+  y.new2 ~ dnorm(grand.mean + group.delta[Group[2]], group.within.tau[Group[2]])
+  }"
+data <- list(N=nrow(mailExact), Y=mailExact$TimeDelivered, K=max(mailExact$Group+1),
+             Group=(mailExact$Group+1))
+params <- c("grand.mean","delta.between.group", "sigma.between.group", "group.delta", "group.mean",
+            "group.within.sigma", "y.new2")
+j1 <- jags(data=data, parameters.to.save=params, inits=NULL, model.file=textConnection(model1)); j1
+##                       mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
+## delta.between.group    39.435  25.398   2.120  18.421  35.277  57.075  92.897 1.004   510
+## grand.mean            650.551  25.354 601.337 633.208 650.248 667.426 701.950 1.006   340
+## group.delta[1]         48.751  28.402  -8.001  29.126  48.571  67.956 104.437 1.005   460
+## group.delta[2]          8.542  26.788 -45.488  -9.510   9.095  26.338  59.247 1.004   580
+## group.mean[1]         699.302  16.314 663.215 690.396 700.385 708.990 730.555 1.001  3000
+## group.mean[2]         659.092  10.377 640.786 653.343 658.322 663.680 683.464 1.002  1400
+## group.within.sigma[1]  35.048  15.767  16.221  23.941  30.830  41.618  77.953 1.003  1200
+## group.within.sigma[2]  21.018  10.808   9.943  14.337  18.138  23.957  53.014 1.001  3000
+## sigma.between.group    48.012  24.095  10.639  28.634  44.631  65.673  95.790 1.004  1000
+## y.new2                698.685  42.692 611.817 676.106 699.429 721.902 786.249 1.001  3000
+## deviance               99.322   4.246  93.844  96.092  98.403 101.657 109.751 1.001  3000
+~~~
+
+# Conclusions
+
+Lessons learned:
+
+1. my original prior estimate of when the mailman comes was accurate, but I seem to have underestimated the standard deviation; despite that, providing informative priors meant that the predictions from the JAGS model were sensible from the start (mostly from the small values for the SD, as the mean time was easily estimated from the intervals) and it made good use of the data.
+2. the variability of mail delivery times is high enough that the prediction intervals are inherently wide; after relatively few datapoints, whether interval or exact, diminishing returns has set in.
+3. ABC really is simple to implement and getting computational tractability is the problem (besides making it tedious to use, long runtimes also interfere with writing a correct implementation in the first place)
+4. while powerful, JAGS models can be confusing to write; it's easy to lose track of what the structure of your model is and write the wrong thing, and the use of precision rather than standard-deviation adds boilerplate and makes it even easier to get lost in a welter of variables & distributions, in addition to a fair amount of boilerplate in running the JAGS code at all - leading to errors where you are not certain whether you have a conceptual problem or your boilerplate is out of date
+5. the combination of `ggplot2` and [`animation`](http://cran.r-project.org/web/packages/animation/index.html) bade fair to make animations as easy as devising a ggplot2 image, but due to some ugly interactions between them (`ggplot2` interacts with the R toplevel scope/environment in a way which breaks when it's called inside a function, and `animation` has some subtle bug relating to deciding how long to delay frames in an animation which I couldn't figure out), I lost hours to getting it to work at all.
