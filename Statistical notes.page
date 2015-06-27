@@ -929,7 +929,7 @@ http://www.unz.com/gnxp/the-intel-of-sequencing/#comment-677904
 
 > Mail is delivered by the USPS mailman at a regular but not observed time; what is observed is instead whether the mail has been delivered at a certain time, yielding somewhat-unusual 'interval-censored data'.
 > I describe the problem of estimating when the mailman delivers, write a simulation of the data-generating process, and demonstrate analysis of interval-censored data in R using maximum-likelihood (the survival library), MMC (JAGS), and likelihood-free Bayesian inference (ABC using the simulation). This allows estimation of when to check the mailbox with a certain probability it will be there such as 95%.
-> Finally, I compare the estimates from the interval-censored with estimates from a smaller set of exact delivery-times provided by USPS tracking.
+> Finally, I compare the estimates from the interval-censored with estimates from a smaller set of exact delivery-times provided by USPS tracking, using a multilevel model to deal with heterogeneity apparently due to a change in USPS routes/postmen.
 
 Consider a question of burning importance for all nerds: what time does the mailman come, bearing gifts?
 We could measure by going out in the morning at a random time to see if the mail has come yet, and estimate.
@@ -976,7 +976,7 @@ simulateMailbox <- function(n, time) {
     simulates <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
                          checkTime, deliveryTime)
     return(data.frame(Time1=simulates[1,], Time2=simulates[2,])) }
-mail <- simulateMailbox(30, 660); mail
+mailSim <- simulateMailbox(30, 660); mailSim
 ##        Time1 Time2
 ## 1    569  1440
 ## 2      0   664
@@ -989,7 +989,7 @@ mail <- simulateMailbox(30, 660); mail
 ## ...
 library(ggplot2)
 png(file="~/wiki/images/maildelivery-simulated.png", width = 800, height = 500)
-ggplot(mail) + geom_segment(aes(x=Time1, xend=Time2, y=1:nrow(mail), yend=1:nrow(mail))) +
+ggplot(mailSim) + geom_segment(aes(x=Time1, xend=Time2, y=1:nrow(mailSim), yend=1:nrow(mailSim))) +
     geom_vline(xintercept=660, color="blue") + ylab("Day") + xlab("Time")
 invisible(dev.off())
 ~~~
@@ -1001,8 +1001,8 @@ Inferring the mean time of delivery might sound difficult with such extremely cr
 And also with our simulated dataset, we can see if the standard R survival library and a interval-censored model written in JAGS can recover the 660:
 
 ~~~{.R}
-surv <- Surv(mail$Time1, mail$Time2, type="interval2")
-s <- survfit(surv ~ 1, data=mail); summary(s)
+surv <- Surv(mailSim$Time1, mailSim$Time2, type="interval2")
+s <- survfit(surv ~ 1, data=mailSim); summary(s)
 ##  time   n.risk   n.event survival   std.err lower 95% CI upper 95% CI
 ## 633.0 30.00000  7.503147 0.749895 0.0790680     0.609889     0.922041
 ## 651.0 22.49685 12.188431 0.343614 0.0867071     0.209546     0.563458
@@ -1010,7 +1010,7 @@ s <- survfit(surv ~ 1, data=mail); summary(s)
 ## 685.0  9.69734  9.697336 0.000000       NaN           NA           NA
 plot(s)
 ## https://i.imgur.com/nzOHQT0.png
-sr <- survreg(surv ~ 1, dist="gaussian", data=mail); summary(sr)
+sr <- survreg(surv ~ 1, dist="gaussian", data=mailSim); summary(sr)
 ##                 Value Std. Error        z           p
 ## (Intercept) 656.21819   7.324758 89.58906 0.00000e+00
 ## Log(scale)    2.93664   0.444159  6.61169 3.79957e-11
@@ -1044,35 +1044,30 @@ model1 <- "model { for (i in 1:n){
 
            y.new ~ dnorm(mu, tau)
            }"
-
-
 # y=1 means the same thing as Event=3 for `Surv`; it means the event is hidden inside the interval, not observed or left- or right-censored
-data <- list("dt"=mail, "n"=nrow(mail), "y"=rep(1, nrow(mail)))
-inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mail,1,mean))) }
-params <- c("mu","tau", "y.new")
-j1 <- jags(data,inits, params, textConnection(model1), n.iter=1000000); j1
-## Inference for Bugs model at "13", fit using jags,
-##  3 chains, each with 2000 iterations (first 1000 discarded)
-##  n.sims = 3000 iterations saved
+data <- list("dt"=mailSim, "n"=nrow(mailSim), "y"=rep(1, nrow(mailSim)))
+inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mailSim,1,mean))) }
+params <- c("mu", "sd", "y.new")
+j1 <- jags(data,inits, params, textConnection(model1)); j1
 ##          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
-## mu       657.668   7.985 642.789 652.612 657.204 662.418 674.584 1.008   390
-## tau        0.003   0.003   0.000   0.001   0.002   0.004   0.010 1.060    44
+## mu       657.855   9.362 640.022 651.823 657.567 663.866 676.540 1.003  1100
+## sd        28.226  10.859  12.033  20.051  26.412  34.750  54.141 1.068    35
+## y.new    656.872  32.354 592.156 638.315 656.290 675.344 721.606 1.005  3000
 ## deviance   0.000   0.000   0.000   0.000   0.000   0.000   0.000 1.000     1
-1/sqrt(0.003)
-# [1] 18.25741858
 ~~~
 
-Both approaches' point-value mean time of 656/657 (10:54AM) come close to the true simulation value of 660 (11AM), validating the models.
-The estimated standard deviation isn't as accurate (18 vs 30) but the credible interval reflects that it's a harder parameter to estimate and the estimate is still vague with only _n_=30.
+Both approaches' point-value mean time of 656/657 (10:54AM) come close to the true simulation value of 660 (11AM) and the prediction interval of 592-721 also sounds right, validating the models.
+The estimated standard deviation isn't as accurate with a wide credible interval, reflecting that it's a harder parameter to estimate and the estimate is still vague with only _n_=30.
 
 ~~~{.R}
-mail <- simulateMailbox(70, 660); mail
+mailSim <- simulateMailbox(70, 660); mailSim
 
+# http://cran.r-project.org/web/packages/animation/index.html
 library(animation)
 saveGIF(
-for(n in 1:nrow(mail)){
-    data <- list("dt"=mail[1:n,], "n"=nrow(mail[1:n,]), "y"=rep(1, nrow(mail[1:n,])))
-    inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mail[1:n,],1,mean))) }
+for(n in 1:nrow(mailSim)){
+    data <- list("dt"=mailSim[1:n,], "n"=nrow(mailSim[1:n,]), "y"=rep(1, nrow(mailSim[1:n,])))
+    inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mailSim[1:n,],1,mean))) }
     params <- c("mu","tau", "y.new")
     j1 <- jags(data, inits, params, textConnection(model1))
 
@@ -1084,10 +1079,10 @@ for(n in 1:nrow(mail)){
     upperPredictive <- j1$BUGSoutput$summary[c(4),][7]
 
     # we need an environment call to use `ggplot` inside a function; see http://stackoverflow.com/a/29595312/329866
-    p <- ggplot(mail[1:n,]) +
+    p <- ggplot(mailSim[1:n,]) +
           coord_cartesian(xlim = c(7*60, 13*60)) +
           ylab("Day") + xlab("Time") +
-          geom_segment(aes(x=mail[1:n,]$Time1, xend=mail[1:n,]$Time2, y=1:n, yend=1:n)) +
+          geom_segment(aes(x=mailSim[1:n,]$Time1, xend=mailSim[1:n,]$Time2, y=1:n, yend=1:n)) +
           geom_vline(xintercept=medianMean, color="blue") +
           geom_vline(xintercept=lowerMean, color="green") +
           geom_vline(xintercept=upperMean, color="green") +
@@ -1128,7 +1123,7 @@ model1 <- "model { for (i in 1:n){
 data <- list("dt"=mail, "n"=nrow(mail), "y"=rep(1, nrow(mail)))
 inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mail,1,mean))) }
 params <- c("mu","sd", "y.new")
-j1 <- jags(data, inits, params, textConnection(model1), n.iter=1000000); j1
+j1 <- jags(data, inits, params, textConnection(model1)); j1
 ##          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 ## mu       643.770  16.440 609.812 633.338 644.257 654.347 674.943 1.001  3000
 ## sd        41.072  12.335  15.849  31.725  42.366  51.450  59.173 1.001  3000
@@ -1382,9 +1377,13 @@ model1 <- "model{
   for (i in 1:N) {
    # each individual observation is from the grand-mean + group-offset, then normally distributed:
    Y[i] ~ dnorm(grand.mean + group.delta[Group[i]], group.within.tau[Group[i]])
-  }}"
+  }
+
+  # prediction interval for the second group, the 2015 data, which is the one I care about:
+  y.new2 ~ dnorm(grand.mean + group.delta[Group[2]], group.within.tau[Group[2]])
+  }"
 data <- list(N=nrow(mailExact), Y=mailExact$TimeDelivered, K=max(mailExact$Group+1), Group=(mailExact$Group+1))
-params <- c("grand.mean","delta.between.group", "sigma.between.group", "group.delta", "group.mean", "group.within.sigma")
+params <- c("grand.mean","delta.between.group", "sigma.between.group", "group.delta", "group.mean", "group.within.sigma", "y.new2")
 j1 <- jags(data=data, parameters.to.save=params, inits=NULL, model.file=textConnection(model1)); j1
 ##                       mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 ## delta.between.group    39.435  25.398   2.120  18.421  35.277  57.075  92.897 1.004   510
@@ -1396,5 +1395,14 @@ j1 <- jags(data=data, parameters.to.save=params, inits=NULL, model.file=textConn
 ## group.within.sigma[1]  35.048  15.767  16.221  23.941  30.830  41.618  77.953 1.003  1200
 ## group.within.sigma[2]  21.018  10.808   9.943  14.337  18.138  23.957  53.014 1.001  3000
 ## sigma.between.group    48.012  24.095  10.639  28.634  44.631  65.673  95.790 1.004  1000
+## y.new2                698.685  42.692 611.817 676.106 699.429 721.902 786.249 1.001  3000
 ## deviance               99.322   4.246  93.844  96.092  98.403 101.657 109.751 1.001  3000
 ~~~
+
+Lessons learned:
+
+1. my original prior estimate of when the mailman comes was accurate, but I seem to have underestimated the standard deviation; despite that, providing informative priors meant that the predictions from the JAGS model were sensible from the start (mostly from the small values for the SD, as the mean time was easily estimated from the intervals) and it made good use of the data.
+2. the variability of mail delivery times is high enough that the prediction intervals are inherently wide; after relatively few datapoints, whether interval or exact, diminishing returns has set in.
+3. ABC really is simple to implement and getting computational tractability is the problem (besides making it tedious to use, long runtimes also interfere with writing a correct implementation in the first place)
+4. while powerful, JAGS models can be confusing to write; it's easy to lose track of what the structure of your model is and write the wrong thing, and the use of precision rather than standard-deviation adds boilerplate and makes it even easier to get lost in a welter of variables & distributions, in addition to a fair amount of boilerplate in running the JAGS code at all - leading to errors where you are not certain whether you have a conceptual problem or your boilerplate is out of date
+5. the combination of `ggplot2` and [`animation`](http://cran.r-project.org/web/packages/animation/index.html) bade fair to make animations as easy as devising a ggplot2 image, but due to some ugly interactions between them (`ggplot2` interacts with the R toplevel scope/environment in a way which breaks when it's called inside a function, and `animation` has some subtle bug relating to deciding how long to delay frames in an animation which I couldn't figure out), I lost hours to getting it to work at all.
