@@ -927,11 +927,16 @@ http://www.unz.com/gnxp/the-intel-of-sequencing/#comment-677904
 
 # When Does The Mail Come?
 
+> Mail is delivered by the USPS mailman at a regular but not observed time; what is observed is instead whether the mail has been delivered at a certain time, yielding somewhat-unusual 'interval-censored data'.
+> I describe the problem of estimating when the mailman delivers, write a simulation of the data-generating process, and demonstrate analysis of interval-censored data in R using maximum-likelihood (the survival library), MMC (JAGS), and likelihood-free Bayesian inference (ABC using the simulation). This allows estimation of when to check the mailbox with a certain probability it will be there such as 95%.
+> Finally, I compare the estimates from the interval-censored with estimates from a smaller set of exact delivery-times provided by USPS tracking.
+
 Consider a question of burning importance for all nerds: what time does the mailman come, bearing gifts?
 We could measure by going out in the morning at a random time to see if the mail has come yet, and estimate.
 (No one wants to sit around all morning to spot the *exact* time the mailman comes. At least, I don't.)
 
 ## Interval-censored data
+
 Given a set of data like "2015-06-20 11:00AM: mail has not come yet; 2015-06-21 11:59AM: mail had come", how can we estimate?
 This is not a normal setup where we estimate a mean but our data is interestingly messed up: censored or truncated or an interval somehow.
 
@@ -943,24 +948,23 @@ I don't think this is left or right truncation either, since each day data is co
 What this is is interval censoring: when we go out to the mailbox at 11AM and discover the mail is there, we learn that the mail was delivered today sometime in the interval midnight-10:59AM, or if the mail isn't there, we learn it will be delivered later today sometime during the interval 11:01AM-midnight (hopefully closer to the first end than the second).
 Interval censoring comes up in biostatistics for situations like periodic checkups for cancer, which does resemble our mail situation.
 
-http://www.ctspedia.org/do/view/CTSpedia/IntervalCensoredAnalysis
-
 ### ML
 
-> Surv(time, time2, event, type='interval')
->
-> 1. time: For interval data, the first argument is the starting time for the interval.
-> 2. time2: ending time of the interval for interval censored or counting process data only. Intervals are assumed to be open on the left and closed on the right, (start, end]. For counting process data, event indicates whether an event occurred at the end of the interval.
-> 3. event: The status indicator, normally 0=alive, 1=dead....For interval censored data, the status indicator is 0=right censored, 1=event at time, 2=left censored, 3=interval censored.
->
-> Interval censored data can be represented in two ways. For the first use type = "interval" and the codes shown above. In that usage the value of the time2 argument is ignored unless event=3. The second approach is to think of each observation as a time interval with (-infinity, t) for left censored, (t, infinity) for right censored, (t,t) for exact and (t1, t2) for an interval. This is the approach used for type = interval2. Infinite values can be represented either by actual infinity (Inf) or NA. The second form has proven to be the more useful one.
+The R [`survival` library](http://cran.r-project.org/web/packages/survival/index.html) supports the usual right/left-censoring but also the interval-censoring.
+It supports two encodings of intervals, `interval` and `interval2`[^survival-interval-encoding]; I use the former, which format works well with both the `survival` library and also other tools like JAGS.
+Times are written as minutes since midnight, so they can be handled as positive numbers rather than date-times (ie midnight=0, 11AM=660, noon=720, midnight=1440, etc), and the upper and lower bounds on intervals are 0 and 1440 (so if I check the mail at 660 and it's there, then the interval is 0-660, and if it's not, 660-1440).
 
-> a subject's data for the pair of columns in the dataset (time1, time2) is (t_e, t_e) if the event time t_e is known exactly; (t_l, NA) if right censored (where t_l is the censoring time); and (t_l, t_u) if interval censored (where t_l is the lower and t_u is the upper bound of the interval).
+[^survival-interval-encoding]: From the documentation:
 
-midnight=0
-11AM=660
-noon=720
-midnight=1440
+    > `Surv(time, time2, event, type='interval')`
+    >
+    > 1. `time`: For interval data, the first argument is the starting time for the interval.
+    > 2. `time2`: ending time of the interval for interval censored or counting process data only. Intervals are assumed to be open on the left and closed on the right, `(start, end]`. For counting process data, event indicates whether an event occurred at the end of the interval.
+    > 3. `event`: The status indicator, normally 0=alive, 1=dead....For interval censored data, the status indicator is 0=right censored, 1=event at time, 2=left censored, 3=interval censored.
+    >
+    > Interval censored data can be represented in two ways. For the first use type = "interval" and the codes shown above. In that usage the value of the time2 argument is ignored unless event=3. The second approach is to think of each observation as a time interval with (-infinity, t) for left censored, (t, infinity) for right censored, (t,t) for exact and (t1, t2) for an interval. This is the approach used for type = interval2. Infinite values can be represented either by actual infinity (Inf) or NA. The second form has proven to be the more useful one.
+
+    > a subject's data for the pair of columns in the dataset (time1, time2) is $(t_e, t_e)$ if the event time $t_e$ is known exactly; $(t_l, NA)$ if right censored (where $t_l$ is the censoring time); and $(t_l, t_u)$ if interval censored (where $t_l$ is the lower and $t_u$ is the upper bound of the interval).
 
 ~~~{.R}
 set.seed(2015-06-21)
@@ -1102,8 +1106,8 @@ set.seed(2015-06-24)
 library(lubridate)
 clockS <- function(t){hour(t)*60 + minute(t) + second(t)/60}
 
-mail <- data.frame(Time=clockS(as.POSIXct(c("2015-06-20 11:00", "2015-06-21 11:06", "2015-06-23 11:03", "2015-06-24 11:05", "2015-06-25 11:00", "2015-06-26 10:56"), "EDT")),
-    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE))
+mail <- data.frame(Time=clockS(as.POSIXct(c("2015-06-20 11:00", "2015-06-21 11:06", "2015-06-23 11:03", "2015-06-24 11:05", "2015-06-25 11:00", "2015-06-26 10:56", "2015-06-27 10:45"), "EDT")),
+    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE))
 
 mail <- data.frame(Time1 = ifelse(mail$Delivered, 0, mail$Time),
                            Time2 = ifelse(mail$Delivered,  mail$Time, 1440))
@@ -1123,15 +1127,13 @@ model1 <- "model { for (i in 1:n){
 
 data <- list("dt"=mail, "n"=nrow(mail), "y"=rep(1, nrow(mail)))
 inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mail,1,mean))) }
-params <- c("mu","tau", "y.new")
+params <- c("mu","sd", "y.new")
 j1 <- jags(data, inits, params, textConnection(model1), n.iter=1000000); j1
 ##          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
-## mu       655.412  17.808 617.206 645.052 656.344 666.095 689.965 1.001  2000
-## tau        0.002   0.005   0.000   0.000   0.001   0.001   0.009 1.001  3000
-## y.new    656.285  45.388 564.130 630.034 656.955 681.479 750.348 1.001  3000
-
-1/sqrt(j1$BUGSoutput$mean$tau)
-# [1] 24.24244989
+## mu       643.770  16.440 609.812 633.338 644.257 654.347 674.943 1.001  3000
+## sd        41.072  12.335  15.849  31.725  42.366  51.450  59.173 1.001  3000
+## y.new    643.003  45.034 550.865 615.279 643.776 671.716 730.792 1.001  3000
+## deviance   0.000   0.000   0.000   0.000   0.000   0.000   0.000 1.000     1
 
 lowerMean <- j1$BUGSoutput$summary[c(2),][3]
 medianMean  <- j1$BUGSoutput$mean$mu
@@ -1162,9 +1164,9 @@ invisible(dev.off())
 
 ### ABC
 
-Because JAGS provides an interval-censored distribution in the form of `dinterval()` with a [likelihood function](!Wikipedia), we can use MCMC for backward inference (reasoning from data to the underlying process)
-But if it didn't, I sure wouldn't know how to write one down for it and then the MCMC wouldn't work; but I was able to write a little simulation of how the underlying process of delivery-and-checking works, which, given a set of parameters, spits out simulated results generated by the process, which is forward inference (reasoning from a version of an underlying process to see what it creates).
-This is a common situation: you can write a good simulation, but you can't write a likelihood function.
+Because JAGS provides an interval-censored distribution in the form of `dinterval()` with a [likelihood function](!Wikipedia), we can use MCMC for inverse inference (reasoning from data to the underlying process)
+But if it didn't, I wouldn't know how to write one down for it and then the MCMC wouldn't work; but I was able to write a little simulation of how the underlying process of delivery-and-checking works, which, given a set of parameters, spits out simulated results generated by the process, which is probability or forward inference (reasoning from a version of an underlying process to see what it creates).
+This is a common situation: you can write a good simulation simply by describing how you think something works, but you can't write a likelihood function.
 
 [ABC](!Wikipedia "Approximate Bayesian computation") (exemplified in the fun example ["Tiny Data, Approximate Bayesian Computation and the Socks of Karl Broman"](http://www.sumsar.net/blog/2014/10/tiny-data-and-the-socks-of-karl-broman/)) is a remarkably simple and powerful idea which lets us take a forward simulation and use it to run backwards inference.
 
@@ -1202,11 +1204,9 @@ results <- data.frame(t(sapply(results,c)))
 summary(results)
 ~~~
 
-<!-- $ -->
-
 The first thing to note is efficiency: I can get reasonable number of samples in reasonable amount of time for _n_=1-3, but at 4 datapoints, it becomes slow.
 There's so many possible datasets when 4 checks are simulated that almost all get rejected because they are not identical to the real dataset and it takes millions of samples and hours to run.
-And this problem only gets worse for _n_=5 and higher
+And this problem only gets worse for _n_=5 and bigger.
 
 To run ABC more efficiently, you relax the requirement that the simulated data == real data and instead accept the pair of parameters if the simulated data is 'close enough' in some sense to the real data, close in terms of some summary statistic (hopefully sufficient) like the mean.
 I don't know what are the sufficient statistics for a set of interval-censored data, but I figure that if the means of the pairs of times are similar in both datasets, then they are probably close enough for ABC to work, so I can use that as a rejection tolerance; implementing that and playing around, it seems I can make the difference in means as tight as <2 while still running fast.
@@ -1226,7 +1226,7 @@ mail_abc <- function(samples) {
       # generate new data set based on a pair of possible parameters:
       newData <- simulateMailbox(nrow(mail), mu, sd)
 
-      # see if some summaries of the new data were within tolerance ϵ of the real data:
+      # see if some summaries of the new data were within tolerance ϵ<2 of the real data:
       if (abs(mean(newData$Time1) - mean(mail$Time1)) < 2 &&
           abs(mean(newData$Time2) - mean(mail$Time2)) < 2)
         { results <- list(c(Mu=mu, SD=sd), results); n <- n+1; }
@@ -1237,15 +1237,15 @@ sims <- mail_abc(1000)
 results <- matrix(unlist(sims), ncol=2, byrow=TRUE)
 summary(results)
 ##        V1                 V2
-##  Min.   :624.7535   Min.   : 0.148301
-##  1st Qu.:659.2788   1st Qu.: 2.806508
-##  Median :661.7225   Median : 6.937644
-##  Mean   :661.2441   Mean   :12.997532
-##  3rd Qu.:663.9442   3rd Qu.:18.276974
-##  Max.   :699.1050   Max.   :59.746685
+##  Min.   :617.5109   Min.   : 0.07457698
+##  1st Qu.:651.3754   1st Qu.: 5.15522760
+##  Median :656.6510   Median :15.79521687
+##  Mean   :654.6066   Mean   :20.36306982
+##  3rd Qu.:658.8573   3rd Qu.:33.14659490
+##  Max.   :688.2603   Max.   :59.65391393
 ~~~
 
-The mean value here is acceptable but the SD is considerably off from the JAGS estimate (which I assume to be correct).
+The mean value here is somewhat acceptable but the SD is considerably off from the JAGS estimate (which I assume to be correct).
 Post hoc, this makes some sense since my summary statistic *is* just means; it might make more sense to check the SD of each column as well (at the cost of more runtime).
 
 Another way to summarize the dataset occurs to me while looking at the graphs: the most striking visual feature of the interval-censored data is how the 'needles' overlap slightly and it is this slight overlap which determines where the mean is; the most informative set of data would be balanced exactly between needles that fall to the left and needles that fall to the right, leaving as little room as possible for the mean to 'escape' out into the wider intervals and be uncertain.
@@ -1277,15 +1277,15 @@ sims <- mail_abc(10000)
 results <- matrix(unlist(sims), ncol=2, byrow=TRUE)
 summary(results)
 ##        V1                 V2
-##  Min.   :550.2925   Min.   : 0.08477393
-##  1st Qu.:639.5443   1st Qu.:16.10635360
-##  Median :660.1267   Median :31.09839041
-##  Mean   :660.4666   Mean   :30.95371197
-##  3rd Qu.:681.0658   3rd Qu.:45.92970616
-##  Max.   :775.1745   Max.   :59.99744545
+##  Min.   :553.4688   Min.   : 0.385626
+##  1st Qu.:639.2079   1st Qu.:17.145015
+##  Median :659.3327   Median :31.471877
+##  Mean   :659.5980   Mean   :31.296899
+##  3rd Qu.:679.8369   3rd Qu.:45.743645
+##  Max.   :765.8880   Max.   :59.991264
 ~~~
 
-This summary, simple as it is, does much better in replicating the JAGS estimates.
+This summary, simple as it is, does better in replicating the JAGS estimates.
 
 ## Exact delivery-time data
 
@@ -1325,7 +1325,7 @@ Plotted over time, there's a troubling amount of heterogeneity: despite the spar
 
 ### ML
 
-Besides the visual evidence, a t-test agrees with there being a difference between 2010-2014 and 2015
+Besides the visual evidence, a _t_-test agrees with there being a difference between 2010-2014 and 2015
 
 ~~~{.R}
 mailExact$Group <- year(mailExact$Date) > 2014
@@ -1353,6 +1353,8 @@ But now my mailman is a younger middle-aged woman. That seems like a good reason
 
 ### MCMC
 
+Estimating the two distributions separately in a simple multilevel/hierarchical model:
+
 ~~~{.R}
 library(R2jags)
 model1 <- "model{
@@ -1369,7 +1371,7 @@ model1 <- "model{
   for(j in 1:K){
    # let's say the group-level differences are also normally-distributed:
    group.delta[j] ~ dnorm(delta.between.group, tau.between.group)
-   # and each group also has its own standard-deviation, potentially different from the others'
+   # and each group also has its own standard-deviation, potentially different from the others':
    group.within.sigma[j] ~ dunif(0, 100)
    group.within.tau[j] <- pow(group.within.sigma[j], -2)
 
