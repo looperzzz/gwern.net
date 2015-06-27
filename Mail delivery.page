@@ -1,5 +1,5 @@
 ---
-title: When Does The Mail Come
+title: When Does The Mail Come?
 description: Bayesian & max-likelihood analysis of local mail delivery times
 tags: statistics
 created: 21 June 2015
@@ -210,7 +210,7 @@ model1 <- "model { for (i in 1:n){
 data <- list("dt"=mail, "n"=nrow(mail), "y"=rep(1, nrow(mail)))
 inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mail,1,mean))) }
 params <- c("mu","sd", "y.new")
-j1 <- jags(data, inits, params, textConnection(model1)); j1
+j1 <- jags(data, inits, params, textConnection(model1), n.iter=100000); j1
 ##          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 ## mu       643.770  16.440 609.812 633.338 644.257 654.347 674.943 1.001  3000
 ## sd        41.072  12.335  15.849  31.725  42.366  51.450  59.173 1.001  3000
@@ -244,6 +244,41 @@ invisible(dev.off())
 ~~~
 
 ![Overlapping-intervals data, with the estimated mean time in blue, 95% CI around the mean time in green, and 95% predictive intervals as to when the delivery is made](/images/maildelivery-real.png)
+
+### Optimal mail checking time
+
+With a posterior distribution of delivery times (`y.new`) we can try to find an optimal time to check, assuming we can figure out a [loss function](!Wikipedia) giving a cost of checking at each possible time.
+The loss here can be considered in units of time; if I didn't care about the delay between the package being delivered and me getting my hands on it, I would simply check at 2PM and have done with it.
+The loss function itself is not obvious; squared loss, absolute loss and 0-1 loss don't correspond to my process of checking mail.
+
+#### Defining a loss function
+
+Expecting a package wears on my mind and in some cases, I'd like to start using the contents ASAP; I see a delay of 10 minutes as being twice as bad as 5 minutes and not 4 times as bad, so this part is an absolute loss. (If it arrives at 11AM and I check at 11:30AM, then the loss due to the delay is 30.)
+Besides the delay, there's also the cost of walking all the way down to the mailbox and back, which due to the long driveway is around 10 minutes, but it's mostly unshaded and hot out and an interruption, so the loss is much greater than that; introspecting, I would be willing to wait at least 60 minutes to save one roundtrip, so I will define the cost of a mail check at 60 'minutes'.
+So suppose I check at 10:30AM, the mail comes at 11AM, and I check again at 11:30AM and find it; then the cost is 60+60+(11:30AM-11:00AM) = 150, while if I had checked at 11:20AM then the cost is better and smaller at just 60+(11:20AM-11:00AM) = 70.
+
+OK, so if the package is there, that's easy, but what if I walk out at 11:20AM and it's *not* there?
+In a proper [Bayesian search theory](!Wikipedia) application, if I check once, I would then update my posterior and run a loss function again to decide when to check next, but this is impracticable for daily usage and in reality, what I would do is if the first check didn't turn up the package, I would then give up in frustration & disgust and not come back until ~1PM (780) when the package would definitely have arrived. Then I'd incur a loss of two walks and possibly a long wait until 1PM.
+
+All these considerations give me a weird-looking but nevertheless realistic loss function: if the package is delivered at _d_ and we check at a particular time _t_, then if _t_>_d_ and the package had arrived we incur a total loss of $60+(t-d)$; otherwise, we check back a second and final time at 1PM, incurring a total loss of $60+60+(780-d)$
+
+#### Finding the optimum
+
+Having figured that out, we run the loss function on each sample from the posterior, averaging over all weighted possible delivery times, and find what time of day minimizes the loss:
+
+~~~{.R}
+posteriorTimes <- j1$BUGSoutput$sims.list[["y.new"]]
+lossFunction <- function(t, walk_cost, predictions, lastResortT) {
+    mean(sapply(predictions,
+                function(delivered) { if (delivered<t) { return(walk_cost   + (t           - delivered)); } else
+                                                       { return(2*walk_cost + (lastResortT - t) ); }}))
+    }
+losses <- sapply(c(0:1440), function (tm) { lossFunction(tm, 60, posteriorTimes, 780);})
+which.min(losses)
+# [1] 689
+## 11:29AM
+qplot(0:1440, losses)
+~~~
 
 ## ABC
 
@@ -444,7 +479,7 @@ Estimating the two distributions separately in a simple multilevel/hierarchical 
 
 ~~~{.R}
 library(R2jags)
-model1 <- "model{
+model2 <- "model{
   # I expect all deliveries ~11AM/660:
   grand.mean ~ dnorm(660, pow(30, -2))
 
@@ -472,13 +507,13 @@ model1 <- "model{
   }
 
   # prediction interval for the second group, the 2015 data, which is the one I care about:
-  y.new2 ~ dnorm(grand.mean + group.delta[Group[2]], group.within.tau[Group[2]])
+  y.new2 ~ dnorm(group.mean[2], group.within.tau[2])
   }"
 data <- list(N=nrow(mailExact), Y=mailExact$TimeDelivered, K=max(mailExact$Group+1),
              Group=(mailExact$Group+1))
 params <- c("grand.mean","delta.between.group", "sigma.between.group", "group.delta", "group.mean",
             "group.within.sigma", "y.new2")
-j1 <- jags(data=data, parameters.to.save=params, inits=NULL, model.file=textConnection(model1)); j1
+k1 <- jags(data=data, parameters.to.save=params, inits=NULL, model.file=textConnection(model2)); k1
 ##                       mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
 ## delta.between.group    39.435  25.398   2.120  18.421  35.277  57.075  92.897 1.004   510
 ## grand.mean            650.551  25.354 601.337 633.208 650.248 667.426 701.950 1.006   340
@@ -489,8 +524,19 @@ j1 <- jags(data=data, parameters.to.save=params, inits=NULL, model.file=textConn
 ## group.within.sigma[1]  35.048  15.767  16.221  23.941  30.830  41.618  77.953 1.003  1200
 ## group.within.sigma[2]  21.018  10.808   9.943  14.337  18.138  23.957  53.014 1.001  3000
 ## sigma.between.group    48.012  24.095  10.639  28.634  44.631  65.673  95.790 1.004  1000
-## y.new2                698.685  42.692 611.817 676.106 699.429 721.902 786.249 1.001  3000
+## y.new2                659.272  25.976 609.740 645.561 658.339 672.493 715.009 1.001  3000
 ## deviance               99.322   4.246  93.844  96.092  98.403 101.657 109.751 1.001  3000
+
+posteriorTimes <- k1$BUGSoutput$sims.list[["y.new2"]]
+lossFunction <- function(t, walk_cost, predictions, lastResortT) {
+    mean(sapply(predictions,
+                function(delivered) { if (delivered<t) { return(walk_cost   + (t           - delivered)); } else
+                                                       { return(2*walk_cost + (lastResortT - t) ); }}))
+    }
+losses <- sapply(c(0:1440), function (tm) { lossFunction(tm, 60, posteriorTimes, 780);})
+which.min(losses)
+# [1] 691
+## 11:31AM
 ~~~
 
 # Conclusions
