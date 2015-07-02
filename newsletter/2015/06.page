@@ -2,7 +2,7 @@
 title: June news
 created: 27 May 2015
 tags: newsletter
-status: in progress
+status: finished
 belief: log
 ...
 
@@ -11,7 +11,8 @@ This is a summary of the revision-history RSS feed, overlapping with [Changelog]
 
 # Writings
 
-
+- rewrote `gwern.net` CSS to be mobile-friendly; should now be readable in an iPhone 6 browser
+- wrote [two summer poems](http://www.gwern.net/fiction/Poems#summer), on earthworms and the rain
 
 # Media
 ## Links
@@ -23,41 +24,80 @@ Everything is heritable:
 Politics/religion:
 
 - ["American Hippopotamus"](https://read.atavist.com/american-hippopotamus)
+- ["The secret joke of Kant's soul"](http://www.fed.cuhk.edu.hk/~lchang/material/Evolutionary/Developmental/Greene-KantSoul.pdf), Greene 2007
+- ["Web-Based Experiments for the Study of Collective Social Dynamics in Cultural Markets"](https://www.princeton.edu/~mjs3/salganik_watts09.pdf), Salganik & Watts 2009
 - ["The Agency: From a nondescript office building in St. Petersburg, Russia, an army of well-paid 'trolls' has tried to wreak havoc all around the Internet — and in real-life American communities"](http://www.nytimes.com/2015/06/07/magazine/the-agency.html)
+- ["Education, Intelligence, and Attitude Extremity"](http://papers.ssrn.com/sol3/papers.cfm?abstract_id=2145529), Makowsky & Miller 2012
+- [Macabre Murder Factory Flies Under the Radar](http://neojaponisme.com/2012/12/28/the-year-2012-in-japan/) (on [Sumida Miyoko](https://en.wikipedia.org/wiki/Amagasaki_Serial_Murder_Incident))
+- ["The Moon: A Propaganda Hoax"](http://www.revisionism.nl/Moon/The-Mad-Revisionist.htm); ["On Not Believing In Canada"](http://crookedtimber.org/2012/12/21/the-christmas-sermon-2012-on-not-believing-in-canada/)
+- ["Post-Apocalit"](http://www.newyorker.com/books/page-turner/post-apocalit)
 
 Statistics/AI/meta-science:
 
+- ["The Brain as a Universal Learning Machine"](http://lesswrong.com/r/lesswrong/lw/md2/the_brain_as_a_universal_learning_machine/)
 - ["The Economics of Reproducibility in Preclinical Research"](http://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1002165), Freedman et al 2015 ([excerpts](https://plus.google.com/103530621949492999968/posts/aDz1oMzUowo))
+- ["An Alternative to Null-Hypothesis Significance Tests: P_rep"](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1473027/), Killeen 2005
 - ["Effect of monthly vitamin D3 supplementation in healthy adults on adverse effects of earthquakes: randomised controlled trial"](http://www.bmj.com/content/349/bmj.g7260.full) (if only more people could be this imaginative in thinking about how to run RCTs, and less defeatist)
+- ["Shuffles, Bayes' theorem and continuations"](http://blog.sigfpe.com/2012/12/shuffles-bayes-theorem-and-continuations.html)
+- ["Eyes wide shut: pseudo-placebo effects"](http://mungowitzend.blogspot.com/2012/03/eyes-wide-shut.html)
 
 Psychology/biology:
 
 - ["How a Grad Student Uncovered a Huge Fraud"](http://nymag.com/scienceofus/2015/05/how-a-grad-student-uncovered-a-huge-fraud.html) ([commentary](https://plus.google.com/103530621949492999968/posts/7xepEk2L5wL))
-- ["Hunting and Hallucinogens: The use psychoactive and other Plants to improve the Hunting ability of dogs"](https://www.dropbox.com/s/32ulhvew5hxsqnb/2015-bennett.pdf), Bennett & Alarcón 2015 ([excerpts](https://plus.google.com/103530621949492999968/posts/SJRguoMvxJs))
+- ["Infectious causation of disease: an evolutionary perspective"](http://www.isteve.com/infectious_causation_of_disease.pdf), Cochran et al 2000
+- ["Hunting and Hallucinogens: The use of psychoactive and other Plants to improve the Hunting ability of dogs"](https://www.dropbox.com/s/32ulhvew5hxsqnb/2015-bennett.pdf), Bennett & Alarcón 2015 ([excerpts](https://plus.google.com/103530621949492999968/posts/SJRguoMvxJs))
+- ["A Pickpocket’s Tale: The spectacular thefts of Apollo Robbins"](http://www.newyorker.com/magazine/2013/01/07/a-pickpockets-tale?currentPage=all)
+- ["The Lying Disease: Why Would Someone Want to Fake a Serious Illness on the Internet?"](http://www.thestranger.com/seattle/the-lying-disease/Content?oid=15337239)
 
 Technology:
 
+- ["Operant Conditioning by Software Bugs"](http://blog.regehr.org/archives/861) (see also: people who break software just by being near)
+- ["What is the largest possible inhabitable world?"](http://aleph.se/andart2/megascale/what-is-the-largest-possible-inhabitable-world/)
+- ["Incremental Regular Expressions"](http://jkff.info/articles/ire/)
+
 Economics:
 
-Philosophy:
+- ["The Red and the Black: Profit is the motor of capitalism. What would it be under socialism?"](https://www.jacobinmag.com/2012/12/the-red-and-the-black/)
+- ["Robert Murphy's Bet That Inflation Was Just Around the Corner Has Gone Absolutely Horribly Wrong"](http://www.bradford-delong.com/2012/12/when-will-robert-murphy-conclude-that-he-just-does-not-know-what-he-is-doing.html) (and he's going to lose the 2016 bet too...)
 
-Fiction:
-
-<!-- Back to 30 Dec 2012 -->
+<!-- Back to 21 Dec 2012 -->
 
 ## Books
 
 Fiction:
 
-Nonfiction:
+- A.E. Housman:
+
+    - [_More Poems_](http://www.wikilivres.ca/wiki/More_Poems) ([review](https://www.goodreads.com/review/show/372533317))
+    - [_Last Poems_](https://www.gutenberg.org/ebooks/7848)
+    - _Additional Poems_
+- Nihei's _Biomega_ ([review](http://myanimelist.net/reviews.php?id=190020)), _Abara_ (even lamer)
 
 ## Film/TV
 
 Live-action:
 
+- Alfred Hitchcock's [_Suspicion_](https://en.wikipedia.org/wiki/Suspicion_%281941_film%29)
+
+    A movie whose plot begs to be described in Red Pill terms: a shy over-educated young heiress finds her jimmies rustled by a bad boy alpha male Johnny (played by the still-famous Cary Grant) and, ignoring her parents, all common sense, and the beta floaters around her, elopes with him, only to discover to her dismay that she's married a man who could have come straight out of the pages of Cleckley's 1941 [_Mask of Sanity_](https://en.wikipedia.org/wiki/The_Mask_of_Sanity) (the resemblance is so exact that I was surprised to see that the original novel was written in 1932 and the _Suspicion_ screenplay ~1939) - a glib bankrupt unemployed macho gambler who steals, embezzles, and lies extravagantly without the slightest shred of remorse or shame or any care about how it might hurt others or any plan beyond the instant. The suspicion is raised by a succession of circumstances indicative of killing the protagonist by poison for her life insurance.
+
+    The ending (to give away a bit of a spoiler) is that she misinterpreted them and really he did love her and he had been contemplating suicide, but now chooses to take responsibility for his actions and go to jail honorably. This ending is so laughably inconsistent with his character, and such a misstep for Hitchcock, I thought that there must be more to this ending and that I should not have been surprised that Hollywood would refuse to show Cary Grant playing a serial murderer; sure enough when I checked WP, the original novel had the right ending and Hitchcock is on record complaining about being forced to change the end. The bogus ending aside, it is well-done and a bit suspenseful (at least once they get married and the real plot; the prologue scenario being so predictable that I was bored) with some noteworthy bits like the final gorgeous sequence of Johnny ascending the stairs with the poisoned milk.
+- [_The Bridge over the River Kwai_](https://en.wikipedia.org/wiki/The_Bridge_on_the_River_Kwai)
+
+    One of the great war movies; the theme of the futility & destructiveness of war can never be emphasized enough. The colonel's descent into collaborationism is all too easily understood, as is, to a lesser extent, the murderous & death-seeking behavior of the commando officer. The major flaws I would consider to be the Japanese depicted entirely too positively (the first plot arc of the colonel's resistance, while uplifting, broke a bit of suspension of disbelief because in reality he would probably have simply been executed within the day), the ending is a bit too heavy-handed (did any viewer actually need the doctor to repeat "madness!" 4 or 5 times to get the message?), and too much of the 161 minutes running time is occupied with the resistance arc and then later with the commando squad cutting its way through the jungle.
+
 Anime:
 
-- [_Barakamon_](https://en.wikipedia.org/wiki/Barakamon): slice-of-life bildungsroman about a young-adult calligrapher rusticated for hot-headedness to a southern Japanese island (not Okinawa, feels more like one of the smaller Ryukyu Islands) where he learns Life Lessons taught to him by the locals and particularly a elementary-age girl a la _Yotsuba&!_. Animated in the current clean standard style, with some effort on the backgrounds. Calligraphy as the topic is a definite change of pace and earns _Barakamon_ pluses in my book, though most of the calligraphy merely looks messy to my untutored eyes and is hard to appreciate (the exception being the _hoshi_/"star" calligraphy of episode 9, a black-white [figure-ground](https://en.wikipedia.org/wiki/Figure%E2%80%93ground_%28perception%29) inversion writing which would be gimmicky if it didn't so perfectly make the pictorial & semantic aspects mirror each other). A good watch but I find it hard to love because it's heavy-handed in showing the protagonist learning his Life Lessons and relies too heavily on the [cheerful child](http://tvtropes.org/pmwiki/pmwiki.php/Main/CheerfulChild) trope.
+- [_Mushishi Zoku Shou_](https://en.wikipedia.org/wiki/Mushishi): One of the best anime (2005) received its long-deserved second season in 2014. Rather than declining, the second season is better than the first.
+
+    The basics remain the same: in a quasi-medieval Japan, biology meets dreamy folklore in the form of mushi, not quite bacteria or animals but not quite spirits either, and a wandering man solves problems relating to them. But where the first season focused more on individuals and their relationships to the mushi (and modifications by, sufferings due to, etc), season two examines a variety of relationships *between* humans, particularly families. Despite the episodic structure, the drama is still intelligent and moving - a son seeks to surpass his father; a man punishes himself and his daughter, a brother cannot forgive himself for a past omission; a mother sacrifices and slowly becomes the milk her baby needs; a family passes on a grim obsession through the generation at the expense of outsiders; a woman with the disastrous power to bring rain travels to villages in need, postponing getting married until the rain ceases, while another boy endures lightning strikes for the mother who does not love him; a neglected and despised son nearly kills his pseudo-family, but ultimately lets his anger disperse and can move on; a clan devotes itself to fighting an existential risk, even at the cost of its childrens' souls; a man and his wife, to live together and save each other, become time-travellers who choose to become trapped in loops; an ancient tree sacrifices all for the villagers it nurtured.
+
+    The endings are not always happy nor predictable; some are deeply tragic ("Mud Grass" and "Tree of Eternity") or just creepy ("The Hand That Caresses the Night", "Floral Delusion", "Path of Thorns"). Very few episodes are failures (Out of the 21 episodes, I could indict only "Mirror Lake" and "Hidden Cove" as being boringly bland, and "Thread of Light" as being mediocre.) The world expands as Ginko travels to locales beyond the stereotypical thick forest of season 1, and we gain glimpses of the network of mushishi Ginko is one of (and his own notoriety in that small circle) and of the mountain lords. The plots as well enlarge and additional elements of fantasy and SF are mixed in (particularly in "Path of Thorns" again, "Fragrant Darkness", and "Lingering Crimson"), particularly Japanese folklore ("Azure Waters" implies the kappa are an exaggeration of a particular mushi infection, and "Lightning's End" refers to the raijū).
+
+    The backgrounds are no longer quite so impressive as they were back during the original _Mushishi_ and the animation has some visible flaws (you'll notice a lot of blank undrawn faces), but the mushi seem to benefit from CGI upgrades since 2005. The music is appropriate, and Ally Kerr supplies a very appropriate OP song.
+
+    Easily the best new anime I've watched in 2015.
+- [_Barakamon_](https://en.wikipedia.org/wiki/Barakamon): slice-of-life bildungsroman about a young-adult calligrapher rusticated for hot-headedness to a southern Japanese island (not Okinawa, feels more like one of the smaller Ryukyu Islands) where he learns Life Lessons taught to him by the locals and particularly an elementary-age girl a la _Yotsuba&!_. Animated in the current clean standard style, with some effort on the backgrounds. Calligraphy as the topic is a definite change of pace and earns _Barakamon_ pluses in my book, though most of the calligraphy merely looks messy to my untutored eyes and is hard to appreciate (the exception being the _hoshi_/"star" calligraphy of episode 9, a black-white [figure-ground](https://en.wikipedia.org/wiki/Figure%E2%80%93ground_%28perception%29) inversion writing which would be gimmicky if it didn't so perfectly make the pictorial & semantic aspects mirror each other). A good watch but I find it hard to love because it's heavy-handed in showing the protagonist learning his Life Lessons and relies too heavily on the [cheerful child](http://tvtropes.org/pmwiki/pmwiki.php/Main/CheerfulChild) trope.
 
 ## Music
 
@@ -70,26 +110,6 @@ Touhou:
 - ["STARDUST HERO～恋色マスタースパーク"](https://www.dropbox.com/s/atrevtmyeedlvqk/cobu-fantasygirlwaryongkangoriginalsoundtrack-stardusthero.ogg) (Cobu; _Fantasy girl War Yongkang Original Soundtrack_ {C87}) [orchestral]
 - ["MIND OF SPACE～千年幻想郷"](https://www.dropbox.com/s/xwywo0klbrbijb0/cobu-fantasygirlwaryongkangoriginalsoundtrack-mindofspace.ogg) (Cobu; _Fantasy girl War Yongkang Original Soundtrack_ {C87}) [orchestral]
 - ["Flanhelp Op.1-496～U.Nオーエンは彼女なのか？"](https://www.dropbox.com/s/ajs3uoydqp4i52c/cobu-fantasygirlwaryongkangoriginalsoundtrack-flanhelpop1496%EF%BC%9F.ogg) (Cobu; _Fantasy girl War Yongkang Original Soundtrack_ {C87}) [orchestral]
-
-- ["マンドラゴラの庭"](https://www.dropbox.com/s/mi485le47loy1wo/siva-gensokyostpatricksday-%E3%83%9E%E3%83%B3%E3%83%89%E3%83%A9%E3%82%B4%E3%83%A9%E3%81%AE%E5%BA%AD.ogg) (siva; _Gensokyo St. Patrick's Day_ {K10}) [Celtic]
-- ["Rince Oiche"](https://www.dropbox.com/s/o2w97h60hpq0tw2/escarmew-gensokyostpatricksday-rinceoiche.ogg) (Escarmew; _Gensokyo St. Patrick's Day_ {K10}) [Celtic]
-
-- ["Sleepy Maiden"](https://www.youtube.com/watch?v=Pdmq-BgQiRU) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
-- ["Septette for a Sleepy Princess"](https://www.youtube.com/watch?v=6o8h-HgFgB0) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
-- ["籠居漏水"](https://www.youtube.com/watch?v=B3_04qNCHMo) (PIROPARU; _Kyouon no Ooi Ryouriten_ {Reitaisai SP}) [instrumental]
-- ["Lotus World"](https://www.youtube.com/watch?v=dR9t3_SM9cE) (PIROPARU; _Kyouon no Ooi Ryouriten_ {Reitaisai SP}) [instrumental]
-- ["Going back to Sleeping Night"](https://www.youtube.com/watch?v=A24ZJz0IUws) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
-- ["Drowsy Eyes"](https://www.youtube.com/watch?v=FrU6xfbLyRk) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
-- ["A Maiden's Quiet Sleep"](https://www.youtube.com/watch?v=DRAujB9XmGs) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
-- ["Sleeping Asia"](https://www.youtube.com/watch?v=u8XqTnkMTco) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
-- ["Reach for the Dream, Immortal Smoke"](https://www.youtube.com/watch?v=oBydaD3jBZU) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
-- ["Temptation of the Eternal Night"](https://www.youtube.com/watch?v=1sQcqdJhGmE) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
-
-- ["Fires of Hokkai"](https://www.youtube.com/watch?v=a9deVonL3Ns) (くみちょ; _Knights of Round 3_ {C77}) [post-rock]
-- ["Septette for the Dead Princess"](https://www.youtube.com/watch?v=UNNCfcCkyZU) (Eru; _Knights of Round 3_ {C77}) [instrumental rock]
-- ["上海紅茶館 ～ Chinese Tea"](http://otokei-douj.in/tlmc//%5BSound%20Sepher%5D/2011.05.08%20%5BSEPR-0009%5D%20%E6%9D%B1%E6%96%B9%E5%B9%BB%E5%A5%8F%E7%A5%80%E5%85%B86%20-Grimoire-%20%5B%E4%BE%8B%E5%A4%A7%E7%A5%AD8%5D/04%20%5Bzunba%5D%20%E4%B8%8A%E6%B5%B7%E7%B4%85%E8%8C%B6%E9%A4%A8%20%EF%BD%9E%20Chinese%20Tea.mp3) (zunba; _Touhou Gensou Shiten 6 "Grimoire"_; {R8}) [jazz]
-- ["Awakening of the Earth Spirits"](https://www.youtube.com/watch?v=KG3yo5PCAAk) (江口孝宏 feat.Satomi Ishikawa; _Touhou Gensou Shiten 6 "Grimoire"_ {R8}) [trance]
-- ["8番目の路地"](https://www.youtube.com/watch?v=faE0AW2Yfgg) (アサヒ feat. emaru; _864_ {R12}) [trance]
 
 Kantai Collection:
 
