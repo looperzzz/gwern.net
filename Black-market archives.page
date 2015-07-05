@@ -1,3 +1,12 @@
+---
+title: Black-market archives
+description: Mirrors of Tor-Bitcoin black-markets & forums 2013-2015, and other material
+created: 1 Dec 2013
+tags: Bitcoin, Silk Road
+status: in progress
+belief: possible
+...
+
 Other mirrors:
 
 - DARC Australia crawls
@@ -28,19 +37,13 @@ cd ~/blackmarket-mirrors/archive/ && for ARCHIVE in `find . -type f -name "*.tar
 3. check for any tarballs having accidental inclusion of 'cookies.txt' (possible security leak) or  .onion subdirectories in them which need merging (akin to #2);:
 
    c ~/blackmarket-mirrors/archive/ && for ARCHIVE in `find . -type f -name "*.tar.xz"`; do echo -n "$ARCHIVE: " && nice unxz $ARCHIVE --stdout | tar --list | fgrep --color -e 'cookies.txt' -e '/*\.onion/'; done; alert
-3. uncompress any tarballs (to expose their compressibility)
-4. provide supersets of forum mirrors (take the date-mirrors, and in chronological order, `rsync` each one onto the base mirror; this creates a final superset mirror where any later deleted or missed threads will show up)
 5. For better compression rates of many mirrors, use the sort-key trick (http://www.gwern.net/Archiving%20URLs#sort---key-compression-trick):
 
     find . -type f -print0 | sort --zero-terminated --unique --key=3 --field-separator="/" | tar --no-recursion --null --files-from - -c | nice xz -9 --extreme --memlimit-compress=40% --stdout > ./mirror.tar.xz
-6. include miscellaneous logged out pages in ~/www/: find /home/gwern/www/*.onion | sort
-
- one thing I only realized a week or so ago is that it's just as important to blacklist /login as it is to blacklist /logout: because when
-                  your cookie expires, the site may start redirecting to you /login on each page with a bogus code, and so you may wind up with a whole spider
-                  where every page is a copy of /login
 
 Release:
 /r/DNM & all market-specific subreddits, G+, Twitter, researchers' emails, Daryl Lay, Ormsby, Adrian Chen, Sudhir Venkatesh, https://www.reddit.com/r/datasets , http://ryancompton.net/about/
+for seeding, ping /u/bobbiggs69 https://www.reddit.com/r/DarkNetMarkets/comments/3c53zw/call_for_dnmrelated_datasets_and_scrapes/cst3xti
 
 Grams: the only ones that were API were Evolution, Cloud9, Middle Earth, Bungee54, Outlaw; all others were custom crawls
 
@@ -130,6 +133,84 @@ Knowing this, analyses should have some strategy to deal with missingness. There
 - assume missing-at-random and use analyses insensitive to that, focusing on things like ratios
 - work with the data as is, writing results such that the biases and lower-bounds are explicit & emphasized
 
+# How to crawl markets
+
+The bulk of the crawls are my own work, and were generally all created in a similar way.
+
+My setup is a Debian testing Linux system with [Tor](!Wikipedia), [Privoxy](!Wikipedia), and [Polipo](!Wikipedia) installed. See the [Tor guides](https://www.torproject.org/docs/installguide.html.en).
+
+1. when a new market opens, I learn of it typically from Reddit or The Hub, and browse to it in Firefox configured to proxy through `127.0.0.1:8123` (Polipo)
+2. create a new account
+
+    The username/password are not particularly important but using a [password manager](!Wikipedia) to create & store strong passwords for throwaway accounts has the advantage of making it easier to authenticate any hacks or database dumps later. (Given the poor security record of many markets, it should go without saying that you should not use your own username or any password which is used anywhere else.)
+3. I locate various 'action' URLs: login, logout, 'report vendor', 'settings', 'place order', 'send message', and add the URL prefixes (sometimes they need to be regexps) into `/etc/privoxy/user.action`; Privoxy, a filtering proxy running on `127.0.0.1:8118`, will then block any attempt to download URLs which match those prefixes/regexps
+
+    A good blacklist is critical to avoid logging oneself out and immediately ending the crawl, but it's also important to avoid triggering any on-site actions which might cause your account to be banned or prompt the operators to put in anti-crawl measures you may have a hard time working around. A blacklist is also invaluable for avoiding downloading superfluous pages like the same category page sorted 15 different ways; Tor is high latency and you cannot afford to waste a request on redundant or meaningless pages, which there can be many of. Simple Machine Forums are particularly dangerous in this regard, requiring at least 39 URLs blacklisted to get an efficient crawl, and implementing many actions as simply HTTP links that a crawler will browse (for example, if you have managed to get access to a private subforum on a SMF, you will *delete your access to it* if you simply turn a crawler like wget or [HTTrack](!Wikipedia) loose, which I learned the hard way).
+4. where possible, configure the site to simplify crawling: request as many listings as possible on each page, hide clutter, disable any options which might get in the way, etc.
+
+    Forums often default to showing 20 posts on a page, but options might let you show 100; if you set it to display as much as possible, the crawls will be faster, save disk space, *and* be more reliable because the crawl is less likely to suffer from downtime.
+5. in Firefox, I export a `cookies.txt` using the FF extension [Export Cookies](https://addons.mozilla.org/En-us/firefox/addon/export-cookies/). (I also recommend [NoScript](!Wikipedia) to avoid JavaScript shenanigans, [Live HTTP Headers](https://addons.mozilla.org/En-us/firefox/addon/live-http-headers/) to assist in debugging by showing the HTTP headers and requests FF is actually sending to the market, and [User Agent Switcher](https://addons.mozilla.org/En-us/firefox/addon/user-agent-switcher/) to lock your FF into showing a consistent [TorBrowser](!Wikipedia) [user-agent](!Wikipedia))
+6. with a valid cookie in the `cookies.txt` and a proper blacklist set up, mirrors can now be made with [wget](!Wikipedia), using commands like thus:
+
+    ~~~{.Bash}
+    alias today="date '+%Y-%m-%d'" # prints out current date like "2015-07-05"
+    cat ~/blackmarket-mirrors/user-agent.txt
+    ## Mozilla/5.0 (Windows NT 6.1; rv:31.0) Gecko/20100101 Firefox/30.0
+
+    cd ~/blackmarket-mirrors/cryptomarket/
+    fgrep --no-filename '.onion' ~/cookies.txt ~/`today`/cookies.txt > ./cookies.txt
+    http_proxy="localhost:8118" wget --mirror
+        --tries=5 --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 --tries=10
+        --load-cookies=cookies.txt --keep-session-cookies
+        --max-redirect=1
+        --referer="http://cryptomktgxdn2zd.onion"
+        --user-agent="$(cat ~/blackmarket-mirrors/user-agent.txt)"
+        --append-output=log.txt --server-response
+        'http://cryptomktgxdn2zd.onion/category.php?id=Weed'
+    mv ./cryptomktgxdn2zd.onion/ `today`
+    mv log.txt ./`today`/
+    rm cookies.txt
+    ~~~
+
+    To unpack the commands:
+
+    - the `fgrep` invocation minimizes the size of the local cookies.txt and helps prevent accidental release of a full cookies.txt while packing up archives and sharing them with other people
+    - wget:
+
+        - we direct it to download only through Privoxy in order to benefit from the blacklist. Warning: wget has a blacklist option but it does *not* work, because it is implemented in a bizarre fashion where it downloads the blacklisted URL (!) and then deletes it; [this is a known >12-year-old bug in wget](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=217243). For other crawlers, this behavior should be double-checked so you don't wind up inadvertently logging yourself out of a market and downloading gigabytes of worthless front pages.
+        - we throw in a number of options to encourage wget to ignore connection failures and retry; hidden servers are slow and unreliable
+        - we load the cookies file with the authentication for the market, and in particular, we need `--keep-session-cookies` to keep around all cookies a market might give us, particularly the ones which change on each page load.
+        - `--max-redirect=1` helps deal with a nasty market behavior where when one's cookie has expired, they then quietly redirect, without errors or warnings, all subsequent page requests to a login page. Of course, the login page should also be in the blacklist as well, but this is extra insurance and can save one round-trip's worth of time, which will add up
+        - some markets seem to snoop on the "referer" part of a HTTP request specifying where you come from; putting in the market page seems to help
+        - the user-agent, as mentioned, should exactly match however one logged in, as some markets record that and block accesses if the user-agent does not match exactly. Putting the current user-agent into a centralized text file helps avoid scripts getting out of date and specifying an old user-agent
+    - logging of requests and particularly errors is important; `--server-response` prints out headers, and `--append-output` stores them to a log file. Most crawlers do not keep an error log around, but this is necessary to allow investigation of incompleteness and observe where errors in a crawl started (perhaps you missed blacklisting a page); for example, "Evaluating drug trafficking on the Tor Network: Silk Road 2, the sequel", Dolliver 2015, failed to log errors in their few HTTrack crawls of SR2, and so wound up with a grossly incomplete crawl which led to nonsense conclusions like 1-2% of SR2's sales were drugs. (I speculate the HTTrack crawl was stuck in the ebooks section, which was always clogged with spam, and then SR2 went down for an hour or two, leading to HTTrack's default behavior of quickly erroring out and finishing the crawl; but the lack of logging means we may never know what went wrong.)
+7. once the wget crawl is done, then we name it whatever day it terminated on, we store the log inside the mirror, and clean up the probably-now-expired cookies, and perhaps check for any unusual problems.
+
+This method will permit somewhere around 18 simultaneous crawls of different black-market sites or forums before you begin to risk Privoxy throwing errors about "too many connections".
+A Privoxy bug may also lead to huge logs being stored on each request.
+Between these two issues, I've found it helpful to have a daily cronjob reading `rm -rf /var/log/privoxy/*; /etc/init.d/privoxy restart` so as to keep the logfile mess under control and occasionally start a fresh Privoxy.
+
+Crawls can be quickly checked by comparing the downloaded sizes to past downloads; markets typically do not grow or shrink more than 10% in a week, and forums' downloaded size should monotonically increase.
+(Incidentally, that implies that it's more important to archive markets than forums.)
+If the crawls are no longer working, one can check for problems:
+
+- is your user-agent no longer in sync?
+- does the crawl error out at a specific page?
+- do the headers shown by wget match the headers you see in a regular browser using Live HTTP Headers?
+- has the target URL been renamed?
+- do the URLs in the blacklist match the URLs of the site, or did you log in at the right URL? (for example, a blacklist of "www.abraxas...onion" is different from "abraxas...onion"; and if you logged in at a onion with `www.` prefix, the cookie may be invalid on the prefix-free onion)
+- did the server simply go down for a few hours while crawling? Then you can simply restart and merge the crawls.
+- has your account been banned? If the signup process is particularly easy, it may be simplest to just register a fresh account each time.
+
+Despite all this, not all markets can be crawled or present other difficulties:
+
+- Blue Sky Market did something with HTTP headers which defeated all my attempts to crawl it; it rejected all my wget attempts at the first request, before anything even downloaded, but I was never able to figure out exactly how the wget HTTP headers differed in any respect from the (working) Firefox requests
+- Mr Nice Guy 2 breaks the HTTP standard by returning all pages gzip-encoded, whether or not the client says it can accept gzip-encoded HTML; as it happens, wget cannot read gzip-encoded HTML and parse the page for additional URLs to download, and so mirroring breaks
+- AlphaBay, during the DoS attacks of mid-2015, began doing something odd with its HTTP responses, which makes Polipo error out; one must browse AlphaBay after switching to Privoxy; Poseidon also did something similar for a time
+- Middle Earth rate-limits crawls per session, limiting how much can be downloaded without investing a lot of time or in a CAPTCHA-breaking service
+- Abraxas leads to peculiarly high RAM usage by wget
+
+
 # Previous releases
 
 Some of these archives have been released publicly before;
@@ -142,12 +223,12 @@ Some of these archives have been released publicly before;
 
 Please cite this resource as:
 
-- Gwern Branwen, Nicolas Christin, David Hetu, StExo, Rasmus Munksgaard Andersen, Anonymous, Daryl Lau, Sohhlz, Delyan Kratunov, Vince Cakic, Van Buskirk, Whom, & TODO. "Tor Black-markets, 2011-2015", Internet Archive, TODO TODO 2015. Web. [access date] <http://archive.org/TODO>
+- Gwern Branwen, Nicolas Christin, David Hetu, Rasmus Munksgaard Andersen, StExo, Anonymous, Daryl Lau, Sohhlz, Delyan Kratunov, Vince Cakic, Van Buskirk, Whom, & TODO. "Dark Net Market archives, 2011-2015", Internet Archive, TODO TODO 2015. Web. [access date] <http://archive.org/TODO>
 
 # Donations
 
-- The black-markets could not exist without volunteers and nonprofits spending the money to pay for the bandwidth used by the Tor network; these scrapes collectively represent many terabytes of consumed bandwidth. If you would like to donate towards keeping Tor servers running, you can donate to Torservers.net: https://www.torservers.net/donate.html
-- The Internet Archive hosts countless amazing resources, of which this is only one, and is a unique Internet resource: https://archive.org/donate/bitcoin.php
+- The black-markets could not exist without volunteers and nonprofits spending the money to pay for the bandwidth used by the Tor network; these scrapes collectively represent terabytes of consumed bandwidth. If you would like to donate towards keeping Tor servers running, you can [donate to Torservers.net](https://www.torservers.net/donate.html) or [the Tor Project itself](https://www.torproject.org/donate/donate.html.en)
+- The Internet Archive hosts countless amazing resources, of which this is only one, and is a unique Internet resource; [they accept Bitcoin](https://archive.org/donate/bitcoin.php)
 - TODO me 1GWERNi49LgEb5LpvxxGFSuVYo2K3BDRdo
 
 # Copyright
