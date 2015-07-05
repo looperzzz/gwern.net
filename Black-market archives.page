@@ -1,0 +1,181 @@
+Other mirrors:
+
+- DARC Australia crawls
+- Princeton grad student [???]
+- Nicolas Christin's CMU group [got Atlantis, anonymized SR1 data; want full SR1 data & scrapes made since]
+- Digital Citizens Alliance (at least two: http://media.gractions.com/314A5A5A9ABBBBC5E3BD824CF47C46EF4B9D3A76/5f8d4168-c36a-4f78-b048-f5d48b18dc0a.pdf )
+- Judith Aldridge & Hetu (September SR1) [DONE]
+- Rasmus Munksgaard [DONE]
+- Dolliver [unlikely to be forthcoming, and largely redundant with mine]
+
+
+For redistribution:
+
+1. check that no 'cookies.txt' is in the archive (!!!)
+
+cd ~/blackmarket-mirrors/archive/ && for ARCHIVE in `find . -type f -name "*.tar.xz"`; do echo -n "$ARCHIVE: " && nice unxz $ARCHIVE --stdout | tar --list | fgrep --color -e 'cookies.txt' -e '/*\.onion/'; done; alert
+
+2. check for mirrors that need combining:
+
+    c /home/gwern/blackmarket-mirrors/ && nice find . -type d -name "*.onion" -or -name "*.i2p" | sort | egrep "201[0-9]" ; alert
+2. Optimize images:
+
+    c ~/blackmarket-mirrors/ && nice find . -type f -iname "*.jpg" -or -iname "*.jpeg" | nice parallel --ungroup nice -n 19 ionice -c 3 jpegoptim; nice find . -type f -iname "*.png" | nice parallel --ungroup nice -n 19 ionice -c 3 optipng -o9 -fix; exit
+
+3. Remove session-id spam (useful for logged-out forums):
+
+    c ~/blackmarket-mirrors/ && find . -type f -name "*sid=*" -exec rename --force 's/\?sid=.*//' {} \; && find . -type f -name "*sid=*" -exec rename --force 's/\&sid=.*//' {} \; ; exit
+3. check for any tarballs having accidental inclusion of 'cookies.txt' (possible security leak) or  .onion subdirectories in them which need merging (akin to #2);:
+
+   c ~/blackmarket-mirrors/archive/ && for ARCHIVE in `find . -type f -name "*.tar.xz"`; do echo -n "$ARCHIVE: " && nice unxz $ARCHIVE --stdout | tar --list | fgrep --color -e 'cookies.txt' -e '/*\.onion/'; done; alert
+3. uncompress any tarballs (to expose their compressibility)
+4. provide supersets of forum mirrors (take the date-mirrors, and in chronological order, `rsync` each one onto the base mirror; this creates a final superset mirror where any later deleted or missed threads will show up)
+5. For better compression rates of many mirrors, use the sort-key trick (http://www.gwern.net/Archiving%20URLs#sort---key-compression-trick):
+
+    find . -type f -print0 | sort --zero-terminated --unique --key=3 --field-separator="/" | tar --no-recursion --null --files-from - -c | nice xz -9 --extreme --memlimit-compress=40% --stdout > ./mirror.tar.xz
+6. include miscellaneous logged out pages in ~/www/: find /home/gwern/www/*.onion | sort
+
+ one thing I only realized a week or so ago is that it's just as important to blacklist /login as it is to blacklist /logout: because when
+                  your cookie expires, the site may start redirecting to you /login on each page with a bogus code, and so you may wind up with a whole spider
+                  where every page is a copy of /login
+
+Release:
+/r/DNM & all market-specific subreddits, G+, Twitter, researchers' emails, Daryl Lay, Ormsby, Adrian Chen, Sudhir Venkatesh, https://www.reddit.com/r/datasets , http://ryancompton.net/about/
+
+Grams: the only ones that were API were Evolution, Cloud9, Middle Earth, Bungee54, Outlaw; all others were custom crawls
+
+extracting specific files:
+
+    tar --verbose --extract --xz --file='silkroad2-forums.tar.xz' --no-anchored --wildcards '*topic=49187*'
+
+
+Redacting SMF to remove login details of a crawl:
+
+find . -type f -name "index.php?action=who" -delete
+find . -type f -name "index.php?action=profile" -delete
+find . -name "*action=deletemsg*" -delete
+find . -type f -exec sed -i -e 's/ <span>yama dass<\/span>//' -e 's/profile;u=945\">yama dass/\">/' -e 's/;u=945\">/\">/' {} \;
+
+
+
+    dnmUptime <- read.delim("~/blackmarket-mirrors/misc/dnstats/2015-06-05.sql", na.strings="NULL",
+                             nrows=6000000, colClasses=c("factor", "factor", "factor", "integer",
+                                                         "factor", "numeric", "numeric", "POSIXct"))
+    markets <- dnmUptime[dnmUptime$type==1,]
+    dnmUptime <- NULL # save RAM
+    markets$Date <- as.Date(markets$timestamp)
+    markets$Up <- markets$httpcode == 200
+    daily <- aggregate(Up ~ Date + sitename, markets, mean)
+    library(ggplot2)
+    qplot(Date, sitename, color=Up, data=daily)
+
+
+Missing or highly incomplete:
+
+- BMR
+- SR1
+- Blue Sky
+- TorMarket
+- DeepBay
+- Red Sun Marketplace
+- Sanitarium Market
+- EXXTACY
+- Mr Nice Guy 2
+
+
+# About
+
+# Contents
+
+
+Grams coverage:
+
+$ for ZIP in 2*.zip; do (mkdir `echo $ZIP | sed -e s/\.zip//`; unzip $ZIP; mv *.csv `echo $ZIP | sed -e s/\.zip//`/); done # unpack Grams archives into separate directories which won't collide with each other so I can combine them in a single clean archive
+$ find . -type f -name "*.csv" -exec basename {} \;| sort -u
+
+# Possible Uses
+
+Here are some suggested uses:
+
+- providing information on vendors across markets like their PGP key and feedback ratings
+- identifying arrested and flipped sellers (eg. the Weaponsguy sting)
+- individual drug and category popularity
+- total sales per day, with consequent turnover and commission estimates; correlates with Bitcoin or blackmarket-related search traffic, subreddit traffic, Bitcoin price or volume, etc
+- seller lifetimes, ratings, over time and by product sold
+- losses to black-market exit scams, or seller exit scams
+- reactions to shocks like Operation Onymous
+- survival analysis, and predictors of exit-scams (early finalization volume; site downtime; new vendors; etc)
+- topic modeling of forums
+- compilations of forum posts on lab tests estimating purity and safety
+- compilations of forum-posted Bitcoin addresses to examine the effectiveness of market tumblers
+- stylometric analysis of posters, particular site staff (what is staff turnover like? do any markets ever change hands?)
+- deanonymization and information leaks (eg GPS coordinates in metadata, usernames reused on the clearnet, valid emails in PGP public keys)
+- security practices: use of PGP, lifetime of individual keys, accidental posts of private rather than public keys, malformatted or unusable public keys, etc
+- anthologies of real-world photos of particular drugs compiled from all sellers of them
+
+
+# Using these scrapes & archives
+
+Scrapes can be difficult to analyze. They are large, complicated, redundant, and highly error-prone. They cannot be taken at face-value.
+
+No matter how much work one puts into it, one will never get an exact snapshot of a market at a particular instant: listings will go up or down as one crawls, vendors will be banned and their entire profile & listings & all feedback vanish instantly, Tor connection errors will cause a nontrivial % of page requests to fail, the site itself will go down (Agora especially), and Internet connections are imperfect. Scrapes can get bogged down in a backwater of irrelevant pages, spend all their time downloading a morass of on-demand generated pages, the user login expire or be banned by site administrators, etc. If a page is present in a scrape, then it probably existed at some point; but if a page is not present, then it may not have existed or existed but did not get downloaded for any of a myriad of reasons. At best, a scrape is a lower bound on how much was there.
+
+So any analysis *must* take seriously the incompleteness of each crawl and the fact that there is a lot and always will be a lot of missing data, and do things like focus on what can be inferred from 'random' sampling or explicitly model incompleteness by using markets' category-count-listings. (For example, if your download of a market claims to have 1.3k items but the categories' claimed listings sum to 13k items, your download is probably highly incomplete & biased towards certain categories as well.) There are many subtle biases: for example, there will be upward biases in markets' average review ratings because sellers who turn out to be scammers will disappear from the market scrapes when they are banned, and few of their customers will go back and revise their ratings; similarly if scammers are concentrated in particular categories, then using a single snapshot will lead to biased results as the scammers have already been removed, while uncontroversial sellers last a lot longer (which might lead to, say, e-book sellers seeming to have many more sales than expected).
+
+The contents cannot be taken at face-value either. Some vendors engage in review-stuffing using shills. Metadata like categories can be manipulated (a category labeled "Musical instruments" may contain listings for prescription drugs - beta blockers - or modafinil or Adderall may be listed in both a "Prescription drugs" and "Stimulants" category).  Many things said on forums are lies or bluffing or scams. Market operators may deliberately deceive users (Ross Ulbricht claiming to have sold SR1, the SR2 team engaging in "psyops") or conceal information (the hacks of SR1; the second SR2 hack) or attack their users (Sheep Marketplace and Pandora). Different markets have different characteristics: the commission rate on Pandora was unilaterally raised after it was hacked (causing sales volume to fall); SR2 was a notorious scammer haven due to inactive or overwhelmed staff and lacking a working escrow mechanism; etc. There is no substitute here for domain knowledge.
+
+Knowing this, analyses should have some strategy to deal with missingness. There are a couple tacks:
+
+- attempt to exploit "ground truths" to explicitly model and cope with varying degrees of missingness; there are a number of ground-truths available in the form of leaked seller data (screenshots & data), databases (leaked, hacked), official statements (eg the FBI's quoted numbers about Silk Road 1's total sales, number of accounts, number of transactions, etc)
+- assume missing-at-random and use analyses insensitive to that, focusing on things like ratios
+- work with the data as is, writing results such that the biases and lower-bounds are explicit & emphasized
+
+# Previous releases
+
+Some of these archives have been released publicly before;
+
+- https://www.reddit.com/r/SilkRoad/comments/36jmp2/silk_road_2_scrape_torrent_released/
+- https://www.reddit.com/r/DarkNetMarkets/comments/2zps7q/evolution_forums_mirrorscrapes_torrent_released/
+- https://www.reddit.com/r/DarkNetMarkets/comments/2zllmv/evolution_market_mirrorscrapes_torrent_released/
+
+# Citing
+
+Please cite this resource as:
+
+- Gwern Branwen, Nicolas Christin, David Hetu, StExo, Rasmus Munksgaard Andersen, Anonymous, Daryl Lau, Sohhlz, Delyan Kratunov, Vince Cakic, Van Buskirk, Whom, & TODO. "Tor Black-markets, 2011-2015", Internet Archive, TODO TODO 2015. Web. [access date] <http://archive.org/TODO>
+
+# Donations
+
+- The black-markets could not exist without volunteers and nonprofits spending the money to pay for the bandwidth used by the Tor network; these scrapes collectively represent many terabytes of consumed bandwidth. If you would like to donate towards keeping Tor servers running, you can donate to Torservers.net: https://www.torservers.net/donate.html
+- The Internet Archive hosts countless amazing resources, of which this is only one, and is a unique Internet resource: https://archive.org/donate/bitcoin.php
+- TODO me 1GWERNi49LgEb5LpvxxGFSuVYo2K3BDRdo
+
+# Copyright
+
+The copyright status of crawls of websites, particularly ones engaged in illegal activities, is unclear. To the extent I hold any copyright in the contents, I release my work under the Creative Commons CC0 "No Rights Reserved" license.
+
+---
+
+This archive of the Silk Road 1 forums is composed of 3 parts,
+all created during October 2013 after Silk Road 1 was shut down
+but before the Silk Road 1 forums went offline some months later:
+
+1. StExo's archive, released anonymously
+
+    This excludes the Vendor Roundtable (VRT) subforum, and is believed to be sanitized
+    in various respects such as removing a number of StExo's own posts.
+2. Moustache's archived pages
+
+    Unknown source, may be based on StExo archives
+3. consolidated `wget` spider
+
+    After the SR1 bust and StExo's archiving, I began mirroring the SR1F with `wget`,
+    logged in as a vendor with access to the Vendor Roundtable; unfortunately due to my inexperience
+    with the forum software Simple Machines, I did not know it was possible to revoke your
+    own access to subforums with `wget` and failed to blacklist the revocation URL. Hence
+    the VRT was very incompletely archived. I combined my various archives into a single version.
+
+    Simultaneously, qwertyoruiop was archiving the SR1F with a regular user account and a custom
+    Node.js script. I combined his spider with my version to produce a final version with reasonable
+    coverage of the forums (perhaps 3/4s of what was left after everyone began deleting & censoring
+    their past posts).
