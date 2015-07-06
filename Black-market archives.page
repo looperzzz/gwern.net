@@ -7,6 +7,10 @@ status: in progress
 belief: possible
 ...
 
+contents
+
+the sort-key trick (http://www.gwern.net/Archiving%20URLs#sort---key-compression-trick):
+
 Other mirrors:
 
 - DARC Australia crawls
@@ -23,23 +27,9 @@ For redistribution:
 1. check that no 'cookies.txt' is in the archive (!!!)
 
 cd ~/blackmarket-mirrors/archive/ && for ARCHIVE in `find . -type f -name "*.tar.xz"`; do echo -n "$ARCHIVE: " && nice unxz $ARCHIVE --stdout | tar --list | fgrep --color -e 'cookies.txt' -e '/*\.onion/'; done; alert
-
-2. check for mirrors that need combining:
-
-    c /home/gwern/blackmarket-mirrors/ && nice find . -type d -name "*.onion" -or -name "*.i2p" | sort | egrep "201[0-9]" ; alert
-2. Optimize images:
-
-    c ~/blackmarket-mirrors/ && nice find . -type f -iname "*.jpg" -or -iname "*.jpeg" | nice parallel --ungroup nice -n 19 ionice -c 3 jpegoptim; nice find . -type f -iname "*.png" | nice parallel --ungroup nice -n 19 ionice -c 3 optipng -o9 -fix; exit
-
-3. Remove session-id spam (useful for logged-out forums):
-
-    c ~/blackmarket-mirrors/ && find . -type f -name "*sid=*" -exec rename --force 's/\?sid=.*//' {} \; && find . -type f -name "*sid=*" -exec rename --force 's/\&sid=.*//' {} \; ; exit
 3. check for any tarballs having accidental inclusion of 'cookies.txt' (possible security leak) or  .onion subdirectories in them which need merging (akin to #2);:
 
    c ~/blackmarket-mirrors/archive/ && for ARCHIVE in `find . -type f -name "*.tar.xz"`; do echo -n "$ARCHIVE: " && nice unxz $ARCHIVE --stdout | tar --list | fgrep --color -e 'cookies.txt' -e '/*\.onion/'; done; alert
-5. For better compression rates of many mirrors, use the sort-key trick (http://www.gwern.net/Archiving%20URLs#sort---key-compression-trick):
-
-    find . -type f -print0 | sort --zero-terminated --unique --key=3 --field-separator="/" | tar --no-recursion --null --files-from - -c | nice xz -9 --extreme --memlimit-compress=40% --stdout > ./mirror.tar.xz
 
 Release:
 /r/DNM & all market-specific subreddits, G+, Twitter, researchers' emails, Daryl Lay, Ormsby, Adrian Chen, Sudhir Venkatesh, https://www.reddit.com/r/datasets , http://ryancompton.net/about/
@@ -47,17 +37,13 @@ for seeding, ping /u/bobbiggs69 https://www.reddit.com/r/DarkNetMarkets/comments
 
 Grams: the only ones that were API were Evolution, Cloud9, Middle Earth, Bungee54, Outlaw; all others were custom crawls
 
-extracting specific files:
-
-    tar --verbose --extract --xz --file='silkroad2-forums.tar.xz' --no-anchored --wildcards '*topic=49187*'
-
 
 Redacting SMF to remove login details of a crawl:
 
 find . -type f -name "index.php?action=who" -delete
 find . -type f -name "index.php?action=profile" -delete
 find . -name "*action=deletemsg*" -delete
-find . -type f -exec sed -i -e 's/ <span>yama dass<\/span>//' -e 's/profile;u=945\">yama dass/\">/' -e 's/;u=945\">/\">/' {} \;
+find . -type f -exec sed -i -e 's/ <span>username<\/span>//' -e 's/profile;u=945\">username/\">/' -e 's/;u=945\">/\">/' {} \;
 
 
 
@@ -89,6 +75,15 @@ Missing or highly incomplete:
 # About
 
 # Contents
+
+These are archives are [xz](!Wikipedia)-compressed tarballs; typically each subfolder is a single date-stamped (YYYY-MM-DD) crawl using wget.
+(Mac & Windows users may be able to uncompress using their OS archiver, 7zip, or Stuffit.)
+
+If you don't want to uncompress all of a particular archive, as they can be very large, you can try extracting specific files using archiver-specific options; for example, a SR2F command targeting a particular old forum thread:
+
+~~~{.Bash}
+tar --verbose --extract --xz --file='silkroad2-forums.tar.xz' --no-anchored --wildcards '*topic=49187*'
+~~~
 
 
 Grams coverage:
@@ -224,6 +219,17 @@ Some of these archives have been released publicly before;
 Please cite this resource as:
 
 - Gwern Branwen, Nicolas Christin, David Hetu, Rasmus Munksgaard Andersen, StExo, Anonymous, Daryl Lau, Sohhlz, Delyan Kratunov, Vince Cakic, Van Buskirk, Whom, & TODO. "Dark Net Market archives, 2011-2015", Internet Archive, TODO TODO 2015. Web. [access date] <http://archive.org/TODO>
+
+# Works using this dataset
+
+Papers:
+
+- Andersen, R., Demant, J. & G. Branwen 2015, "Commentary on Dolliver 2015" (submitted to _International Journal of Drug Problems_)
+- Décary-Hétu & Giommoni 2015, "The Tangigle Effects Of Operation Onymous: Displacement In The Dark Net Drug Markets" (manuscript)
+
+Posts:
+
+- ["Darknet Market [Evolution] Basket Analysis"](http://ryancompton.net/2015/03/24/darknet-market-basket-analysis/), Ryan Compton
 
 # Donations
 
