@@ -158,7 +158,7 @@ Name                  Sex Age Pseudonym            Role      Market      Seller 
 --------------------- --- --- ---------------      -------   ----------- ---------------       ----------- -------------- ------------------------------        ----- --------- ----------    -----
 Stacy Litz            F                            buyer     Silk Road 1                       USA         Pennsylvania   MDMA, LSD                             FALSE 2011-09-01 2013-01-13
                                                              Silk Road 1                       USA         Maryland                                                   2011-12-29 2015-04-18   Inferred from internal timeline; Baltimore CI
-                                                             Silk Road 1                       USA         Illinois                                                   2012-01-13 2015-04-18 Inferred from internal timeline; Chicago CI
+                                                             Silk Road 1                       USA         Illinois                                                   2012-01-13 2015-04-18   Inferred from internal timeline; Chicago CI
 Jacob Theodore George M       digitalink           seller    Silk Road 1                       USA         Maryland       heroin, methylone                     FALSE 2012-01-17 2013-10-29    Details remain mysterious; arrest in Jan 2012 but when exactly? Best guess date.
                               dripsofacid          buyer     Silk Road 1                       USA                                                                    2012-03-01 2015-01-14    Inferred from DerYeghiayan's testimony about use for undercover buys.
 Christopher Owen      M                            seller    Silk Road 1                       Australia                  MDMA, ketamine, meth                  FALSE 2012-04-27 2013-05-18
@@ -312,7 +312,7 @@ Charlie Shrem         M                            seller    Silk Road 1        
 Kuntal Patel          F                            buyer     BMR         Korff                 UK                         abrin                                 TRUE  2014-01-26 2014-09-26
 T.S.                  M                            buyer     Silk Road 2 pillbay               Indonesia   West Jakarta   MDMA, LSD                             TRUE  2014-01-31 2015-01-28
 L.A.                  F                            buyer     Silk Road 2 pillbay               Indonesia   West Jakarta   MDMA, LSD                             TRUE  2014-01-31 2015-01-28
-Rudolf Jansen?        M   47  RuudNL                seller    Utopia                            Netherlands                 MDMA, cocaine, marijuana             TRUE  2013-10-04 2014-02-12    The seller arrested en route to Germany.
+Rudolf Jansen?        M   47  RuudNL               seller    Utopia                            Netherlands                 MDMA, cocaine, marijuana             TRUE  2013-10-04 2014-02-12    The seller arrested en route to Germany.
                       M                            operator  Utopia                            Netherlands                                                      TRUE  2014-02-12 2014-02-12    At least 1 or 2 of the Utopia arrests must've been the site operators but I am unable to figure out which from the vague media coverage.
 Jeroen Teeninga       M                            operator  Utopia                            Netherlands                                                      TRUE  2014-02-12 2014-02-12
 Steven Ruijter        M       CosaNostra           staff     Utopia                            Netherlands                                                      TRUE  2014-02-12 2014-02-12
@@ -493,7 +493,7 @@ Jamie Roden           M                            seller                       
 Elliot Hyams          M                            seller                                      UK                                                               TRUE             2015-04-14
 Jaikishen Patel       M                            seller                                      UK                                                               TRUE             2015-04-14
 Joshua Morgan         M                            seller                                      UK                                                               TRUE             2015-04-14
-                                                   seller                                      Sweden                                                                            2015-06-10 Imputed seller arrest; 4 known seller groups arrested, yet Swedish police statement 22 May 2015 that "8 of them has already been charged."
+                                                   seller                                      Sweden                                                                            2015-06-10      Imputed seller arrest; 4 known seller groups arrested, yet Swedish police statement 22 May 2015 that "8 of them has already been charged."
                                                    seller                                      Sweden                                                                            2015-06-10
                                                    seller                                      Sweden                                                                            2015-06-10
                                                    seller                                      Sweden                                                                            2015-06-10
@@ -1205,7 +1205,7 @@ The original [Operation Onymous press release](http://www.eurojust.europa.eu/pre
      - Ireland: 2
      - 14 known arrests; 3 are missing, but at least 2 must be German arrests, and hypothetically the last could be from any combination of the mentioned participating countries unrepresented in the above list ("...Bulgaria, the Czech Republic, Finland, France, Germany, Ireland, Latvia, Lithuania, Luxembourg, the Netherlands, ... Romania, Sweden") but is probably German as well
 
-On 6 January 2015, the [Princeton student Julian Edgren was arrested](http://planetprinceton.com/2015/01/07/princeton-university-student-arrested-for-drug-possession/ "Princeton University Student Arrested for Drug Possession") after a CD package of MDMA; warrants also turned up mushrooms/psilocybin, marijuana, LSD, hashish, and Adderall.
+On 6 January 2015, the [Princeton student Julian Edgren was arrested](http://planetprinceton.com/2015/01/07/princeton-university-student-arrested-for-drug-possession/ "Princeton University Student Arrested for Drug Possession") & later [pled guilty](http://www.centraljersey.com/news/princeton-former-university-student-pleads-guilty-on-drug-charges/article_9635a3a8-23fb-11e5-9217-8b73683508f0.html "PRINCETON: Former university student pleads guilty on drug charges") after a CD package of MDMA; warrants also turned up mushrooms/psilocybin, marijuana, LSD, hashish, and Adderall.
 It is known Edgren had been a The Marketplace customer, but TMP had closed down months before January 2015 after Operation Onymous, so he could not have been using TMP for that order.
 (The pricing [might suggest a Canadian source](https://www.reddit.com/r/DarkNetMarkets/comments/2robda/possibly_dnm_related_buyer_arrest/cnif309).)
 
@@ -1221,7 +1221,8 @@ On the same day, 26 March 2015, Alabama man [Ryan Andrew Backer was also arreste
 While neither order is stated to have been black-market-related, several factors suggest strongly that these two cases are: the simultaneous arrests is unusual but common when a seller has been profiled and multiple packages can be intercepted simultaneously; LSD is particularly difficult to intercept by Customs; both men are young; the quantities are small; Backer's order is explicitly said to have been online rather than through other channels; and German & Dutch sellers have been having particular difficulty 2014-2015.
 (If so, then the specific seller may have been "HollandOnline".)
 
-<!-- 4 possible interconnected Colorado cases: https://bitcointalk.org/index.php?topic=934268.msg10972935#msg10972935 may be DNM-related due to combination of local-bitcoin sales with some drug charges -->
+<!-- TODO: 4 possible interconnected Colorado cases: https://bitcointalk.org/index.php?topic=934268.msg10972935#msg10972935 may be DNM-related due to combination of local-bitcoin sales with some drug charges -->
+<!-- TODO: possible reseller Kaleb Chhabra of 25i: https://www.reddit.com/r/DarkNetMarkets/comments/3c5mkx/if_chairman_pao_removes_this_subreddit_what_are/cssuz7o?context=3 http://www.clarionledger.com/story/news/2015/07/02/madison-man-pleads-guilty-on-synthetic-lsd-charges/29631749/ http://www.clarionledger.com/story/news/local/2014/09/15/former-msu-student-top-lsd-distributor-arrested/15674007/ -->
 
 ## Utopia
 
