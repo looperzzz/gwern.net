@@ -207,9 +207,10 @@ clockS <- function(t){hour(t)*60 + minute(t) + second(t)/60}
 mail <- data.frame(Time=clockS(as.POSIXct(c("2015-06-20 11:00", "2015-06-21 11:06", "2015-06-23 11:03",
                                  "2015-06-24 11:05", "2015-06-25 11:00", "2015-06-26 10:56",
                                  "2015-06-27 10:45", "2015-06-29 10:31", "2015-06-30 10:39", "2015-07-01 10:27",
-                                 "2015-07-02 10:47"),
+                                 "2015-07-02 10:47", "2015-07-03 10:27", "2015-07-04 10:54", "2015-07-05 10:55",
+                                 "2015-07-06 11:21", "2015-07-07 10:01", "2015-07-07 10:20"),
                                 "EDT")),
-    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE))
+    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE))
 
 mail <- data.frame(Time1 = ifelse(mail$Delivered, 0, mail$Time),
                            Time2 = ifelse(mail$Delivered,  mail$Time, 1440))
@@ -252,7 +253,7 @@ sapply(c(lowerPredictive, upperPredictive), reformat)
 
 library(ggplot2)
 
-png(file="~/wiki/images/maildelivery-real.png", width = 800, height = 500)
+png(file="~/wiki/images/maildelivery-real.png", width = 900, height = 600)
 ggplot(mail) + geom_segment(aes(x=Time1, xend=Time2, y=1:nrow(mail), yend=1:nrow(mail))) +
     ylab("Day") + xlab("Time") +
     geom_vline(xintercept=medianMean, color="blue") +
@@ -295,9 +296,78 @@ lossFunction <- function(t, walk_cost, predictions, lastResortT) {
     }
 losses <- sapply(c(0:1440), function (tm) { lossFunction(tm, 60, posteriorTimes, 780);})
 which.min(losses)
-# [1] 689
-## 11:29AM
+# [1] 698
+## 11:38AM
 qplot(0:1440, losses)
+~~~
+
+We can compare the cost of check times. If I check at 11:28AM rather than the current estimated optimal time of 11:38AM, then the loss each time is -2.1:
+
+~~~{.R}
+losses[698]
+# [1] 125.1687367
+losses[688]
+# [1] 127.2646144
+losses[698] - losses[688]
+# [1] -2.095877679
+~~~
+
+With average losses per check time, and after choosing a discount rate, we can also derive a net present value; I usually use the approximation $\frac{\text{gain}}{ln(1 + \text{discount rate})}$ and a discount rate of 5% annually.
+So if I check for a package 20 times a year, and I do so suboptimally each time and incur a loss of -2, then the total loss is equivalent to
+
+~~~{.R}
+netPresentValue <- function(p) { p / log(1.05) }
+netPresentValue((losses[698] - losses[688]) * 20)
+[1] -859.1394249
+~~~
+
+This is similar to the "[expected value of perfect information](!Wikipedia)": if I estimated the optimal time as 688 and it was actually 698, I should be willing to pay up to 859 'minutes' to learn the truth and instead start checking the mail at 698.
+
+Perfect information is not available at any cost, however.^[I could always resort to additional technology like motion-activated cameras or radio bugs on the mailbox which send alerts when it's been opened if I *really* wanted, but for the purpose of this exercise, let's ignore those possibilities.]
+All I can do is go out to the mail box _n_ times, and as we saw in the simulation, diminishing returns always happens and at some point the predictive intervals stop changing noticeably.
+
+So the question is what is the "[expected value of sample information](!Wikipedia)" (EVSI): what is the value of collecting one more additional datapoint, which can help pin down the optimal time a little more precisely and reduce the loss from a suboptimal time?
+EVSI can be defined as "expected value of best decision with some additional sample information" minus "expected value of best current decision".
+More specifically, if many times we draw a sample from the posterior (which represents our best estimate of the world), turn it into a new interval-censored datapoint, create an updated posterior distribution incorporating that datapoint, run the loss function again & calculate a new optimal check time, and compute the improvement of the new check time's NPV over the old check time's NPV to get the EVSI, what is the mean of the EVSIs?
+
+~~~{.R}
+sampleValues <- NULL
+sampleValuesProfit <- NULL
+for (i in seq(from=1, to=301, by=5)) {
+
+evsis <- replicate(100, {
+    n <- i
+    deliveryTime <- sample(posteriorTimes, size=n)
+    checkTime <- round(rnorm(n, mean = 660, sd = 30))
+    newSamples <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
+                             checkTime, deliveryTime)
+    newSamples <- data.frame(Time1=newSamples[1,], Time2=newSamples[2,])
+    newData <- rbind(mail, newSamples)
+
+    dataEVSI <- list("dt"=newData, "n"=nrow(newData), "y"=rep(1, nrow(newData)))
+    initsEVSI <- function() { list(mu=rnorm(1),sd=15,t=as.vector(apply(newData,1,mean))) }
+    paramsEVSI <- c("y.new")
+    jEVSI <- jags(dataEVSI, initsEVSI, paramsEVSI, textConnection(model1), n.iter=100, progress.bar="none")
+    # jEVSI
+
+    posteriorTimesEVSI <- jEVSI$BUGSoutput$sims.list[["y.new"]]
+    lossesEVSI <- sapply(c(0:1440), function (tm) { lossFunction(tm, 60, posteriorTimesEVSI, 780);})
+    # which.min(lossesEVSI)
+
+    newOptimum <- netPresentValue(min(lossesEVSI) * 20)
+    oldOptimum <- netPresentValue(min(losses)     * 20)
+    EVSI <- newOptimum - oldOptimum
+    return(EVSI)
+    }
+    )
+print(i)
+print(mean(evsis))
+sampleValues[i] <- mean(evsis)
+print(mean(evsis - (i*60)))
+sampleValuesProfit[i] <- mean(evsis - (i*60))
+}
+sampleValues
+sampleValuesProfit
 ~~~
 
 ## ABC
@@ -377,13 +447,13 @@ mail_abc <- function(samples) {
 sims <- mail_abc(1000)
 results <- matrix(unlist(sims), ncol=2, byrow=TRUE)
 summary(results)
-##        V1                 V2
-##  Min.   :617.5109   Min.   : 0.07457698
-##  1st Qu.:651.3754   1st Qu.: 5.15522760
-##  Median :656.6510   Median :15.79521687
-##  Mean   :654.6066   Mean   :20.36306982
-##  3rd Qu.:658.8573   3rd Qu.:33.14659490
-##  Max.   :688.2603   Max.   :59.65391393
+##       V1                 V2
+## Min.   :621.0812   Min.   :10.00167
+## 1st Qu.:644.7149   1st Qu.:15.71872
+## Median :648.0593   Median :20.57838
+## Mean   :652.3028   Mean   :23.42996
+## 3rd Qu.:651.2694   3rd Qu.:28.52015
+## Max.   :739.4133   Max.   :59.89326
 ~~~
 
 The mean value here is somewhat acceptable but the SD is considerably off from the JAGS estimate (which I assume to be correct).
@@ -417,13 +487,13 @@ mail_abc <- function(samples) {
 sims <- mail_abc(10000)
 results <- matrix(unlist(sims), ncol=2, byrow=TRUE)
 summary(results)
-##        V1                 V2
-##  Min.   :553.4688   Min.   : 0.385626
-##  1st Qu.:639.2079   1st Qu.:17.145015
-##  Median :659.3327   Median :31.471877
-##  Mean   :659.5980   Mean   :31.296899
-##  3rd Qu.:679.8369   3rd Qu.:45.743645
-##  Max.   :765.8880   Max.   :59.991264
+##       V1                 V2
+## Min.   :550.4086   Min.   :10.00066
+## 1st Qu.:640.0134   1st Qu.:22.33501
+## Median :660.2284   Median :34.76427
+## Mean   :660.2783   Mean   :34.83866
+## 3rd Qu.:680.5165   3rd Qu.:47.45385
+## Max.   :760.6862   Max.   :59.99828
 ~~~
 
 This summary, simple as it is, does better in replicating the JAGS estimates.
@@ -444,7 +514,7 @@ mailExact <- data.frame(Date=as.POSIXct(c("2010-04-29 11:33AM", "2010-05-12 11:3
                                           "2014-09-29 11:15AM", "2014-12-15 12:02PM", "2015-03-09 11:19AM",
                                           "2015-06-10 10:34AM", "2015-06-20 11:02AM", "2015-06-23 10:58AM",
                                           "2015-06-24 10:53AM", "2015-06-25 10:55AM", "2015-06-30 10:36AM",
-                                          "2015-07-02 10:45"),
+                                          "2015-07-02 10:45AM", "2015-07-06 11:19AM"),
                         "EDT"))
 mailExact$TimeDelivered <- clockS(mailExact$Date)
 ##                   Date TimeDelivered Group
