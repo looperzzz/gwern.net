@@ -208,9 +208,9 @@ mail <- data.frame(Time=clockS(as.POSIXct(c("2015-06-20 11:00", "2015-06-21 11:0
                                  "2015-06-24 11:05", "2015-06-25 11:00", "2015-06-26 10:56",
                                  "2015-06-27 10:45", "2015-06-29 10:31", "2015-06-30 10:39", "2015-07-01 10:27",
                                  "2015-07-02 10:47", "2015-07-03 10:27", "2015-07-04 10:54", "2015-07-05 10:55",
-                                 "2015-07-06 11:21", "2015-07-07 10:01", "2015-07-07 10:20"),
+                                 "2015-07-06 11:21", "2015-07-07 10:01", "2015-07-08 10:20", "2015-07-09 10:50"),
                                 "EDT")),
-    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE))
+    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE))
 
 mail <- data.frame(Time1 = ifelse(mail$Delivered, 0, mail$Time),
                            Time2 = ifelse(mail$Delivered,  mail$Time, 1440))
@@ -266,6 +266,30 @@ invisible(dev.off())
 
 ![Overlapping-intervals data, with the estimated mean time in blue, 95% CI around the mean time in green, and 95% predictive intervals as to when the delivery is made](/images/maildelivery-real.png)
 
+Posterior predictive checks (PPC) are a technique recommended by Gelman as a test of how appropriate the model is (as the model or likelihood often is far more important in forcing particular results than the priors one might've used), where one generates possible observations from the model and inferred posteriors, and sees how often the simulated data matches the real data; if that is rarely or never, then the model may be bad and one should fix it or possibly throw in additional models for Bayesian model comparison (which will hopefully then pick out the right model).
+For continuous data or more than trivially small data, we have the same issue as in ABC (which is similar to PPCs): the simulates will never exactly match the data, so we must define some sort of summary or distance measure which lets us say that a particular simulated dataset is similar enough to the real data.
+In the two summaries I tried for ABC, counting 'flip-flops' worked better, so I'll reuse that here.
+
+~~~{.R}
+posteriorTimes <- j1$BUGSoutput$sims.list[["y.new"]]
+
+simsPPC <- replicate(10000, {
+    n <- nrow(mail)
+    deliveryTime <- sample(posteriorTimes, size=n, replace=TRUE)
+    checkTime <- round(rnorm(n, mean = 660, sd = 30))
+    newSamples <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
+                         checkTime, deliveryTime)
+    newData <- data.frame(Time1=newSamples[1,], Time2=newSamples[2,])
+
+    return(sum(newData$Time1 == 0))
+    }
+)
+
+qplot(simsPPC) + geom_vline(xintercept=sum(mail$Time1 == 0), color="blue")
+~~~
+
+The true data has a summary near the middle of the distribution of the summaries of the posterior predictions, suggesting that the model fit to the problem is not terrible at the moment.
+
 ### Optimal mail checking time
 
 With a posterior distribution of delivery times (`y.new`) we can try to find an optimal time to check, assuming we can figure out a [loss function](!Wikipedia) giving a cost of checking at each possible time.
@@ -296,8 +320,8 @@ lossFunction <- function(t, walk_cost, predictions, lastResortT) {
     }
 losses <- sapply(c(0:1440), function (tm) { lossFunction(tm, 60, posteriorTimes, 780);})
 which.min(losses)
-# [1] 698
-## 11:38AM
+# [1] 696
+## 11:36AM
 qplot(0:1440, losses)
 ~~~
 
@@ -312,16 +336,16 @@ losses[698] - losses[688]
 # [1] -2.095877679
 ~~~
 
-With average losses per check time, and after choosing a discount rate, we can also derive a net present value; I usually use the approximation $\frac{\text{gain}}{ln(1 + \text{discount rate})}$ and a discount rate of 5% annually.
-So if I check for a package 20 times a year, and I do so suboptimally each time and incur a loss of -2, then the total loss is equivalent to
+With average losses per check time, an estimate of number of check times per year, and a discount rate, we can derive a [net present value](!Wikipedia); I usually use the approximation $\frac{\text{gain}}{ln(1 + \text{discount rate})}$ and a discount rate of 5% annually, but in this case assuming an indefinite horizon is wrong - the delivery time will change and the problem will reset as soon as the next mailman begins this route, which has already happened once in the 4 years thus far, so I instead assume that any estimate is worthless after 3 years (the mailman will have changed, the route or USPS will have changed, I may not even be living in the same place in 3 years).
+So if I check for a package 30 times a year (which is roughly as much as I did in 2014 & am on track to do in 2015), and I do so suboptimally each time and incur a loss of -2, then the total loss is equivalent to
 
 ~~~{.R}
-netPresentValue <- function(p) { p / log(1.05) }
-netPresentValue((losses[698] - losses[688]) * 20)
-[1] -859.1394249
+netPresentValue <- function(p) { (p / (1 + 0.05)^1) + (p / (1 + 0.05)^2) + (p / (1 + 0.05)^3)  }
+netPresentValue(losses[698]*30 - losses[688]*30)
+## [1] -48.95181657
 ~~~
 
-This is similar to the "[expected value of perfect information](!Wikipedia)": if I estimated the optimal time as 688 and it was actually 698, I should be willing to pay up to 859 'minutes' to learn the truth and instead start checking the mail at 698.
+This is similar to the "[expected value of perfect information](!Wikipedia)": if I estimated the optimal time as t=688 and it was actually t=698, I should be willing to pay up to 49 'minutes' to learn the truth and instead start checking the mail at t=698.
 
 Perfect information is not available at any cost, however.^[I could always resort to additional technology like motion-activated cameras or radio bugs on the mailbox which send alerts when it's been opened if I *really* wanted, but for the purpose of this exercise, let's ignore those possibilities.]
 All I can do is go out to the mail box _n_ times, and as we saw in the simulation, diminishing returns always happens and at some point the predictive intervals stop changing noticeably.
@@ -333,11 +357,11 @@ More specifically, if many times we draw a sample from the posterior (which repr
 ~~~{.R}
 sampleValues <- NULL
 sampleValuesProfit <- NULL
-for (i in seq(from=1, to=301, by=5)) {
+for (i in seq(from=1, to=30)) {
 
 evsis <- replicate(100, {
     n <- i
-    deliveryTime <- sample(posteriorTimes, size=n)
+    deliveryTime <- sample(posteriorTimes, size=n, replace=TRUE)
     checkTime <- round(rnorm(n, mean = 660, sd = 30))
     newSamples <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
                              checkTime, deliveryTime)
@@ -354,20 +378,33 @@ evsis <- replicate(100, {
     lossesEVSI <- sapply(c(0:1440), function (tm) { lossFunction(tm, 60, posteriorTimesEVSI, 780);})
     # which.min(lossesEVSI)
 
-    newOptimum <- netPresentValue(min(lossesEVSI) * 20)
-    oldOptimum <- netPresentValue(min(losses)     * 20)
+    newOptimum <- netPresentValue(min(lossesEVSI) * 30)
+    oldOptimum <- netPresentValue(min(losses)     * 30)
     EVSI <- newOptimum - oldOptimum
     return(EVSI)
     }
     )
-print(i)
-print(mean(evsis))
-sampleValues[i] <- mean(evsis)
-print(mean(evsis - (i*60)))
-sampleValuesProfit[i] <- mean(evsis - (i*60))
+
+    print(i)
+
+    print(mean(evsis))
+    sampleValues[i] <- mean(evsis)
+
+    print(mean(evsis - (i*60)))
+    sampleValuesProfit[i] <- mean(evsis - (i*60))
 }
 sampleValues
+##  [1]  621.9099624  676.3511205  711.6662485  828.0513308  771.5025080  758.5178942  883.5654301
+##  [8]  878.3814885  792.5198993  935.5268629  924.4320994  961.1936763  895.4424611 1024.0913322
+## [15] 1091.0730761 1007.0386573 1043.8139893 1107.7887113 1039.2301437 1070.4069060  979.9023277
+## [22] 1071.9631383 1070.6226339 1067.4642958 1132.5503132 1048.9637609 1001.1076490 1239.8961317
+## [29] 1079.4585210 1083.7775260
 sampleValuesProfit
+##  [1]  561.90996235  556.35112053  531.66624852  588.05133078  471.50250798  398.51789419
+##  [7]  463.56543005  398.38148850  252.51989929  335.52686294  264.43209935  241.19367629
+## [13]  115.44246111  184.09133217  191.07307609   47.03865732   23.81398930   27.78871132
+## [19] -100.76985626 -129.59309403 -280.09767225 -248.03686170 -309.37736610 -372.53570425
+## [25] -367.44968683 -511.03623905 -618.89235097 -440.10386832 -660.54147903 -716.22247398
 ~~~
 
 ## ABC
