@@ -58,7 +58,9 @@ A dataset like this owes its existence to many parties:
 
 # Contents
 
-These are archives are [xz](!Wikipedia)-compressed tarballs (optimized with the [sort-key trick](/Archiving%20URLs#sort---key-compression-trick)); typically each subfolder is a single date-stamped (YYYY-MM-DD) crawl using [wget](!Wikipedia), with the default directory/file layout. Archives sourced from other people follow their own particular conventions.
+There are ~89 markets, >37 forums and ~5 other sites, representing <4,438 mirrors of >43,596,420 files in ~50GB of 163 compressed files, unpacking to >1548GB. <!-- 1538962410676 bytes -->
+
+These archives are [xz](!Wikipedia)-compressed tarballs (optimized with the [sort-key trick](/Archiving%20URLs#sort---key-compression-trick)); typically each subfolder is a single date-stamped (YYYY-MM-DD) crawl using [wget](!Wikipedia), with the default directory/file layout. Archives sourced from other people follow their own particular conventions.
 (Mac & Windows users may be able to uncompress using their OS archiver, 7zip, or Stuffit.)
 
 If you don't want to uncompress all of a particular archive, as they can be very large, you can try extracting specific files using archiver-specific options; for example, a SR2F command targeting a particular old forum thread:
@@ -71,7 +73,6 @@ tar --verbose --extract --xz --file='silkroad2-forums.tar.xz' --no-anchored --wi
 
 Most of the material dates from 2013 to 2015; some archives sourced from other people (before I began crawling) may date 2011-2012.
 
-There are ~89 markets, >37 forums and ~5 other sites, representing <4,438 mirrors of >43,596,420 files in ~50GB of 163 compressed files, unpacking to >1548GB. <!-- 1538962410676 bytes -->
 Specifically:
 
 - Markets:
@@ -291,6 +292,38 @@ The main drawbacks are:
 - the largest markets can be split across multiple CSVs (eg `EVO.csv` & `EVO2.csv`), complicating reading the data in somewhat
 - the export each time is of the current listings, which means that different days can repeat the same identical crawl data if there was not a successful crawl by Grams in between
 
+For example, to read in all the Grams SR2 crawls, then count & graph total listings by day in R:
+
+~~~{.R}
+DIR <- "blackmarket-mirrors/archive/grams"
+# Grams's SR2 crawls are named like "grams/2014-06-13/SilkRoad.csv"
+gramsFiles <- list.files(path=DIR, pattern="SilkRoad.csv", all.files=TRUE, full.names=TRUE, recursive=TRUE)
+# schema of SR2 crawls eg:
+## "hash","market_name","item_link","vendor_name","price","name","description","image_link","add_time","ship_from",
+## "2-11922","Silk Road 2","http://silkroad6ownowfk.onion/items/220-fe-only-tw-x-mb","$220for28grams","0.34349900" \
+##  "220 FE Only TW X MB","1oz of the same tw x mb as my other listing FE only. Not shipped until finalized. Price \
+##   is higher for non FE listing.","","1404258628","United States",
+# read in each CSV, note what day it is from, and combine into a single dataframe:
+grams <- data.frame()
+for (i in 1:length(gramsFiles)) {
+    log <- read.csv(gramsFiles[i], header=TRUE)
+    log$Date <- as.Date(gsub("/SilkRoad.csv", "", gsub(paste0(DIR,"/"), "", gramsFiles[i])))
+    grams <- rbind(grams,log)
+}
+totalCounts <- aggregate(hash ~ Date, length, data=grams)
+summary(totalCounts)
+#       Date                 hash
+#  Min.   :2014-06-09   Min.   : 2846.00
+#  1st Qu.:2014-07-05   1st Qu.: 9584.25
+#  Median :2014-08-26   Median :10527.50
+#  Mean   :2014-08-21   Mean   : 9651.44
+#  3rd Qu.:2014-09-29   3rd Qu.:11165.00
+#  Max.   :2014-11-07   Max.   :19686.00
+library(ggplot2)
+qplot(Date, hash, data=totalCounts)
+# https://i.imgur.com/ucPMvJQ.png
+~~~
+
 ### Information leaks
 #### Diabolus/Crypto Market
 
@@ -390,18 +423,214 @@ The Darkleaks protocol requires providing encrypted data and then the revelation
 This archive is all the encrypted data, decryption keys, and revealed usernames I was able to collate.
 (The auction did not seem to go well as the revealed data was not a compelling proof, and it's unclear whether he was the genuine article.)
 
-### Not included
+## Copyright
 
-A number of other datasets are known to exist but are unavailable, including:
+The copyright status of crawls of websites, particularly ones engaged in illegal activities, is unclear.
+To the extent I hold any copyright in the contents, I release my work under the [Creative Commons](!Wikipedia) [CC0 "No Rights Reserved" license](https://creativecommons.org/about/cc0); other authors may reserve their rights.
 
-- law enforcement scrapes (see [the Force briefing](https://www.reddit.com/r/DarkNetMarkets/comments/336p83/the_force_briefing_le_dnm_investigative_methods/)), seized server images
-- National Drug and Alcohol Research Centre (NDARC) in Sydney, Australia; Australian vendor focused crawls, non-release may be due to concerns over Australian police interest in them as documentation of sales volume to use against the many arrested Australian sellers
-- unknown Princeton grad student
-- Christin CMU group: uncensored SR1 crawls, indefinite number of other markets crawled post-2012
-- Digital Citizens Alliance
-- Dolliver 2015 (claimed NDA on SR2 crawls)
+## Previous releases
 
-## How to crawl markets
+Some of these archives have been released publicly before:
+
+- [SR2 market](https://www.reddit.com/r/SilkRoad/comments/36jmp2/silk_road_2_scrape_torrent_released/)
+- [Evolution forums](https://www.reddit.com/r/DarkNetMarkets/comments/2zps7q/evolution_forums_mirrorscrapes_torrent_released/)
+- [Evolution market](https://www.reddit.com/r/DarkNetMarkets/comments/2zllmv/evolution_market_mirrorscrapes_torrent_released/)
+
+These downloads are obsoleted by this archive.
+
+## Verification
+
+Integrity of the archive can be verified using [PAR2](!Wikipedia "Parchive"): `par2verify ecc.par2`
+Up to 10% of file damage/loss can be repaired using the supplied PAR2 files for [FEC](!Wikipedia "Forward error correction") and `par2repair`; see the man page for details.
+
+Signed SHA-256 hashes of the archives:
+
+~~~
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+8b05d5fcba36db6889af4fe23d1117a48c39b0808332d32919f9d7c835380721  1776.tar.xz
+cc6f54d5818e13fb585b14d6c414fcdbf4d20a4e1ab3aa398f5ce05287a1d1b0  2015-sr2doug-claimedsr2leaks.tar.xz
+6e082846f83dc9e06950fc29095491d303f5b336d65bbe6760db2c03d969cf02  abraxas-forums.tar.xz
+3dcb6ba24bc3e4f75e13827bb1e2f0632ed269b10e6158bdb554cc50983f1204  abraxas.tar.xz
+4231b81aa12d529f4502129683f8d5f1e0ef1f813d252d6edcce9d3b75eecdd2  agape.tar.xz
+4838969a87610fe80678ae72a3d631ab2aaa5a6b219cd67226f528d96c4fc958  agora-forums-20140421-whom-astorposts.tar.xz
+f6afe2df9238ce5cecea6dac70fd7c4b67a444824eccf07667ca46b15a167734  agora-forums-2014093020141016-rasmusandersen.tar.xz
+5730cc4e7e34138aeee934985b937ba8a2ae78f23580ba9a666348fb04fb3583  agora-forums.tar.xz
+4e7d5d4f63be66956037d4c27f3b97c0b980addd3ed5029b24904ab69f705c9d  agora.tar.xz
+ab9fc0d2324ddbd03fcf5a9e8b9213fc6c650fcb1f7e99f9d3b7a63cd67923af  alpaca.tar.xz
+1bbb33eda2094f662d982cad045033541a5fb22e850359883fa3decb5a0d81d2  alphabay.tar.xz
+7a61ae8945322455f9b6d0afdad2751847f9a294b951920ea6cccaa8f3b06d86  amazondark.tar.xz
+19e634813d8038474460d72e0c5311a7d97a9a2e9e9089eab32a719cf4a0c377  anarchia.tar.xz
+8da899bae2e51384afa8d4f839a45371a1b1c5b22a52685f698aced1dba5adbd  andromeda-forums.tar.xz
+0c95881e291bde995dc33ae8ee516ca7c8b200cb8dd3b967f8dc62ec5a36b6b2  andromeda.tar.xz
+3466f8f9637aab4f2d74ef9c242be7aeff08d5adfadcffe7ca69ce58392a62a9  area51.tar.xz
+d9f4f00dba4a44cc7bb45b19d9967046be56b83328c0149697cdf44862438ef2  armory.tar.xz
+d9e887e1370f690724e9a178287baf5c85e5e8a900e9e9dae019b795e2afdb6e  assassinationmarket.tar.xz
+c959b430f7aef932d26fe389498c6f4d3d7d02421e9d05c204803b009317869b  atlantis-20130921-christin.tar.xz
+e1539816b1318badf183152960783697f234ce6c972e90ed2830b119d620313a  blackbankmarket-forums.tar.xz
+c9e4940b16078ad2982a55c4c1221054ad3b6a2cac99517d55fc24063a71efdd  blackbankmarket.tar.xz
+cbb17ccd867d242ce571ea692a4672474c8330679d3a41e2fff7ebaa511ffd58  blackgoblin.tar.xz
+f68f7bb73b47161d8d0499eb062ddd8b4f7b267cad9b2c9179b3a6d309ac9d2b  blackmarketreloaded-20131017-userlist.sql.xz
+eed272069f2f057dc6894bbb078041c4bf64db3936a1218cf9f9db9c42518839  blackmarketreloaded-20131225-feedback-wousd.sql.xz
+6b0a07ea3cbf67cd60c743a52cdf0427a3e4e587655e3950a75c48fad2f57085  blackmarketreloaded-elpresidente.tar.xz
+63d95bc6baa947842247084f0332e8e5ccc465ad112df2fe4d88e1a024aeb5fc  blackmarketreloaded-forums.tar.xz
+84598eccbc428ce0325327618f2d7566e55ab799f46e030a1c5b8295e0397fd0  blackservicesmarket.tar.xz
+9d0f068823a37eb405b2bf6014ba3051a6cddfb78997111ae1a0c7507c60dd3e  bloomsfield.tar.xz
+a4477cf586ff6b18df649e5bfb47d825f2c604c3913b934c235eafa514d0025b  bluesky.tar.xz
+8e9b225be42d4f3cff9f835e7f24ba414a6d72e3131d77655f3fc7d05c3b6208  breakingbad.tar.xz
+9bb37c2f8b68730b02d38ddf3be04154384f2c79a70505a3324fb8b973e4553c  bungee54-forums.tar.xz
+78f5599807f5adc1a068cb86f8a8c7ad194d67d28ef5f451076a40a8587f1776  bungee54.tar.xz
+9afedc1135e8a96a61974fb663eaaabef2476bafbc4193dc9f6744402573c98c  buyitnow.tar.xz
+f9559a82359cc33f9e9b093d5aa7a6d8b4deebb39aa13841c2fb91ea6f6fdac5  cannabisroad2-forums.tar.xz
+db133bef60e5c338757af23809175a8f64a9b4ca1dbebcbf3d8930af590a924a  cannabisroad2.tar.xz
+9fca953f118c80f6e61264b513872404ab67b51e06e544bba35284b1fcf8defd  cannabisroad3-forums.tar.xz
+173d4f60232941b18a5cdef0c04d45a678fd1f9c4ff0a4a1158266cd1f15c4fa  cannabisroad3.tar.xz
+5feeb4f56b4b2c0ab058e45d82543588ec09386f50a3663af53109abb72d66c6  cannabisroad.tar.xz
+e0b5355ac6fc07b53dd6ae6767783462173d0e5a62f77b3ca23b699d5f59ce25  cantina.tar.xz
+a2db7e54af153958d9d0bac0bf4088ff371e28c7e5510e5fae6b850af88dda8f  cloudnine.tar.xz
+9010bcfd779f01508075d341e278dbd412c2350d9fba41bb96a1345494956b40  cryptomarket.tar.xz
+66d0236a256059df1ae4f0c6da5e7ded59f83f4534e2293c576575ad0191262e  cryuserv.tar.xz
+1dd482381d3a4ff8b30c4750696f1de1fbceb19ce29061ad39f5ce33092239f3  darkbay-forums.tar.xz
+366e30bdb6d84e6cbe5d54909d2f49a7f95e0f232ecd886ea53e729f479104e0  darkbay.tar.xz
+d7f666e3fd244c299621c6fb7beb20111690e4e7c8786161f1534c23c7836d51  darklist.tar.xz
+c6d2478c2a0f860c4b1e8507a5925f699ee39edf8dead1df2cec5d0d94b51af2  darknetheroes-forums.tar.xz
+1197eae4c7cb83ed97aa5374365a26b67beea75bf053a9927b2e8948393fe58d  darknetheroes.tar.xz
+623ff7d3509727be5936f27ab95cd2b40432f25b0f07e20df7062e5e2cd55217  darknetnation.tar.xz
+23e4932551b2a56c12d151d2f14140d5c9a7c25407b766b34d48456c5dbab589  dbay.tar.xz
+f8b3cd5c861e7c32147ad720538728f113bcda0f41760ef7475ffbaf26037490  deepzon.tar.xz
+2199f5062ad587d355ed683b894ada4dd1529ec50c5f5761b523cdaff9c20b5c  diabolus-cminfoleak-20150220-20150311.tar.xz
+f1f6df5855287def19443db64082aa1c7df507991a6968dca6f5f097b024e253  diabolus-forums.tar.xz
+42d1a476d9eb6b9b4807789ba08c5791054d41f3d6b9e7506a78a309603bad78  diabolus.tar.xz
+ddeed8ce25ef813814522bffe2224f390c84dcdca4dcd0c3023b49d0a63a8b5a  dnstats-20150712.sql.xz
+649e311c427398006bf390f7827fe3534026c730a905766cb9f3e78bad82b520  documents.tar.xz
+2f2523f4125e64acaa86ebacb8fe2f08fc640608aabc95d747e9319bf9446e12  dogeroad-forums.tar.xz
+78079f03495ba405a04860fb546421780f9bc1cdcf06025e7abd29033f77c450  dogeroad.tar.xz
+768482dd0aae12fab023497cda437fd290657ac1e9df29a6b65f1b142d1ce8af  dreammarket.tar.xz
+229373106b35aa6d72a71f7dc48e90d1da47647cc58348ee0cb768a3926294c4  drugslist.tar.xz
+f8a324d215858918d781436a09d51bfaa88c2b9bd59ef6af4a75f52c81891a6c  eastindiacompany.tar.xz
+23449de611a42899bcb27db8186d194f7b805ee7e55034ec5ab17adee226aecd  evolution-forums-2014093020141016-rasmusandersen.tar.xz
+109eb980c11ed37b29321f6403cb5e95614f3c44525a549164d95d0a52eb94cf  evolution-forums.tar.xz
+a6a0ccd588635903f1e914390f36bb9a56f562d37b9e92d6e58dac6364b35b8a  evolution.tar.xz
+0b2e5eac28bad63ca832aeeebb8a759dec21bbf2b52eb5f816dc010ab5a825f3  freebay.tar.xz
+336c43eb0794174bb8c58cb8b018a8e019a4dd1719a298051b0c0e4ba04a7109  freedommarketplace.tar.xz
+61f2037e6245d2e0a23f87df142ff53c0736da26844a3a3f7d869fdd1b835202  freemarket.tar.xz
+af4dd8003b015519677c802cc3c19f0910cb79541876be0be719e0c176fe7f5e  galaxy.tar.xz
+0d963a63009ef5b581ce705555a608997cfc7220971a26236d8f12b6268c224c  gobotal-20140818-20141102.tar.xz
+0cecd5e78416328caf06614ee6a8fabee0d91b8aecddd9ca2d67f059ff7497d6  grams.tar.xz
+2dccb3df553b89dfceb5ba4930269ffff4fcd39dc6c876ca6cfc9e85c98bda9a  grandtrunk.tar.xz
+2fe55a93c6c7b69b40a5bfe1c1dcd7c0cc4601045696870f1b4dad460c93ea70  greyroad-forums.tar.xz
+419e97c0c28784e6077f296746bf2ae5b4899cc0fef2756108c3b5c3d5ed9b13  greyroad.tar.xz
+d7624f290f63642d3d875d0b94baf84af89cd63e2abab57c1889bf8d18883596  havanaabsolem-forums.tar.xz
+94bafe76779807cdf7cc86d0534da64155b22e40db79f1bb801e865becd44fc6  havanaabsolem.tar.xz
+32475d62c6ff9cce00063b6473576782a2941bf1dc2e05a0f9a6bc9880ed91c3  haven.tar.xz
+b69715d148fa02e87af8143d36152f4deda57b39f85fe4da47e8090e5e93c348  horizon.tar.xz
+b06b7f272934b661920eae5ba9cc3ac8480c8e94ca86d7ab039988cdbf348f2a  hydra-forums.tar.xz
+0cf4eda89b71d17a9a539599053e06f4fed4322c0ea306edb6e30c950ab0d16b  hydra.tar.xz
+cebec4d92f705475a61ab0fe66c905d509c737139276e96c4c8826539bdd2e07  ironclad.tar.xz
+deb71f9e282bbc477c16c922ea8731ecc8817244808619fe881c22467df1d213  kingdom-forums.tar.xz
+466772600b49a37d6f5078c1534d889f0b3d3d7ccb165228292e1121217395fd  kiss-forums.tar.xz
+74436c0b38dab5007ad212e5c8bb7f1d67708fbdfbbaf6488a80ea637cdcd912  kiss.tar.xz
+73ed19cbc40d0d313cf91ed68c7c8f931438238605076bea95c6db7e41a382bd  middleearth.tar.xz
+69e783616806f90715b3a63b8f8623ca7ea83f81a48b71e0fadbfa85dfca214f  modafinil.tar.xz
+fc29a84ba388a0bf7aa7c27437ea2e53462bfdb527f00c45958b2d15a43237ef  mrniceguy2.tar.xz
+796fa38de4eae84797ce07c30a158123b61224dffdb6e94dfd5be39f8a96a187  mrniceguy-forums.tar.xz
+146f2ae90fd4fa25932f43596e621065204a07ca5b8149d4e6af142abea32597  mtgox-2011-usernamepasswordleak.csv.xz
+0d4136f8e59a4cedfbfac30da33a846d42ed1c9e6e1af8ed030be8ac42e42522  mtgox-20140309-leak.tar.xz
+e22b5c83f04ac244e4e77bad4e91588642373a371b3b5606c311a5021bd2eba2  nucleus-forums.tar.xz
+87fb7a67bfd55f25f882fbf10e10c82bf2872721109f47728192b5be0e830252  nucleus.tar.xz
+ff975d6dc3c91c5b2fd42a86c54acecfed17616dcd80ba5a320ff4b4df2e89fd  onionshop.tar.xz
+1b95c06289b081c1dc674dc5d4e055f61fd1609b8a75d5a65a51134407639c11  outlawmarket-forums.tar.xz
+4d7d1c24197c89252d515e35ef1bc3c80543180e952ed3e6aae821eb48d17d4c  outlawmarket.tar.xz
+11327c8c1915e802cd6083e590217e8e93b19767c9453fc62291e24b96a0a420  oxygen.tar.xz
+5355211f6e1b8a338115ef10b2c8498af3b4ee494405b51147f1ffe27645d7b5  panacea-forums.tar.xz
+58a76cba9c7ca06c4d92ce03bb39bddf24f15dabeee508f2004f0158bf1aca70  panacea.tar.xz
+ed17677aa7269d725cdd81fc1832655a76b3ab701a0ca356b1182443622bedd7  pandora-elpresidente.tar.xz
+9f9de82834b46973a5712a6b1dcabe3cb2af1b3c42348d3f2ab4534b59f64dc6  pandora-forums-20140421-whom-astorposts.tar.xz
+29bb6c5add500b077b3545559871eda0515887f8847380f1024072ce6cc785aa  pandora-forums.tar.xz
+d6e00fb115cecb5739e72c994243edf3199a7b2c9524ebe1e55983bcd2dbc894  pandora.tar.xz
+0dfcfdac5d359b508efae9c50cb861f5403924e047de00831db758841a469bfa  pedofunding.tar.xz
+427bc78c1e466a7bdc7f0b667d125aced3de76da7bfd8fed5fce564f44421372  pigeon-forums.tar.xz
+6fe6fd24b0b604ec70b9e56610743f3bdf91683d24e6ade3a149ecd61b7b787f  pigeon.tar.xz
+bd634bf2b2943fb1d01c548f1d731d86c8344d319b799a03a9197874e8e01772  piratemarket.tar.xz
+f8dbee89392ebced3a529a972e19c5146aaa3cfe8ce9d25005f538d41b47c2ed  poseidon.tar.xz
+71b44fc678bebb8122ddfdba02e2ef80335f72eaf49b4f11ef3204ee7f29ec35  projectblackflag-20131103-anonymous-logsdump.tar.xz
+0000462319ea6467b0a25f070f659124966518da3adce1a0fa92d81a84a24e59  projectblackflag-forums.tar.xz
+b2ec62fbe54b8148f7e6e7738b84d0d7d45c6b7a91b951494a9a8ab20769e24b  revolver-forums.tar.xz
+4f8573bded758c065f86c1eae189d69c1ad622fb6558d10d4aef780e699e09c2  sheep-elpresidente.tar.xz
+073829fc8ae4fe9e6920b2c3232bc253ebe6c877b29264a569651e5d76c3b191  sheep.tar.xz
+4099f3d49d74d8828b12d8ff532979531c5ca31092985457e93f5f5e9fafbdc1  silkroad1-20111103-delyankratunov.tar.xz
+57b641200c30bf6a801fe2faf462d507fcc99c678567943f25af9d0c51970879  silkroad1-20120722-vanbuskirk.docx
+59e72f95201726cc46d9680f97a53f44c45f242b57a96567916c4cb76a863d5e  silkroad1-20120723-christin-censored.tar.xz
+da8726427d1b13f850a9647a34757ee95be000c036a5ec370e8f43b01fde6609  silkroad1-20130703-anonymous.tar.xz
+a3fe8ec72186e7ec02fe206f92616688fae07b756f06a555bd8f306a92b0451b  silkroad1-20130915-aldridgehetu.tar.xz
+12876b0783fb928a9c982dff048155fae331b174e08847e66a3100a9f74c9369  silkroad1-forums-20130703-anonymous.tar.xz
+5533a90285c0d072d62ebf681cfe717987dfe595f13b96e1e8dc9ae1ed7274ab  silkroad1-forums-20131103-gwernrasmusandersen.tar.xz
+3a28097c243843cc69d365b1c6456075679bfa09cd3a50daa6105a0c7f4df837  silkroad1-forums-anonymous.tar.xz
+37db1b2eab69923e22cb0d2ee65426152cb11ab09d92d1d6013a2fe7f20aa7d0  silkroad1-forums-stexo.tar.xz
+eac0013182b996b4a77f446a28ffabd74f23ea0fa32eeaa6f3bc499081c372c8  silkroad1-forums.tar.xz
+ab1ffac3b85b9cbb2d7ff80ed28a1899561f945758196ba3976dbb2e5b8b4c21  silkroad1-vendorprofiles-stexo.tar.xz
+2df744013fedfdacfd349472e05981316dbf392ccb56e627ff6d6f09b4ad7a8a  silkroad1-wiki.tar.xz
+1c8e643eade9750b39485c5e101f65d2c12ec977cb7b681cd8df064eccf4c0e7  silkroad2-20140129-sohhlz-vendors.tar.xz
+3381cd4305c4cd909aa86cf218a1022e6be5ed227d6eb728603c41b9956c7a28  silkroad2-20140927-daryllau.tar.xz
+7367dc56f15f61212d8567033a4d3a9468622e05f86d38607a70d5686164648a  silkroad2-forums-20140419-whom-astorposts.tar.xz
+0900093d7100b4faf983707b4b1e0ec1fae3c4b18270eaa8eedfe4f8b69a6e23  silkroad2-forums-2014093020141016-rasmusandersen.tar.xz
+a473132cb8eec64aea2066628a24628a0c1eb38c195c9945c700dd19f1f972f2  silkroad2-forums.tar.xz
+2abc793c7fdfce31d375db11307b66aa69cb91f4c684408840d546bf4e61e41b  silkroad2.tar.xz
+3384789112185d81544dcad5bc69967cd44b097b7a772da48f5a1226b43155de  silkroadreloaded.tar.xz
+ed9d47ecc9afce0f541386471da9894c436833b89da06663ffbc5ab6de2beacf  silkstreet.tar.xz
+7e254452405543c27ee47c0bf6a455fe34443a6fa335a904e086fef61cf6f330  simplybear.tar.xz
+80c759f67a5eac57b6345417dff1181690a80ecb965a14ce812ab79d315f2f2d  tcf.tar.xz
+6f0775201cb379bb0845c60fde22e66b8aa7d5319d6046987202cdc9065b0591  theblackboxmarket.tar.xz
+c25c1f2b35d1cf1f38f1f009b40d559f5a0aaf484248d98aed7b9942fade20a8  thecave.tar.xz
+078cc6e61cb37c56f671b6d87ca243e885c2a37a17645d73d26c01e56b28afe4  thehub-forums-20140420-whom-astorposts.tar.xz
+5620dae0fac58b30bff4efbf116ce9674d071c3d43fe7cef2f5f84c2950b4182  thehub-forums.tar.xz
+c542fed2541d059c466d0b9dc402465952a778b1ef584a3af73e7ad34d953f7e  themajesticgarden-forums.tar.xz
+a8a57924768c5f7ad4062fe0b6931722a078caab91b65a515b554817b2e4c1dc  themajesticgarden.tar.xz
+8deee8650c55fbd4cfb8366a4f8b5e8a5370b525f676769de34f81a8864e92d2  themarketplace.tar.xz
+420889ca017ac87c92a0ff774d21dc79c3abc1958c8dee0dcc11e1af59fd680d  therealdeal-forums.tar.xz
+b1ee23d727b30c486c3d197212ac91ac16f18b78b30ba5346854bedf81e6b821  therealdeal.tar.xz
+70cf9c9a75815e9a514d4a5eb69aef77df862f3c8e36aff19feed8dae7c1e1cc  tochka.tar.xz
+32acbc1289525785c12f179a7da9ce76a838e5a13a4dbaa6fb16c3f1870f9d98  tom-forums.tar.xz
+3f62941a988c166ebcec9c788069de1d30a3c365f0b1da1921d342c8a4df3a35  tom.tar.xz
+6c50bd480914e0c257b6e85a3e22a087e0e058614d465f7269e2ebd1f867a35a  topix2.tar.xz
+fee6a7cd032648bebaae7752045bcd64c0a069c0abd311c53686323103fe7ede  torbay.tar.xz
+76fdc6da85a4d697e2e5ed5b9c3d608c5d1ac33a0831fd0701cfd0c6c922e9db  torbazaar-forums.tar.xz
+5b9b457c2e541fc618461b69c14511b03fff886daed25ba1e0cb49a89c5b749c  torbazaar.tar.xz
+0f3c3a34496feeb44f258e07ee46704a38f856e975e394bcf689e03a18d263ca  torescrow-forums.tar.xz
+7e4bf1ef60826367375ab419b068ce1b61daf231cda407594f595ec3bffc6d50  torescrow.tar.xz
+1b911a07423900ee4ef9ff71e9d1f4752bfa89ad9c473b760263314f56c7a021  tormarket-20131213-dpr2-dbdump.mht
+e229859ffa92bb7c142d2d54317d4b571e48dcc030d412fc93489a3f5aaa9faa  tormarket-elpresidente.tar.xz
+55b50e6e9283df50e68d1843db0d07360cc0e6c7d2d032dc00de2c04a00cd489  tormarket.tar.xz
+f81a11e6dd8779a4bf077f9bc833740536ed202d2dca106ab5122d758784bf74  tortuga1-forums.tar.xz
+15c7d2ad0b525a9f3ae417dc63a670698204ac755a28bd98f104b0b240f3a4fd  tortuga2.tar.xz
+0bb2324c424faa0481a3ca5b4004e57493eacfb7a521a7018edb40c3b467037b  undergroundmarket-forums.tar.xz
+2153d48e75b60942cb7287a06b93c43b2968fb175af7b4f82fff59577674e9f6  undergroundmarket.tar.xz
+13bb5eda0762a41aecc74caf3f3a527035b0015ea71019ba4d2d2363aeaf86d3  unitech.tar.xz
+2811a120a4db56907498b2758b0b5d8b2d43c2167a40b2bf0c6e432ba383ff55  utopia-forums.tar.xz
+c64666bf5ea4218f7b69d366243ce13a1c8fc21a68d4e24a6ac8c7c3d8bf6908  utopia.tar.xz
+9278f2ed7191642cf736bc4dc88c2ccbe7c0b1af6cc6e6ffcb283263a4aef729  vault43.tar.xz
+8087f7b4a7781ffc634d0baa2ac4a7cec7b7b1bd5a619f89cb43d49faae002b7  whiterabbit.tar.xz
+dc64656700ad46505bd02412d7af5a04d60aba138c713720a00d80cc4bd20000  zanzibarspice.tar.xz
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCgAGBQJVoq+QAAoJEH3Oo4eJxYjM52IP/3ZMzulM6TuwKfkcsGDrFe4Q
+X3gQL4Ru2N80jWWcUj3hA/SxEyhs5gWA/xnLZr1HFPPEOXZQRMZb5G3tVQ7clhxL
+dH2q7YPl+1L151iqtZHATYMcK8kSB7gbs8S33JU5SkS+y7R0tOXI9fpVuhnaD6HN
+q3nGEKrSXI0CaC2o4bBxmUh/1WsimTySiNbcErdj0jMns10MKeYwTq98E+6yc+XQ
+ItsMqS9gfSVlGN0yLRedc+kI+Y3M4ujLzY5aHC7PDv2RnpZhRMV68cSbsTc4FD7m
+A7AOFKHukUhDPBqp1d3BEU/IiNqY4YhfIkmDMIQ8y2ioYG+rkk0SMojb3OYXgv0p
+ioO0QuHNsJSomXYe9OkNoF9y2Tb99nJr7Wr6TFyJ4Geeow9B9p0j2LWFwfrpD3oq
+eevXcIQruyi1AG4sK3/F6UG+GAZ3ZgsvcECoRc0+zytXNF0sn14WNcnyqGmtyfo1
+/Y0KcDA0RCiWyvUTyAHWjjv0xOxVGDij8r9aqDM+8UgTsECIL6tlTo/Ifhm/k4a6
+qF0adhyCpeFPAhmW2kz7BYsmtM0TzWDV/eD3h3mrpo8bn0ILgZr4MpEpLn3WPjY/
+D+ZepCz12epZSURHV+6SWFteO6PM44fU895ezBq/iU5ZIRK8uvTShR6KEtPivJFp
+fYrFFbOhBc6KRQbNJ8o2
+=U0bP
+-----END PGP SIGNATURE-----
+~~~
+
+# How to crawl markets
 
 The bulk of the crawls are my own work, and were generally all created in a similar way.
 
@@ -489,24 +718,18 @@ A custom crawler could have simplified the blacklist part and allowed some other
 - removing initial hops in connecting to the hidden service, speeding it up and reducing latency (does not seem to be a config option in Tor daemon but I'm [told something like this](https://tor.stackexchange.com/questions/6271/accessing-tor-hidden-services-over-a-single-hop-circuit) is done in [Tor2web](!Wikipedia))
 - post-download checks: a market may not visibly error out but start returning login pages or warnings. If these could be detected, the custom crawler could log back in (particularly with CAPTCHA-solving) or at least alert the user to the problem so they can decide whether to log back in, create a new account, slow down crawling, split over multiple accounts, etc
 
-# Copyright
+# Other datasets
 
-The copyright status of crawls of websites, particularly ones engaged in illegal activities, is unclear.
-To the extent I hold any copyright in the contents, I release my work under the [Creative Commons](!Wikipedia) [CC0 "No Rights Reserved" license](https://creativecommons.org/about/cc0); other authors may reserve their rights.
+A number of other datasets are known to exist but are unavailable, including:
 
-# Previous releases
+- law enforcement scrapes (see [the Force briefing](https://www.reddit.com/r/DarkNetMarkets/comments/336p83/the_force_briefing_le_dnm_investigative_methods/)), seized server images
+- National Drug and Alcohol Research Centre (NDARC) in Sydney, Australia; Australian vendor focused crawls, non-release may be due to concerns over Australian police interest in them as documentation of sales volume to use against the many arrested Australian sellers
+- unknown Princeton grad student
+- Christin CMU group: uncensored SR1 crawls, indefinite number of other markets crawled post-2012
+- Digital Citizens Alliance
+- Dolliver 2015 (claimed NDA on SR2 crawls)
 
-Some of these archives have been released publicly before:
-
-- [SR2 market](https://www.reddit.com/r/SilkRoad/comments/36jmp2/silk_road_2_scrape_torrent_released/)
-- [Evolution forums](https://www.reddit.com/r/DarkNetMarkets/comments/2zps7q/evolution_forums_mirrorscrapes_torrent_released/)
-- [Evolution market](https://www.reddit.com/r/DarkNetMarkets/comments/2zllmv/evolution_market_mirrorscrapes_torrent_released/)
-
-These downloads are obsoleted by this archive.
-
-# Verification
-
-Hashes: TODO
+# External links
 
 <!-- TODO:
 
