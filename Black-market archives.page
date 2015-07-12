@@ -7,8 +7,15 @@ status: in progress
 belief: highly likely
 ...
 
->
+> Dark Net Markets (DNM) are online markets typically hosted as Tor hidden services whose users transact in Bitcoin or other cryptocoins, usually for drugs or other illegal/regulated goods; the most famous DNM was Silk Road 1, which pioneered the business model.
+> From 2013-2015, I scraped/mirrored on a weekly or daily basis all existing English-language DNMs as part of my research into their [usage](/Silk Road), [lifetimes/characteristics](/Black-market survival), & [legal riskiness](/Black-market arrests); these scrapes covered vendor pages, feedback, images, etc.
+> In addition, I made or obtained copies of as many other datasets & documents related to the DNMs as I could.
+> All this data has been publicly released as a single 52GB (~1.6TB) archive covering 89 DNMs & 37+ related forums, representing <4,438 mirrors.
+> This page documents the download, contents, interpretation, and technical methods behind the scrapes.
 
+# Download
+
+The full archive is available for download from [the Internet Archive as a torrent](https://archive.org/download/dnmarchives/dnmarchives_archive.torrent) ([item page](https://archive.org/details/dnmarchives)).
 
 # Research
 ## Possible Uses
@@ -58,7 +65,7 @@ A dataset like this owes its existence to many parties:
 
 # Contents
 
-There are ~89 markets, >37 forums and ~5 other sites, representing <4,438 mirrors of >43,596,420 files in ~50GB of 163 compressed files, unpacking to >1548GB. <!-- 1538962410676 bytes -->
+There are ~89 markets, >37 forums and ~5 other sites, representing <4,438 mirrors of >43,596,420 files in ~52GB of 163 compressed files, unpacking to >1548GB. <!-- 1538962410676 bytes -->
 
 These archives are [xz](!Wikipedia)-compressed tarballs (optimized with the [sort-key trick](/Archiving%20URLs#sort---key-compression-trick)); typically each subfolder is a single date-stamped (YYYY-MM-DD) crawl using [wget](!Wikipedia), with the default directory/file layout. Archives sourced from other people follow their own particular conventions.
 (Mac & Windows users may be able to uncompress using their OS archiver, 7zip, or Stuffit.)
@@ -428,6 +435,8 @@ This archive is all the encrypted data, decryption keys, and revealed usernames 
 The copyright status of crawls of websites, particularly ones engaged in illegal activities, is unclear.
 To the extent I hold any copyright in the contents, I release my work under the [Creative Commons](!Wikipedia) [CC0 "No Rights Reserved" license](https://creativecommons.org/about/cc0); other authors may reserve their rights.
 
+(I request that users respect the spirit of this archive and release their own source code & derived datasets to public, but I will not legally demand it.)
+
 ## Previous releases
 
 Some of these archives have been released publicly before:
@@ -733,12 +742,13 @@ A number of other datasets are known to exist but are unavailable, including:
 
 <!-- TODO:
 
-2. par2create -m1000 -n30 -r10 ecc *
-2. PGP sign hashes of files
 3. upload to IA
-$ cd ~/blackmarket-mirrors/archive/ && ia upload dnmarchives * --metadata="title:Dark Net Market archives, 2011-2015"
+$ cd ~/blackmarket-mirrors/ && ia upload "dnmarchives" ./dnmarchives-20112015/ --size-hint=51500122969 --metadata="title:Dark Net Market archives, 2011-2015" --log
+3. burn archives to BD as as backup
+4. set up Patreon, add to sidebar to replace Gratipay
 
 Release:
 /r/DNM & all market-specific subreddits, G+, Twitter, researchers' emails, Daryl Lay, Ormsby, Adrian Chen, Sudhir Venkatesh, Gerald Rich https://www.reddit.com/r/datasets , http://ryancompton.net/about/
 for seeding, ping /u/bobbiggs69 https://www.reddit.com/r/DarkNetMarkets/comments/3c53zw/call_for_dnmrelated_datasets_and_scrapes/cst3xti /u/Agorathrowawayyfoe1 https://www.reddit.com/r/DarkNetMarkets/comments/3c53zw/call_for_dnmrelated_datasets_and_scrapes/cstsbnl?context=3
+go back to old archive releases and mark them deprecated, linking to here instead
 -->
