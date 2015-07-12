@@ -10,7 +10,7 @@ belief: highly likely
 > Dark Net Markets (DNM) are online markets typically hosted as Tor hidden services whose users transact in Bitcoin or other cryptocoins, usually for drugs or other illegal/regulated goods; the most famous DNM was Silk Road 1, which pioneered the business model.
 > From 2013-2015, I scraped/mirrored on a weekly or daily basis all existing English-language DNMs as part of my research into their [usage](/Silk Road), [lifetimes/characteristics](/Black-market survival), & [legal riskiness](/Black-market arrests); these scrapes covered vendor pages, feedback, images, etc.
 > In addition, I made or obtained copies of as many other datasets & documents related to the DNMs as I could.
-> All this data has been publicly released as a single 52GB (~1.6TB) archive covering 89 DNMs & 37+ related forums, representing <4,438 mirrors.
+> This uniquely comprehensive collection is now publicly released as a single 52GB (~1.6TB) archive covering 89 DNMs & 37+ related forums, representing <4,438 mirrors, and is available for any research.
 > This page documents the download, contents, interpretation, and technical methods behind the scrapes.
 
 # Download
@@ -23,19 +23,19 @@ The full archive is available for download from [the Internet Archive as a torre
 Here are some suggested uses:
 
 - providing information on vendors across markets like their PGP key and feedback ratings
-- identifying arrested and flipped sellers (eg. the Weaponsguy sting)
+- identifying arrested and flipped sellers (eg the Weaponsguy sting on Agora)
 - individual drug and category popularity
-- total sales per day, with consequent turnover and commission estimates; correlates with Bitcoin or blackmarket-related search traffic, subreddit traffic, Bitcoin price or volume, etc
+- total sales per day, with consequent turnover and commission estimates; correlates with Bitcoin or black-market-related search traffic, subreddit traffic, Bitcoin price or volume, etc
 - seller lifetimes, ratings, over time and by product sold
 - losses to black-market exit scams, or seller exit scams
-- reactions to shocks like Operation Onymous
+- reactions to exogenous shocks like Operation Onymous
 - survival analysis, and predictors of exit-scams (early finalization volume; site downtime; new vendors; etc)
 - topic modeling of forums
 - compilations of forum posts on lab tests estimating purity and safety
 - compilations of forum-posted Bitcoin addresses to examine the effectiveness of market tumblers
 - stylometric analysis of posters, particular site staff (what is staff turnover like? do any markets ever change hands?)
 - deanonymization and information leaks (eg GPS coordinates in metadata, usernames reused on the clearnet, valid emails in PGP public keys)
-- security practices: use of PGP, lifetime of individual keys, accidental posts of private rather than public keys, malformatted or unusable public keys, etc
+- security practices: use of PGP, lifetime of individual keys, accidental posts of private rather than public keys, malformed or unusable public keys, etc
 - anthologies of real-world photos of particular drugs compiled from all sellers of them
 
 ## Works using this dataset
@@ -66,8 +66,9 @@ A dataset like this owes its existence to many parties:
 # Contents
 
 There are ~89 markets, >37 forums and ~5 other sites, representing <4,438 mirrors of >43,596,420 files in ~52GB of 163 compressed files, unpacking to >1548GB. <!-- 1538962410676 bytes -->
+(It can be burned to 3 25GB BDs or 2 50GB BDs; if the former, it may be worth generating additional FEC.)
 
-These archives are [xz](!Wikipedia)-compressed tarballs (optimized with the [sort-key trick](/Archiving%20URLs#sort---key-compression-trick)); typically each subfolder is a single date-stamped (YYYY-MM-DD) crawl using [wget](!Wikipedia), with the default directory/file layout. Archives sourced from other people follow their own particular conventions.
+These archives are [xz](!Wikipedia)-compressed tarballs (optimized with the [sort-key trick](/Archiving%20URLs#sort---key-compression-trick)); typically each subfolder is a single date-stamped (`YYYY-MM-DD`) crawl using [wget](!Wikipedia), with the default directory/file layout. Archives sourced from other people follow their own particular conventions.
 (Mac & Windows users may be able to uncompress using their OS archiver, 7zip, or Stuffit.)
 
 If you don't want to uncompress all of a particular archive, as they can be very large, you can try extracting specific files using archiver-specific options; for example, a SR2F command targeting a particular old forum thread:
@@ -89,14 +90,14 @@ Specifically:
     - Agape
     - Agora
     - Alpaca
-    - Alphabay
+    - AlphaBay
     - Amazon Dark
     - Anarchia
     - Andromeda
     - Area51
     - Armory
     - Atlantis
-    - Blackbanket Market
+    - BlackBank Market
     - Black Goblin
     - BlackMarket Reloaded
     - Black Services Market
@@ -111,20 +112,20 @@ Specifically:
     - Cantina
     - Cloud9
     - Crypto Market / Diabolus
-    - Darkbay
+    - DarkBay
     - Darklist
     - Darknet Heroes
-    - Dbay
+    - DBay
     - Deepzon
     - Doge Road
     - Dream Market
     - Drugslist
     - East India Company
     - Evolution
-    - Freebay
+    - FreeBay
     - Freedom Marketplace
     - Free Market
-    - Greyroad
+    - GreyRoad
     - Havana/Absolem
     - Haven
     - Horizon
@@ -132,7 +133,7 @@ Specifically:
     - Ironclad
     - Kiss
     - Middle Earth
-    - Mr Niceguy 2
+    - Mr Nice guy 2
     - Nucleus
     - Onionshop
     - Outlaw Market
@@ -149,15 +150,15 @@ Specifically:
     - Silk Road Reloaded (I2P)
     - Silkstreet
     - Simply Bear
-    - The Blackbox Market
+    - The BlackBox Market
     - The Majestic Garden
     - The Marketplace
     - The RealDeal
-    - tochka
+    - Tochka
     - TOM
     - Topix 2
-    - Torbay
-    - Torbazaar
+    - TorBay
+    - TorBazaar
     - TorEscrow
     - TorMarket
     - Tortuga 2
@@ -172,17 +173,17 @@ Specifically:
     - Agora forums
     - Andromeda forums
     - Black Market Reloaded forums
-    - Blackbank Market forums
+    - BlackBank Market forums
     - bungee54 forums
     - Cannabis Road 2 forums
     - Cannabis Road 3 forums
-    - Darkbay forums
+    - DarkBay forums
     - Darknet heroes forums
     - Diabolus forums
     - Doge Road forums
     - Evolution forums
     - Gobotal
-    - Greyroad forums
+    - GreyRoad forums
     - Havana/Absolem forums
     - Hydra forums
     - Kingdom forums
@@ -203,7 +204,7 @@ Specifically:
     - The Majestic Garden forums
     - The RealDeal forums
     - TorEscrow forums
-    - Torbazaar forums
+    - TorBazaar forums
     - Tortuga 1 forums
     - Underground Market forums
     - Unitech
@@ -224,7 +225,7 @@ Missing or highly incomplete:
 - SR1
 - Blue Sky
 - TorMarket
-- DeepBay
+- Deepbay
 - Red Sun Marketplace
 - Sanitarium Market
 - EXXTACY
@@ -254,9 +255,9 @@ Some of the archives are unusual and need to be described in more detail.
 
 The September SR1 crawl is processed data stored in [SPSS](!Wikipedia) `.sav` Data Files. There are various libraries available for reading this format (in R, using the `foreign` library like `library(foreign); sellers <- read.spss("Sellers -- 2013-09-15.sav", to.data.frame=TRUE)`.)
 
-### DNstats
+### DNStats
 
-[DNstats](https://dnstats.net/) is a service which periodically pings hidden services and records the response & latency, generating graphs of uptime and allowing users to see how long a market has been down and if an error is likely to be transient.
+[DNStats](https://dnstats.net/) is a service which periodically pings hidden services and records the response & latency, generating graphs of uptime and allowing users to see how long a market has been down and if an error is likely to be transient.
 The owner has provided me with a SQL export of the ping database; this database could be useful for comparing downtime across markets, examining the effect of DoS attacks, or regressing downtime against things like the Bitcoin exchange rate (presumably if the markets still drive more than a trivial amount of the Bitcoin economy, downtime of the largest markets or market deaths should predict falls in the exchange rate).
 
 The service is a useful one and accepts donations: `1DNstATs59JANuXjbpS5ngWHqvApAhYHBS`.
@@ -310,7 +311,7 @@ gramsFiles <- list.files(path=DIR, pattern="SilkRoad.csv", all.files=TRUE, full.
 ## "2-11922","Silk Road 2","http://silkroad6ownowfk.onion/items/220-fe-only-tw-x-mb","$220for28grams","0.34349900" \
 ##  "220 FE Only TW X MB","1oz of the same tw x mb as my other listing FE only. Not shipped until finalized. Price \
 ##   is higher for non FE listing.","","1404258628","United States",
-# read in each CSV, note what day it is from, and combine into a single dataframe:
+# read in each CSV, note what day it is from, and combine into a single data-frame:
 grams <- data.frame()
 for (i in 1:length(gramsFiles)) {
     log <- read.csv(gramsFiles[i], header=TRUE)
@@ -349,7 +350,7 @@ TRD denied that this was any kind of problem, so I collected order information f
 
 ### Modafinil
 
-As part of my interest in the stimulant [modafinil](/Modafinil), I have been monthly collecting by hand scrapes of all modafinil/armodafinil/adrafinil listings across the blackmarkets; the modafinil archive contains the saved files in MHT or MAFF format from 2013-05-28 to 2015-07-03. Sampled markets include:
+As part of my interest in the stimulant [modafinil](/Modafinil), I have been monthly collecting by hand scrapes of all modafinil/armodafinil/adrafinil listings across the black-markets; the modafinil archive contains the saved files in MHT or MAFF format from 2013-05-28 to 2015-07-03. Sampled markets include:
 
 - Abraxas
 - Agora
@@ -420,7 +421,7 @@ but before the Silk Road 1 forums went offline some months later:
 
 Sources:
 
-- in January 2014, [sohhlz](https://www.reddit.com/user/sohhlz) made & distributed a scrape of SR2 vendor pages akin to StExo's SR1 vendor dump
+- in January 2014, [Sohhlz](https://www.reddit.com/user/sohhlz) made & distributed a scrape of SR2 vendor pages akin to StExo's SR1 vendor dump
 - ["Analyzing Trends in the Silk Road 2.0"](http://lau.im/articles/analyzing-silk-road-2-0-part-1/) ([source](https://github.com/dlau/sr-data)), Daryl Lau
 
 #### SR2Doug
@@ -694,7 +695,7 @@ My setup is a Debian testing Linux system with [Tor](!Wikipedia), [Privoxy](!Wik
 
 This method will permit somewhere around 18 simultaneous crawls of different black-market sites or forums before you begin to risk Privoxy throwing errors about "too many connections".
 A Privoxy bug may also lead to huge logs being stored on each request.
-Between these two issues, I've found it helpful to have a daily cronjob reading `rm -rf /var/log/privoxy/*; /etc/init.d/privoxy restart` so as to keep the logfile mess under control and occasionally start a fresh Privoxy.
+Between these two issues, I've found it helpful to have a daily cron job reading `rm -rf /var/log/privoxy/*; /etc/init.d/privoxy restart` so as to keep the logfile mess under control and occasionally start a fresh Privoxy.
 
 Crawls can be quickly checked by comparing the downloaded sizes to past downloads; markets typically do not grow or shrink more than 10% in a week, and forums' downloaded size should monotonically increase.
 (Incidentally, that implies that it's more important to archive markets than forums.)
