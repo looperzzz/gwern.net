@@ -4,7 +4,7 @@ description: Mirrors of Tor-Bitcoin black-markets & forums 2013-2015, and other 
 created: 1 Dec 2013
 tags: Bitcoin, Silk Road
 status: in progress
-belief: possible
+belief: highly likely
 ...
 
 >
@@ -46,7 +46,7 @@ Posts:
 
 Please cite this resource as:
 
-- Gwern Branwen, Nicolas Christin, David Hetu, Rasmus Munksgaard Andersen, StExo, El Presidente, Anonymous, Daryl Lau, Sohhlz, Delyan Kratunov, Vince Cakic, Van Buskirk, Whom, & TODO. "Dark Net Market archives, 2011-2015", TODO TODO 2015. Web. [access date] <http://www.gwern.net/Black-market%20archives>
+- Gwern Branwen, Nicolas Christin, David Hetu, Rasmus Munksgaard Andersen, StExo, El Presidente, Anonymous, Daryl Lau, Sohhlz, Delyan Kratunov, Vince Cakic, Van Buskirk, & Whom. "Dark Net Market archives, 2011-2015", 12 July 2015. Web. [access date] <http://www.gwern.net/Black-market%20archives>
 
 ## Donations
 
@@ -71,9 +71,144 @@ tar --verbose --extract --xz --file='silkroad2-forums.tar.xz' --no-anchored --wi
 
 Most of the material dates from 2013 to 2015; some archives sourced from other people (before I began crawling) may date 2011-2012.
 
-There are TODO markets, TODO forums, representing TODO mirrors of TODO files sized TODOGB, specifically:
+There are ~89 markets, >37 forums and ~5 other sites, representing <4,438 mirrors of >43,596,420 files in ~50GB of 163 compressed files, unpacking to >1548GB. <!-- 1538962410676 bytes -->
+Specifically:
 
-- TODO do two unxz/tar runs, one to extract a file list, the other to unpack all files & get a byte count
+- Markets:
+
+    - 1776
+    - Abraxas
+    - Agape
+    - Agora
+    - Alpaca
+    - Alphabay
+    - Amazon Dark
+    - Anarchia
+    - Andromeda
+    - Area51
+    - Armory
+    - Atlantis
+    - Blackbanket Market
+    - Black Goblin
+    - BlackMarket Reloaded
+    - Black Services Market
+    - Bloomsfield
+    - Blue Sky Market
+    - Breaking Bad
+    - bungee54
+    - BuyItNow
+    - Cannabis Road 1
+    - Cannabis Road 2
+    - Cannabis Road 3
+    - Cantina
+    - Cloud9
+    - Crypto Market / Diabolus
+    - Darkbay
+    - Darklist
+    - Darknet Heroes
+    - Dbay
+    - Deepzon
+    - Doge Road
+    - Dream Market
+    - Drugslist
+    - East India Company
+    - Evolution
+    - Freebay
+    - Freedom Marketplace
+    - Free Market
+    - Greyroad
+    - Havana/Absolem
+    - Haven
+    - Horizon
+    - Hydra
+    - Ironclad
+    - Kiss
+    - Middle Earth
+    - Mr Niceguy 2
+    - Nucleus
+    - Onionshop
+    - Outlaw Market
+    - Oxygen
+    - Panacea
+    - Pandora
+    - Pigeon
+    - Pirate Market
+    - Poseidon
+    - Project Black Flag
+    - Sheep
+    - Silk Road 1
+    - Silk Road 2
+    - Silk Road Reloaded (I2P)
+    - Silkstreet
+    - Simply Bear
+    - The Blackbox Market
+    - The Majestic Garden
+    - The Marketplace
+    - The RealDeal
+    - tochka
+    - TOM
+    - Topix 2
+    - Torbay
+    - Torbazaar
+    - TorEscrow
+    - TorMarket
+    - Tortuga 2
+    - Underground Market
+    - Utopia
+    - Vault43
+    - White Rabbit
+    - Zanzibar Spice
+- Forums:
+
+    - Abraxas forums
+    - Agora forums
+    - Andromeda forums
+    - Black Market Reloaded forums
+    - Blackbank Market forums
+    - bungee54 forums
+    - Cannabis Road 2 forums
+    - Cannabis Road 3 forums
+    - Darkbay forums
+    - Darknet heroes forums
+    - Diabolus forums
+    - Doge Road forums
+    - Evolution forums
+    - Gobotal
+    - Greyroad forums
+    - Havana/Absolem forums
+    - Hydra forums
+    - Kingdom forums
+    - Kiss forums
+    - Mr Nice Guy 1 forums
+    - Nucleus forums
+    - Outlaw Market forums
+    - Panacea forums
+    - Pandora forums
+    - Pigeon forums
+    - Project Black Flag forums
+    - Revolver forums
+    - Silk Road 1 forums
+    - Silk Road 2 forums
+    - TOM forums
+    - The Cave
+    - The Hub forums
+    - The Majestic Garden forums
+    - The RealDeal forums
+    - TorEscrow forums
+    - Torbazaar forums
+    - Tortuga 1 forums
+    - Underground Market forums
+    - Unitech
+    - Utopia forums
+- Miscellaneous:
+
+    - Assassination Market
+    - Cryuserv
+    - DNM-related documents (primarily the Ross Ulbricht trial evidence exhibits)
+    - DNStats
+    - Grams
+    - Pedofunding
+    - SR2doug's leaks
 
 Missing or highly incomplete:
 
@@ -121,7 +256,7 @@ The service is a useful one and accepts donations: `1DNstATs59JANuXjbpS5ngWHqvAp
 ### Grams
 
 [Grams](http://grams7enufi7jmdl.onion/) ([subreddit](https://www.reddit.com/r/grams)) is a service primarily specializing in searching market listings; they can pull listings from API exports provided by markets (Evolution, Cloud9, Middle Earth, Bungee54, Outlaw), or they may use their own custom crawls (the rest).
-They have generously given me near-daily CSV exports of the current state of listings in their search engine, ranging from 2014-06-09 to TODO.
+They have generously given me near-daily CSV exports of the current state of listings in their search engine, ranging from 2014-06-09 to 2015-07-12.
 Grams coverage:
 
 - 1776
@@ -357,19 +492,28 @@ A custom crawler could have simplified the blacklist part and allowed some other
 # Copyright
 
 The copyright status of crawls of websites, particularly ones engaged in illegal activities, is unclear.
-To the extent I hold any copyright in the contents, I release my work under the [Creative Commons](!Wikipedia) [CC0 "No Rights Reserved" license](https://creativecommons.org/about/cc0).
+To the extent I hold any copyright in the contents, I release my work under the [Creative Commons](!Wikipedia) [CC0 "No Rights Reserved" license](https://creativecommons.org/about/cc0); other authors may reserve their rights.
 
 # Previous releases
 
-Some of these archives have been released publicly before;
+Some of these archives have been released publicly before:
 
-- <https://www.reddit.com/r/SilkRoad/comments/36jmp2/silk_road_2_scrape_torrent_released/>
-- <https://www.reddit.com/r/DarkNetMarkets/comments/2zps7q/evolution_forums_mirrorscrapes_torrent_released/>
-- <https://www.reddit.com/r/DarkNetMarkets/comments/2zllmv/evolution_market_mirrorscrapes_torrent_released/>
+- [SR2 market](https://www.reddit.com/r/SilkRoad/comments/36jmp2/silk_road_2_scrape_torrent_released/)
+- [Evolution forums](https://www.reddit.com/r/DarkNetMarkets/comments/2zps7q/evolution_forums_mirrorscrapes_torrent_released/)
+- [Evolution market](https://www.reddit.com/r/DarkNetMarkets/comments/2zllmv/evolution_market_mirrorscrapes_torrent_released/)
+
+These downloads are obsoleted by this archive.
+
+# Verification
+
+Hashes: TODO
 
 <!-- TODO:
 
-par2create -m1000 -n30 -r10 ecc *.xz *.mht *.docx
+2. par2create -m1000 -n30 -r10 ecc *
+2. PGP sign hashes of files
+3. upload to IA
+$ cd ~/blackmarket-mirrors/archive/ && ia upload dnmarchives * --metadata="title:Dark Net Market archives, 2011-2015"
 
 Release:
 /r/DNM & all market-specific subreddits, G+, Twitter, researchers' emails, Daryl Lay, Ormsby, Adrian Chen, Sudhir Venkatesh, Gerald Rich https://www.reddit.com/r/datasets , http://ryancompton.net/about/
