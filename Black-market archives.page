@@ -7,33 +7,7 @@ status: in progress
 belief: possible
 ...
 
-contents
-
-
-
-Other mirrors:
-
-- DARC Australia crawls
-- Princeton grad student [???]
-- Nicolas Christin's CMU group [got Atlantis, anonymized SR1 data; want full SR1 data & scrapes made since]
-- Digital Citizens Alliance (at least two: http://media.gractions.com/314A5A5A9ABBBBC5E3BD824CF47C46EF4B9D3A76/5f8d4168-c36a-4f78-b048-f5d48b18dc0a.pdf )
-- Judith Aldridge & Hetu (September SR1) [DONE]
-- Rasmus Munksgaard [DONE]
-- Dolliver [unlikely to be forthcoming, and largely redundant with mine]
-
-
-For redistribution:
-
-1. check that no 'cookies.txt' is in the archive (!!!)
-
-cd ~/blackmarket-mirrors/archive/ && for ARCHIVE in `find . -type f -name "*.tar.xz"`; do echo -n "$ARCHIVE: " && nice unxz $ARCHIVE --stdout | tar --list | fgrep --color -e 'cookies.txt' -e '/*\.onion/'; done; alert
-3. check for any tarballs having accidental inclusion of 'cookies.txt' (possible security leak) or  .onion subdirectories in them which need merging (akin to #2);:
-
-   c ~/blackmarket-mirrors/archive/ && for ARCHIVE in `find . -type f -name "*.tar.xz"`; do echo -n "$ARCHIVE: " && nice unxz $ARCHIVE --stdout | tar --list | fgrep --color -e 'cookies.txt' -e '/*\.onion/'; done; alert
-
-Release:
-/r/DNM & all market-specific subreddits, G+, Twitter, researchers' emails, Daryl Lay, Ormsby, Adrian Chen, Sudhir Venkatesh, https://www.reddit.com/r/datasets , http://ryancompton.net/about/
-for seeding, ping /u/bobbiggs69 https://www.reddit.com/r/DarkNetMarkets/comments/3c53zw/call_for_dnmrelated_datasets_and_scrapes/cst3xti
+>
 
 
 # Research
@@ -61,7 +35,7 @@ Here are some suggested uses:
 
 Papers:
 
-- Andersen, R., Demant, J. & G. Branwen 2015, "Commentary on Dolliver 2015" (submitted to _International Journal of Drug Problems_)
+-  Demant, J., Andersen, R., & G. Branwen 2015, "Commentary for Dolliver, Diana S. 'Evaluating drug trafficking on the Tor Network: Silk Road 2, the sequel', 2015: An replication and methodological discussion of Dolliver's original study" (submitted to _International Journal of Drug Problems_)
 - Décary-Hétu & Giommoni 2015, "The Tangigle Effects Of Operation Onymous: Displacement In The Dark Net Drug Markets" (manuscript)
 
 Posts:
@@ -72,7 +46,7 @@ Posts:
 
 Please cite this resource as:
 
-- Gwern Branwen, Nicolas Christin, David Hetu, Rasmus Munksgaard Andersen, StExo, Anonymous, Daryl Lau, Sohhlz, Delyan Kratunov, Vince Cakic, Van Buskirk, Whom, & TODO. "Dark Net Market archives, 2011-2015", TODO TODO 2015. Web. [access date] <http://www.gwern.net/Black-market%20archives>
+- Gwern Branwen, Nicolas Christin, David Hetu, Rasmus Munksgaard Andersen, StExo, El Presidente, Anonymous, Daryl Lau, Sohhlz, Delyan Kratunov, Vince Cakic, Van Buskirk, Whom, & TODO. "Dark Net Market archives, 2011-2015", TODO TODO 2015. Web. [access date] <http://www.gwern.net/Black-market%20archives>
 
 ## Donations
 
@@ -113,6 +87,21 @@ Missing or highly incomplete:
 - EXXTACY
 - Mr Nice Guy 2
 
+## Interpreting & analyzing
+
+Scrapes can be difficult to analyze. They are large, complicated, redundant, and highly error-prone. They cannot be taken at face-value.
+
+No matter how much work one puts into it, one will never get an exact snapshot of a market at a particular instant: listings will go up or down as one crawls, vendors will be banned and their entire profile & listings & all feedback vanish instantly, Tor connection errors will cause a nontrivial % of page requests to fail, the site itself will go down (Agora especially), and Internet connections are imperfect. Scrapes can get bogged down in a backwater of irrelevant pages, spend all their time downloading a morass of on-demand generated pages, the user login expire or be banned by site administrators, etc. If a page is present in a scrape, then it probably existed at some point; but if a page is not present, then it may not have existed or existed but did not get downloaded for any of a myriad of reasons. At best, a scrape is a lower bound on how much was there.
+
+So any analysis *must* take seriously the incompleteness of each crawl and the fact that there is a lot and always will be a lot of missing data, and do things like focus on what can be inferred from 'random' sampling or explicitly model incompleteness by using markets' category-count-listings. (For example, if your download of a market claims to have 1.3k items but the categories' claimed listings sum to 13k items, your download is probably highly incomplete & biased towards certain categories as well.) There are many subtle biases: for example, there will be upward biases in markets' average review ratings because sellers who turn out to be scammers will disappear from the market scrapes when they are banned, and few of their customers will go back and revise their ratings; similarly if scammers are concentrated in particular categories, then using a single snapshot will lead to biased results as the scammers have already been removed, while uncontroversial sellers last a lot longer (which might lead to, say, e-book sellers seeming to have many more sales than expected).
+
+The contents cannot be taken at face-value either. Some vendors engage in review-stuffing using shills. Metadata like categories can be manipulated (a category labeled "Musical instruments" may contain listings for prescription drugs - beta blockers - or modafinil or Adderall may be listed in both a "Prescription drugs" and "Stimulants" category).  Many things said on forums are lies or bluffing or scams. Market operators may deliberately deceive users (Ross Ulbricht claiming to have sold SR1, the SR2 team engaging in "psyops") or conceal information (the hacks of SR1; the second SR2 hack) or attack their users (Sheep Marketplace and Pandora). Different markets have different characteristics: the commission rate on Pandora was unilaterally raised after it was hacked (causing sales volume to fall); SR2 was a notorious scammer haven due to inactive or overwhelmed staff and lacking a working escrow mechanism; etc. There is no substitute here for domain knowledge.
+
+Knowing this, analyses should have some strategy to deal with missingness. There are a couple tacks:
+
+- attempt to exploit "ground truths" to explicitly model and cope with varying degrees of missingness; there are a number of ground-truths available in the form of leaked seller data (screenshots & data), databases (leaked, hacked), official statements (eg the FBI's quoted numbers about Silk Road 1's total sales, number of accounts, number of transactions, etc)
+- assume missing-at-random and use analyses insensitive to that, focusing on things like ratios
+- work with the data as is, writing results such that the biases and lower-bounds are explicit & emphasized
 
 ## Individual archives
 
@@ -167,6 +156,22 @@ The main drawbacks are:
 - the largest markets can be split across multiple CSVs (eg `EVO.csv` & `EVO2.csv`), complicating reading the data in somewhat
 - the export each time is of the current listings, which means that different days can repeat the same identical crawl data if there was not a successful crawl by Grams in between
 
+### Information leaks
+#### Diabolus/Crypto Market
+
+Diabolus/Crypto Market are two markets run by the same team off, apparently, the same server. Crypto Market had an information leak where any attempt to log in as an existing user revealed the status bar of that Diabolus account, listing their current number of orders, number of PMs, and Bitcoin balance, and hence giving access to ground-truth estimates of market turnover and revenue.
+Using my Diabolus crawls to source a list of vendors, I set up a script to automatically download the leaks daily until the hole was finally closed.
+
+#### Simply Bear
+
+Upon launch, the market Simply Bear made the amateur mistake of failing to disable the default Apache `/server-status` page, which shows information about the server such as what HTML pages are being browsed and the connecting IPs.
+Being a Tor hidden service, most IPs were localhost connections from the daemon, but I noticed the administrator was logging in from a local IP (the `192.168.1.x` range) and curious whether I could de-anonymize him, I set up a script to poll `/server-status` every minute or so, increasing the interval as time passed. After two or three days, no naked IPs had appeared yet and I killed the script.
+
+#### TheRealDeal
+
+TheRealDeal was [reported on Reddit in late June 2015 to have a info leak](https://www.reddit.com/r/DarkNetMarkets/comments/3bf5vm/realdealmarket_information_leak/) where any logged-in user could browse around a sixth of the order-details pages (which were in a predictable incrementing whole-number format) of all users without any additional authentication, yielding the Bitcoin amount, listing, and all Bitcoin multisig addresses for that order.
+TRD denied that this was any kind of problem, so I collected order information for about a week.
+
 ### Modafinil
 
 As part of my interest in the stimulant [modafinil](/Modafinil), I have been monthly collecting by hand scrapes of all modafinil/armodafinil/adrafinil listings across the blackmarkets; the modafinil archive contains the saved files in MHT or MAFF format from 2013-05-28 to 2015-07-03. Sampled markets include:
@@ -195,31 +200,73 @@ As part of my interest in the stimulant [modafinil](/Modafinil), I have been mon
 - SR2
 - TOM
 
-### SR2Doug
+### Pedofunding
+
+A [crowdfunding](!Wikipedia) site for child pornography, "Pedofunding", [was launched in November 2014](https://www.deepdotweb.com/2014/11/09/as-drug-markets-are-seized-pedophiles-launch-a-crowdfunding-site/).
+It seemed like possibly the birth of a new black-market business model so I set up a logged-out scrape to archive its beginnings (sans any images), collecting 20 scrapes from 2014-11-13 to 2014-12-02, after which it shut down, apparently having found no traction.
+
+### SR1
+
+Sources:
+
+- ["Down the silk rabbit hole"](https://burntbrunch.github.io/Silk-Rabbit-Hole/html/) ([source](https://github.com/BurntBrunch/Silk-Rabbit-Hole)), Delyan Kratunov
+- appendix to Van Buskirk et al
+- ["Traveling the Silk Road: Datasets"](https://arima.cylab.cmu.edu/sr/) (recompressed)
+- 2013 scrape provided me by anonymous
+- source data for ["Not an 'Ebay for Drugs': The Cryptomarket 'Silk Road' as a Paradigm Shifting Criminal Innovation"](http://papers.ssrn.com/sol3/Papers.cfm?abstract_id=2436643), Aldridge & Décary-Hétu 2014
+
+#### SR1F
+
+This archive of the Silk Road 1 forums is composed of 3 parts,
+all created during October 2013 after Silk Road 1 was shut down
+but before the Silk Road 1 forums went offline some months later:
+
+1. StExo's archive, released anonymously
+
+    This excludes the Vendor Roundtable (VRT) subforum, and is believed to have been censored
+    in various respects such as removing many of StExo's own posts.
+2. Moustache's archived pages
+
+    Unknown source, may be based on StExo archives
+3. consolidated `wget` spider
+
+    After the SR1 bust and StExo's archiving, I began mirroring the SR1F with `wget`,
+    logged in as a vendor with access to the Vendor Roundtable; unfortunately due to my inexperience
+    with the forum software Simple Machines, I did not know it was possible to revoke your
+    own access to subforums with `wget` and failed to blacklist the revocation URL. Hence
+    the VRT was incompletely archived. I combined my various archives into a single version.
+
+    Simultaneously, qwertyoruiop was archiving the SR1F with a regular user account and a custom
+    Node.js script. I combined his spider with my version to produce a final version with reasonable
+    coverage of the forums (perhaps 3/4s of what was left after everyone began deleting & censoring
+    their past posts).
+
+### SR2
+
+Sources:
+
+- in January 2014, [sohhlz](https://www.reddit.com/user/sohhlz) made & distributed a scrape of SR2 vendor pages akin to StExo's SR1 vendor dump
+- ["Analyzing Trends in the Silk Road 2.0"](http://lau.im/articles/analyzing-silk-road-2-0-part-1/) ([source](https://github.com/dlau/sr-data)), Daryl Lau
+
+#### SR2Doug
 
 In 2015, a pseudonym claiming to be a SR2 programmer offered for sale, using the [Darkleaks](https://github.com/darkwallet/darkleaks) protocol, what he claimed was the username/password dump and SR2 source code.
 The Darkleaks protocol requires providing encrypted data and then the revelation of a random fraction of it.
 This archive is all the encrypted data, decryption keys, and revealed usernames I was able to collate.
 (The auction did not seem to go well as the revealed data was not a compelling proof, and it's unclear whether he was the genuine article.)
 
+### Not included
 
-# Using these scrapes & archives
+A number of other datasets are known to exist but are unavailable, including:
 
-Scrapes can be difficult to analyze. They are large, complicated, redundant, and highly error-prone. They cannot be taken at face-value.
+- law enforcement scrapes (see [the Force briefing](https://www.reddit.com/r/DarkNetMarkets/comments/336p83/the_force_briefing_le_dnm_investigative_methods/)), seized server images
+- National Drug and Alcohol Research Centre (NDARC) in Sydney, Australia; Australian vendor focused crawls, non-release may be due to concerns over Australian police interest in them as documentation of sales volume to use against the many arrested Australian sellers
+- unknown Princeton grad student
+- Christin CMU group: uncensored SR1 crawls, indefinite number of other markets crawled post-2012
+- Digital Citizens Alliance
+- Dolliver 2015 (claimed NDA on SR2 crawls)
 
-No matter how much work one puts into it, one will never get an exact snapshot of a market at a particular instant: listings will go up or down as one crawls, vendors will be banned and their entire profile & listings & all feedback vanish instantly, Tor connection errors will cause a nontrivial % of page requests to fail, the site itself will go down (Agora especially), and Internet connections are imperfect. Scrapes can get bogged down in a backwater of irrelevant pages, spend all their time downloading a morass of on-demand generated pages, the user login expire or be banned by site administrators, etc. If a page is present in a scrape, then it probably existed at some point; but if a page is not present, then it may not have existed or existed but did not get downloaded for any of a myriad of reasons. At best, a scrape is a lower bound on how much was there.
-
-So any analysis *must* take seriously the incompleteness of each crawl and the fact that there is a lot and always will be a lot of missing data, and do things like focus on what can be inferred from 'random' sampling or explicitly model incompleteness by using markets' category-count-listings. (For example, if your download of a market claims to have 1.3k items but the categories' claimed listings sum to 13k items, your download is probably highly incomplete & biased towards certain categories as well.) There are many subtle biases: for example, there will be upward biases in markets' average review ratings because sellers who turn out to be scammers will disappear from the market scrapes when they are banned, and few of their customers will go back and revise their ratings; similarly if scammers are concentrated in particular categories, then using a single snapshot will lead to biased results as the scammers have already been removed, while uncontroversial sellers last a lot longer (which might lead to, say, e-book sellers seeming to have many more sales than expected).
-
-The contents cannot be taken at face-value either. Some vendors engage in review-stuffing using shills. Metadata like categories can be manipulated (a category labeled "Musical instruments" may contain listings for prescription drugs - beta blockers - or modafinil or Adderall may be listed in both a "Prescription drugs" and "Stimulants" category).  Many things said on forums are lies or bluffing or scams. Market operators may deliberately deceive users (Ross Ulbricht claiming to have sold SR1, the SR2 team engaging in "psyops") or conceal information (the hacks of SR1; the second SR2 hack) or attack their users (Sheep Marketplace and Pandora). Different markets have different characteristics: the commission rate on Pandora was unilaterally raised after it was hacked (causing sales volume to fall); SR2 was a notorious scammer haven due to inactive or overwhelmed staff and lacking a working escrow mechanism; etc. There is no substitute here for domain knowledge.
-
-Knowing this, analyses should have some strategy to deal with missingness. There are a couple tacks:
-
-- attempt to exploit "ground truths" to explicitly model and cope with varying degrees of missingness; there are a number of ground-truths available in the form of leaked seller data (screenshots & data), databases (leaked, hacked), official statements (eg the FBI's quoted numbers about Silk Road 1's total sales, number of accounts, number of transactions, etc)
-- assume missing-at-random and use analyses insensitive to that, focusing on things like ratios
-- work with the data as is, writing results such that the biases and lower-bounds are explicit & emphasized
-
-# How to crawl markets
+## How to crawl markets
 
 The bulk of the crawls are my own work, and were generally all created in a similar way.
 
@@ -294,7 +341,18 @@ Despite all this, not all markets can be crawled or present other difficulties:
 - Mr Nice Guy 2 breaks the HTTP standard by returning all pages gzip-encoded, whether or not the client says it can accept gzip-encoded HTML; as it happens, wget cannot read gzip-encoded HTML and parse the page for additional URLs to download, and so mirroring breaks
 - AlphaBay, during the DoS attacks of mid-2015, began doing something odd with its HTTP responses, which makes Polipo error out; one must browse AlphaBay after switching to Privoxy; Poseidon also did something similar for a time
 - Middle Earth rate-limits crawls per session, limiting how much can be downloaded without investing a lot of time or in a CAPTCHA-breaking service
-- Abraxas leads to peculiarly high RAM usage by wget
+- Abraxas leads to peculiarly high RAM usage by wget, which can lead to the OOM killer ending the crawl prematurely
+
+In retrospect, had I known I was going to be scraping so many sites for 3 years, I probably would have worked on writing a custom crawler.
+A custom crawler could have simplified the blacklist part and allowed some other desirable features (in descending order of importance):
+
+- CAPTCHA library: if CAPTCHAs could be solved automatically, then each crawl could be scheduled and run on its own.
+
+    The downside is that one would need to occasionally manually check in to make sure that none of the possible problems mentioned previously have happened, since one wouldn't be getting the immediate of noticing a manual crawl finishing suspiciously quickly (eg a big site like SR2 or Evolution or Agora should take a single-threaded normal crawl at least a day and easily several days if images are downloaded as well; if a crawl finishes in a few hours, something went wrong).
+- supporting parallel crawls using multiple accounts on a site
+- optimized tree traversal: ideally one would download all category pages on a market first, to maximize information gain from initial crawls & allow estimates of completeness, and then either randomly sample items or prioritize items which are new/changed compared to previous crawls; this would be better than generic crawlers' defaults of depth or breadth-first
+- removing initial hops in connecting to the hidden service, speeding it up and reducing latency (does not seem to be a config option in Tor daemon but I'm [told something like this](https://tor.stackexchange.com/questions/6271/accessing-tor-hidden-services-over-a-single-hop-circuit) is done in [Tor2web](!Wikipedia))
+- post-download checks: a market may not visibly error out but start returning login pages or warnings. If these could be detected, the custom crawler could log back in (particularly with CAPTCHA-solving) or at least alert the user to the problem so they can decide whether to log back in, create a new account, slow down crawling, split over multiple accounts, etc
 
 # Copyright
 
@@ -305,32 +363,15 @@ To the extent I hold any copyright in the contents, I release my work under the 
 
 Some of these archives have been released publicly before;
 
-- https://www.reddit.com/r/SilkRoad/comments/36jmp2/silk_road_2_scrape_torrent_released/
-- https://www.reddit.com/r/DarkNetMarkets/comments/2zps7q/evolution_forums_mirrorscrapes_torrent_released/
-- https://www.reddit.com/r/DarkNetMarkets/comments/2zllmv/evolution_market_mirrorscrapes_torrent_released/
+- <https://www.reddit.com/r/SilkRoad/comments/36jmp2/silk_road_2_scrape_torrent_released/>
+- <https://www.reddit.com/r/DarkNetMarkets/comments/2zps7q/evolution_forums_mirrorscrapes_torrent_released/>
+- <https://www.reddit.com/r/DarkNetMarkets/comments/2zllmv/evolution_market_mirrorscrapes_torrent_released/>
 
----
+<!-- TODO:
 
-This archive of the Silk Road 1 forums is composed of 3 parts,
-all created during October 2013 after Silk Road 1 was shut down
-but before the Silk Road 1 forums went offline some months later:
+par2create -m1000 -n30 -r10 ecc *.xz *.mht *.docx
 
-1. StExo's archive, released anonymously
-
-    This excludes the Vendor Roundtable (VRT) subforum, and is believed to be sanitized
-    in various respects such as removing a number of StExo's own posts.
-2. Moustache's archived pages
-
-    Unknown source, may be based on StExo archives
-3. consolidated `wget` spider
-
-    After the SR1 bust and StExo's archiving, I began mirroring the SR1F with `wget`,
-    logged in as a vendor with access to the Vendor Roundtable; unfortunately due to my inexperience
-    with the forum software Simple Machines, I did not know it was possible to revoke your
-    own access to subforums with `wget` and failed to blacklist the revocation URL. Hence
-    the VRT was very incompletely archived. I combined my various archives into a single version.
-
-    Simultaneously, qwertyoruiop was archiving the SR1F with a regular user account and a custom
-    Node.js script. I combined his spider with my version to produce a final version with reasonable
-    coverage of the forums (perhaps 3/4s of what was left after everyone began deleting & censoring
-    their past posts).
+Release:
+/r/DNM & all market-specific subreddits, G+, Twitter, researchers' emails, Daryl Lay, Ormsby, Adrian Chen, Sudhir Venkatesh, Gerald Rich https://www.reddit.com/r/datasets , http://ryancompton.net/about/
+for seeding, ping /u/bobbiggs69 https://www.reddit.com/r/DarkNetMarkets/comments/3c53zw/call_for_dnmrelated_datasets_and_scrapes/cst3xti /u/Agorathrowawayyfoe1 https://www.reddit.com/r/DarkNetMarkets/comments/3c53zw/call_for_dnmrelated_datasets_and_scrapes/cstsbnl?context=3
+-->
