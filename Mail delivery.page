@@ -57,11 +57,11 @@ set.seed(2015-06-21)
 # & generate interval data for each time, bounded by end-of-day/midnight below & above, collecting ~1 month:
 simulateMailbox <- function(n, time) {
     deliveryTime <- round(rnorm(n, mean = time, sd = 30))
-    checkTime <- round(rnorm(n, mean = time, sd = 60))
+    checkTime <- round(rnorm(n, mean = time, sd = 20))
     simulates <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
                          checkTime, deliveryTime)
     return(data.frame(Time1=simulates[1,], Time2=simulates[2,])) }
-mailSim <- simulateMailbox(30, 660); mailSim
+mailSim <- simulateMailbox(30, 650); mailSim
 ##        Time1 Time2
 ## 1    569  1440
 ## 2      0   664
@@ -75,15 +75,15 @@ mailSim <- simulateMailbox(30, 660); mailSim
 library(ggplot2)
 png(file="~/wiki/images/maildelivery-simulated.png", width = 800, height = 500)
 ggplot(mailSim) + geom_segment(aes(x=Time1, xend=Time2, y=1:nrow(mailSim), yend=1:nrow(mailSim))) +
-    geom_vline(xintercept=660, color="blue") + ylab("Day") + xlab("Time")
+    geom_vline(xintercept=650, color="blue") + ylab("Day") + xlab("Time")
 invisible(dev.off())
 ~~~
 
-Inferring the mean time of delivery might sound difficult with such extremely crude data of intervals 700 minutes wide or worse, but plotting the little simulated dataset and marking the true mean time of 660, we see it's not *that* bad - the mean time is probably whatever line passes through the most intervals:
+Inferring the mean time of delivery might sound difficult with such extremely crude data of intervals 700 minutes wide or worse, but plotting the little simulated dataset and marking the true mean time of 650, we see it's not *that* bad - the mean time is probably whatever line passes through the most intervals:
 
 ![The simulated overlapping-intervals data, with the true mean time drawn in blue](/images/maildelivery-simulated.png)
 
-And also with our simulated dataset, we can see if the standard R survival library and a interval-censored model written in JAGS can recover the 660:
+And also with our simulated dataset, we can see if the standard R survival library and a interval-censored model written in JAGS can recover the 650:
 
 ~~~{.R}
 library(survival)
@@ -114,7 +114,7 @@ sr <- survreg(surv ~ 1, dist="gaussian", data=mailSim); summary(sr)
 More Bayesianly, we can write an interval-censoring model in JAGS, which gives us the opportunity to use an informative prior about the mean time the mailman comes.
 
 They work normal 9-5 hours as far as I know, so we can rule out anything outside 540-1020.
-From past experience, I expect the mail to show up not before 10AM (600) and not after 1PM (780), with those extremes being rare and sometime around 11AM (660) being much more common; so not a uniform distribution over 600-780 but a normal one centered on 660 and then somewhat arbitrarily saying that 600-700 represent 3 SDs out from the mean of delivery times to get SD=~30 minutes so in all, `dnorm(660, pow(30, -2))`.
+From past experience, I expect the mail to show up not before 10AM (600) and not after 1PM (780), with those extremes being rare and sometime around 11AM (650) being much more common; so not a uniform distribution over 600-780 but a normal one centered on 650 and then somewhat arbitrarily saying that 600-700 represent 3 SDs out from the mean of delivery times to get SD=~30 minutes so in all, `dnorm(650, pow(30, -2))`.
 The SD itself seems to me like it could range anywhere from a few minutes to an hour, but much beyond that is impossible (if the SD was over an hour, then every so often the mailman would have to come at 8AM! and if it was smaller than 10 minutes, then I would never have noticed much variation in the first place).
 
 ~~~{.R}
@@ -125,7 +125,7 @@ model1 <- function () {
            t[i] ~ dnorm(mu,tau)
            }
 
-           mu ~ dnorm(660, pow(30, -2))
+           mu ~ dnorm(650, pow(30, -2))
            sd ~ dunif(10, 60)
            tau <- pow(1/sd, 2)
 
@@ -143,11 +143,11 @@ j1 <- jags(data,inits, params, model1); j1
 ## deviance   0.000   0.000   0.000   0.000   0.000   0.000   0.000 1.000     1
 ~~~
 
-Both approaches' point-value mean time of 656/657 (10:54AM) come close to the true simulation value of 660 (11AM) and the prediction interval of 592-721 also sounds right, validating the models.
+Both approaches' point-value mean time of 656/657 (10:54AM) come close to the true simulation value of 650 (11AM) and the prediction interval of 592-721 also sounds right, validating the models.
 The estimated standard deviation isn't as accurate with a wide credible interval, reflecting that it's a harder parameter to estimate and the estimate is still vague with only _n_=30.
 
 ~~~{.R}
-mailSim <- simulateMailbox(180, 660); mailSim
+mailSim <- simulateMailbox(180, 650); mailSim
 
 # http://cran.r-project.org/web/packages/animation/index.html
 library(animation)
@@ -165,7 +165,7 @@ saveGIF(
         lowerPredictive <- j1$BUGSoutput$summary[c(4),][3]
         upperPredictive <- j1$BUGSoutput$summary[c(4),][7]
 
-        confintTrue <- round(qnorm(c(0.025, 0.975), mean=660, sd=30))
+        confintTrue <- round(qnorm(c(0.025, 0.975), mean=650, sd=30))
         lowerPredictiveTrue <- confintTrue[1]
         upperPredictiveTrue <- confintTrue[2]
 
@@ -208,13 +208,15 @@ set.seed(2015-06-24)
 library(lubridate)
 clockS <- function(t){hour(t)*60 + minute(t) + second(t)/60}
 
-mail <- data.frame(Time=clockS(as.POSIXct(c("2015-06-20 11:00", "2015-06-21 11:06", "2015-06-23 11:03",
-                                 "2015-06-24 11:05", "2015-06-25 11:00", "2015-06-26 10:56",
-                                 "2015-06-27 10:45", "2015-06-29 10:31", "2015-06-30 10:39", "2015-07-01 10:27",
-                                 "2015-07-02 10:47", "2015-07-03 10:27", "2015-07-04 10:54", "2015-07-05 10:55",
-                                 "2015-07-06 11:21", "2015-07-07 10:01", "2015-07-08 10:20", "2015-07-09 10:50"),
+mail <- data.frame(Time=clockS(as.POSIXct(c("2015-06-20 11:00AM", "2015-06-21 11:06AM", "2015-06-23 11:03AM",
+                                 "2015-06-24 11:05AM", "2015-06-25 11:00AM", "2015-06-26 10:56AM",
+                                 "2015-06-27 10:45AM", "2015-06-29 10:31AM", "2015-06-30 10:39AM", "2015-07-01 10:27AM",
+                                 "2015-07-02 10:47AM", "2015-07-03 10:27AM", "2015-07-04 10:54AM", "2015-07-05 10:55AM",
+                                 "2015-07-06 11:21AM", "2015-07-07 10:01AM", "2015-07-08 10:20AM", "2015-07-09 10:50AM",
+                                 "2015-07-10 11:10AM", "2015-07-11 11:12AM", "2015-07-13 11:05AM"),
                                 "EDT")),
-    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE))
+                   Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE,
+                               FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE))
 
 mail <- data.frame(Time1 = ifelse(mail$Delivered, 0, mail$Time),
                            Time2 = ifelse(mail$Delivered,  mail$Time, 1440))
@@ -225,7 +227,7 @@ model1 <- function() { for (i in 1:n){
            t[i] ~ dnorm(mu,tau)
            }
 
-           mu ~ dnorm(660, pow(30, -2))
+           mu ~ dnorm(650, pow(30, -2))
            sd ~ dunif(10, 60)
            tau <- pow(1/sd, 2)
 
@@ -278,7 +280,7 @@ posteriorTimes <- j1$BUGSoutput$sims.list[["y.new"]]
 simsPPC <- replicate(10000, {
     n <- nrow(mail)
     deliveryTime <- sample(posteriorTimes, size=n, replace=TRUE)
-    checkTime <- round(rnorm(n, mean = 660, sd = 30))
+    checkTime <- round(rnorm(n, mean = 650, sd = 20))
     newSamples <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
                          checkTime, deliveryTime)
     newData <- data.frame(Time1=newSamples[1,], Time2=newSamples[2,])
@@ -319,8 +321,8 @@ simulateMailbox <- function(n, dTime, dSD) {
 mailSorted <- mail[order(mail$Time1),]
 
 mail_sim <- replicate(100000, {
-    # mu ~ dnorm(660, 30)
-    mu <- rnorm(n=1, mean=660, sd=30)
+    # mu ~ dnorm(650, 20)
+    mu <- rnorm(n=1, mean=650, sd=20)
     # sd ~ dunif(10, 60)
     sd <- runif(n=1, min=10, max=60)
 
@@ -351,8 +353,8 @@ mail_abc <- function(samples) {
     while (n<samples) {
 
       # Priors:
-      ## mu ~ dnorm(660, 30)
-      mu <- rnorm(n=1, mean=660, sd=30)
+      ## mu ~ dnorm(650, 20)
+      mu <- rnorm(n=1, mean=650, sd=20)
       ## sd ~ dunif(10, 60)
       sd <- runif(n=1, min=10, max=60)
 
@@ -392,8 +394,8 @@ mail_abc <- function(samples) {
     while (n<samples) {
 
       # Priors:
-      ## mu ~ dnorm(660, 30)
-      mu <- rnorm(n=1, mean=660, sd=30)
+      ## mu ~ dnorm(650, 20)
+      mu <- rnorm(n=1, mean=650, sd=20)
       ## sd ~ dunif(10, 60)
       sd <- runif(n=1, min=10, max=60)
 
@@ -436,7 +438,8 @@ mailExact <- data.frame(Date=as.POSIXct(c("2010-04-29 11:33AM", "2010-05-12 11:3
                                           "2014-09-29 11:15AM", "2014-12-15 12:02PM", "2015-03-09 11:19AM",
                                           "2015-06-10 10:34AM", "2015-06-20 11:02AM", "2015-06-23 10:58AM",
                                           "2015-06-24 10:53AM", "2015-06-25 10:55AM", "2015-06-30 10:36AM",
-                                          "2015-07-02 10:45AM", "2015-07-06 11:19AM"),
+                                          "2015-07-02 10:45AM", "2015-07-06 11:19AM", "2015-07-10 10:54AM",
+                                          "2015-07-11 11:09AM"),
                         "EDT"))
 mailExact$TimeDelivered <- clockS(mailExact$Date)
 ##                   Date TimeDelivered Group
@@ -493,8 +496,8 @@ Estimating the two distributions separately in a simple multilevel/hierarchical 
 ~~~{.R}
 library(R2jags)
 model2 <- function() {
-  # I expect all deliveries ~11AM/660:
-  grand.mean ~ dnorm(660, pow(30, -2))
+  # I expect all deliveries ~11AM/650:
+  grand.mean ~ dnorm(650, pow(20, -2))
 
   # different mailman/groups will deliver at different offsets, but not by more than 2 hours or so:
   delta.between.group ~ dunif(0, 100)
@@ -648,7 +651,7 @@ for (i in seq(from=1, to=30)) {
 evsis <- replicate(100, {
     n <- i
     deliveryTime <- sample(posteriorTimes, size=n, replace=TRUE)
-    checkTime <- round(rnorm(n, mean = 660, sd = 30))
+    checkTime <- round(rnorm(n, mean = 650, sd = 20))
     newSamples <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
                              checkTime, deliveryTime)
     newSamples <- data.frame(Time1=newSamples[1,], Time2=newSamples[2,])
