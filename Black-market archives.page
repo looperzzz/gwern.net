@@ -3,19 +3,29 @@ title: Black-market archives
 description: Mirrors of Tor-Bitcoin black-markets & forums 2013-2015, and other material
 created: 1 Dec 2013
 tags: Bitcoin, Silk Road
-status: in progress
+status: finished
 belief: highly likely
 ...
 
-> Dark Net Markets (DNM) are online markets typically hosted as Tor hidden services whose users transact in Bitcoin or other cryptocoins, usually for drugs or other illegal/regulated goods; the most famous DNM was Silk Road 1, which pioneered the business model.
+> Dark Net Markets (DNM) are online markets typically hosted as Tor hidden services providing escrow services between buyers & sellers transacting in Bitcoin or other cryptocoins, usually for drugs or other illegal/regulated goods; the most famous DNM was Silk Road 1, which pioneered the business model in 2011.
 > From 2013-2015, I scraped/mirrored on a weekly or daily basis all existing English-language DNMs as part of my research into their [usage](/Silk Road), [lifetimes/characteristics](/Black-market survival), & [legal riskiness](/Black-market arrests); these scrapes covered vendor pages, feedback, images, etc.
 > In addition, I made or obtained copies of as many other datasets & documents related to the DNMs as I could.
-> This uniquely comprehensive collection is now publicly released as a single 52GB (~1.6TB) archive covering 89 DNMs & 37+ related forums, representing <4,438 mirrors, and is available for any research.
+> This uniquely comprehensive collection is now publicly released as a 52GB (~1.6TB) collection covering 89 DNMs & 37+ related forums, representing <4,438 mirrors, and is available for any research.
 > This page documents the download, contents, interpretation, and technical methods behind the scrapes.
+
+I have been involved in DNMs since June 2011 when Adrian Chen published his famous _Gawker_ article proving that Silk Road 1 was, contrary to my assumption when it was announced in January/February 2011, not a scam and had become a functional drug black-market; fascinated, I signed up, made my first order, and began documenting how to use SR1 and then a few months later, began documenting the first known SR1-linked arrests.
+Monitoring DNMs was easy because SR1 was overwhelmingly dominant and BlackMarket Reloaded was a distant second-place market, with a few irrelevancies like Deepbay or Sheep and then the flashy Atlantis.
+
+This idyllic period ended with the raid on SR1 in October 2013, which ushered in a new age of chaos in which centralized markets battled for dominance, the would-be successor Silk Road 2 was crippled by arrests and turned into a ghost-ship carrying scammers, and the multisig breakthrough went begging.
+The tumult made it clear to me that no market or forum could be counted on to last as long as SR1, and research into the DNM communities and markets, or even simply the memory of their history, was threatened by bitrot: already in November 2013 I was seeing pervasive myths spread throughout the media - that SR1 had \$1 billion in sales, that you could buy child pornography or hitmen services on it, that there were multiple Dread Pirate Roberts - and other dangerous beliefs in the community (that PGP was paranoia, markets could be trusted not to exit-scam, that FE was not a recipe for disaster, that SR2 was not infiltrated despite the staff arrests & even media coverage of a SR1 mole, that guns & poison sellers were not extraordinarily risky to purchase from, that buyers were never arrested).
+
+And so, starting with the SR1 forums, which had not been taken down by the raid (to help the mole? I wondered at the time), I began scraping all the new markets, doing so weekly and sometimes daily starting in December 2013.
+These are the results.
 
 # Download
 
 The full archive is available for download from [the Internet Archive as a torrent](https://archive.org/download/dnmarchives/dnmarchives_archive.torrent) ([item page](https://archive.org/details/dnmarchives)).
+(If the download does not start, it may be a [Torrent client problem related to Getright-webseeding-support](https://archive.org/about/faqs.php#316); if the torrent does not work, all files can be downloaded normally over HTTP from the IA item page, but if possible, torrents are recommended for reducing the bandwidth burden & error-checking.)
 
 # Research
 ## Possible Uses
@@ -37,6 +47,7 @@ Here are some suggested uses:
 - deanonymization and information leaks (eg GPS coordinates in metadata, usernames reused on the clearnet, valid emails in PGP public keys)
 - security practices: use of PGP, lifetime of individual keys, accidental posts of private rather than public keys, malformed or unusable public keys, etc
 - anthologies of real-world photos of particular drugs compiled from all sellers of them
+- simply browsing old listings, remembering the good times and bad times, the fallen and the free
 
 ## Works using this dataset
 
@@ -381,13 +392,13 @@ As part of my interest in the stimulant [modafinil](/Modafinil), I have been mon
 A [crowdfunding](!Wikipedia) site for child pornography, "Pedofunding", [was launched in November 2014](https://www.deepdotweb.com/2014/11/09/as-drug-markets-are-seized-pedophiles-launch-a-crowdfunding-site/).
 It seemed like possibly the birth of a new black-market business model so I set up a logged-out scrape to archive its beginnings (sans any images), collecting 20 scrapes from 2014-11-13 to 2014-12-02, after which it shut down, apparently having found no traction.
 
-### SR1
+### Silk Road 1 (SR41)
 
 Sources:
 
 - ["Down the silk rabbit hole"](https://burntbrunch.github.io/Silk-Rabbit-Hole/html/) ([source](https://github.com/BurntBrunch/Silk-Rabbit-Hole)), Delyan Kratunov
 - appendix to Van Buskirk et al
-- ["Traveling the Silk Road: Datasets"](https://arima.cylab.cmu.edu/sr/) (recompressed)
+- ["Traveling the Silk Road: Datasets"](https://arima.cylab.cmu.edu/sr/) (recompressed), supporting information for Christin et al 2013, ["Traveling the Silk Road: A measurement analysis of a large anonymous online marketplace"](https://www.andrew.cmu.edu/user/nicolasc/publications/Christin-WWW13.pdf)
 - 2013 scrape provided me by anonymous
 - source data for ["Not an 'Ebay for Drugs': The Cryptomarket 'Silk Road' as a Paradigm Shifting Criminal Innovation"](http://papers.ssrn.com/sol3/Papers.cfm?abstract_id=2436643), Aldridge & Décary-Hétu 2014
 
@@ -434,19 +445,20 @@ This archive is all the encrypted data, decryption keys, and revealed usernames 
 ## Copyright
 
 The copyright status of crawls of websites, particularly ones engaged in illegal activities, is unclear.
-To the extent I hold any copyright in the contents, I release my work under the [Creative Commons](!Wikipedia) [CC0 "No Rights Reserved" license](https://creativecommons.org/about/cc0); other authors may reserve their rights.
+
+- to the extent I hold any copyright in the contents, I release my work under the [Creative Commons](!Wikipedia) [CC0 "No Rights Reserved" license](https://creativecommons.org/about/cc0)
+- the SR1 Christin et al 2013 dataset is licensed under the [CC BY-NC](https://creativecommons.org/licenses/by-nc/3.0/us/)
+- other authors may reserve other rights
 
 (I request that users respect the spirit of this archive and release their own source code & derived datasets to public, but I will not legally demand it.)
 
 ## Previous releases
 
-Some of these archives have been released publicly before:
+Some of these archives have been released publicly before and are now obsoleted by this torrent:
 
 - [SR2 market](https://www.reddit.com/r/SilkRoad/comments/36jmp2/silk_road_2_scrape_torrent_released/)
 - [Evolution forums](https://www.reddit.com/r/DarkNetMarkets/comments/2zps7q/evolution_forums_mirrorscrapes_torrent_released/)
 - [Evolution market](https://www.reddit.com/r/DarkNetMarkets/comments/2zllmv/evolution_market_mirrorscrapes_torrent_released/)
-
-These downloads are obsoleted by this archive.
 
 ## Verification
 
@@ -742,14 +754,68 @@ A number of other datasets are known to exist but are unavailable, including:
 # External links
 
 <!-- TODO:
-
-3. upload to IA
-$ cd ~/blackmarket-mirrors/ && ia upload "dnmarchives" ./dnmarchives-20112015/ --size-hint=51500122969 --metadata="title:Dark Net Market archives, 2011-2015" --log
-3. burn archives to BD as as backup
-4. set up Patreon, add to sidebar to replace Gratipay
-
 Release:
-/r/DNM & all market-specific subreddits, G+, Twitter, researchers' emails, Daryl Lay, Ormsby, Adrian Chen, Sudhir Venkatesh, Gerald Rich https://www.reddit.com/r/datasets , http://ryancompton.net/about/
-for seeding, ping /u/bobbiggs69 https://www.reddit.com/r/DarkNetMarkets/comments/3c53zw/call_for_dnmrelated_datasets_and_scrapes/cst3xti /u/Agorathrowawayyfoe1 https://www.reddit.com/r/DarkNetMarkets/comments/3c53zw/call_for_dnmrelated_datasets_and_scrapes/cstsbnl?context=3
-go back to old archive releases and mark them deprecated, linking to here instead
+/r/DNM & all market-specific subreddits, G+, sticky on Twitter, Cryptomarket, Daryl Lau, Ormsby, Adrian Chen, Sudhir Venkatesh, Gerald Rich https://www.reddit.com/r/datasets , http://ryancompton.net/about/ , http://rs.io/100-interesting-data-sets-for-statistics/
+-->
+
+<!-- Reddit announcement:
+
+I am releasing all my DNM scrapes: a 52GB (~1.6TB) collection covering 89 DNMs & 37+ related forums, representing <4,438 mirrors.
+
+It can be downloaded [as a torrent](https://archive.org/download/dnmarchives/dnmarchives_archive.torrent); for all the details, see [my writeup on the contents](http://www.gwern.net/Black-market%20archives).
+
+A quick overview of what is covered:
+
+- Markets:
+
+    - 1776, Abraxas, Agape, Agora, Alpaca, AlphaBay, Amazon Dark, Anarchia, Andromeda, Area51, Armory, Atlantis
+    - BlackBank Market, Black Goblin, BlackMarket Reloaded, Black Services Market, Bloomsfield, Blue Sky Market, Breaking Bad, bungee54, BuyItNow
+    - Cannabis Road 1, Cannabis Road 2, Cannabis Road 3, Cantina, Cloud9, Crypto Market / Diabolus,
+    - DarkBay, Darklist, Darknet Heroes, DBay, Deepzon, Doge Road, Dream Market, Drugslist
+    - East India Company, Evolution, FreeBay, Freedom Marketplace, Free Market, GreyRoad, Havana/Absolem, Haven, Horizon, Hydra
+    - Ironclad, Kiss, Middle Earth, Mr Nice guy 2, Nucleus, Onionshop, Outlaw Market, Oxygen
+    - Panacea, Pandora, Pigeon, Pirate Market, Poseidon, Project Black Flag
+    - Sheep, Silk Road 1, Silk Road 2, Silk Road Reloaded (I2P), Silkstreet, Simply Bear
+    - The BlackBox Market, The Majestic Garden, The Marketplace, The RealDeal, Tochka, TOM, Topix 2, TorBay, TorBazaar, TorEscrow, TorMarket, Tortuga 2
+    - Underground Market, Utopia, Vault43, White Rabbit, Zanzibar Spice
+- Forums:
+
+    - Abraxas, Agora, Andromeda, Black Market Reloaded, BlackBank Market, bungee54, Cannabis Road 2, Cannabis Road 3
+    - DarkBay, Darknet heroes, Diabolus, Doge Road, Evolution, Gobotal, GreyRoad, Havana/Absolem, Hydra, Kingdom, Kiss
+    - Mr Nice Guy 1, Nucleus, Outlaw Market, Panacea, Pandora, Pigeon, Project Black Flag, Revolver
+    - Silk Road 1, Silk Road 2
+    - TOM, The Cave, The Hub, The Majestic Garden, The RealDeal, TorEscrow, TorBazaar, Tortuga 1
+    - Underground Market, Unitech, Utopia
+Miscellaneous:
+
+    - Assassination Market
+    - Cryuserv
+    - DNM-related documents (primarily the Ross Ulbricht trial evidence exhibits)
+    - DNStats
+    - Grams
+    - Pedofunding
+    - SR2doug's leaks
+
+I hope it will be useful.
+
+---
+
+In other news, I am stepping down on /r/DarkNetMarkets mod. I have been planning to do so since the beginning of the year, but I wanted to finish up some big DNM projects before I cut more ties: the first was [my arrests/bust compilation](http://www.gwern.net/Black-market%20arrests) and the second is this, releasing the full scrape archive which I've been working on for years.
+
+I'm no longer as interested in the DNMs as I used to be. I was originally lured in by the fascination of watching a small cryptopunk revolution, and I was hopeful that it would go beyond the SR1 model into multisig and beyond. But we have seen little multisig usage, and that augurs ill for the distributed marketplaces. (What if someone built a trustless distributed blackmarket and no one wanted to use it?) Instead, the SR1 business model has proven remarkably durable despite the constant wearying turmoil of exit-scams and hacks and as I write this in mid-July 2015, there seems to be little chance that things will change substantially soon. (If Tor hidden services are cracked, the DNMs will simply move to I2P or Freenet; if Bitcoin starts getting too easily tracked, transactions will be settled in Monero or another cryptocoin with better anonymity properties, etc.) So I'd like to stop investing so much energy into monitoring DNMs, which includes stopping my scrapes and stepping down as moderator.
+
+The exact timing owes something to the LE attention on me; as unpleasant as the ICE subpoena was, I was almost as disturbed by the subsequent Coinbase persecution of people who had done little but donate some Bitcoin to me. (And more recently, an order of some electronics from China arrived with the box open and the packaging so loosely taped one could get one's finger inside it; this *could* have simply been lazy packing or caused by squishing en route, but on the other hand, international packages at the border have few or no protections so it would be easy to flag a particular name for closer inspection...) I would have liked to finish up earlier, actually, but it's taken a lot of effort to get the archive into a releasable state (just uploading the 52GB to the IA took ~3 days on my connection).
+
+I did not do much in the way of day to day moderation on /r/DNM, so there will be little observable change; the current mod team minus me will be pretty much the same as it was before. I also will probably continue to comment, offer advice, or post from time to time when something interesting comes up; at some point, I would like to finish my overview of proposed distributed market systems from a DNM perspective, and try correlating DNM downtime against the Bitcoin exchange rate.
+
+But otherwise, I am mostly done.
+
+Posting this archive will be my last action as DNM moderator.
+
+It's a good archive, I think.
+Sorting through it, I refound a lot of things I'd forgotten: the BMR mods chatting on Pastebin about one of them being arrested, unaware that Dutch police were watching them and tapping all their phones and they would be going to jail for years in weeks/months, taking down Utopia with them; Backopy bristling at my criticisms of BMR security while preparing to take down BMR for being insecure; Ross and Rene at StoryTime, totally high, talking about Julia (possibly neither of them will ever see Ross again as he's sent to prison in Virginia for life) and Ross's twitter making an attempt at technical analysis of Bitcoin exchange rates (he sounds competent, but it's rather undermined by how the Mtgox leaks showed he sold off a huge amount of bitcoins not long before Bitcoin made some of its biggest gains ever) and his drawings (totally psychedelic); my crawls of The Marketplace, which never got the credit it deserved for pioneering multisig and tends to be left out of the post-SR1 story; the evidence that Sheep was run by Tomas Jirikovský, which I got so much shit for releasing; all the markets with funny themes like Area51 and Absolem and - of course! - Breaking Bad; even the worst markets like Black Goblin are still amusing to think back on; the Ulbricht trial exhibits where they forgot to redact *both* copies of information and so wound up leaking information about Force/Bridges and enabling some journalists to ransack DPR's email accounts (they never did release all of what they found, the greedy bastards); and photos of drugs, of every sort, from every market and vendor, drugs you didn't know existed or where still made, etc etc...
+
+All these and more I give you.
+
+I give you back your memories.
 -->
