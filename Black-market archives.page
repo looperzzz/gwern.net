@@ -81,8 +81,11 @@ A dataset like this owes its existence to many parties:
 There are ~89 markets, >37 forums and ~5 other sites, representing <4,438 mirrors of >43,596,420 files in ~49.4GB of 163 compressed files, unpacking to >1548GB. <!-- 1538962410676 bytes -->
 (It can be burned to 3 25GB BDs or 2 50GB BDs; if the former, it may be worth generating additional FEC.)
 
-These archives are [xz](!Wikipedia)-compressed tarballs (optimized with the [sort-key trick](/Archiving%20URLs#sort---key-compression-trick)); typically each subfolder is a single date-stamped (`YYYY-MM-DD`) crawl using [wget](!Wikipedia), with the default directory/file layout. Archives sourced from other people follow their own particular conventions.
-(Mac & Windows users may be able to uncompress using their OS archiver, 7zip, or Stuffit.)
+These archives are [xz](!Wikipedia)-compressed tarballs (optimized with the [sort-key trick](/Archiving%20URLs#sort---key-compression-trick)); typically each subfolder is a single date-stamped (`YYYY-MM-DD`) crawl using [wget](!Wikipedia), with the default directory/file layout.
+The majority of the content is HTML, CSS, and images (typically photos of item listings); images are space-intensive but I feel that images are useful to allow browsing the markets as they were and may be highly valuable in their own right as research material, so I tried to collects images where applicable.
+(Child porn is not a concern as all DNMs & DNM forums ban that content.)
+Archives sourced from other people follow their own particular conventions.
+Mac & Windows users may be able to uncompress using their OS archiver, 7zip, or Stuffit; the PAR2 error-checking can be done using `par2`, QuickPar, Par Buddy, MultiPar or others depending on one's OS.
 
 If you don't want to uncompress all of a particular archive, as they can be very large, you can try extracting specific files using archiver-specific options; for example, a SR2F command targeting a particular old forum thread:
 
@@ -272,6 +275,21 @@ The September SR1 crawl is processed data stored in [SPSS](!Wikipedia) `.sav` Da
 
 [DNStats](https://dnstats.net/) is a service which periodically pings hidden services and records the response & latency, generating graphs of uptime and allowing users to see how long a market has been down and if an error is likely to be transient.
 The owner has provided me with a SQL export of the ping database; this database could be useful for comparing downtime across markets, examining the effect of DoS attacks, or regressing downtime against things like the Bitcoin exchange rate (presumably if the markets still drive more than a trivial amount of the Bitcoin economy, downtime of the largest markets or market deaths should predict falls in the exchange rate).
+
+For example, to graph an average of site uptime per day and highlight as an exogenous event Operation Onymous, the R code would go like this:
+
+~~~{.R}
+dnmUptime <- read.delim("dnstats-20150712.sql", na.strings="NULL",
+                         nrows=6000000, colClasses=c("factor", "factor", "factor", "integer",
+                                                     "factor", "numeric", "numeric", "POSIXct"))
+markets <- dnmUptime[dnmUptime$type==1,] # type 1 = markets
+dnmUptime <- NULL # save RAM due to dataset size
+markets$Date <- as.Date(markets$timestamp)
+markets$Up <- markets$httpcode == 200
+daily <- aggregate(Up ~ Date + sitename, markets, mean)
+library(ggplot2)
+qplot(Date, sitename, color=Up, data=daily) + geom_vline(xintercept=as.Date("2014-11-05"), color="red")
+~~~
 
 The service is a useful one and accepts donations: `1DNstATs59JANuXjbpS5ngWHqvApAhYHBS`.
 
@@ -760,8 +778,9 @@ A number of other datasets are known to exist but are unavailable, including:
     - [Reddit](https://www.reddit.com/r/DarkNetMarkets/comments/3dfq8s/dark_net_market_archives_20112015/)
     - [HN](https://news.ycombinator.com/item?id=9894570)
     <!-- https://twitter.com/gwern/status/621448090533429249 -->
+- ["You Can Now Download a Copy of Pretty Much Every Dark Web Market Ever Made"](http://motherboard.vice.com/read/you-can-now-download-a-copy-of-pretty-much-every-dark-web-market-ever-made )
 
 <!-- TODO:
 Release:
-all market-specific subreddits, Daryl Lau, Ormsby, Adrian Chen, Sudhir Venkatesh, Gerald Rich https://www.reddit.com/r/datasets , http://ryancompton.net/about/ , http://rs.io/100-interesting-data-sets-for-statistics/
+all market-specific subreddits, Daryl Lau, Ormsby, Adrian Chen, Sudhir Venkatesh, Gerald Rich http://ryancompton.net/about/
 -->
