@@ -10,7 +10,7 @@ belief: highly likely
 > Dark Net Markets (DNM) are online markets typically hosted as Tor hidden services providing escrow services between buyers & sellers transacting in Bitcoin or other cryptocoins, usually for drugs or other illegal/regulated goods; the most famous DNM was Silk Road 1, which pioneered the business model in 2011.
 > From 2013-2015, I scraped/mirrored on a weekly or daily basis all existing English-language DNMs as part of my research into their [usage](/Silk Road), [lifetimes/characteristics](/Black-market survival), & [legal riskiness](/Black-market arrests); these scrapes covered vendor pages, feedback, images, etc.
 > In addition, I made or obtained copies of as many other datasets & documents related to the DNMs as I could.
-> This uniquely comprehensive collection is now publicly released as a 52GB (~1.6TB) collection covering 89 DNMs & 37+ related forums, representing <4,438 mirrors, and is available for any research.
+> This uniquely comprehensive collection is now publicly released as a 50GB (~1.6TB) collection covering 89 DNMs & 37+ related forums, representing <4,438 mirrors, and is available for any research.
 > This page documents the download, contents, interpretation, and technical methods behind the scrapes.
 
 I have been involved in DNMs since June 2011 when Adrian Chen published his famous _Gawker_ article proving that Silk Road 1 was, contrary to my assumption when it was announced in January/February 2011, not a scam and had become a functional drug black-market; fascinated, I signed up, made my first order, and began documenting how to use SR1 and then a few months later, began documenting the first known SR1-linked arrests.
@@ -24,8 +24,10 @@ These are the results.
 
 # Download
 
-The full archive is available for download from [the Internet Archive as a torrent](https://archive.org/download/dnmarchives/dnmarchives_archive.torrent) ([item page](https://archive.org/details/dnmarchives)).
+The full archive is available for download from [the Internet Archive as a torrent](https://archive.org/download/dnmarchives/dnmarchives_archive.torrent) ([item page](https://archive.org/details/dnmarchives))[^IA-torrent-limit].
 (If the download does not start, it may be a [Torrent client problem related to Getright-webseeding-support](https://archive.org/about/faqs.php#316); if the torrent does not work, all files can be downloaded normally over HTTP from the IA item page, but if possible, torrents are recommended for reducing the bandwidth burden & error-checking.)
+
+[^IA-torrent-limit]: Something that might be useful for those seeking to upload large datasets or derivatives to the IA: there is a mostly-undocumented ~25GB size limit on its torrents. Past that, the background processes will no longer update the torrent to cover the additional files, and one will be handed valid but incomplete torrents. Without IA support staff intervention to remove the limit, the full set of files will then only be downloadable over HTTP, not through the torrent.
 
 # Research
 ## Possible Uses
@@ -64,7 +66,7 @@ Posts:
 
 Please cite this resource as:
 
-- Gwern Branwen, Nicolas Christin, David Hetu, Rasmus Munksgaard Andersen, StExo, El Presidente, Anonymous, Daryl Lau, Sohhlz, Delyan Kratunov, Vince Cakic, Van Buskirk, & Whom. "Dark Net Market archives, 2011-2015", 12 July 2015. Web. [access date] <http://www.gwern.net/Black-market%20archives>
+- Gwern Branwen, Nicolas Christin, David Décary-Hétu, Rasmus Munksgaard Andersen, StExo, El Presidente, Anonymous, Daryl Lau, Sohhlz, Delyan Kratunov, Vince Cakic, Van Buskirk, & Whom. "Dark Net Market archives, 2011-2015", 12 July 2015. Web. [access date] <http://www.gwern.net/Black-market%20archives>
 
 ## Donations
 
@@ -76,7 +78,7 @@ A dataset like this owes its existence to many parties:
 
 # Contents
 
-There are ~89 markets, >37 forums and ~5 other sites, representing <4,438 mirrors of >43,596,420 files in ~52GB of 163 compressed files, unpacking to >1548GB. <!-- 1538962410676 bytes -->
+There are ~89 markets, >37 forums and ~5 other sites, representing <4,438 mirrors of >43,596,420 files in ~49.4GB of 163 compressed files, unpacking to >1548GB. <!-- 1538962410676 bytes -->
 (It can be burned to 3 25GB BDs or 2 50GB BDs; if the former, it may be worth generating additional FEC.)
 
 These archives are [xz](!Wikipedia)-compressed tarballs (optimized with the [sort-key trick](/Archiving%20URLs#sort---key-compression-trick)); typically each subfolder is a single date-stamped (`YYYY-MM-DD`) crawl using [wget](!Wikipedia), with the default directory/file layout. Archives sourced from other people follow their own particular conventions.
@@ -753,69 +755,13 @@ A number of other datasets are known to exist but are unavailable, including:
 
 # External links
 
+- Discussion:
+
+    - [Reddit](https://www.reddit.com/r/DarkNetMarkets/comments/3dfq8s/dark_net_market_archives_20112015/)
+    - [HN](https://news.ycombinator.com/item?id=9894570)
+    <!-- https://twitter.com/gwern/status/621448090533429249 -->
+
 <!-- TODO:
 Release:
-/r/DNM & all market-specific subreddits, G+, sticky on Twitter, Cryptomarket, Daryl Lau, Ormsby, Adrian Chen, Sudhir Venkatesh, Gerald Rich https://www.reddit.com/r/datasets , http://ryancompton.net/about/ , http://rs.io/100-interesting-data-sets-for-statistics/
--->
-
-<!-- Reddit announcement:
-
-I am releasing all my DNM scrapes: a 52GB (~1.6TB) collection covering 89 DNMs & 37+ related forums, representing <4,438 mirrors.
-
-It can be downloaded [as a torrent](https://archive.org/download/dnmarchives/dnmarchives_archive.torrent); for all the details, see [my writeup on the contents](http://www.gwern.net/Black-market%20archives).
-
-A quick overview of what is covered:
-
-- Markets:
-
-    - 1776, Abraxas, Agape, Agora, Alpaca, AlphaBay, Amazon Dark, Anarchia, Andromeda, Area51, Armory, Atlantis
-    - BlackBank Market, Black Goblin, BlackMarket Reloaded, Black Services Market, Bloomsfield, Blue Sky Market, Breaking Bad, bungee54, BuyItNow
-    - Cannabis Road 1, Cannabis Road 2, Cannabis Road 3, Cantina, Cloud9, Crypto Market / Diabolus,
-    - DarkBay, Darklist, Darknet Heroes, DBay, Deepzon, Doge Road, Dream Market, Drugslist
-    - East India Company, Evolution, FreeBay, Freedom Marketplace, Free Market, GreyRoad, Havana/Absolem, Haven, Horizon, Hydra
-    - Ironclad, Kiss, Middle Earth, Mr Nice guy 2, Nucleus, Onionshop, Outlaw Market, Oxygen
-    - Panacea, Pandora, Pigeon, Pirate Market, Poseidon, Project Black Flag
-    - Sheep, Silk Road 1, Silk Road 2, Silk Road Reloaded (I2P), Silkstreet, Simply Bear
-    - The BlackBox Market, The Majestic Garden, The Marketplace, The RealDeal, Tochka, TOM, Topix 2, TorBay, TorBazaar, TorEscrow, TorMarket, Tortuga 2
-    - Underground Market, Utopia, Vault43, White Rabbit, Zanzibar Spice
-- Forums:
-
-    - Abraxas, Agora, Andromeda, Black Market Reloaded, BlackBank Market, bungee54, Cannabis Road 2, Cannabis Road 3
-    - DarkBay, Darknet heroes, Diabolus, Doge Road, Evolution, Gobotal, GreyRoad, Havana/Absolem, Hydra, Kingdom, Kiss
-    - Mr Nice Guy 1, Nucleus, Outlaw Market, Panacea, Pandora, Pigeon, Project Black Flag, Revolver
-    - Silk Road 1, Silk Road 2
-    - TOM, The Cave, The Hub, The Majestic Garden, The RealDeal, TorEscrow, TorBazaar, Tortuga 1
-    - Underground Market, Unitech, Utopia
-Miscellaneous:
-
-    - Assassination Market
-    - Cryuserv
-    - DNM-related documents (primarily the Ross Ulbricht trial evidence exhibits)
-    - DNStats
-    - Grams
-    - Pedofunding
-    - SR2doug's leaks
-
-I hope it will be useful.
-
----
-
-In other news, I am stepping down on /r/DarkNetMarkets mod. I have been planning to do so since the beginning of the year, but I wanted to finish up some big DNM projects before I cut more ties: the first was [my arrests/bust compilation](http://www.gwern.net/Black-market%20arrests) and the second is this, releasing the full scrape archive which I've been working on for years.
-
-I'm no longer as interested in the DNMs as I used to be. I was originally lured in by the fascination of watching a small cryptopunk revolution, and I was hopeful that it would go beyond the SR1 model into multisig and beyond. But we have seen little multisig usage, and that augurs ill for the distributed marketplaces. (What if someone built a trustless distributed blackmarket and no one wanted to use it?) Instead, the SR1 business model has proven remarkably durable despite the constant wearying turmoil of exit-scams and hacks and as I write this in mid-July 2015, there seems to be little chance that things will change substantially soon. (If Tor hidden services are cracked, the DNMs will simply move to I2P or Freenet; if Bitcoin starts getting too easily tracked, transactions will be settled in Monero or another cryptocoin with better anonymity properties, etc.) So I'd like to stop investing so much energy into monitoring DNMs, which includes stopping my scrapes and stepping down as moderator.
-
-The exact timing owes something to the LE attention on me; as unpleasant as the ICE subpoena was, I was almost as disturbed by the subsequent Coinbase persecution of people who had done little but donate some Bitcoin to me. (And more recently, an order of some electronics from China arrived with the box open and the packaging so loosely taped one could get one's finger inside it; this *could* have simply been lazy packing or caused by squishing en route, but on the other hand, international packages at the border have few or no protections so it would be easy to flag a particular name for closer inspection...) I would have liked to finish up earlier, actually, but it's taken a lot of effort to get the archive into a releasable state (just uploading the 52GB to the IA took ~3 days on my connection).
-
-I did not do much in the way of day to day moderation on /r/DNM, so there will be little observable change; the current mod team minus me will be pretty much the same as it was before. I also will probably continue to comment, offer advice, or post from time to time when something interesting comes up; at some point, I would like to finish my overview of proposed distributed market systems from a DNM perspective, and try correlating DNM downtime against the Bitcoin exchange rate.
-
-But otherwise, I am mostly done.
-
-Posting this archive will be my last action as DNM moderator.
-
-It's a good archive, I think.
-Sorting through it, I refound a lot of things I'd forgotten: the BMR mods chatting on Pastebin about one of them being arrested, unaware that Dutch police were watching them and tapping all their phones and they would be going to jail for years in weeks/months, taking down Utopia with them; Backopy bristling at my criticisms of BMR security while preparing to take down BMR for being insecure; Ross and Rene at StoryTime, totally high, talking about Julia (possibly neither of them will ever see Ross again as he's sent to prison in Virginia for life) and Ross's twitter making an attempt at technical analysis of Bitcoin exchange rates (he sounds competent, but it's rather undermined by how the Mtgox leaks showed he sold off a huge amount of bitcoins not long before Bitcoin made some of its biggest gains ever) and his drawings (totally psychedelic); my crawls of The Marketplace, which never got the credit it deserved for pioneering multisig and tends to be left out of the post-SR1 story; the evidence that Sheep was run by Tomas Jirikovský, which I got so much shit for releasing; all the markets with funny themes like Area51 and Absolem and - of course! - Breaking Bad; even the worst markets like Black Goblin are still amusing to think back on; the Ulbricht trial exhibits where they forgot to redact *both* copies of information and so wound up leaking information about Force/Bridges and enabling some journalists to ransack DPR's email accounts (they never did release all of what they found, the greedy bastards); and photos of drugs, of every sort, from every market and vendor, drugs you didn't know existed or where still made, etc etc...
-
-All these and more I give you.
-
-I give you back your memories.
+all market-specific subreddits, Daryl Lau, Ormsby, Adrian Chen, Sudhir Venkatesh, Gerald Rich https://www.reddit.com/r/datasets , http://ryancompton.net/about/ , http://rs.io/100-interesting-data-sets-for-statistics/
 -->
