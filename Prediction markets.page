@@ -16,7 +16,7 @@ Wikipedia admirably summarizes the basic idea:
 
 [^interpretation]: As is true of every short description, this is a little over-simplified. People are risk-averse and fundamentally uncertain, so their beliefs about the true probability won't directly translate into the percentage/price they will buy at, and one can't even average out and say 'this is what the market believes the probability is'. See economist Rajiv Sethi's ["On the Interpretation of Prediction Market Data"](http://rajivsethi.blogspot.com/2011/03/on-interpretation-of-prediction-market.html) & ["From Order Books to Belief Distributions"](http://rajivsethi.blogspot.com/2011/03/from-order-books-to-belief.html); for more rigor, see Wolfers & Zitzewitz's paper, ["Interpreting Prediction Market Prices as Probabilities"](http://www.econstor.eu/bitstream/10419/33261/1/510931871.pdf)
 
-Emphasis is added on the most important characteristic of a prediction market, the way in which it differs from regular stock markets. The idea is that by tracking accuracy - punishing ignorance & rewarding knowledge in equal measure - a prediction market can elicit one's *true* beliefs, and avoid the failure mode of predictions as pundit's bloating or wishful thinking or signaling alignment:
+Emphasis is added on the most important characteristic of a prediction market, the way in which it differs from regular stock markets. The idea is that by tracking accuracy - punishing ignorance & rewarding knowledge in equal measure - a prediction market can elicit one's *true* beliefs, and avoid the failure mode of predictions as pundit's bloviation or wishful thinking or signaling alignment:
 
 > "The usual touchstone of whether what someone asserts is mere persuasion or at least a subjective conviction, i.e., firm belief, is betting. Often someone pronounces his propositions with such confident and inflexible defiance that he seems to have entirely laid aside all concern for error. A bet disconcerts him. Sometimes he reveals that he is persuaded enough for one ducat but not for ten. For he would happily bet one, but at 10 he suddenly becomes aware of what he had not previously noticed, namely that it is quite possible that he has erred."^[[Immanuel Kant](!Wikipedia), _[Critique of Pure Reason](!Wikipedia)_ (A824/B852)]
 
@@ -523,9 +523,17 @@ Not *too* shabby; I was actually under the impression I was doing a lot worse th
 
 #### Season 2 results
 
-Naturally I signed up for Season 2. But it took the GJP months to actually send us the honorarium, and for Season 2, they switched to a much harder to use prediction-market interface which I did not like at all. I used up my initial allotment of money, but I'm not sure how actively I will participate: there's still some novelty but the UI was bad enough that all the fun is gone. The later addition of 'trading agents' where one could just specify one's probability and it would make appropriate trades automatically lured me back in for some trading, but as one would expect from my disengagement, [my final results](/docs/personal/2013-gwern-gjp-forecastresults.pdf) were far worse than for season 1: I ranked 184 out of 245.
+Naturally I signed up for Season 2. But it took the GJP months to actually send us the honorarium, and for Season 2, they switched to a much harder to use prediction-market interface which I did not like at all. I used up my initial allotment of money, but I'm not sure how actively I will participate: there's still some novelty but the UI was bad enough that all the fun is gone. The later addition of 'trading agents' where one could just specify one's probability and it would make appropriate trades automatically lured me back in for some trading, but as one would expect from my disengagement, [my final results](/docs/personal/2013-gwern-gjp-forecastresults.pdf) were far worse than for season 1: I ranked 184 out of 245 (~75th percentile).
 
 I might as well stick around for season 3. Maybe I will try harder this time.
+
+#### Season 3 results
+
+For some reason, I never saw my season 3 results; searching my emails turns up no mentions of the official results being released (only some issues with a few controversial contract decisions). I don't recall my season 3 results being unusually good or bad.
+
+#### Season 4 results
+
+[My results in 2014-2015](/docs/predictions/gjp-season4-allpages.maff) (the final season of the IARPA competition) ranked me 41 of 343 in my experimental group. This was much better than season 2, and slightly better than season 1 (~12th percentile vs 13th).
 
 ## Calibration
 
@@ -824,6 +832,7 @@ When we begin deciding what probability to give the prediction, we can employ a 
 
 - ["Calibrate your self-assessments"](http://lesswrong.com/lw/7o7/calibrate_your_selfassessments/) -(miscalibration of one's capability, performance, personal appearance etc. can cause suffering & stress)
 - ["Calibrating our Confidence"](http://measureofdoubt.com/2011/08/17/calibrating-our-confidence/) -(on PB.com)
+- ["Calibration Test with database of 150,000+ questions"](http://lesswrong.com/lw/lvk/calibration_test_with_database_of_150000_questions/)
 - ["Amanda Knox: post mortem"](http://lesswrong.com/lw/84j/amanda_knox_post_mortem/) -(even if we cannot infallibly judge our predictions, our beliefs should still change over time)
 - ["PredictionBook: A Short Note"](http://lesswrong.com/r/discussion/lw/8dx/predictionbook_a_short_note/)
 - ["How Using a Decision Journal can Help you Make Better Decisions"](http://www.farnamstreetblog.com/2014/02/decision-journal/)
