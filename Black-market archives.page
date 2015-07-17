@@ -61,6 +61,7 @@ Papers:
 Posts:
 
 - ["Darknet Market [Evolution] Basket Analysis"](http://ryancompton.net/2015/03/24/darknet-market-basket-analysis/), Ryan Compton
+- ["Deanonymizing Darknet Data": GPS coordinates in image metadata](http://atechdad.com/Deanonymizing-Darknet-Data/)
 
 ## Citing
 
@@ -412,6 +413,7 @@ As part of my interest in the stimulant [modafinil](/Modafinil), I have been mon
 
 A [crowdfunding](!Wikipedia) site for child pornography, "Pedofunding", [was launched in November 2014](https://www.deepdotweb.com/2014/11/09/as-drug-markets-are-seized-pedophiles-launch-a-crowdfunding-site/).
 It seemed like possibly the birth of a new black-market business model so I set up a logged-out scrape to archive its beginnings (sans any images), collecting 20 scrapes from 2014-11-13 to 2014-12-02, after which it shut down, apparently having found no traction.
+([A followup in 2015](https://www.deepdotweb.com/2015/07/16/pedophiles-launch-dash-darkcoin-mining-crowdfunding-platform/) tried to use some sort of [Dash/Darkcoin](!Wikipedia "Dash (cryptocurrency)") mining model; it's unclear why they don't simply use [Darkleaks](https://github.com/darkwallet/darkleaks).)
 
 ### Silk Road 1 (SR41)
 
@@ -720,7 +722,7 @@ My setup is a Debian testing Linux system with [Tor](!Wikipedia), [Privoxy](!Wik
         - we direct it to download only through Privoxy in order to benefit from the blacklist. Warning: wget has a blacklist option but it does *not* work, because it is implemented in a bizarre fashion where it downloads the blacklisted URL (!) and then deletes it; [this is a known >12-year-old bug in wget](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=217243). For other crawlers, this behavior should be double-checked so you don't wind up inadvertently logging yourself out of a market and downloading gigabytes of worthless front pages.
         - we throw in a number of options to encourage wget to ignore connection failures and retry; hidden servers are slow and unreliable
         - we load the cookies file with the authentication for the market, and in particular, we need `--keep-session-cookies` to keep around all cookies a market might give us, particularly the ones which change on each page load.
-        - `--max-redirect=1` helps deal with a nasty market behavior where when one's cookie has expired, they then quietly redirect, without errors or warnings, all subsequent page requests to a login page. Of course, the login page should also be in the blacklist as well, but this is extra insurance and can save one round-trip's worth of time, which will add up
+        - `--max-redirect=1` helps deal with a nasty market behavior where when one's cookie has expired, they then quietly redirect, without errors or warnings, all subsequent page requests to a login page. Of course, the login page should also be in the blacklist as well, but this is extra insurance and can save one round-trip's worth of time, which will add up. (This isn't always a cure, since a market may serve a requested page without any redirects or error codes but the content will be a transcluded login page; this apparently happened with some of my crawls such as Black Bank Market. There's not much that can be done about this except some sort of post-download regexp check or a similar post-processing step.)
         - some markets seem to snoop on the "referer" part of a HTTP request specifying where you come from; putting in the market page seems to help
         - the user-agent, as mentioned, should exactly match however one logged in, as some markets record that and block accesses if the user-agent does not match exactly. Putting the current user-agent into a centralized text file helps avoid scripts getting out of date and specifying an old user-agent
     - logging of requests and particularly errors is important; `--server-response` prints out headers, and `--append-output` stores them to a log file. Most crawlers do not keep an error log around, but this is necessary to allow investigation of incompleteness and observe where errors in a crawl started (perhaps you missed blacklisting a page); for example, "Evaluating drug trafficking on the Tor Network: Silk Road 2, the sequel", Dolliver 2015, failed to log errors in their few HTTrack crawls of SR2, and so wound up with a grossly incomplete crawl which led to nonsense conclusions like 1-2% of SR2's sales were drugs. (I speculate the HTTrack crawl was stuck in the ebooks section, which was always clogged with spam, and then SR2 went down for an hour or two, leading to HTTrack's default behavior of quickly erroring out and finishing the crawl; but the lack of logging means we may never know what went wrong.)
@@ -778,9 +780,9 @@ A number of other datasets are known to exist but are unavailable, including:
 
     - [Reddit](https://www.reddit.com/r/DarkNetMarkets/comments/3dfq8s/dark_net_market_archives_20112015/)
     - [HN](https://news.ycombinator.com/item?id=9894570)
-- ["You Can Now Download a Copy of Pretty Much Every Dark Web Market Ever Made"](http://motherboard.vice.com/read/you-can-now-download-a-copy-of-pretty-much-every-dark-web-market-ever-made )
+- ["You Can Now Download a Copy of Pretty Much Every Dark Web Market Ever Made"](http://motherboard.vice.com/read/you-can-now-download-a-copy-of-pretty-much-every-dark-web-market-ever-made)
 
 <!-- TODO:
 Release:
-all market-specific subreddits, Daryl Lau, Ormsby, Adrian Chen, Sudhir Venkatesh, Gerald Rich http://ryancompton.net/about/
+all market-specific subreddits
 -->
