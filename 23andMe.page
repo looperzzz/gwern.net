@@ -138,7 +138,7 @@ possible replications:
 http://snpedia.com/index.php/Rs4680
 rs4680  22  19951271    GG
 
-val=G, so I'm Val/Val
+val=G, so I'm Val/Val; supposed to be good for modafinil
 
 ["Genetic biomarkers of placebo response: what could it mean for future trial design?"](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3774308/), Hall & Kaptchuk 2013, essay:
 
@@ -180,3 +180,14 @@ Some evidence suggests an inverted U-shaped relationship between dopaminergic to
 29. Bodenmann S, Rusterholz T, Dürr R, Stoll C, Bachmann V, Geissler E, et al. "The functional Val158Met polymorphism of COMT predicts inter-individual differences in brain alpha oscillations in young men". _J Neurosci_ 2009;29:10855e62.
 
 Moreover, female narcoleptics with high COMT activity (Val158 or HH genotype) fell asleep twice faster than those with low COMT activity (Met158 or LL genotype) during the multiple sleep latency test (MSLT). The opposite was true for men. Independent of gender, COMT genotype significantly affected the presence or absence of sleep paralysis, sleep latency at night, and the number of sleep-onset REM periods during the MSLT. This study was the first genetic evidence for the critical involvement of the dopaminergic/noradrenergic system in human narcolepsy and confirmed previous findings in the canine model of the disease [39]. Thus, Val158Met polymorphism of COMT has a sexual dimorphism and a strong effect on EDS in patients with narcolepsy. However, recent genome-wide association studies in narcolepsy could not confirm this association when designed as caseecontrol studies without taking into account gender and endophenotype such as the severity of EDS [40e42]. Recently an European case-control GWAS performed in narcolepsy-cataplexy looked for genetic variants and clinical traits [43]. The sample was relatively small to obtain enough power to detect a genome-wide significant signal. Neither the top hits nor the alleles of the functional COMT gene polymorphism (rs4680) were associated with the severity of EDS assessed by MSLT [43].
+
+"The people who need very little sleep" http://www.bbc.com/future/story/20150706-the-woman-who-barely-sleeps
+"A Gene That Makes You Need Less Sleep?" http://www.newyorker.com/science/maria-konnikova/a-gene-makes-you-need-less-sleep ; HN discussion: https://news.ycombinator.com/item?id=8215872
+
+"Heritability of Performance Deficit Accumulation During Acute Sleep Deprivation in Twins" http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3413799/ Kuna et al 2012
+
+"The Transcriptional Repressor DEC2 Regulates Sleep Length in Mammals" http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2884988/ He et al 2010
+
+"A Novel BHLHE41 Variant is Associated with Short Sleep and Resistance to Sleep Deprivation in Humans" https://pdf.yt/d/i-sxyELBIBsir7uy Pellegrino et al 2014
+
+homozygous on all SNPs: rs4963955: TT; rs4963956: CC; rs1480037: CC
