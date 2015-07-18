@@ -213,10 +213,11 @@ mail <- data.frame(Time=clockS(as.POSIXct(c("2015-06-20 11:00AM", "2015-06-21 11
                                  "2015-06-27 10:45AM", "2015-06-29 10:31AM", "2015-06-30 10:39AM", "2015-07-01 10:27AM",
                                  "2015-07-02 10:47AM", "2015-07-03 10:27AM", "2015-07-04 10:54AM", "2015-07-05 10:55AM",
                                  "2015-07-06 11:21AM", "2015-07-07 10:01AM", "2015-07-08 10:20AM", "2015-07-09 10:50AM",
-                                 "2015-07-10 11:10AM", "2015-07-11 11:12AM", "2015-07-13 11:05AM"),
+                                 "2015-07-10 11:10AM", "2015-07-11 11:12AM", "2015-07-13 11:05AM", "2015-07-14 11:14AM",
+                                 "2015-07-15 11:40AM", "2015-07-16 11:24AM", "2015-07-17 11:03AM"),
                                 "EDT")),
                    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE,
-                               FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE))
+                               FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE))
 
 mail <- data.frame(Time1 = ifelse(mail$Delivered, 0, mail$Time),
                            Time2 = ifelse(mail$Delivered,  mail$Time, 1440))
@@ -439,7 +440,8 @@ mailExact <- data.frame(Date=as.POSIXct(c("2010-04-29 11:33AM", "2010-05-12 11:3
                                           "2015-06-10 10:34AM", "2015-06-20 11:02AM", "2015-06-23 10:58AM",
                                           "2015-06-24 10:53AM", "2015-06-25 10:55AM", "2015-06-30 10:36AM",
                                           "2015-07-02 10:45AM", "2015-07-06 11:19AM", "2015-07-10 10:54AM",
-                                          "2015-07-11 11:09AM"),
+                                          "2015-07-11 11:09AM", "2015-07-15 10:29AM", "2015-07-16 11:02AM",
+                                          "2015-07-17 10:46AM"),
                         "EDT"))
 mailExact$TimeDelivered <- clockS(mailExact$Date)
 ##                   Date TimeDelivered Group
@@ -564,7 +566,13 @@ TODO
 
 With a posterior distribution of delivery times (`y.new`) we can try to find an optimal time to check, assuming we can figure out a [loss function](!Wikipedia) giving a cost of checking at each possible time.
 The loss here can be considered in units of time; if I didn't care about the delay between the package being delivered and me getting my hands on it, I would simply check at 2PM and have done with it.
-The loss function itself is not obvious; squared loss, absolute loss and 0-1 loss don't correspond to my process of checking mail.
+
+The usual stopping point in an analysis like this would involve the mean, least-squares, and [mean squared error](!Wikipedia).
+There's a [lot of good things to say about that](http://www.benkuhn.net/squared "Why squared error?") as a default
+But as an algorithm for deciding when check the mail, squaring errors and averaging them seems like a strange way to evaluate mistakes: is it really *equally* bad to check the mail box 5 minutes before the mail and 5 minutes afterwards? is checking 10 minutes after really *more* than twice as bad as checking 5 minutes after?
+I would say "no" in both cases: it's much better to check 5 minutes after rather than 5 minutes before, since then the package will be there and I won't have to make another hike out to the mailbox; and checking 10 minutes seems only twice as bad to me as checking 5 minutes after.
+So the loss function itself is not obvious; squared loss, absolute loss and 0-1 loss don't correspond to my process of checking mail.
+I need to define my own loss function, expressing the real costs and gains of this situation.
 
 ### Defining a loss function
 
