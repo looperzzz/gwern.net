@@ -2801,7 +2801,29 @@ On 5 February 2015, the top variant (`meta5`) outperformed the bottom one (`meta
 On 8 February 2015, the new top variant (`meta6`) now outperformed (`meta4`), so I deleted it.
 On 22 March 2015, it outperformed `none`.
 On 25 May 2015, the difference was not statistically-significant but I decided to delete `meta3` anyway.
-On 30 June 2015, I deleted `meta2` similarly; given the ever smaller differences between variants, it may be time to kill the experiment.
+On 2 July 2015, I deleted `meta2` similarly; given the ever smaller differences between variants, it may be time to kill the experiment.
+
+<!--
+TODO: test CSE
+
+A CSE is a Google search query but one specialized in various ways - somewhat like offering a user a form field which redirects to a Google search query like `$QUERY site:gwern.net/docs/`, but more powerful since you can specify thousands of URLs to blacklist and whitelist and have limited patterns.
+I have two: [one](https://cse.google.com/cse/publicurl?cx=009114923999563836576:1eorkzz2gp4) is specialized for searching for anime/manga news sites and makes writing Wikipedia articles much easier (since you can search for a particular anime title and the results will be mostly news and reviews which you can use in a WP article, rather than images, songs, memes, Amazon and commercial sites, blogs, etc); and [the second](https://cse.google.com/cse/publicurl?cx=009114923999563836576:dv0a4ndtmly) is specialized to search `gwern.net`, my Reddit, LessWrong, PredictionBook, Good Reads and some other sites, to make it easier to find something I may've written.
+The second I created to put in the sidebar and serve as a website search function. (I threw in the other sites because why not?)
+
+Google provides HTML & JS for integrating a CSE somewhere, so creating & installing it was straightforward, and it went live 24 May 2013.
+
+The problem is that the CSE search input takes up space in the sidebar, and is more JS to run on each page load and loads at least one other JS file as well.
+So on 17 July 2015, I took a look to evaluate whether it was worth keeping.
+
+There had been 8974 searches since I installed it 785 days previously or ~11.4 searches per day; at least 119 were searches for "e", which I assume were user mistakes where they didn't intend to search and probably annoyed them.
+(The next most popular searches are "Graeber"/26, "chunking"/22, and "nootropics"/10, with CSE refusing to provide any further queries due to low volume. This suggests a long tail of search queries - but also that they're not very important since it's easy to find the DNB FAQ & my nootropics page, and it can hardly be very useful if the top search is an error.)
+
+To put these 8855 searches in perspective, in that same exact time period, there were 891,790 unique users with 2,010,829 page views.
+So only 0.44% of page-views involve a use of the CSE.
+Is it net-beneficial to make 99.56% of page-views incur the JS run & loading for the sake of such a rare user-action?
+
+So I need to A/B test the presence/absence of the CSE div. (I can't simply hide it using CSS like usual because it will still affect page loads.)
+-->
 
 ### Analysis
 
