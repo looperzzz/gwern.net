@@ -1,6 +1,6 @@
 ---
 title: Black-market archives
-description: Mirrors of Tor-Bitcoin black-markets & forums 2013-2015, and other material
+description: Mirrors of Tor-Bitcoin black-markets & forums 2011-2015, and related material
 created: 1 Dec 2013
 tags: Bitcoin, Silk Road
 status: finished
@@ -268,7 +268,7 @@ Knowing this, analyses should have some strategy to deal with missingness. There
 
 Some of the archives are unusual and need to be described in more detail.
 
-### Aldridge & Hetu SR1
+### Aldridge & Décary-Hétu SR1
 
 The September SR1 crawl is processed data stored in [SPSS](!Wikipedia) `.sav` Data Files. There are various libraries available for reading this format (in R, using the `foreign` library like `library(foreign); sellers <- read.spss("Sellers -- 2013-09-15.sav", to.data.frame=TRUE)`.)
 
@@ -324,6 +324,8 @@ Grams coverage:
 The Grams archive has three virtues:
 
 1. while it doesn't have any raw data, the CSVs are easy to work with
+
+    Other included datasets which are in structured formats that may be easier to deal with for prototyping: the Aldridge & Décary-Hétu 2013 SR1 crawl; the SR1 sales spreadsheet (original is a PDF but I've created a usable CSV of it); the BMR feedback dumps are in SQL, as is DNStats and Christin et al 2013's public data (but note the last is so heavily redacted & anonymized as to support few analyses); and Daryl Lau's SR2 work may be in a structured format.
 2. the crawls were conducted independent of other crawls and they can be used to check each other
 3. the market data sourced from the APIs can be considered close to 100% complete & accurate, which is rare
 
@@ -781,6 +783,7 @@ A number of other datasets are known to exist but are unavailable, including:
     - [Reddit](https://www.reddit.com/r/DarkNetMarkets/comments/3dfq8s/dark_net_market_archives_20112015/)
     - [HN](https://news.ycombinator.com/item?id=9894570)
 - ["You Can Now Download a Copy of Pretty Much Every Dark Web Market Ever Made"](http://motherboard.vice.com/read/you-can-now-download-a-copy-of-pretty-much-every-dark-web-market-ever-made)
+- ["There's a searchable cache of the web's darkest corners of the anonymous internet"](http://fusion.net/story/168035/theres-a-searchable-cache-of-the-webs-darkest-corners-of-the-anonymous-internet/)
 
 <!-- TODO:
 Release:
