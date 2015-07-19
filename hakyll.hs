@@ -1,6 +1,35 @@
 #!/usr/bin/env runhaskell
 {-# LANGUAGE OverloadedStrings #-}
 
+{- Debian dependencies:
+$ sudo apt-get install libghc-hakyll-dev libghc-pandoc-dev libghc-filestore-dev libghc-feed-dev libghc-tagsoup-dev imagemagick s3cmd git
+(ImageMagick, s3cmd, & git are runtime dependencies used to help optimize images and upload to hosting/Github respectively)
+
+$ cd ~/wiki/ && ghc -rtsopts -threaded -O2 -fforce-recomp -optl-s --make hakyll.hs &&
+  ./hakyll rebuild +RTS -N3 -RTS && echo -n -e '\a' && emacs -nw _site/Modafinil &&
+  s3cmd -v -v --human-readable-sizes --reduced-redundancy --guess-mime-type --default-mime-type=text/html
+        --add-header="Cache-Control: max-age=604800, public" --delete-removed sync _site/ s3://www.gwern.net/ &&
+  s3cmd --reduced-redundancy --mime-type=text/css --add-header="Cache-Control: max-age=604800, public" put ./static/css/default.css s3://www.gwern.net/static/css/ &&
+  rm -rf ~/wiki/_cache/ ~/wiki/_site/ && rm ./hakyll *.o *.hi ;
+  git push; echo -n -e '\a'
+
+Explanations:
+
+- we could run Hakyll with a command like `./hakyll.hs build` but this would run much slower than if we compile an optimized parallelized binary & run it with multiple threads; this comes at the cost of considerable extra complexity in the invocation, though, since we need to compile it with fancy options, run it with other options, and then at the end clean up by deleting the compiled binary & intermediates (GHC cannot take care of them on its own: https://ghc.haskell.org/trac/ghc/ticket/4114 )
+- `rebuild` instead of 'build' because IIRC there was some problem where Hakyll didn't like extension-less files so incremental syncs/builds don't work; this tells Hakyll
+ to throw everything away without even trying to check
+- Emacs: I manually edit the ads on the Modafinil page away from the default to the current sponsor; I should probably figure out how to do this automatically with the templating system but meh, I don't sync gwern.net *that* often
+- s3cmd:
+
+    - `--reduced-redundancy` saves a bit of money; no need for high-durability since everything is backed up locally in the git repo, after all
+    - s3cmd's MIME type detection has been unreliable in the past, so we need to force a default, especially for the extension-less (HTML) files
+    - the second, apparently redundant, CSS upload is an example of the MIME flakiness: for some reason, s3cmd sometimes uploads `*.css` files as the default MIME type!
+      Of curse, browsers ignore any CSS served as text/HTML or the further default of octetstream, so gwern.net then breaks.
+      By forcing an upload with a hardwired CSS MIME, we can avoid this being an issue ever again.
+- after that, we clean up after ourselves and sync with the Github mirror as well
+- the 'echo' calls are there to ring the terminal bell and notify the user that he needs to edit the Modafinil file or that the whole thing is done
+-}
+
 import Codec.Binary.UTF8.String (encode)
 import Control.Exception (onException)
 import Data.ByteString.Lazy.Char8 (unpack)
