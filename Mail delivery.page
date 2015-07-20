@@ -214,10 +214,12 @@ mail <- data.frame(Time=clockS(as.POSIXct(c("2015-06-20 11:00AM", "2015-06-21 11
                                  "2015-07-02 10:47AM", "2015-07-03 10:27AM", "2015-07-04 10:54AM", "2015-07-05 10:55AM",
                                  "2015-07-06 11:21AM", "2015-07-07 10:01AM", "2015-07-08 10:20AM", "2015-07-09 10:50AM",
                                  "2015-07-10 11:10AM", "2015-07-11 11:12AM", "2015-07-13 11:05AM", "2015-07-14 11:14AM",
-                                 "2015-07-15 11:40AM", "2015-07-16 11:24AM", "2015-07-17 11:03AM"),
+                                 "2015-07-15 11:40AM", "2015-07-16 11:24AM", "2015-07-17 11:03AM", "2015-07-18 10:46AM",
+                                 "2015-07-20 11:05AM"),
                                 "EDT")),
                    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE,
-                               FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE))
+                               FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE,
+                               FALSE))
 
 mail <- data.frame(Time1 = ifelse(mail$Delivered, 0, mail$Time),
                            Time2 = ifelse(mail$Delivered,  mail$Time, 1440))
