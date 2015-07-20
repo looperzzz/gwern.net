@@ -193,7 +193,7 @@ Non-Firefox browsers can be supported with similar strategies; for example, Zach
 
 More useful perhaps is a script to extract external links from Markdown files and print them to standard out: [link-extractor.hs](haskell/link-extractor.hs)
 
-So now I can take `find . -name "*.page"`, pass the 100 or so Markdown files in my wiki as arguments, and add the thousand or so external links to the archiver queue (eg. `find . -name "*.page" -type f -print0 | xargs -0 runhaskell haskell/link-extractor.hs | filter-urls >> ~/.urls.txt`); they will eventually be archived/backed up.
+So now I can take `find . -name "*.page"`, pass the 100 or so Markdown files in my wiki as arguments, and add the thousand or so external links to the archiver queue (eg. `find . -name "*.page" -type f -print0 | xargs -0 ~/wiki/haskell/link-extractor.hs | filter-urls >> ~/.urls.txt`); they will eventually be archived/backed up.
 
 #### Website spidering
 
