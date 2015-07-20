@@ -383,6 +383,7 @@ Rea, Cornelius P; Modigliani, Vito. ["The effect of expanded versus massed pract
 - learning to read with phonics (Seabrook et al 2005)
 - music ([Stambaugh 2009](http://www.legacyweb.rcm.ac.uk/cache/fl0020113.pdf "When repetition isn't the best practice strategy: Examining differing levels of contextual interference during practice"))
 - biology (middle school; [Kelly & Whatson 2013](http://www.frontiersin.org/Journal/10.3389/fnhum.2013.00589/full "Making long-term memories in minutes: a spaced learning pattern from memory research in education"))
+- statistics (introductory; [Maas et al 2015](http://www.researchgate.net/profile/Phil_Pavlik_Jr/publication/277247763_How_Spacing_and_Variable_Retrieval_Practice_Affect_the_Learning_of_Statistics_Concepts/links/5564dd0908aec4b0f48593aa.pdf "How Spacing and Variable Retrieval Practice Affect the Learning of Statistics Concepts"))
 - memorizing website passwords ([Bonneau & Schechter 2014](http://www.usenix.org/system/files/conference/usenixsecurity14/sec14-paper-bonneau.pdf "Towards Reliable Storage of 56-bit Secrets in Human Memory"), [Blocki et al 2014](http://arxiv.org/abs/1410.1490 "Spaced Repetition and Mnemonics Enable Recall of Multiple Strong Passwords"))
 
 [^Rohrer-warning]: Rohrer & Taylor 2006 warns us, though, about many of the other math studies:
@@ -487,6 +488,7 @@ Another potential objection is to argue^[Gentner, D., Loewenstein, J., & Thompso
 9. Verkoeijen & Bouwmeester 2014, ["Is spacing really the 'friend of induction'?"](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3978334/)
 10. Rohrer et al 2014: [1](/docs/spacedrepetition/2014-rohrer-1.pdf "The benefit of interleaved mathematics practice is not limited to superficially similar kinds of problems"), [2](/docs/spacedrepetition/2014-rohrer-2.pdf "Interleaved Practice Improves Mathematics Learning")
 11. Vlach et al 2014, ["Equal spacing and expanding schedules in children's categorization and generalization"](/docs/spacedrepetition/2014-vlach.pdf)
+12. Gluckman et al, ["Spacing Simultaneously Promotes Multiple Forms of Learning in Children's Science Curriculum"](http://babytalk.psych.ucla.edu/documents/Gluckman_Vlach_Sandhofer_2014.pdf)
 
 ### Review summary
 
@@ -714,6 +716,7 @@ The Mnemosyne project has been collecting user-submitted spaced repetition stati
 - ["Teaching linear algebra"](http://bentilly.blogspot.com/2009/09/teaching-linear-algebra.html) (with spaced repetition), by Ben Tilly
 
     - [Manual flashcards for his 2^nd^ grader](http://bentilly.blogspot.com/2012/10/my-sons-flashcard-routine.html)
+- ["A Year of Spaced Repetition Software in the Classroom"](http://lesswrong.com/r/discussion/lw/mfm/a_year_of_spaced_repetition_software_in_the/)
 - [AJATT table of contents](http://www.alljapaneseallthetime.com/blog/all-japanese-all-the-time-ajatt-how-to-learn-japanese-on-your-own-having-fun-and-to-fluency) -(applying SRS to learning Japanese)
 - SRS for programming:
 
@@ -721,6 +724,7 @@ The Mnemosyne project has been collecting user-submitted spaced repetition stati
     - ["Janki Method: Using spaced repetition systems to learn and retain technical knowledge"](http://www.jackkinsella.ie/2011/12/05/janki-method.html) ([Reddit discussion](http://www.reddit.com/r/programming/comments/n30hl/janki_method_learning_programming_with_6000/)); [SRS problems & solutions](http://www.oxbridgenotes.com/articles/autodidactism/note_taking)
     - ["Memorizing a programming language using spaced repetition software"](https://sivers.org/srs) ([Derek Sivers](!Wikipedia); [Hacker News](https://news.ycombinator.com/item?id=5015183))
     - [learning text editor shortcuts](https://www.shortcutfoo.com/blog/introducing-interval-training-for-shortcuts/)
+    - ["Learning Go with flashcards and spaced repetition"](https://developer.atlassian.com/blog/2015/06/golang-flashcards-and-spaced-repetition/)
 - ["QS Primer: Spaced Repetition and Learning"](http://quantifiedself.com/2012/06/spaced-repetition-and-learning/) -(talks on applications of spaced repetition)
 - Value compared to curriculums:
 
@@ -740,7 +744,7 @@ The Mnemosyne project has been collecting user-submitted spaced repetition stati
     5. [Programs](https://code.google.com/p/graded-reader/) (I took [a stab](http://community.haskell.org/~gwern/hcorpus/) at writing Haskell versions once)
 - ["Diff revision: diff-based revision of text notes, using spaced repetition"](http://www.fsavard.com/flow/2012/12/diff-revision/)
 - Hacker News discussion: [1](https://news.ycombinator.com/item?id=6461936), [2](https://news.ycombinator.com/item?id=7539390), [3](https://news.ycombinator.com/item?id=8183220)
-- ["A vote against spaced repetition"](http://lesswrong.com/r/discussion/lw/juq/a_vote_against_spaced_repetition/)
+- ["A vote against spaced repetition"](http://lesswrong.com/r/discussion/lw/juq/a_vote_against_spaced_repetition/); ["How Flashcards Fail: Confessions of a Tired Memory Guy"](http://howtoremember.biz/content/how-flashcards-fail-confessions-tired-memory-guy)
 - ["Learning Ancient Egyptian in an Hour Per Week with Beeminder"](http://blog.beeminder.com/hieroglyphs/)
 - ["Anki, 10000 Cards Later: How my Anki usage has evolved"](http://rs.io/2014/04/05/anki-10000-cards-later.html)
 - [Duolingo](https://www.duolingo.com/)
@@ -751,6 +755,7 @@ The Mnemosyne project has been collecting user-submitted spaced repetition stati
 - ["Why We Should Memorize [Poetry]"](http://www.newyorker.com/books/page-turner/why-we-should-memorize)
 - ["Studying for the Test by Taking It"](http://www.nytimes.com/2014/11/23/sunday-review/studying-for-the-test-by-taking-it.html)
 - ["Making Summer Count: How Summer Programs Can Boost Children's Learning"](http://www.rand.org/content/dam/rand/pubs/monographs/2011/RAND_MG1120.pdf), McCombs et al 2011 (RAND MG1120)
+- [_Learning Medicine: An Evidence-Based Guide_](http://www.learningmedicinebook.com/)
 
 ## Flashcard sources
 
