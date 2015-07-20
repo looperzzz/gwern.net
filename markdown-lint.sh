@@ -30,6 +30,8 @@ do
 
         # image hotlinking deprecated; impolite, and slows page loads & site compiles
         egp --only-matching '\!\[.*\]\(http://.*\)' -- "$PAGE";
+        # check for IA-hosted PDFs and host them on gwern.net to make them visible to Google Scholar:
+        link-extractor.hs "$PAGE" | egp --only-matching '^http://.*archive\.org/.*\.pdf$';
         # indicates broken copy-paste of image location
         egp --only-matching '\!\[.*\]\(wiki/.*\)' -- "$PAGE";
         # look for unescaped single dollar-signs (risk of future breakage)
