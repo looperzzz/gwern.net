@@ -323,7 +323,38 @@ Grams coverage:
 
 The Grams archive has three virtues:
 
-1. while it doesn't have any raw data, the CSVs are easy to work with
+1. while it doesn't have any raw data, the CSVs are easy to work with. For example, to read in all the Grams SR2 crawls, then count & graph total listings by day in R:
+
+    ~~~{.R}
+    DIR <- "blackmarket-mirrors/archive/grams"
+    # Grams's SR2 crawls are named like "grams/2014-06-13/SilkRoad.csv"
+    gramsFiles <- list.files(path=DIR, pattern="SilkRoad.csv", all.files=TRUE, full.names=TRUE, recursive=TRUE)
+    # schema of SR2 crawls eg:
+    ## "hash","market_name","item_link","vendor_name","price","name","description","image_link","add_time", \
+    ## "ship_from",
+    ## "2-11922","Silk Road 2","http://silkroad6ownowfk.onion/items/220-fe-only-tw-x-mb","$220for28grams", \
+    ## "0.34349900", "220 FE Only TW X MB","1oz of the same tw x mb as my other listing FE only. Not shipped \
+    ##  until finalized. Price is higher for non FE listing.","","1404258628","United States",...
+    # read in each CSV, note what day it is from, and combine into a single data-frame:
+    grams <- data.frame()
+    for (i in 1:length(gramsFiles)) {
+        log <- read.csv(gramsFiles[i], header=TRUE)
+        log$Date <- as.Date(gsub("/SilkRoad.csv", "", gsub(paste0(DIR,"/"), "", gramsFiles[i])))
+        grams <- rbind(grams,log)
+    }
+    totalCounts <- aggregate(hash ~ Date, length, data=grams)
+    summary(totalCounts)
+    #       Date                 hash
+    #  Min.   :2014-06-09   Min.   : 2846.00
+    #  1st Qu.:2014-07-05   1st Qu.: 9584.25
+    #  Median :2014-08-26   Median :10527.50
+    #  Mean   :2014-08-21   Mean   : 9651.44
+    #  3rd Qu.:2014-09-29   3rd Qu.:11165.00
+    #  Max.   :2014-11-07   Max.   :19686.00
+    library(ggplot2)
+    qplot(Date, hash, data=totalCounts)
+    # https://i.imgur.com/ucPMvJQ.png
+    ~~~
 
     Other included datasets which are in structured formats that may be easier to deal with for prototyping: the Aldridge & Décary-Hétu 2013 SR1 crawl; the SR1 sales spreadsheet (original is a PDF but I've created a usable CSV of it); the BMR feedback dumps are in SQL, as is DNStats and Christin et al 2013's public data (but note the last is so heavily redacted & anonymized as to support few analyses); and Daryl Lau's SR2 work may be in a structured format.
 2. the crawls were conducted independent of other crawls and they can be used to check each other
@@ -333,39 +364,14 @@ The main drawbacks are:
 
 - the largest markets can be split across multiple CSVs (eg `EVO.csv` & `EVO2.csv`), complicating reading the data in somewhat
 - the export each time is of the current listings, which means that different days can repeat the same identical crawl data if there was not a successful crawl by Grams in between
+- exports are not available for every day, and some gaps are large. The 2015-01-09 to 2015-02-21 gap is due to a broken Grams export during this period before I noticed the problem and requested it be fixed; other gaps may be due to transient errors with the cron job:
 
-For example, to read in all the Grams SR2 crawls, then count & graph total listings by day in R:
+    ~~~{.Bash}
+    @daily ping -q -c 5 google.com && torify wget --quiet --continue http://grams7enufi7jmdl.onion/gwernapi/$SECRETKEY
+                -O ~/blackmarket-mirrors/grams/`date '+\%Y-\%m-\%d'`.zip
+    ~~~
 
-~~~{.R}
-DIR <- "blackmarket-mirrors/archive/grams"
-# Grams's SR2 crawls are named like "grams/2014-06-13/SilkRoad.csv"
-gramsFiles <- list.files(path=DIR, pattern="SilkRoad.csv", all.files=TRUE, full.names=TRUE, recursive=TRUE)
-# schema of SR2 crawls eg:
-## "hash","market_name","item_link","vendor_name","price","name","description","image_link","add_time", \
-## "ship_from",
-## "2-11922","Silk Road 2","http://silkroad6ownowfk.onion/items/220-fe-only-tw-x-mb","$220for28grams", \
-## "0.34349900", "220 FE Only TW X MB","1oz of the same tw x mb as my other listing FE only. Not shipped \
-##  until finalized. Price is higher for non FE listing.","","1404258628","United States",...
-# read in each CSV, note what day it is from, and combine into a single data-frame:
-grams <- data.frame()
-for (i in 1:length(gramsFiles)) {
-    log <- read.csv(gramsFiles[i], header=TRUE)
-    log$Date <- as.Date(gsub("/SilkRoad.csv", "", gsub(paste0(DIR,"/"), "", gramsFiles[i])))
-    grams <- rbind(grams,log)
-}
-totalCounts <- aggregate(hash ~ Date, length, data=grams)
-summary(totalCounts)
-#       Date                 hash
-#  Min.   :2014-06-09   Min.   : 2846.00
-#  1st Qu.:2014-07-05   1st Qu.: 9584.25
-#  Median :2014-08-26   Median :10527.50
-#  Mean   :2014-08-21   Mean   : 9651.44
-#  3rd Qu.:2014-09-29   3rd Qu.:11165.00
-#  Max.   :2014-11-07   Max.   :19686.00
-library(ggplot2)
-qplot(Date, hash, data=totalCounts)
-# https://i.imgur.com/ucPMvJQ.png
-~~~
+    so if my Internet was down, or Grams was down, or the download was corrupted halfway through, then there would be nothing that day.
 
 ### Information leaks
 #### Diabolus/Crypto Market
