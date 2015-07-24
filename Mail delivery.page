@@ -1,6 +1,6 @@
 ---
 title: When Does The Mail Come?
-description: Bayesian & max-likelihood analysis of local mail delivery times
+description: Bayesian decision-theoretic analysis of local mail delivery times
 tags: statistics
 created: 21 June 2015
 status: in progress
@@ -215,11 +215,12 @@ mail <- data.frame(Time=clockS(as.POSIXct(c("2015-06-20 11:00AM", "2015-06-21 11
                                  "2015-07-06 11:21AM", "2015-07-07 10:01AM", "2015-07-08 10:20AM", "2015-07-09 10:50AM",
                                  "2015-07-10 11:10AM", "2015-07-11 11:12AM", "2015-07-13 11:05AM", "2015-07-14 11:14AM",
                                  "2015-07-15 11:40AM", "2015-07-16 11:24AM", "2015-07-17 11:03AM", "2015-07-18 10:46AM",
-                                 "2015-07-20 11:05AM"),
+                                 "2015-07-20 11:05AM", "2015-07-21 10:56AM", "2015-07-22 11:00AM", "2015-07-23 11:17AM",
+                                 "2015-07-24 11:15AM"),
                                 "EDT")),
                    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE,
                                FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE,
-                               FALSE))
+                               FALSE, FALSE, TRUE, TRUE, TRUE))
 
 mail <- data.frame(Time1 = ifelse(mail$Delivered, 0, mail$Time),
                            Time2 = ifelse(mail$Delivered,  mail$Time, 1440))
@@ -564,6 +565,12 @@ which.min(losses)
 TODO
 
 # Decision theory
+
+One oft-mentioned advantage of Bayesian approaches, and subjective Bayesian probability in particular, is that it plugs immediately into economic or decision theory approaches to making choices under uncertainty, so we don't stop at merely providing an estimate of some parameter but can continue onwards to reach a decision.
+(See for example [_Probability and Statistics for Business Decisions: an Introduction to Managerial Economics Under Uncertainty_, Schlaifer 1959](/docs/statistics/1959-schlaifer-probabilitystatisticsbusinessdecisions.djvu) and the more recent [_Introduction to Statistical Decision Theory_, Pratt et al 1995](/docs/statistics/1995-pratt-introductionstatisticaldecisiontheory.epub); an applied example of going from Bayesian multilevel models to optimal decisions is ["Bayesian prediction of mean indoor radon concentrations for Minnesota counties"](http://stat.columbia.edu/~gelman/research/published/price.pdf "Price et al 1996").)
+
+Since the motivation for estimating mail-delivery time is implicitly a decision-theoretic problem ("at what time *should* I decide to check the mail?"), there's no reason to settle for just a mean or credible interval for the delivery time.
+
 ## Optimal mail checking time
 
 With a posterior distribution of delivery times (`y.new`) we can try to find an optimal time to check, assuming we can figure out a [loss function](!Wikipedia) giving a cost of checking at each possible time.
