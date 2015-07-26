@@ -687,7 +687,9 @@ fYrFFbOhBc6KRQbNJ8o2
 
 The bulk of the crawls are my own work, and were generally all created in a similar way.
 
-My setup is a Debian testing Linux system with [Tor](!Wikipedia), [Privoxy](!Wikipedia), and [Polipo](!Wikipedia) installed. See the [Tor guides](https://www.torproject.org/docs/installguide.html.en).
+My setup is a Debian testing Linux system with [Tor](!Wikipedia), [Privoxy](!Wikipedia), and [Polipo](!Wikipedia) installed.
+For browsing, I used Iceweasel; useful FF extensions included [LastPass](https://addons.mozilla.org/en-us/firefox/addon/lastpass-password-manager/), [Flashblock](https://addons.mozilla.org/en-us/firefox/addon/flashblock/) & [NoScript](https://addons.mozilla.org/en-us/firefox/addon/noscript/), [Live HTTP Headers](https://addons.mozilla.org/en-us/firefox/addon/live-http-headers/), [Mozilla Archive Format](https://addons.mozilla.org/en-us/firefox/addon/mozilla-archive-format/), [User Agent Switcher](https://addons.mozilla.org/en-us/firefox/addon/user-agent-switcher/) & [switchproxytype](https://addons.mozilla.org/en-US/firefox/addon/switchproxytype/), and [RECAP](!Wikipedia).
+See the [Tor guides](https://www.torproject.org/docs/installguide.html.en).
 
 1. when a new market opens, I learn of it typically from Reddit or The Hub, and browse to it in Firefox configured to proxy through `127.0.0.1:8123` (Polipo)
 2. create a new account
