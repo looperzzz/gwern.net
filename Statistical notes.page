@@ -575,7 +575,7 @@ zeoClean <- as.data.frame(sapply(zeoClean, as.numeric))
 Prior knowledge:
 
 - `Start.of.Night` is temporally first, and cannot be caused
-- `Time.to.Z` is temporally second, and can be influenced by `Start.of.Night` (likely a connection between how late I go to bed and how fast I fall asleep) & `Time.in.Wake` (since if it takes 10 minutes to fall asleep, I must spend >=10 minutes in wake) but not others
+- `Time.to.Z` is temporally second, and can be influenced by `Start.of.Night` (likely a connection between how late I go to bed and how fast I fall asleep) & `Time.in.Wake` (since if it takes 10 minutes to fall asleep, I must spend ≥10 minutes in wake) but not others
 - `Morning.Feel` is temporally last, and cannot cause anything
 - `ZQ` is a synthetic variable invented by Zeo according to an opaque formula, which cannot cause anything but is determined by others
 - `Total.Z` should be the sum of `Time.in.Light`, `Time.in.REM`, and `Time.in.Deep`
@@ -924,3 +924,148 @@ data.frame(Date = predictDays, Cost.per.Genome.predicted = exp(predict(nlmR, new
 ~~~
 
 http://www.unz.com/gnxp/the-intel-of-sequencing/#comment-677904
+
+# Air conditioner replacement
+
+> Is my old air conditioner inefficient enough to replace? After calculating electricity consumption for it and a new air conditioner, with discounting, and with uncertainty in parameters evaluated by a Monte Carlo method, I conclude that the savings are too small by an order of magnitude to pay for a new replacement air conditioner.
+
+I have an old Whirlpool air conditioner (AC) in my apartment, and as part of insulating and cooling my apartment, I've wondered if the AC should be replaced on energy efficiency grounds.
+Would a new AC save more than it costs upfront? What is the optimal decision here?
+
+Initially I was balked in analysis because I couldn't figure out what model it was, and thus anything about it like its energy efficiency.
+(No model number or name appears anywhere visible on it, and I'm not going to rip it out of the wall just to look at hidden parts.)
+
+## Parameters
+
+So I began looking at all the old Whirlpool AC photographs in Google, and eventually I found one whose appearance exactly matches mine and which was released around when I think the AC was installed.
+The old AC is the ["Whirlpool ACQ189XS"](http://www.ajmadison.com/cgi-bin/ajmadison/ACQ189XS.html) ([official](http://www.whirlpool.com/-%5BACQ189XS%5D-1004030/ACQ189XS/)) (cost: \$0, sunk cost), which is claimed to have [an EER of 10.7](http://www.whirlpool.com/digitalassets/ACQ189XS/Energy%20Guide_EN.pdf).
+
+For comparison, I browsed Amazon looking for highly-rated [Energy Star](!Wikipedia) AC models with at least 5000 BTU cooling power and costing \$250-\$300, picking out the Sunpentown WA-8022S 8000 BTU Window Air Conditioner (\$271) with [11.3 EER](http://www.sylvane.com/sunpentown-wa8011s-window-ac.html).
+(Checking some other entries on Amazon, this is fairly representative on both cost & EER.)
+
+Question: what is the electrical savings and hence the payback period of a new AC?
+
+The efficiency unit here is the EER or energy efficiency ratio, defined as BTUs (amount of heat being moved by the AC) divided by watts consumed.
+Here we have ACs with 10.7 EER vs 11.2 EER; I need ~10k BTUs to keep the apartment cool (after fixing a lot of cracks, installing an attic fan and two box fans, putting tin foil over some windows, insulation under a floor etc), so the ACs will use up $EER = \frac{10000}{x \text{watts}}$, and then _x_ = 898 watts and 934 watts respectively.
+
+(EER is a lot like [miles per gallon](!Wikipedia)/MPG as a measure of efficiency, and shares the same drawbacks: from a cost-perspective, EER/MPG don't necessarily tell you what you want to know and can be misleading and harder to work with than if efficiency were reported as, say, gallons per mile. As watts per BTU or gallons per mile, it is easy to see that after a certain point, the cost differences have become absolutely small enough that improvements are not worth paying for. Going from 30 gallons of gas to 15 gallons of gas is worth more than going from 3 gallons to 1.5 gallons, even if the relative improvement is the same.)
+
+So while operating, the two ACs will use 898 watts vs 934 watts or 0.89kWh vs 0.934kWh to cool; a difference of 36 watts or 0.036kWh.
+
+Each kWh costs around \$0.09 so the cost-difference is \$0.00324 per hour.
+
+AC is on May-September (5 months), and on almost all day although it only runs intermittently, so say a third of the day or 8 hours, for a total of 1200 hours of operation.
+
+## Cost-benefit
+
+Thus, then the annual benefit from switching to the new AC with 11.2 EER is $\$0.00324 \cdot 8 \cdot 30 \cdot 5 = \$3.888$ or \$3.9.
+
+The cost is \$271 amortized over _n_ years.
+At \$3.9 a year, it will take $\frac{\$271}{\$3.9}$ annually = 68 years to payback (ignoring breakage and discounting/interest/opportunity-cost).
+This is not good.
+
+Decision: do not replace.
+
+### Discounting
+
+To bring in discounting/interest:
+For what annual payment (cost-savings) would we be willing to pay the price of a new AC?
+More specifically, if it costs \$271 and has an average payout period of 7 years, then at my usual annual discount rate of 5%, how much must each payout be?
+
+$\sum \limits_{t=1}^7 \frac{r}{(1+0.05)^t} \geq \$271$
+
+_r_ turns out to be ≥\$46.83, which sounds about right. (Discounting penalizes future savings, so _r_ should be greater than $\frac{\$271}{7}$ or \$39, which it is.)
+
+\$47 is 12x larger than the estimated savings of \$3.9, so the conclusion remains the same.
+
+We could also work backward to figure out what EEC *would* justify an upgrade by treating it as an unknown _e_ and solving for it; let's say it must payback in 7 years (I doubt average AC lifetime is much longer) at least \$271, with the same kWh & usage as before, what must the rival EEC be? as an equation:
+
+$(\frac{\frac{10000}{10.7} - \frac{10000}{e}}{1000} \cdot 0.09 \cdot 8 \cdot 30 \cdot 5) > 47$
+
+and solving,
+
+$e > 20.02$
+
+I am pretty sure there are no ACs with EER>20!
+
+Another way to look at it: if a new good AC costs ~\$300 and I expect it to last ~7 years, then that's an annual cost of \$43.
+The current AC's *total* annual cost to run is $1200 \text{hours} \cdot \text{kWhs} \cdot \text{cost per kWh}$ or $(8 \cdot 30 \cdot 5) \cdot 0.934 \cdot 0.09 = \$101$.
+So it's immediately clear that the energy savings must be huge - half! - before it can hope to justify a new purchase.
+
+## Sensitivity analysis
+
+The above analyses were done with point-estimates.
+It's only fair to note that there's a lot of uncertainty lurking in those estimates: \$0.09 was just the median of the estimates I found for my state's electricity rates, the AC might be on 4 or 6 months, the hours per day might be considerably higher (or lower) than my guess of 8 hours, 10.7 & 11.2 EERs are probably best-case estimates and the real efficiencies lower (they're always lower than nominal), the discount rate may be a percent lower or higher and so minimum savings would be off by as much as \$4 in either direction, and so on.
+It would be good to do a bit of a sensitivity analysis to make sure that this is not being driven by any particular number.
+(Based on the definition, since it's using mostly multiplication, the final value *should* be robust to considerable error in estimating each parameter, but you never know.)
+Throwing together my intuition for how much uncertainty is in each parameter and modeling most as normals, I can simulate my prior distribution of savings:
+
+~~~{.R}
+set.seed(2015-07-26)
+simulate <- function() {
+    BTUs <- rnorm(1, 10000, 100)
+    EER_old <- 10.7 - abs(rnorm(1, 0, 0.5)) # half-normals because efficiencies only get worse, not better
+    EER_new <- 11.2 - abs(rnorm(1, 0, 0.5))
+    kWh <- rnorm(1, 0.09, 0.01)
+    dailyUsage <- rnorm(1, 8, 2)
+    months <- sample (4:6, 1)
+    minimumSavings <- rnorm(1, 47, 4)
+
+    annualNetSavings <- ((((BTUs / EER_old ) - (BTUs / EER_new)) / 1000) * kWh * dailyUsage * 30 * months) - minimumSavings
+    return(annualNetSavings)
+}
+sims <- replicate(100000, simulate())
+summary(sims)
+##        Min.     1st Qu.      Median        Mean     3rd Qu.        Max.
+## -70.3666500 -46.2051500 -42.3764100 -42.1133700 -38.3134600  -0.7334517
+quantile(sims, p=c(0.025, 0.975))
+##        2.5%        97.5%
+## -53.59989114 -29.13999204
+~~~
+
+Under every simulation, a new AC is a net loss.
+(Since we have no observed data to update our priors with, this is an exercise in probability, not Bayesian inference, and so there is no need to bring in JAGS.)
+
+There are two choices: replace or not.
+The expected-value of a replacement is $100\% \cdot -\$42$ or -\$42, and the expected-value of not replacing is $100\% \cdot \$0$ or \$0; the latter is larger than the former, so we should choose the latter and not replace the old AC.
+
+Hence we can be confident that not getting a new AC really is the right decision.
+
+<!--
+"Estimating the genotypic intelligence of populations and assessing the impact of socioeconomic factors and migrations.", Piffer https://thewinnower.com/papers/estimating-the-genotypic-intelligence-of-populations-and-assessing-the-impact-of-socioeconomic-factors-and-migrations
+
+http://openpsych.net/forum/showthread.php?tid=127
+http://openpsych.net/forum/showthread.php?tid=224
+
+http://www.unz.com/akarlin/genetics-iq-and-convergence/
+
+http://humanvarieties.org/2014/10/03/is-there-no-population-genetic-support-for-a-racial-hereditarian-hypothesis/
+
+Piffer, Davide (2015): A review of intelligence GWAS hits: their relationship to country IQ and the issue of spatial autocorrelation. Figshare.
+http://dx.doi.org/10.6084/m9.figshare.1393160
+
+Factor Analysis of Population Allele Frequencies as a Simple, Novel Method of Detecting Signals of Recent Polygenic Selection: The Example of Educational Attainment and IQ. D Piffer
+D Piffer
+Mankind Quarterly 54 (2), 168-200
+
+Others:
+Statistical associations between genetic polymorphisms modulating executive function and intelligence suggest recent selective pressure on cognitive abilities.
+D Piffer
+Mankind Quarterly 54 (1), 3-25
+
+Opposite selection pressures on stature and intelligence across human populations
+D Piffer
+Open Behavioral Genetics
+
+The genetic correlation between educational attainment, intracranial volume and IQ is due to recent polygenic selection on general cognitive ability
+D Piffer, E Kirkegaard
+Open Behavioral Genetics
+
+
+Piffer, D. (2014). Estimating strength of polygenic selection with principal components analysis of spatial genetic variation. bioRxiv, 008011.
+
+Piffer, D., & Kirkegaard, E. O. The genetic correlation between educational attainment, intracranial volume and IQ is due to recent polygenic selection on general cognitive ability.
+
+https://www.google.com/search?num=100&q=%22Date%20of%20Birth%22%20site%3Amy.pgp-hms.org%2Fprofile%2F eg https://my.pgp-hms.org/profile/hu594129
+https://opensnp.org/phenotypes/148#users eg https://opensnp.org/users/3866
+-->
