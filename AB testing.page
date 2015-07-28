@@ -2975,13 +2975,75 @@ Except consider the power issues: if that 1 CSE search converts, then to be prof
 power.prop.test(p1=0.174, p2=0.170, power=0.80, sig.level=0.05)
 ##     Two-sample comparison of proportions power calculation
 ##              n = 139724.5781
-##     ...
 ~~
 
 Even with the most optimistic possible assumptions (perfect conversion, no negative effect), it takes 279,449 page-views to get decent power.
 This is ridiculous from a cost-benefit perspective, and worse given that my priors are against it due to the extra JS & CSS it entails.
 
 So I simply removed it. It was a bit of an experiment, and <8.9k searches does not seem worth it.
+
+# Deep reinforcement learning
+
+A/B testing variants one at a time is fine as far as it goes, but it has several drawbacks that have become apparent:
+
+1. fixed trials, compared to sequential or adaptive trial approaches, waste data/page-views. Looking back, it's clear that many of these trials didn't need to run so long.
+2. they are costly to set up, both because of the details of a static site doing A/B tests but also because it requires me to define each change, code it up, collect, and analyze the results all by hand.
+3. they are not amenable to testing complicated models or relationships, since factorial designs suffer combinatorial explosion.
+4. they will test only the interventions the experimenter thinks of, which may be a tiny handful of possibilities out of a wide space of possible interventions (this is related to the cost: I won't test anything that isn't interesting, controversial, or potentially valuable, because it's far too much of a hassle to implement/collect/analyze)
+
+The topic of sequential trials leads naturally to [multi-armed bandits](!Wikipedia) (MAB), which can be seen as a generalization of regular experimenting which naturally reallocate samples across branches as the posterior probabilities change in a way which minimizes how many page-views go to bad variants.
+It's hard to see how to implement MABs as a static site, so this would probably motivate a shift to a dynamic site, at least to the extent that the server will tweak the served static content based on the current MAB.
+
+MABs work for the current use case of specifying a small number of variants (eg <20) and finding the best one.
+Depending on implementation detail, they could also make it easy to run factorial trials checking for interactions among those variants, resolving another objection.
+
+They're still expensive to set up since one still has to come up with concrete variants to pit against each other, but if it's now a dynamic server, it can at least handle the analysis automatically.
+
+MABs themselves are a special case of [reinforcement learning](!Wikipedia) (RL), which is a family of approaches to exploring complicated systems to maximize a reward at (hopefully) minimum data cost.
+Optimizing a website fits naturally into a RL mold: all the possible CSS and HTML variants are a very complicated system, which we are trying to explore as cheaply as possible while maximizing the reward of visitors spending more time reading each page.
+
+To solve the expressivity problem, one could try to equip the RLer with a lot of power over the CSS: parse it into an [AST](!Wikipedia), so instead of specifying by hand '100%' vs '105%' in a CSS declaration like `div#sidebar-news a { font-size: 105%; }`, the RLer sees a node in the AST like `(font-size [Real ~ dnorm(100,20)])` and tries out numbers around 100% to see what yields higher conversion rates.
+Of course, this yields an enormous number of possibilities and my website traffic is not equally enormous.
+Informative priors on each node would help if one was using a Bayesian MAB to do the optimization, but a Bayesian model might be too weak to detect many effects. (You can't easily put in interactions between every node of the AST, after all.)
+
+In a challenging problem like this, deep neural networks come to mind, yielding a deep reinforcement learner ([Q-learning](!Wikipedia)) - such a system made a splash in 2013-2015 in learning to play dozens of Atari games (["Human-level control through deep reinforcement learning"](http://diyhpl.us/~nmz787/pdf/Human-level_control_through_deep_reinforcement_learning.pdf "Mnih et al 2015"); [parallelizing it](http://arxiv.org/abs/1507.04296 "'Massively Parallel Methods for Deep Reinforcement Learning', Nair et al 2015")).
+The deep network handles interpretation of the input, and the RLer handles policy and optimization.
+
+So the loop would go something like this:
+
+1. a web browser requests a page
+2. the server asks the RL for CSS to include
+3. the RL generates a best guess at optimal CSS, taking the CSS AST skeleton and returning the defaults, with some fields/parameters randomized for exploration purposes
+4. the CSS is transcluded into the HTML page, and sent to the web browser
+5. JS analytics in the HTML page report back how long the user spent on that page and details like their country, web browser, etc, which predict time on page (explaining variance, making it easier to see effects)
+6. this time-on-page constitutes the reward which is fed into the RL and updates
+7. return to waiting for a request
+
+Parsing CSS into an AST seems difficult, and it is still limited in that it will only ever tweak existing CSS fields.
+
+How to offer more power and expressivity to the RLer without giving it so much freedom that it will hang itself with gibberish CSS before ever finding working CSS, never mind improvements?
+
+A powerful AI tool which could generate CSS on its own are the [recurrent neural networks](!Wikipedia): NNs which generate some output which gets fed back in until a long sequence has been emitted. (They usually also have some special support for storing 'memories' over multiple recursive applications, using [LSTM](!Wikipedia "Long short term memory").)
+RNNs are famous for mimicking text and other sequential material; in one demo, Karpathy's ["The Unreasonable Effectiveness of Recurrent Neural Networks"](https://karpathy.github.io/2015/05/21/rnn-effectiveness/), he trained a RNN on 474MB of C source code & headers, the RNN does a credible job of emitting pseudo-C code which looks convincing and is even mostly syntactically-correct in balancing parentheses & brackets.
+(Of course, the pseudo-C doesn't *do* anything but that RNN was never asked to make it do something.)
+In [another RNN paper](http://arxiv.org/abs/1410.4615 "'Learning to Execute', Zaremba & Sutskever 2015"), the authors trained it on Python source code and it was able to 'execute' very simple Python programs and predict the output; this is perhaps not too surprising given the earlier ["Neural Turing Machines"](http://arxiv.org/abs/1410.5401 "Graves et al 2014") and solving the Traveling Salesman Problem (["Pointer Networks"](http://arxiv.org/abs/1506.03134 "Vinyals et al 2015")).
+So RNNs are powerful and have already shown promise in learning how to write simple programs.
+
+This suggests the use of an RNN inside an RLer for generating CSS files.
+Train the RNN on a few hundred megabytes of CSS files (there are millions online, no shortage there), which teaches the RNN about the full range of possible CSS expressions, then plug it into step 3 of the above website optimization algorithm and begin training it to emit useful CSS.
+The pretraining provides extremely strong priors about what CSS should look like so syntactically valid CSS will be mostly used without the constraint of operating on a rigid AST, the RL begins optimizing particular steps, and providing the original CSS with a high reward prevents it from straying too far from a known good design.
+
+Can we go further? Perhaps.
+In the Atari RL paper, the NN was specifically a convolutional neural network (CNN), used almost universally in image classification tastes; the CNN was in charge of understanding the pixel output so it could be manipulated by the RL.
+Th RNN would have considerable understanding of CSS on a textual level, but it wouldn't be easily able to understand how one CSS declaration changes the appearance of the webpage.
+A CNN, on the other hand, can look at a page+CSS as rendered by a web browser, and 'see' what it looks like; possibly it could learn that 'messy' layouts are bad, that fonts shouldn't be made 'too big', that blocks shouldn't overlap, etc.
+The RNN generates CSS, the CSS is rendered in a web browser, the rendering is looked at by a CNN... and then what?
+I'm not sure how to make use of a generative approach here.
+Something to think about.
+
+- [_Reinforcement Learning: An Introduction_](http://webdocs.cs.ualberta.ca/~sutton/book/ebook/the-book.html), Sutton & Barto 1998
+- [_Neural Networks and Deep Learning_](http://neuralnetworksanddeeplearning.com/), Nielsen 2015
+- ["Reinforcement Learning with Recurrent Neural Networks"](http://repositorium.uni-osnabrueck.de/bitstream/urn:nbn:de:gbv:700-2008112111/2/E-Diss839_thesis.pdf), Shafer 2008
 
 # Appendix
 ## Covariate impact on power
