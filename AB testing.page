@@ -2803,8 +2803,9 @@ On 22 March 2015, it outperformed `none`.
 On 25 May 2015, the difference was not statistically-significant but I decided to delete `meta3` anyway.
 On 2 July 2015, I deleted `meta2` similarly; given the ever smaller differences between variants, it may be time to kill the experiment.
 
-<!--
-TODO: test CSE
+### Analysis
+
+## CSE
 
 A CSE is a Google search query but one specialized in various ways - somewhat like offering a user a form field which redirects to a Google search query like `$QUERY site:gwern.net/docs/`, but more powerful since you can specify thousands of URLs to blacklist and whitelist and have limited patterns.
 I have two: [one](https://cse.google.com/cse/publicurl?cx=009114923999563836576:1eorkzz2gp4) is specialized for searching for anime/manga news sites and makes writing Wikipedia articles much easier (since you can search for a particular anime title and the results will be mostly news and reviews which you can use in a WP article, rather than images, songs, memes, Amazon and commercial sites, blogs, etc); and [the second](https://cse.google.com/cse/publicurl?cx=009114923999563836576:dv0a4ndtmly) is specialized to search `gwern.net`, my Reddit, LessWrong, PredictionBook, Good Reads and some other sites, to make it easier to find something I may've written.
@@ -2819,13 +2820,23 @@ There had been 8974 searches since I installed it 785 days previously or ~11.4 s
 (The next most popular searches are "Graeber"/26, "chunking"/22, and "nootropics"/10, with CSE refusing to provide any further queries due to low volume. This suggests a long tail of search queries - but also that they're not very important since it's easy to find the DNB FAQ & my nootropics page, and it can hardly be very useful if the top search is an error.)
 
 To put these 8855 searches in perspective, in that same exact time period, there were 891,790 unique users with 2,010,829 page views.
-So only 0.44% of page-views involve a use of the CSE.
-Is it net-beneficial to make 99.56% of page-views incur the JS run & loading for the sake of such a rare user-action?
+So only 0.44% of page-views involve a use of the CSE, or a ratio of 1:227
+Is it net-beneficial to make 227 page-views incur the JS run & loading for the sake of 1 CSE search?
 
-So I need to A/B test the presence/absence of the CSE div. (I can't simply hide it using CSS like usual because it will still affect page loads.)
--->
+This might seem like a time to A/B test the presence/absence of the CSE div. (I can't simply hide it using CSS like usual because it will still affect page loads.)
+Except consider the power issues: if that 1 CSE search converts, then to be profitable, it needs to damage the 227 other page-views conversion rate by <1/227. Or to put it the other way, the current conversion rate is ~17% of page-views and CSE search represents 0.44% of page-views, so if the CSE makes that one page-view 100% guaranteed to convert and otherwise converts normally, then over 1000 page-views, we have 0.17*995 + 1.0*5 =174 vs 0.17*995 + 0.17*5=170, or 17.4% vs 17.0%
 
-### Analysis
+~~~{.R}
+power.prop.test(p1=0.174, p2=0.170, power=0.80, sig.level=0.05)
+##     Two-sample comparison of proportions power calculation
+##              n = 139724.5781
+##     ...
+~~
+
+Even with the most optimistic possible assumptions (perfect conversion, no negative effect), it takes 279,449 page-views to get decent power.
+This is ridiculous from a cost-benefit perspective, and worse given that my priors are against it due to the extra JS & CSS it entails.
+
+So I simply removed it. It was a bit of an experiment, and <8.9k searches does not seem worth it.
 
 # Appendix
 ## Covariate impact on power
