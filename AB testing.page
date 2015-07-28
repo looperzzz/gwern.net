@@ -2803,7 +2803,152 @@ On 22 March 2015, it outperformed `none`.
 On 25 May 2015, the difference was not statistically-significant but I decided to delete `meta3` anyway.
 On 2 July 2015, I deleted `meta2` similarly; given the ever smaller differences between variants, it may be time to kill the experiment.
 
+Totals, 29 Jan - 27 July 2015:
+
+Metadata Returning N     Conversion rate
+-------- --------- ----- ---------------
+`meta1`  FALSE     835   0.1545
+`meta1`  TRUE      364   0.2060
+`meta2`  FALSE     37140 0.1532
+`meta2`  TRUE      14063 0.2213
+`meta3`  FALSE     26600 0.1538
+`meta3`  TRUE      10045 0.2301
+`meta4`  FALSE     1234  0.1669
+`meta4`  TRUE      462   0.2186
+`meta5`  FALSE     61646 0.1397
+`meta5`  TRUE      20130 0.2109
+`meta6`  FALSE     61608 0.1382
+`meta6`  TRUE      19219 0.2243
+`none`   FALSE     9227  0.1568
+`none`   TRUE      3358  0.2225
+
 ### Analysis
+
+~~~{.R}
+rates <- read.csv(stdin(),header=TRUE)
+Metadata,Date,Old,N,Rate
+meta1,"2015-02-06",FALSE, 832, 0.1538
+meta1,"2015-02-06",TRUE, 356, 0.2051
+meta2,"2015-02-06",FALSE, 1037, 0.1716
+meta2,"2015-02-06",TRUE, 423, 0.2411
+meta3,"2015-02-06",FALSE, 1010, 0.1604
+meta3,"2015-02-06",TRUE, 431, 0.2204
+meta4,"2015-02-06",FALSE, 1061, 0.1697
+meta4,"2015-02-06",TRUE, 349, 0.2092
+meta5,"2015-02-06",FALSE, 1018, 0.1798
+meta5,"2015-02-06",TRUE, 382, 0.2749
+meta6,"2015-02-06",FALSE, 1011, 0.1731
+meta6,"2015-02-06",TRUE, 423, 0.2837
+none ,"2015-02-06",FALSE, 1000, 0.1710
+none ,"2015-02-06",TRUE, 434, 0.2074
+meta1,"2015-02-09",TRUE, 8, 0.1250
+meta2,"2015-02-09",FALSE, 921, 0.1238
+meta2,"2015-02-09",TRUE, 248, 0.1895
+meta3,"2015-02-09",FALSE, 861, 0.1440
+meta3,"2015-02-09",TRUE, 262, 0.2137
+meta4,"2015-02-09",FALSE, 189, 0.1429
+meta4,"2015-02-09",TRUE, 92, 0.2500
+meta5,"2015-02-09",FALSE, 889, 0.1327
+meta5,"2015-02-09",TRUE, 304, 0.2401
+meta6,"2015-02-09",FALSE, 845, 0.1219
+meta6,"2015-02-09",TRUE, 274, 0.2336
+none ,"2015-02-09",FALSE, 866, 0.1236
+none ,"2015-02-09",TRUE, 236, 0.2288
+meta1,"2015-03-23",FALSE, 635, 0.1496
+meta1,"2015-03-23",TRUE, 277, 0.1841
+meta2,"2015-03-23",FALSE, 9346, 0.1562
+meta2,"2015-03-23",TRUE, 3545, 0.2305
+meta3,"2015-03-23",FALSE, 9392, 0.1533
+meta3,"2015-03-23",TRUE, 3627, 0.2412
+meta4,"2015-03-23",FALSE, 1020, 0.1588
+meta4,"2015-03-23",TRUE, 381, 0.2231
+meta5,"2015-03-23",FALSE, 9359, 0.1631
+meta5,"2015-03-23",TRUE, 3744, 0.2228
+meta6,"2015-03-23",FALSE, 9532, 0.1600
+meta6,"2015-03-23",TRUE, 3479, 0.2483
+none ,"2015-03-23",FALSE, 8979, 0.1537
+none ,"2015-03-23",TRUE, 3196, 0.2287
+meta1,"2015-05-25",TRUE, 1, 0.000
+meta2,"2015-05-25",FALSE, 21879, 0.1584
+meta2,"2015-05-25",TRUE, 8131, 0.2285
+meta3,"2015-05-25",FALSE, 22066, 0.1539
+meta3,"2015-05-25",TRUE, 8288, 0.2300
+meta5,"2015-05-25",FALSE, 21994, 0.1611
+meta5,"2015-05-25",TRUE, 8629, 0.2187
+meta6,"2015-05-25",FALSE, 22197, 0.1575
+meta6,"2015-05-25",TRUE, 8114, 0.2328
+none ,"2015-05-25",FALSE, 4987, 0.1562
+none ,"2015-05-25",TRUE, 1721, 0.2342
+meta2,"2015-07-02",FALSE, 11016, 0.1452
+meta2,"2015-07-02",TRUE, 4291, 0.2123
+meta3,"2015-07-02",FALSE, 208, 0.865
+meta3,"2015-07-02",TRUE, 137, 0.1387
+meta5,"2015-07-02",FALSE, 11336, 0.1451
+meta5,"2015-07-02",TRUE, 4165, 0.2091
+meta6,"2015-07-02",FALSE, 11051, 0.1397
+meta6,"2015-07-02",TRUE, 3879, 0.2274
+meta2,"2015-07-28",FALSE, 10299, 0.1448
+meta2,"2015-07-28",TRUE, 4086, 0.2102
+meta3,"2015-07-28",TRUE, 28, 0.1429
+meta5,"2015-07-28",FALSE, 34976, 0.1250
+meta5,"2015-07-28",TRUE, 9984, 0.1988
+meta6,"2015-07-28",FALSE, 34830, 0.1242
+meta6,"2015-07-28",TRUE, 9550, 0.2093
+
+
+rates$Successes <- rates$N * rates$Rate
+rates$Successes <- round(rates$Successes,0)
+rates$Failures <-rates$N - rates$Successes
+g <- glm(cbind(Successes,Failures) ~ Metadata * Old + Date, data=rates, family="binomial"); summary(g)
+##                          Estimate  Std. Error   z value   Pr(>|z|)
+## (Intercept)           -1.68585483  0.07376022 -22.85588 < 2.22e-16
+## Metadatameta2          0.11289144  0.07557654   1.49374  0.1352445
+## Metadatameta3          0.10270100  0.07602219   1.35093  0.1767164
+## Metadatameta4          0.10061048  0.09241740   1.08865  0.2763069
+## Metadatameta5          0.08577369  0.07542883   1.13715  0.2554767
+## Metadatameta6          0.06413629  0.07543722   0.85019  0.3952171
+## Metadatanone           0.06769859  0.07738865   0.87479  0.3816898
+## OldTRUE                0.30223404  0.12339673   2.44929  0.0143139
+## Date2015-02-09        -0.25042825  0.04531921  -5.52587 3.2785e-08
+## Date2015-03-23        -0.07756390  0.02932304  -2.64515  0.0081654
+## Date2015-05-25        -0.09191468  0.02904941  -3.16408  0.0015557
+## Date2015-07-02        -0.16628108  0.03108431  -5.34936 8.8267e-08
+## Date2015-07-28        -0.30091724  0.02988108 -10.07050 < 2.22e-16
+## Metadatameta2:OldTRUE  0.15884370  0.12509633   1.26977  0.2041662
+## Metadatameta3:OldTRUE  0.16917541  0.12606099   1.34201  0.1795920
+## Metadatameta4:OldTRUE  0.08085814  0.15986591   0.50579  0.6130060
+## Metadatameta5:OldTRUE  0.15772161  0.12470219   1.26479  0.2059480
+## Metadatameta6:OldTRUE  0.26593031  0.12471587   2.13229  0.0329831
+## Metadatanone :OldTRUE  0.18329569  0.12933518   1.41721  0.1564202
+confint(g)
+##                                2.5 %         97.5 %
+## (Intercept)           -1.83279352769 -1.54352045422
+## Metadatameta2         -0.03311333865  0.26327668480
+## Metadatameta3         -0.04420468214  0.25393168209
+## Metadatameta4         -0.07967057622  0.28275671162
+## Metadatameta5         -0.05993245076  0.23587876421
+## Metadatameta6         -0.08158679693  0.21425729726
+## Metadatanone          -0.08197368374  0.22151789608
+## OldTRUE                0.05847893596  0.54254577177
+## Date2015-02-09        -0.33953084106 -0.16186556722
+## Date2015-03-23        -0.13481890103 -0.01986901416
+## Date2015-05-25        -0.14861372005 -0.03473644767
+## Date2015-07-02        -0.22700745604 -0.10515380198
+## Date2015-07-28        -0.35925991220 -0.24212277265
+## Metadatameta2:OldTRUE -0.08484020193  0.40587579037
+## Metadatameta3:OldTRUE -0.07642276867  0.41806754337
+## Metadatameta4:OldTRUE -0.23209702844  0.39481052801
+## Metadatameta5:OldTRUE -0.08518032081  0.40399365950
+## Metadatameta6:OldTRUE  0.02300128120  0.51222878593
+## Metadatanone :OldTRUE -0.06880343759  0.43849923508
+~~~
+
+A strange set of results. `meta2` performs the best on new visitors, and worst on old visitors; while `meta6` is the exact opposite.
+Because there are more new visitors than old visitors, `meta2` is the best on average.
+Except I hate how `meta2` looks and much prefer `meta6`.
+The confidence intervals are wide, though - it's not clear that `meta6` is definitely worse than `meta2`.
+
+Given my own preference, I will go with `meta6`.
 
 ## CSE
 
