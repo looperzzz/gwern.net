@@ -1869,7 +1869,8 @@ I am not sure in advance how long I should run the experiment: I have no previou
 
     Easter interfered with the planned transition; didn't want to risk being greasy.
 6. 4 April - 8 April: poo; 9 April - 5 May: no-poo
-7. 5 May: poo; 30 May - ?: no-poo
+7. 5 May: poo; 30 May - 30 June: no-poo
+8. 1 - 16 July: no-poo; 17 July - ? ?: poo
 
 The main concerns with this design seem to be whether a month is enough time to show any no-poo adaptation, and whether it would be possible to estimate time for each photo despite controlling the conditions as much as possible.
 
@@ -2045,68 +2046,3 @@ I haven't gotten much use out of them, but changes in ambient lighting over time
 I've written a script using Imagemagick which analyzes each webcam photo and calculates the average brightness (as a grayscale intensity) and the average [LAB](!Wikipedia "Lab color space") color triplet.
 (I originally used RGB but the 3 colors turned out to correlate so highly that the data was redundant and I was told LAB better matches human perception; in any case, the LAB values turn out to be less inter-correlated and so should be more useful.)
 The light intensity might affect sleep patterns (particularly sleep timing) and daily productivity.
-
-# Proposal: hand-counting mobile app for more fluid group discussions
-
-> Groups use voting for decision-making, but existing vote systems are cumbersome.
-> Hand-raising is faster, but does not scale because hand-counting hands is slow.
-> Advances in machine vision may make it possible for AI to count hands in photos accurately.
-> Combined with a smartphone's camera, this could yield an app for fast voting in even large groups.
-
-Medium-large (>10 people) groups face a problem in reaching consensus: ballot or pen-and-paper voting is sufficiently slow and clunky that it is too costly to use for anything but the most important discussions.
-A group is forced to adopt other discussion norms and save a formal vote for only the final decision, and even then the long delay kills a lot of enthusiasm and interest.
-Voting could be used for many more decisions if it could be faster, and of course all existing group votes would benefit from increased speed.
-(I am reminded of anime conventions and film festivals where, particularly for short films such as AMVs, one seems to spend more time filling out a ballot & passing them along aisles & the staff painfully counting through each ballot by hand than one actually spends watching the media in question!)
-
-It would be better if voting could be as fluent and easy as simply raising your hand like in a small group such as a classroom - a mechanism which makes it so easy to vote that votes can be held as fast as the alternatives can be spoken aloud and a glance suffices to count (an alert group could vote on 2 or 3 topics in the time it takes to read this sentence).
-But hand-raising, as great as it is, suffers from the flaw that it does not scale due to the counting problem: a group of 500 people can raise their hands as easily as a group of 50 or 5, but it takes far too long to count ~250 hands: the person counting will quickly tire of the tedium, they will make mistakes counting, and this puts a serious lag on each vote, a lag which increases linearly with the number of voters.
-(Hands can be easy to approximate if almost everyone votes for or against something, but if consensus is so overwhelming, one doesn't need to vote in the first place! The hard case of almost-balanced votes is the most important case.)
-
-One might suggest using an entirely different strategy: a website with HTML polls or little clicker gizmos like used in some college lectures to administer quick quizzes.
-This have the downsides that they require potentially expensive equipment (I used a clicker in one class and I think it cost at least $20, so if a convention wanted to use that in an audience of hundreds, that's a major upfront cost & my experience was that clickers were unintuitive, did not always work, and slowed things down if anything; a website would only work if you assume everyone has smartphones and is willing to pull them out to use at an instance's notice and of course that there's working WiFi in the room, which cannot be taken for granted) and considerable overhead in explaining to everyone how it works and getting them on the same page and making sure every person who wanders in also gets the message.
-(If anyone is going to be burdened with understanding or using a new system, it should be the handful of conference/festival/group organizers, not the entire audience!)
-It's hard to imagine a film festival running using either system, and difficult to see either system improving on pen-and-paper ballots which at least are cheap, relatively straightforward, and well-known.
-
-Hand-counting really does seem like the best solution, if only the counting could be fixed.
-Counting is something computers do fast, so that is the germ of an idea.
-What if a smartphone could count the votes? You don't want a smartphone app on the entire audiences' phones, of course, since that's even worse than having everyone go to a website to vote; but machine vision has made enormous strides in the 2000s-2010s, reaching human-equivalent performance on challenging image recognition contests like ImageNet.
-(Machine vision is complicated, but the important thing is that it's the kind of complicated which can be outsourced to someone else and turned into a dead-easy-to-use app, and the burden does not fall on the primary users - the audience.)
-What if the organizer had an app which took a photo of the entire audience with lifted arms and counted hands & faces and returned a vote count in a second?
-
-Such an app would be ideal for any cultural, political, or organizational meeting. Now the flow for, eg, a film festival could go: [no explanation given to audience, one just starts] "OK, how many people liked the first short, 'Vampire Deli' by Ms Houston?" [everyone raises hand, smartphone flashes, 1s passes] "OK, 140 votes. How many liked the second short, 'Cthulicious' by Mr Iouston?" [raises hands, smartphone flashes, 1s passes] "OK... 130 people. Congratulations Ms Houston!"
-And so on.
-
-Such an app might be considered an infeasible machine vision task, but I believe it could be feasible: facial localization is an old and well-studied image recognition task (and effective algorithms are built into every consumer camera), hands/fingers have very distinct shapes, and both tasks seem easier than the subtle discriminations between, say, various dog breeds demanded of ImageNet contestants.
-
-Specifically, one could implement the machine vision core as follows:
-
-1. multilayer neural networks trained for one task can be repurposed to similar tasks by removing the highest layer and retraining on the new task, potentially reaping great performance gains as the hybrid network has already learned much of what it needs for the second task (["transfer learning"](https://cs231n.github.io/transfer-learning/)). So one could take a publicly available NN trained for ImageNet (such as [AlexNet](http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf "'ImageNet Classification with Deep Convolutional Neural Networks', Krizhevsky et al 2012"), available in [caffe](https://github.com/BVLC/caffe)), remove the top two layers, and retrain on a dataset of audiences; this will perform better since the original NN has already learned how to detect edges, recognize faces, etc
-2. raid Flickr and Google Images for CC-licensed photos of audiences raising their arms; then one can manually count how many arms are raised (or outsource to Amazon Mechanical Turk). With the boost from a transferred convolutional deep network, one might get good performance with just a few thousand photos to train with. If each photo takes a minute to obtain and count, then one can create a useful corpus in a week or two of work.
-3. train the NN, applying the usual data augmentation tricks to increase one's meager corpus, trying out random hyperparameters, tweaking the architecture, etc
-
-    (Note that while NNs are very slow and computationally intensive to *train*, they are typically quite fast to *run*; the smartphone app would not be training a NN, which is indeed completely infeasible from a CPU and battery life standpoint - it is merely running the NN created by the original developer.)
-4. with an accurate NN, one can wrap it in a mobile app framework. The UI, at the simplest, is simply a big button to press to take a photo, feed it into the NN, and display the count. Some additional features come to mind:
-
-    - "headcount mode": one may not be interested in a vote, but in how many people are in an audience (to estimate how popular a guest is, whether an event needs to move to a new bigger space, etc). If the NN can count faces and hands to estimate a vote count, it can simply report the count of faces instead.
-    - the app should save every photo & count, both as an audit trail and also to support post-vote recounts in case of disputes or a desire for a more definitive count
-    - the reported count should come with an indication of the NN's uncertainty/error-rate, so users are not misled by their little handheld oracle and so they can redo a vote if the choice is borderline; Bayesian methods, in which previous votes are drawn upon, might be relevant here.
-
-        - if the original photo could be annotated with graphical notes for each recognized/counted hand & face, this would let the user 'see' what the NN is thinking and would help build confidence a great deal
-    - it should support manually entering in a vote-count; if the manual count differs, then this indicates the NN made an error and the photo & count should be uploaded to the original developer so it can be added to the corpus and the NN's performance fixed in future releases of the app
-    - smartphone cameras may not be high-resolution or have a sufficiently wide field-of-view to capture the entire audience at once; some sort of "montage mode" should exist so the user can swing the phone across the audience, bursts of shots taken, and the overlapping photos stitched together into a single audience photo which can be then fed into the NN as usual
-    - a burst of photos might be superior to a single photo due to smartphone & hand movement blur; I don't know if it's best to try to combine the photos, run the NN multiple times and take the median, or feed multiple photos into the NN (perhaps by moving to a RNN architecture?)
-    - the full-strength NN might still be too slow and energy-hungry to run pleasantly on a smartphone; there are [model compression](http://www.cs.cornell.edu/~caruana/compression.kdd06.pdf "'Model Compression', Bucila et al 2006") [techniques for simplifying deep NNs](http://arxiv.org/abs/1503.02531 "'Distilling the Knowledge in a Neural Network', Hinton et al 2015") to reduce the number of nodes or [have fewer layers](http://arxiv.org/abs/1312.6184 "'Do Deep Nets Really Need to be Deep?', Ba & Caruana 2013")  without losing much performance, which might be useful in this context (and indeed, were originally motivated by wanting to make speech-recognition run better on smartphones)
-
-Given this breakdown, one might estimate building such an app as requiring, assuming one is already reasonably familiar with deep networks & writing mobile apps:
-
-1. 1 week to find an ImageNet NN, learn how to modify it, and set it up to train on a fresh corpus
-2. 3 weeks to create a corpus of <5000 photos with manually-labeled hand counts
-3. 5 weeks to train the NN (NNs as large as ImageNet NNs take weeks to train; depending on the GPU hardware one has access to and how many tweaks and hyperparameters one tries, 5 weeks could be drastically optimistic; but on the plus side, it's mostly waiting as the GPUs suck electricity like crazy)
-4. 5 weeks to make an intuitive simple app, submitting to an app store, etc
-5. These estimates are loose and probably too optimistic (although I would be surprised if it took a good developer more than 6 months to develop this app), but that would suggest >14 weeks or 784 hours of work for a developer, start to finish. (Even at minimum wage, this represents a substantial development cost of >\$6k; at more plausible developer salaries, easily >\$60k of salary.)
-
-How large is the market for such an app?
-Groups such as anime conventions or anything on a college campus are cheapskates and would balk at a price higher than \$4.99 (even if only 5 or 10 staffers need to buy it and it makes the experience much smoother). There are probably several hundred anime or video game conventions which might use this to vote, so that might be 1000 sales there.
-There's easily [13,000 business conventions or conferences in the USA](http://www.quora.com/How-many-conferences-conventions-tradeshows-and-exhibitions-happen-in-the-United-States-and-the-world-each-year), which might not need voting so much, but would be attracted by a headcount mode to help optimize their event.
-This suggests perhaps \$70k in sales with much less profit after the app store cut & taxes, much of which sales would probably be one-offs as the user reuses it for each conference.
-So even a wild success, in which most events adopt use of such voting software, would barely recoup the development costs; as a product, it seems this is just too much of a niche unless one could develop it *much* faster (such as by finding an existing corpus of hands/photos, or be certain of banging out the mobile app in much less than I estimated), find a larger market (theaters for audience participation?), or increase price substantially (10x the price and aim at only businesses?).
