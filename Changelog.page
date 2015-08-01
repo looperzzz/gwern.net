@@ -9,6 +9,17 @@ belief: log
 Following my writing can be a little difficult: while I provide [an RSS feed of the edit history](http://www.gwern.net/atom.xml), it is too fine-grained to know what is an interesting update and what is housekeeping. So periodically I write up interesting changes in a human-readable format:
 
 # 2015
+## July
+
+- [Dark Net Market archives, 2011-2015](/Black-market%20archives "Mirrors of Tor-Bitcoin black-markets & forums 2013-2015, and other material")
+- A/B tests: finished [metadata test](/AB%20testing#moving-sidebars-metadata-into-page); [proposal towards](/AB%20testing#deep-reinforcement-learning) recurrent neural network for reinforcement learning of CSS
+- [Air conditioner upgrade](/Statistical%20notes#air-conditioner-replacement) cost-benefit analysis
+- `gwern.net`:
+
+    - [switched to Patreon](https://www.patreon.com/gwern) for donations
+    - optimized website loading (removed CSE, A/B testing, non-validating XML, outbound link-tracking; simplified Disqus; minified JS, and fully async/deferred JS loading)
+
+
 ## June
 
 - rewrote `gwern.net` CSS to be mobile-friendly; should now be readable in an iPhone 6 browser
