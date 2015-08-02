@@ -3013,11 +3013,16 @@ So the loop would go something like this:
 
 1. a web browser requests a page
 2. the server asks the RL for CSS to include
-3. the RL generates a best guess at optimal CSS, taking the CSS AST skeleton and returning the defaults, with some fields/parameters randomized for exploration purposes
+3. the RL generates a best guess at optimal CSS, taking the CSS AST skeleton and returning the defaults, with some fields/parameters randomized for exploration purposes (possibly selected by [Bayesian optimization](!Wikipedia) to maximize information gain)
 4. the CSS is transcluded into the HTML page, and sent to the web browser
 5. JS analytics in the HTML page report back how long the user spent on that page and details like their country, web browser, etc, which predict time on page (explaining variance, making it easier to see effects)
 6. this time-on-page constitutes the reward which is fed into the RL and updates
 7. return to waiting for a request
+
+Learning can be sped up by data augmentation or local training: the developer can browse pages locally and based on whether they look horrible or not, insert pseudo-data.
+(If one variant looks bad, it can be immediately heavily penalized by adding, say, 100 page-views of that variant with low rewards.)
+Once previews have stabilized on not-too-terrible-looking, it can be run on live users; the developer's preferences may introduce some bias compared to the general Internet population, but the developer won't be *too* different and this will kill off many of the worst variants.
+As well, historical information can be inserted as pseudo-data: if the current CSS file has 17% conversion over 1 million page views, one can simulate 1m page views to that CSS variant's considerable credit.
 
 Parsing CSS into an AST seems difficult, and it is still limited in that it will only ever tweak existing CSS fields.
 
@@ -3031,11 +3036,12 @@ So RNNs are powerful and have already shown promise in learning how to write sim
 
 This suggests the use of an RNN inside an RLer for generating CSS files.
 Train the RNN on a few hundred megabytes of CSS files (there are millions online, no shortage there), which teaches the RNN about the full range of possible CSS expressions, then plug it into step 3 of the above website optimization algorithm and begin training it to emit useful CSS.
+For additional learning, the output can be judged using an oracle (a CSS validator like the [W3C CSS Validation Service](https://jigsaw.w3.org/css-validator/)/`w3c-markup-validator` package, or possibly [CSSTidy](http://csstidy.sourceforge.net/)), and the error or reward based on how many validation errors there are.
 The pretraining provides extremely strong priors about what CSS should look like so syntactically valid CSS will be mostly used without the constraint of operating on a rigid AST, the RL begins optimizing particular steps, and providing the original CSS with a high reward prevents it from straying too far from a known good design.
 
 Can we go further? Perhaps.
-In the Atari RL paper, the NN was specifically a convolutional neural network (CNN), used almost universally in image classification tastes; the CNN was in charge of understanding the pixel output so it could be manipulated by the RL.
-Th RNN would have considerable understanding of CSS on a textual level, but it wouldn't be easily able to understand how one CSS declaration changes the appearance of the webpage.
+In the Atari RL paper, the NN was specifically a [convolutional neural network](!Wikipedia) (CNN), used almost universally in image classification tastes; the CNN was in charge of understanding the pixel output so it could be manipulated by the RL.
+The RNN would have considerable understanding of CSS on a textual level, but it wouldn't be easily able to understand how one CSS declaration changes the appearance of the webpage.
 A CNN, on the other hand, can look at a page+CSS as rendered by a web browser, and 'see' what it looks like; possibly it could learn that 'messy' layouts are bad, that fonts shouldn't be made 'too big', that blocks shouldn't overlap, etc.
 The RNN generates CSS, the CSS is rendered in a web browser, the rendering is looked at by a CNN... and then what?
 I'm not sure how to make use of a generative approach here.
