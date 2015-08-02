@@ -181,13 +181,27 @@ Another simple implementation of serial hashing (SHA-256) for time-locking has b
 
 ## Chained hashes
 
-On the other hand, there seems to be a way that the original person running this algorithm *can* run it in parallel: one generates _n_ random inputs (for _n_ CPUs, presumably), and sets them hashing as before for say a month. Then, one sets up a chain between the _n_ results - the final hash of seed 1 is used to encrypt seed 2, the final hash of which was the encryption for seed 3, and so on. Then one releases the encrypted file, first seed, and the $n-1$ *encrypted* seeds. Now the public has to hash the first seed for a month, and only then can it decrypt the second seed, and start hashing *that* for a month, and so on. Karl Gluck suggests that like repeated squaring, it's even possible to add error-detection to the procedure[^Gluck-chain]. (A somewhat similar scheme, ["A Guided Tour Puzzle for Denial of Service Prevention"](http://www.cs.pitt.edu/~mehmud/docs/abliz09tourpuzzle.pdf "Abliz & Znati 2009"), uses network latency rather than hash outputs as the chained data - clients bounce from resources to resource - but this obviously requires an online server and is unsuitable for our purposes, among [other problems](http://www.reddit.com/r/compsci/comments/1nx0n5/timelock_encryption/ccne7bk).)
+On the other hand, there seems to be a way that the original person running this algorithm *can* run it in parallel: one generates _n_ random inputs (for _n_ CPUs, presumably), and sets them hashing as before for _m_ iterations (say, a month).
+Then, one sets up a chain between the _n_ results - the final hash of seed 1 is used as a key to encrypt seed 2, the final hash of which was the encryption for seed 3, and so on.
+Then one releases the encrypted file, first seed, and the $n-1$ *encrypted* seeds.
+Now the public has to hash the first seed for a month, and only then can it decrypt the second seed, and start hashing *that* for a month, and so on.
+Since the encryption for each seed is uncrackable, and there's no way to "jump forward" in successive hashing, there is no way to reach the final result faster than a single hash can be computed the _n_\*_m_ times in serial by a single processor/circuit.
+Karl Gluck suggests that like repeated squaring, it's even possible to add error-detection to the procedure[^Gluck-chain].
+(A somewhat similar scheme, ["A Guided Tour Puzzle for Denial of Service Prevention"](http://www.cs.pitt.edu/~mehmud/docs/abliz09tourpuzzle.pdf "Abliz & Znati 2009"), uses network latency rather than hash outputs as the chained data - clients bounce from resources to resource - but this obviously requires an online server and is unsuitable for our purposes, among [other problems](http://www.reddit.com/r/compsci/comments/1nx0n5/timelock_encryption/ccne7bk).)
 
 [^Gluck-chain]: On [Hacker News](https://news.ycombinator.com/item?id=6509688)
 
     > To add checkpoints, one could release both the original seed of the chain $A$, and a number of pairs of hashes $(x0,y0) (x1,y1)$ ... Let's say you wanted to do 1-month chains. Hash the seed $A$ for a week, then take the current value $x0$ such that $H(B)=x0$. You know the value of $B$, since you've been computing the chain. Pick another random value $y0$, and continue the chain with $H(B^{y0})$. Write $(x0,y0)$ in the output, and hash for another week. Do the same for $(x1,y1)$ $(x2,y2)$ and $(x3,y3)$. Each chain then has a seed value and 4 pairs of 'checkpoints'. When unlocking the crypto puzzle, these checkpoints can't be used to jump ahead in the computation, but they can tell you that you're on the right track. I think that you could even use a secondary hash chain for the $y_n$ values, so $y_n+1=H(y_n)$. If you also derived $y0$ from $A$ (e.g. $y0=H(A^{const})$), you would just need to publish the seed value $A$ and each checkpoint hash $x_n$ in order to have a fully checkpointed crypto puzzle.
 
 This is pretty clever. If one has a thousand CPUs handy, one can store up 3 years' of computation-resistance in just a day. This satisfies a number of needs. (Maybe; please do not try to use this for a real application before getting a proof from a cryptographer that chained hashing is secure.)
+
+Specifically, you could use a hash for which highly optimized implementations have already been created and put into mass production as ASICs, which have been hand-optimized down to the minimal number of gates possible (probably a few thousand).
+Because of Bitcoin mining, SHA-256 is a plausible candidate here.
+(There is [one proposal](https://bitslog.wordpress.com/2015/02/17/faster-sha-256-asics-using-carry-reduced-adders/) for slightly faster circuits, but it would be unusable for time-locks on its own because it would deterministically fail on some hashes, which would likely be encountered while following a hash-chain.)
+Serial speedups would lead to proportional reductions in time to unlock.
+
+To allow for increases in computing power, it's probably not necessary to adjust for Moore's law: serial speeds and clock frequencies have stagnated considerably in recent years, with most of the gains going to parallelism or energy efficiency, neither of which helps with a hash-chain.
+More concerning is exotic technology like [superconducting logic](!Wikipedia) or graphene for implementing circuits in the gigahertz or terahertz range. (Such an exotic chip might cost a lot, but only a few would be necessary to compute hash-chains far faster than expected.)
 
 Implementing chained hashing is not as easy as single-threaded hashing, but there are currently 2 implementations:
 
