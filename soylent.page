@@ -1,0 +1,29 @@
+my criticism of a regular diet: http://lesswrong.com/lw/hht/link_soylent_crowdfunding/90y7
+add a link in http://lesswrong.com/lw/hht/link_soylent_crowdfunding/914n
+
+https://soylent.reddit.com/
+
+Soylent Orange?
+
+http://lesswrong.com/lw/h2h/soylent_orange_whole_food_open_source_soylent/
+
+Hacker School soylent?
+
+http://diy.soylent.me/recipes/hacker-school-soylent
+http://diy.soylent.me/recipes/2potatoes-hacker-school-not-modified
+http://www.cookingfor20.com/2013/06/18/hacker-school-soylent-recipe/
+http://diy.soylent.me/recipes/my-take-on-hacker-school-soylent-recipe
+
+Twin study idea:
+
+One of my hobbies is gathering data & [running experiments](http://www.gwern.net/tags/experiments) on myself. For the most part, I can take the usual approaches of measure data on relevant variables, randomize an intervention, and regress to get the mean effect.
+
+One set of data I *don't* collect is data about my diet and the food I eat: this is tedious, difficult to do right (weighing portions and calculating calories or nutritional value), cannot be automated, and I don't want to do it unless I absolutely have to - say, because diet turns out to be a large influence on my daily energy levels and explain a lot of currently unexplained variation. I could try to estimate how big the influence is by simply collecting the data and regressing on it but that would incur a lot of work for possibly little benefit.
+
+What if I could do something easier, to just estimate the total variability rather than its specific effect? It occurred to me that this was a similar setup as with the famous twin studies of the genetic heritability of traits: since one knows how related on average identical twins, fraternal twins, siblings etc are, one can examine the variation of sets and estimate how much all genes influence traits, without ever having to sequence a genome or identify the exact effect of a particular gene. But instead of heritability with genes, it's 'heritability' for food.
+
+In this scenario, the role of identical genomes would be played by identical meals (prepared meals like those sold to dieters, or liquid meals like the notorious Soylent & its knockoffs & Mealsquares). Days on which all 3 meals were one of the identical meals would be similar to identical twins (a 1 in the relationship matrix), days with 2 of 3 meals (0.66) or 1 of 3 meals identical (0.33) would be like siblings, and days of normal food would be like unrelated (0) people from the general population. Do this for a month or two, then plug daily data on mood/energy/work into one's favorite R library along with the meal similarity for each day (which would be much easier to record than my exact diet), and see if the _h^2_ is something meaningful like >0.1. If it's large, then I've learned I may not want to neglect recording data on my diet. (I suggested this [some time ago](https://www.reddit.com/r/HPMOR/comments/2i1mb6/hpmor_progress_report_oct_2014/ckzlqk3) and have been looking into it in more detail today.)
+
+I have been reading up on twin studies and structural equation modeling and googling heavily for keywords relating to variance. But so far the only relevant material I've found is framed exclusively in terms of genetics (which I am not sure how well it applies to my proposed use; the approach *seems* generic, but...), or the variance estimation concerns matters where the variable has been observed (diet being unobserved is the whole point of this) or they're interested in the latent variable behind observed variables, and so are not useful.
+
+<!-- MealSquares; Vaniver gave me 5 on 29 December 2014; ate last on 6 January 2015, so 30/01/02/05/06? -->
