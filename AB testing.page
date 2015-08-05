@@ -3055,6 +3055,7 @@ Something to think about.
 - ["Reinforcement learning: A survey"](http://www.jair.org/media/301/live-301-1561-jair.ps), by Kaelbling, L.P., Littman, M.L., and Moore, A.W., in the Journal of Artificial Intelligence Research, 4:237--285, 1996.
 - ["Learning and sequential decision making"](http://webdocs.cs.ualberta.ca/~sutton/papers/BSW-90-full.pdf), by Barto, A.G., Sutton, R.S., & Watkins, C.J.C.H., in Learning and Computational Neuroscience, M. Gabriel and J.W. Moore (Eds.), pp. 539--602, 1990, MIT Press.
 - Sutton, R.S. (1989). ["Implementation details of the TD(lambda) procedure for the case of vector predictions and backpropagation"](http://webdocs.cs.ualberta.ca/~sutton/papers/sutton-89.pdf). GTE Laboratories Technical Report TR87-509.1, as corrected August 1989. GTE Laboratories, 40 Sylvan Road, Waltham, MA 02254.
+- ["Deep Reinforcement Learning"](http://videolectures.net/rldm2015_silver_reinforcement_learning/), Silver 2015 lecture
 
 recurrent Q-learning:
 - Lin & Mitchell 1992 "Memory approaches to reinforcement learning in non-Markovian domains"
@@ -3068,11 +3069,11 @@ It would be nifty if I could set up a NN to generate and optimize the CSS on `gw
 
 ### `char-rnn`
 
-Fortunately, Karpathy has already written an easy-to-use tool `char-rnn` (https://github.com/karpathy/char-rnn) which works really well on XML/LaTeX/C (https://karpathy.github.io/2015/05/21/rnn-effectiveness/).
+Fortunately, Karpathy has already written an easy-to-use tool [`char-rnn`](https://github.com/karpathy/char-rnn) which works well on [XML/LaTeX/C](https://karpathy.github.io/2015/05/21/rnn-effectiveness/).
 
-`char-rnn` relies on the Torch NN framework & Nvidia's CUDA GPU framework (http://docs.nvidia.com/cuda/cuda-getting-started-guide-for-linux/index.html#ubuntu-installation / https://developer.nvidia.com/cuda-downloads?sid=907142).
+`char-rnn` relies on the [Torch NN framework](http://torch.ch/) & NVIDIA's CUDA GPU framework (http://docs.nvidia.com/cuda/cuda-getting-started-guide-for-linux/index.html#ubuntu-installation / https://developer.nvidia.com/cuda-downloads?sid=907142).
 
-Torch is fairly easy to install (http://torch.ch/docs/getting-started.html https://github.com/torch/torch7/wiki/Cheatsheet):
+Torch is fairly [easy to install](http://torch.ch/docs/getting-started.html) ([cheat sheet](https://github.com/torch/torch7/wiki/Cheatsheet)):
 
 ~~~{.Bash}
 cd ~/src/
@@ -3129,9 +3130,9 @@ Frustrated, I finally gave up and went the *easy* way: Torch provides an Amazon 
 
 ### EC2
 
-The AMI (https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#LaunchInstanceWizard:ami=ami-b36981d8) can be immediately launched if you have an AWS account.
+The [Torch AMI](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#LaunchInstanceWizard:ami=ami-b36981d8) can be immediately launched if you have an AWS account.
 The two GPU instances seem to have the same number and kind of GPUs (1 Nvidia[^GPU-cost]) and differ mostly in RAM & CPUs, neither of which are the bottleneck here, so I picked the smaller/cheaper "g2.2xlarge" type.
-("Cheaper" here is relative; "g2.2xlarge" still costs \$0.65/hr (https://aws.amazon.com/ec2/pricing/) and when I looked at spot that day, ~$0.21.)
+("Cheaper" here is relative; "g2.2xlarge" still costs [\$0.65/hr](https://aws.amazon.com/ec2/pricing/) and when I looked at spot that day, ~\$0.21.)
 
 
 [^GPU-cost]: The EC2 price chart describes it as "High-performance NVIDIA GPUs, each with 1,536 CUDA cores and 4GB of video memory". These apparently are NVIDIA Quadro K5000 cards, which cost somewhere around $1500. (Price & performance-wise, it seems there are a lot of [better options now](https://timdettmers.wordpress.com/2014/08/14/which-gpu-for-deep-learning/ "Which GPU(s) to Get for Deep Learning: My Experience and Advice for Using GPUs in Deep Learning").) At \$0.65/hr, that's ~2300 hours or 96 days; at spot, 297 days. Even adding in local electricity cost and the cost of building a desktop PC around the GPUs, it's clear that breakeven is under a year and that for more than the occasional dabbling, one's own hardware is key. If nothing else, you won't feel anxious about the clock ticking on your Amazon bill!
@@ -3156,7 +3157,7 @@ Now we can begin working on what we care about.
 
 #### CSS
 
-First, to generate a decent sized CSS corpus; between all the HTML documentation installed by Ubuntu and my own WWW crawls (http://www.gwern.net/Archiving%20URLs), I have something like 1GB of CSS hanging around my drive. Let's grab 20MB of it (enough to not take forever to train on, but not so little as to be trivial):
+First, to generate a decent sized CSS corpus; between all the HTML documentation installed by Ubuntu and my [own WWW crawls](http://www.gwern.net/Archiving%20URLs), I have something like 1GB of CSS hanging around my drive. Let's grab 20MB of it (enough to not take forever to train on, but not so little as to be trivial):
 
 ~~~{.Bash}
 cd ~/src/char-rnn/
@@ -3576,7 +3577,7 @@ ul.secondary .page,
 ~~~
 
 Now it's readable and we can see the RNN has done an excellent job of still writing CSS while in minified-mode, and around this level of loss, I noticed the RNN had learned to write valid-looking URLs - fragments like `background : url(/sites/all/themes/rpg_theme/images/btn/form_subscription_not-page.png)` look exactly like what a human CSS programmer would write.
-(Unfortunately, this sample has 4 validation errors: 1 from an imbalanced bracket, 1 one parse error on `*zoom: 2 !important;`, and 2 properties which don't exist.)
+(Unfortunately, this sample has 4 validation errors: 1 from an imbalanced bracket; 1 one parse error on `*zoom: 2 !important` due to the asterisk which [is an](https://news.ycombinator.com/item?id=10013720) [old IE hack](http://nicolasgallagher.com/micro-clearfix-hack/ "A new micro clearfix hack") & arguably the RNN isn't wrong; and 2 properties which don't exist.)
 
 At 0.88, I also noticed the RNN was now making a valiant attempt to write comments. Bad comments, but still:
 
@@ -3678,12 +3679,12 @@ blockquote.inner ul {padding:0;}}
 }
 ~~~
 
-Ultimately, the best RNN (https://www.dropbox.com/s/5719eisknt0u9fi/lm_css_epoch24.00_0.7660.t7.xz) achieved a loss of 0.7660 before I decided to shut it down because it wasn't making much further progress.
+Ultimately, the [best RNN](https://www.dropbox.com/s/5719eisknt0u9fi/lm_css_epoch24.00_0.7660.t7.xz) achieved a loss of 0.7660 before I decided to shut it down because it wasn't making much further progress.
 
 ##### Samples
 
 It stalwartly continued to try to write comments, approximating slightly English (even though there is not that much English text in those 20MB, only 8.5k lines with `/*` in them - it's CSS, not text).
-Examples of comments extracted from a large sample of 0.766's output (https://www.dropbox.com/s/bo137n58e8wm0rk/best.txt `fgrep '/*' best.txt`):
+Examples of comments extracted from a [large sample of 0.766's output](https://www.dropbox.com/s/bo137n58e8wm0rk/best.txt) (`fgrep '/*' best.txt`):
 
 ~~~{.CSS}
 *//* COpToMNINW BDFER
@@ -3802,6 +3803,7 @@ Lessons learned:
     - meaningful exploration of NN sizes or other hyperparameters will be challenging when a single run can cost days
 - computing large datasets or NNs on Amazon EC2 will entail substantial financial costs; it's adequate for short runs but bills around \$25 for two days of playing around are not a long-term solution
 - pretraining an RNN on CSS may be useful for a CSS reinforcement learner
+
 
 # Appendix
 ## Covariate impact on power
