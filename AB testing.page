@@ -3006,7 +3006,7 @@ To solve the expressivity problem, one could try to equip the RLer with a lot of
 Of course, this yields an enormous number of possibilities and my website traffic is not equally enormous.
 Informative priors on each node would help if one was using a Bayesian MAB to do the optimization, but a Bayesian model might be too weak to detect many effects. (You can't easily put in interactions between every node of the AST, after all.)
 
-In a challenging problem like this, deep neural networks come to mind, yielding a deep reinforcement learner ([Q-learning](!Wikipedia)) - such a system made a splash in 2013-2015 in learning to play dozens of Atari games (["Human-level control through deep reinforcement learning"](http://diyhpl.us/~nmz787/pdf/Human-level_control_through_deep_reinforcement_learning.pdf "Mnih et al 2015"); [parallelizing it](http://arxiv.org/abs/1507.04296 "'Massively Parallel Methods for Deep Reinforcement Learning', Nair et al 2015")).
+In a challenging problem like this, deep neural networks come to mind, yielding a deep reinforcement learner ([Q-learning](!Wikipedia)) - such a system made a splash in 2013-2015 in learning to play dozens of Atari games (DQN).
 The deep network handles interpretation of the input, and the RLer handles policy and optimization.
 
 So the loop would go something like this:
@@ -3029,8 +3029,8 @@ Parsing CSS into an AST seems difficult, and it is still limited in that it will
 How to offer more power and expressivity to the RLer without giving it so much freedom that it will hang itself with gibberish CSS before ever finding working CSS, never mind improvements?
 
 A powerful AI tool which could generate CSS on its own are the [recurrent neural networks](!Wikipedia): NNs which generate some output which gets fed back in until a long sequence has been emitted. (They usually also have some special support for storing 'memories' over multiple recursive applications, using [LSTM](!Wikipedia "Long short term memory").)
-RNNs are famous for mimicking text and other sequential material; in one demo, Karpathy's ["The Unreasonable Effectiveness of Recurrent Neural Networks"](https://karpathy.github.io/2015/05/21/rnn-effectiveness/), he trained a RNN on 474MB of C source code & headers, the RNN does a credible job of emitting pseudo-C code which looks convincing and is even mostly syntactically-correct in balancing parentheses & brackets.
-(Of course, the pseudo-C doesn't *do* anything but that RNN was never asked to make it do something.)
+RNNs are famous for mimicking text and other sequential material; in one demo, Karpathy's ["The Unreasonable Effectiveness of Recurrent Neural Networks"](https://karpathy.github.io/2015/05/21/rnn-effectiveness/), he trained a RNN on a Wikipedia dump in XML format and a LaTeX math book (both replicating the syntax quite well) and more relevantly, 474MB of C source code & headers where the RNN does a credible job of emitting pseudo-C code which looks convincing and is even mostly syntactically-correct in balancing parentheses & brackets, which more familiar Markov-chain approaches would have trouble managing.
+(Of course, the pseudo-C doesn't *do* anything but that RNN was never asked to make it do something, either.)
 In [another RNN paper](http://arxiv.org/abs/1410.4615 "'Learning to Execute', Zaremba & Sutskever 2015"), the authors trained it on Python source code and it was able to 'execute' very simple Python programs and predict the output; this is perhaps not too surprising given the earlier ["Neural Turing Machines"](http://arxiv.org/abs/1410.5401 "Graves et al 2014") and solving the Traveling Salesman Problem (["Pointer Networks"](http://arxiv.org/abs/1506.03134 "Vinyals et al 2015")).
 So RNNs are powerful and have already shown promise in learning how to write simple programs.
 
@@ -3047,9 +3047,761 @@ The RNN generates CSS, the CSS is rendered in a web browser, the rendering is lo
 I'm not sure how to make use of a generative approach here.
 Something to think about.
 
-- [_Reinforcement Learning: An Introduction_](http://webdocs.cs.ualberta.ca/~sutton/book/ebook/the-book.html), Sutton & Barto 1998
+- [_Reinforcement Learning: An Introduction_](http://webdocs.cs.ualberta.ca/~sutton/book/ebook/the-book.html), Sutton & Barto 1998 ([second edition draft, April 2015](https://www.dropbox.com/s/7jl597kllvtm50r/book2015april.pdf))
 - [_Neural Networks and Deep Learning_](http://neuralnetworksanddeeplearning.com/), Nielsen 2015
 - ["Reinforcement Learning with Recurrent Neural Networks"](http://repositorium.uni-osnabrueck.de/bitstream/urn:nbn:de:gbv:700-2008112111/2/E-Diss839_thesis.pdf), Shafer 2008
+- DQN: ["Human-level control through deep reinforcement learning"](http://diyhpl.us/~nmz787/pdf/Human-level_control_through_deep_reinforcement_learning.pdf "Mnih et al 2015"), [source code](https://sites.google.com/a/deepmind.com/dqn/), [simple Pong version](https://github.com/soumith/cvpr2015/blob/master/DQN%20Training%20iTorch.ipynb); [parallelizing it](http://arxiv.org/abs/1507.04296 "'Massively Parallel Methods for Deep Reinforcement Learning', Nair et al 2015")
+- ["Self-improving reactive agents based on reinforcement learning, planning and teaching"](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.75.7884&rep=rep1&type=pdf), Lin 1992
+- ["Reinforcement learning: A survey"](http://www.jair.org/media/301/live-301-1561-jair.ps), by Kaelbling, L.P., Littman, M.L., and Moore, A.W., in the Journal of Artificial Intelligence Research, 4:237--285, 1996.
+- ["Learning and sequential decision making"](http://webdocs.cs.ualberta.ca/~sutton/papers/BSW-90-full.pdf), by Barto, A.G., Sutton, R.S., & Watkins, C.J.C.H., in Learning and Computational Neuroscience, M. Gabriel and J.W. Moore (Eds.), pp. 539--602, 1990, MIT Press.
+- Sutton, R.S. (1989). ["Implementation details of the TD(lambda) procedure for the case of vector predictions and backpropagation"](http://webdocs.cs.ualberta.ca/~sutton/papers/sutton-89.pdf). GTE Laboratories Technical Report TR87-509.1, as corrected August 1989. GTE Laboratories, 40 Sylvan Road, Waltham, MA 02254.
+
+recurrent Q-learning:
+- Lin & Mitchell 1992 "Memory approaches to reinforcement learning in non-Markovian domains"
+- Meeden, McGraw & Blank 1993 "Emergent control and planning in an autonomous vehicle"
+- Schmidhuber 1991b "Reinforcement learning in Markovian and non-Markovian environments"
+- http://nikhilbuduma.com/2015/01/11/a-deep-dive-into-recurrent-neural-networks/
+
+## Training a neural net to generate CSS
+
+It would be nifty if I could set up a NN to generate and optimize the CSS on `gwern.net` so I don't have to learn CSS & devise tests myself (http://www.gwern.net/AB%20testing#deep-reinforcement-learning); as a first step towards this, I wanted to see how well a [recurrent neural network](!Wikipedia) (RNN) could generate CSS.
+
+### `char-rnn`
+
+Fortunately, Karpathy has already written an easy-to-use tool `char-rnn` (https://github.com/karpathy/char-rnn) which works really well on XML/LaTeX/C (https://karpathy.github.io/2015/05/21/rnn-effectiveness/).
+
+`char-rnn` relies on the Torch NN framework & Nvidia's CUDA GPU framework (http://docs.nvidia.com/cuda/cuda-getting-started-guide-for-linux/index.html#ubuntu-installation / https://developer.nvidia.com/cuda-downloads?sid=907142).
+
+Torch is fairly easy to install (http://torch.ch/docs/getting-started.html https://github.com/torch/torch7/wiki/Cheatsheet):
+
+~~~{.Bash}
+cd ~/src/
+curl -s https://raw.githubusercontent.com/torch/ezinstall/master/install-deps | bash
+git clone https://github.com/torch/distro.git ./torch --recursive
+cd ./torch; ./install.sh
+export PATH=$HOME/src/torch/install/bin:$PATH
+## fire up the REPL to check:
+th
+~~~
+
+Then `char-rnn` is likewise easy to get running and try out a simple example:
+
+~~~{.Bash}
+luarocks install nngraph
+luarocks install optim
+# luarocks install cutorch && luarocks install cunn ## 'cutorch' & 'cunn' need working CUDA
+git clone 'https://github.com/karpathy/char-rnn.git'
+cd ./char-rnn/
+th train.lua -data_dir data/tinyshakespeare/ -gpuid 0 -rnn_size 512 -num_layers 2 -dropout 0.5
+# package cunn not found!
+# package cutorch not found!
+# If cutorch and cunn are installed, your CUDA toolkit may be improperly configured.
+# Check your CUDA toolkit installation, rebuild cutorch and cunn, and try again.
+# Falling back on CPU mode
+# loading data files...
+# cutting off end of data so that the batches/sequences divide evenly
+# reshaping tensor...
+# data load done. Number of data batches in train: 423, val: 23, test: 0
+# vocab size: 65
+# creating an lstm with 2 layers
+# number of parameters in the model: 3320385
+# cloning rnn
+# cloning criterion
+# 1/21150 (epoch 0.002), train_loss = 4.19087871, grad/param norm = 2.1744e-01, time/batch = 4.98s
+# 2/21150 (epoch 0.005), train_loss = 4.99026574, grad/param norm = 1.8453e+00, time/batch = 3.13s
+# 3/21150 (epoch 0.007), train_loss = 4.29807770, grad/param norm = 5.6664e-01, time/batch = 4.30s
+# 4/21150 (epoch 0.009), train_loss = 3.78911860, grad/param norm = 3.1319e-01, time/batch = 3.87s
+# ...
+~~~
+
+Unfortunately, even on my i7 CPU, training is quite slow: ~3s a batch on the Tiny Shakespeare example.
+The important parameter is `train_loss` here; after some experimenting, I found that >3=output is total garbage, 1-2=lousy, and with <1=good, with <0.8=very good.
+With Tiny Shakespeare, the loss drops quickly at first, getting <4 within seconds and into the 2s within 20 minutes, but then the 1s take a long time to surpass, and <1 even longer (hours of waiting).
+
+### GPU vs CPU
+
+This is a toy dataset and suggests that for a real dataset I'd be waiting weeks or months. GPU acceleration is critical.
+I spent several days trying to get Nvidia's CUDA to work, even signing up as a developer & using the unreleased version 7.5 preview of CUDA, but it seems that when they say Ubuntu *14*.04 and not *15*.04 (the latter is what I have installed), they are quite serious: everything I tried yielded bloodcurdling ATA hard drive errors (!) upon boot followed by a hard freeze the instant X began to run.
+This made me unhappy since my old laptop began dying in late July 2015 and I had purchased this Acer Aspire V17 Nitro Black Edition VN7-791G-792A laptop with the express goal of using its NVIDIA GeForce GTX 960M for deep learning. But at the moment I am out of ideas for how to get CUDA working aside from either reinstalling to downgrade to Ubuntu 14.04 or simply waiting for version 8 of CUDA which will hopefully support the latest Ubuntu.
+(Debian is not an option because on Debian Stretch, I could not even get the GPU driver to work, much less CUDA.)
+
+Frustrated, I finally gave up and went the *easy* way: Torch provides an Amazon OS image preconfigured with Torch, CUDA, and other relevant libraries for deep learning.
+
+### EC2
+
+The AMI (https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#LaunchInstanceWizard:ami=ami-b36981d8) can be immediately launched if you have an AWS account.
+The two GPU instances seem to have the same number and kind of GPUs (1 Nvidia[^GPU-cost]) and differ mostly in RAM & CPUs, neither of which are the bottleneck here, so I picked the smaller/cheaper "g2.2xlarge" type.
+("Cheaper" here is relative; "g2.2xlarge" still costs \$0.65/hr (https://aws.amazon.com/ec2/pricing/) and when I looked at spot that day, ~$0.21.)
+
+
+[^GPU-cost]: The EC2 price chart describes it as "High-performance NVIDIA GPUs, each with 1,536 CUDA cores and 4GB of video memory". These apparently are NVIDIA Quadro K5000 cards, which cost somewhere around $1500. (Price & performance-wise, it seems there are a lot of [better options now](https://timdettmers.wordpress.com/2014/08/14/which-gpu-for-deep-learning/ "Which GPU(s) to Get for Deep Learning: My Experience and Advice for Using GPUs in Deep Learning").) At \$0.65/hr, that's ~2300 hours or 96 days; at spot, 297 days. Even adding in local electricity cost and the cost of building a desktop PC around the GPUs, it's clear that breakeven is under a year and that for more than the occasional dabbling, one's own hardware is key. If nothing else, you won't feel anxious about the clock ticking on your Amazon bill!
+
+Once started, you can SSH using your registered public key like any other EC2 instance. The default username for this image is "ubuntu", so:
+
+~~~{.Bash}
+ssh -i /home/gwern/.ssh/EST.pem ubuntu@ec2-54-164-237-156.compute-1.amazonaws.com
+~~~
+
+Once in, we set up the $PATH to find the Torch installation like before (I'm not sure why Torch's image doesn't already have this done) and grab a copy of `char-rnn` to run Tiny Shakespeare:
+
+~~~{.Bash}
+export PATH=$HOME/torch/install/bin:$PATH
+git clone 'https://github.com/karpathy/char-rnn'
+# etc
+~~~
+
+Per-batch, this yields a *20x* speedup on Tiny Shakespeare compared to my laptop's CPU, running each batch in ~0.2s.
+
+Now we can begin working on what we care about.
+
+#### CSS
+
+First, to generate a decent sized CSS corpus; between all the HTML documentation installed by Ubuntu and my own WWW crawls (http://www.gwern.net/Archiving%20URLs), I have something like 1GB of CSS hanging around my drive. Let's grab 20MB of it (enough to not take forever to train on, but not so little as to be trivial):
+
+~~~{.Bash}
+cd ~/src/char-rnn/
+mkdir ./data/css/
+find / -type f -name "*.css" -exec cat {} \; | head --bytes=20MB >> ./data/css/input.txt
+## https://www.dropbox.com/s/mvqo8vg5gr9wp21/rnn-css-20mb.txt.xz
+wc --chars ./data/css/input.txt
+# 19,999,924 ./data/input.txt
+scp -i ~/.ssh/EST.pem -C data/css/input.txt ubuntu@ec2-54-164-237-156.compute-1.amazonaws.com:/home/ubuntu/char-rnn/data/css/
+~~~
+
+With 19.999M characters, our RNN can afford only <20M parameters; how big can I go with `-rnn_size` and `-num_layers`? (Which as they sound like, specify the size of each layer and how many layers.) The full set of `char-rnn` training options:
+
+~~~{.Bash}
+  -data_dir                  data directory. Should contain the file input.txt with input data [data/tinyshakespeare]
+  -rnn_size                  size of LSTM internal state [128]
+  -num_layers                number of layers in the LSTM [2]
+  -model                     lstm,gru or rnn [lstm]
+  -learning_rate             learning rate [0.002]
+  -learning_rate_decay       learning rate decay [0.97]
+  -learning_rate_decay_after in number of epochs, when to start decaying the learning rate [10]
+  -decay_rate                decay rate for rmsprop [0.95]
+  -dropout                   dropout for regularization, used after each RNN hidden layer. 0 = no dropout [0]
+  -seq_length                number of timesteps to unroll for [50]
+  -batch_size                number of sequences to train on in parallel [50]
+  -max_epochs                number of full passes through the training data [50]
+  -grad_clip                 clip gradients at this value [5]
+  -train_frac                fraction of data that goes into train set [0.95]
+  -val_frac                  fraction of data that goes into validation set [0.05]
+  -init_from                 initialize network parameters from checkpoint at this path []
+  -seed                      torch manual random number generator seed [123]
+  -print_every               how many steps/minibatches between printing out the loss [1]
+  -eval_val_every            every how many iterations should we evaluate on validation data? [1000]
+  -checkpoint_dir            output directory where checkpoints get written [cv]
+  -savefile                  filename to autosave the checkpont to. Will be inside checkpoint_dir/ [lstm]
+  -gpuid                     which gpu to use. -1 = use CPU [0]
+  -opencl                    use OpenCL (instead of CUDA) [0]
+~~~
+
+##### Large RNN
+
+Some playing around suggests that the upper limit is 950 neurons and 3 layers, yielding a total of 18,652,422 parameters.
+(I originally went with 4 layers, but with that many layers, RNNs seem to train very slowly.)
+Some other settings to give an idea of how parameter count increases:
+
+-  512/4: 8,012,032
+-  950/3: 18,652,422
+- 1000/3: 20,634,122
+- 1024/3: 21,620,858
+- 1024/4: 30,703,872
+- 1024/5: 39,100,672
+- 1024/6: 47,497,472
+- 1800/4: 93,081,856
+- 2048/4: 120,127,744
+- 2048/5: 153,698,560
+- 2048/6: 187,269,376
+
+If we really wanted to stress the EC2 image's hardware, we could go as large as this:
+
+~~~{.Bash}
+th train.lua -data_dir data/css/ -rnn_size 1306 -num_layers 4 -dropout 0.5 -eval_val_every 1
+~~~
+
+This turns out to not be a good idea since it will take forever to train (eg after ~70m of training, still at train-loss of 3.7!).
+
+Undeterred, I decided to upload *all* the CSS (using the sort-key trick to reduce the archive size):
+
+~~~{.Bash}
+find / -type f -name "*.css" | rev | sort | rev | tar c --to-stdout --no-recursion --files-from - | xz -9 --stdout > ~/src/char-rnn/data/css/all.tar.xz
+cd ~/src/char-rnn/ && scp -C data/css/all.tar.xz ubuntu@ec2-54-164-237-156.compute-1.amazonaws.com:/home/ubuntu/char-rnn/data/css/
+unxz all.tar.xz
+## non-ASCII input seems to cause problems, so delete anything not ASCII:
+## https://disqus.com/home/discussion/karpathyblog/the_unreasonable_effectiveness_of_recurrent_neural_networks_66/#comment-2042588381
+## https://github.com/karpathy/char-rnn/issues/51
+tar xfJ  data/css/all.tar.xz --to-stdout | iconv -c -tascii  > data/css/input.txt
+wc --char all.css
+# 1,126,949,128 all.css
+~~~
+
+Unsurprisingly, this did not solve the problem, and with 1GB of data, even 1 pass over the data (1 epoch) would take weeks, likely.
+Additional problems included `-val_frac`'s default 50 and `-eval_val_every`'s default 1000: 0.05 of 1GB is 50MB, which means every time `char-rnn` checked on the validation set, it took ages; and since it only wrote a checkpoint out every 1000 iterations, hours would pass in between checkpoints.
+1MB or 0.001 is a more feasible validation data size; and checking every 100 iterations strikes a reasonable balance between being able to run the latest & greatest and spending as much GPU time on training as possible.
+
+##### Small RNN
+
+So I backed off to the 20MB sample and a smaller 3-layer RNN, training it overnight, and was startled to see what happened:
+
+~~~{.Bash}
+th train.lua -print_every 5 -data_dir data/css/ -savefile css -eval_val_every 10000 -val_frac 0.001 -rnn_size 1700 -num_layers 3 -dropout 0.8
+# ...
+# 20000/21408250 (epoch 0.047), train_loss = 0.84076253, grad/param norm = 3.4693e-03, time/batch = 3.59s
+# loss is exploding, aborting.
+~~~
+
+Specifically, the loss on the validation set had exploded to 333.2351 (!).
+When I looked at samples from the check-pointed copy, it performed both well and poorly. `th sample.lua cv/lm_css_epoch0.05_333.2351.t7` yielded:
+
+~~~{.CSS}
+Y aiiiiiiiiiiiiiiiiiiiiaiiine add3erip span,
+.nest-comments .mb_comments p,
+.pomenefister .views-content .add-post,
+.pleuse-product-nav .dropdown-pane .date .intro,
+.product-nav .shortlist.tooltip_pane .bread-slide,
+.module-category .vote-content td {
+  font-size: 9px;
+  text-align: center;
+}
+.teotspaces-left h2,
+.footer .social-icons .mepubititab-left ul {
+  margin: 0;
+}
+.mlissbox-box .post-content {
+  margin-top: 10px;
+}
+.secondary .tooltip-arrow .scegee-category h6,
+.no-list .comment-footer .module-title,
+.featured-left-column .lightbox-description h0,
+.popup-tomimate .social-rover .comment-arrow {
+  list-style: none;
+}
+.tooltip-post .secondary .module-menu-houder .thumbnail {
+  float: left;
+}
+.module-content .lightbox-list {
+  display: inline-block;
+  float: none;
+  width: 50%;
+  position: relative;
+  background-position: 0 1px;
+  width: 30px;
+  margin-top: 5px;
+  text-align: center;
+  margin-right: 10px;
+}
+.logo-events .show-luset .box-content li {
+  width: 30px;
+  -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+.search-results .section-featured .content-top-section-left {
+  margin-top: -6px;
+}
+.secondary .module-mones-grey .down-mod-page {
+  margin-bottom: 20px;
+}
+.comment-top-content .meviat-alignright {
+  width: 350px;
+}
+.module-contributor h2.comment-hold-homicate.sptbed_postnames{
+  display: inline-block;
+  padding-top: -24px;
+}
+.secondary .module-content .logo div {
+  float: left;
+}
+.medium-block-grid-1 > li:hover {
+  border-bottom: none #5c466d;
+}
+.row-image-container .medium-topic-browser {
+  clear: right;
+}
+.rooc-box-sprite .modal-links .list-group li {
+  display: inline-block;
+  float: left;
+  padding-top: 8px;
+}
+
+.vead-video-list {
+  display: block;
+  margin-right: 13px;
+}
+#no-touch .main-tabs-new-content .widget-top-content {
+  color: #58128c;
+  display: block;
+  padding: 8px 0;
+  border-color: transparent;
+  border-bottom: 1px solid #fff;
+  padding: 5px 12px;
+  text-align: center;
+}
+~~~
+
+Aside from the Unicode junk at the beginning, the output actually looks tremendously like CSS!
+The brackets are matched, the selectors look like selectors, and the fields are properly typed (pixels go into pixel fields, colors go into color fields, etc).
+If I [validate the non-junk CSS part](https://jigsaw.w3.org/css-validator/#validate-by-input), the validator remarkably yields only *1* error, at line 52/`.module-contributor h2.comment-hold-homicate.sptbed_postnames` where it notes that "Value Error : padding-top -24px negative values are not allowed : -24px".
+Considering it didn't even finish 1 epoch, the mimicking is almost uncanny: it nails the various aspects like RGB color notation (both hex & `rgba()`), matching brackets, plausible-sounding identifiers (eg `.scegee-category`), etc.
+If I were shown this without any corresponding HTML, I would not easily be able to tell it's all gibberish.
+
+Chastened by the exploding-error problem and the mostly waste of ~26 hours of processing (7:30PM - 9:30PM / \$15.6), I tried a smaller yet RNN (500/2), run from 5PM-11AM (so total bill for all instances, including various playing around, restarting, generating samples, downloading to laptop etc: \$25.58).
+
+##### Data URI problem
+
+One flaw in the RNN I stumbled across but was unable to reproduce was that it seemed to have a problem with [data URIs](!Wikipedia).
+A data URI is a special kind of URL which is its own content, letting one write small files inline and avoiding needing a separate file; for example, this would yield a PNG image without any further network roundtrips or the developer needing to define a tiny file:
+
+~~~{.CSS}
+url('data:image/png;base64,iVBORw0KGgoAA
+AANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD///+l2Z/dAAAAM0l
+EQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6
+P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC')
+~~~
+
+So it's a standard prefix followed by an indefinitely long string of ASCII gibberish, which is a textual encoding of the true binary encoding.
+The RNN sometimes starts a data URI and generates the prefix but then gets stuck continually producing hundreds or thousands of characters of ASCII gibberish without closing the data URI and getting back to writing regular CSS.
+
+What's going on there?
+Since PNG/JPG are compressed image formats, the binary encoding will be near-random and the base-64 encoding likewise near-random.
+The RNN can easily generate another character once it has started the base-64, but how does it know when to *stop*? ("I know how to spell Mississippi, I just don't know when to stop!")
+Possibly it has run into the limits of its 'memory' and once it has started emitting base-64 and has reached a plausible length of at least a few score characters (very few things can be encoded in less), it's now too far away from the original CSS, and all it can see is base-64; so of course the maximal probability goes to further base-64 characters...
+
+This might be fixable by either giving the RNN more neurons in the hope that with more memory it can break out of the base-64 trap, training more (perhaps data URIs are too rare for it to have adequately learned it with the few epochs thus far), or backpropagating error further in time/the sequence by increasing the size of the RNN in terms of unrolling (increasing `-seq_length` from 50).
+Or of course one could delete data URIs and other undesirable features from the corpus, in which case those problems will never come up; still, I would prefer the RNN to handle issues on its own and have as little domain knowledge engineered in as possible.
+I wonder if the data URI issue might be what killed the large RNN at the end?
+
+##### Progress
+
+This RNN progressed steadily over time, although by the end the performance on the held-out validation dataset seem to have been stagnating when I plot the validation tests:
+
+~~~{.R}
+performance <- dget(textConnection("structure(list(Epoch = c(0.13, 0.26, 0.4, 0.53, 0.66, 0.79, 0.92,
+1.06, 1.19, 1.32, 1.45, 1.58, 1.71, 1.85, 1.98, 2.11, 2.24, 2.37,
+2.51, 2.64, 2.77, 2.9, 3.03, 3.17, 3.3, 3.43, 3.56, 3.69, 3.82,
+3.96, 4.09, 4.22, 4.35, 4.48, 4.62, 4.75, 4.88, 5.01, 5.14, 5.28,
+5.41, 5.54, 5.67, 5.8, 5.94, 6.07, 6.2, 6.33, 6.46, 6.59, 6.73,
+6.86, 6.99, 7.12, 7.25, 7.39, 7.52, 7.65, 7.78, 7.91, 8.05, 8.18,
+8.31, 8.44, 8.57, 8.7, 8.84, 8.97, 9.1, 9.23, 9.36, 9.5, 9.63,
+9.76, 9.89, 10.02, 10.16, 10.29, 10.42, 10.55, 10.68, 10.82,
+10.95, 11.08, 11.21, 11.34, 11.47, 11.61, 11.74, 11.87, 12, 12.13,
+12.27, 12.4, 12.53, 12.66, 12.79, 12.93, 13.06, 13.19, 13.32,
+13.45, 13.58, 13.72, 13.85, 13.98, 14.11, 14.24, 14.38, 14.51,
+14.64, 14.77, 14.9, 15.04, 15.17, 15.3, 15.43, 15.56, 15.7, 15.83,
+15.96, 16.09, 16.22, 16.35, 16.49, 16.62, 16.75, 16.88, 17.01,
+17.15, 17.28, 17.41, 17.54, 17.67, 17.81, 17.94, 18.07, 18.2,
+18.33, 18.46, 18.6, 18.73, 18.86, 18.99, 19.12, 19.26, 19.39,
+19.52, 19.65, 19.78, 19.92, 20.05, 20.18, 20.31, 20.44, 20.58,
+20.71, 20.84, 20.97, 21.1, 21.23, 21.37, 21.5, 21.63, 21.76,
+21.89, 22.03, 22.16, 22.29, 22.42, 22.55, 22.69, 22.82, 22.95,
+23.08, 23.21, 23.34, 23.48, 23.61, 23.74, 23.87, 24, 24.14, 24.27,
+24.4, 24.53, 24.66, 24.8, 24.93, 25.06, 25.19, 25.32, 25.46,
+25.59, 25.72), Validation.loss = c(1.4991, 1.339, 1.3006, 1.2896,
+1.2843, 1.1884, 1.1825, 1.0279, 1.1091, 1.1157, 1.181, 1.1525,
+1.1382, 1.0993, 0.9931, 1.0369, 1.0429, 1.071, 1.08, 1.1059,
+1.0121, 1.0614, 0.9521, 1.0002, 1.0275, 1.0542, 1.0593, 1.0494,
+0.9714, 0.9274, 0.9498, 0.9679, 0.9974, 1.0536, 1.0292, 1.028,
+0.9872, 0.8833, 0.9679, 0.962, 0.9937, 1.0054, 1.0173, 0.9486,
+0.9015, 0.8815, 0.932, 0.9781, 0.992, 1.0052, 0.981, 0.9269,
+0.8523, 0.9251, 0.9228, 0.9838, 0.9807, 1.0066, 0.8873, 0.9604,
+0.9155, 0.9242, 0.9259, 0.9656, 0.9892, 0.9715, 0.9742, 0.8606,
+0.8482, 0.8879, 0.929, 0.9663, 0.9866, 0.9035, 0.9491, 0.8154,
+0.8611, 0.9068, 0.9575, 0.9601, 0.9805, 0.9005, 0.8452, 0.8314,
+0.8582, 0.892, 0.9186, 0.9551, 0.9508, 0.9074, 0.7957, 0.8634,
+0.8884, 0.8953, 0.9163, 0.9307, 0.8527, 0.8522, 0.812, 0.858,
+0.897, 0.9328, 0.9398, 0.9504, 0.8664, 0.821, 0.8441, 0.8832,
+0.8891, 0.9422, 0.953, 0.8326, 0.871, 0.8024, 0.8369, 0.8541,
+0.895, 0.8892, 0.9275, 0.8378, 0.8172, 0.8078, 0.8353, 0.8602,
+0.8863, 0.9176, 0.9335, 0.8561, 0.7952, 0.8423, 0.8833, 0.9052,
+0.9202, 0.9354, 0.8477, 0.8271, 0.8187, 0.8714, 0.8714, 0.9089,
+0.903, 0.9225, 0.8583, 0.7903, 0.8016, 0.8432, 0.877, 0.8825,
+0.9323, 0.8243, 0.8233, 0.7981, 0.8249, 0.826, 0.9109, 0.8875,
+0.9265, 0.8239, 0.8026, 0.7934, 0.851, 0.8856, 0.9033, 0.9317,
+0.8576, 0.8335, 0.7829, 0.8172, 0.8658, 0.8976, 0.8756, 0.9262,
+0.8184, 0.792, 0.7826, 0.8244, 0.861, 0.9144, 0.9244, 0.9106,
+0.8327, 0.766, 0.7988, 0.8378, 0.8606, 0.8831, 0.9032, 0.8113,
+0.8138, 0.7747, 0.8027, 0.8197, 0.8684, 0.874, 0.912)), .Names = c('Epoch',
+'Validation.loss'), class = 'data.frame', row.names = c(NA, -195L
+))"))
+
+library(ggplot2)
+qplot(Epoch, Validation.loss, data=performance) + stat_smooth()
+## https://i.imgur.com/PZOPS6a.png
+~~~
+
+As the loss diminished to ~0.8-0.9, the sampled CSS output became even more realistic. At one point I was impressed to see that the RNN had learned to switch between "minified" and unminified CSS formatting. For example, above the output is unminified, but the RNN at 0.88 sometimes writes minified (following has been line-broken from a single line):
+
+~~~{.CSS}
+/* $ th sample.lua  cv/lm_css_epoch6.07_0.8815.t7 -primetext 'div#sidebar { margin: 0px; }' -length 2000
+... */
+div#sidebar { margin: 0px; }
+#flashTopgip ul li h3 { clear: both; padding: 0; height:25px;
+ background:url(/images/exporibox.png) no-repeat 0
+ 0;}.col_description{text-align:left!important;display:block;height:44px;top:-3px;left:68%;width:150px;}.front
+ .content
+ h3{display:inline-block;width:100%;position:fixed;position:absolute;left:0;}.date-repeat
+ #right{list-style:none;}.rtl
+ #block-agned-header{padding:10px;line-height:14px;width:auto;}#block-column-right{background:#63c;}.block-document_body
+ #content,.activism-content-box .content,.rtl .archive-wide
+ .button.input-rawignad{float:left;}.rtl .panel-pane .social-view table .lim
+ h1,.page-news h3.pane-title{*zoom:2 !important;}.rtl
+ .arow-right,#right-fields-img{display:none;}div.error{background-color:#ededed;}div.page-term
+ span.recimsregoor_contemt #aconds,.input-admin-widget-fill div.inner
+ .form-submit{display:block;margin-right:.1em;}#edit-activism-field-actionpoint{color:#8c0000;background:url(/sites/all/themes/zrw/sprites/hadd.png)
+ no-repeat 3px 0px;calse:0}.login-form p{margin:4px 25px;}.rtl
+ .note-ssTitle{margin:0 0 3px 0}ul.secondary
+ .page,#node-region{background:url(/sites/all/themes/rpg_theme/images/btn/form_subscription_not-page.png)
+ no-repeat 12px 0 #016 !important;}#network-footer:active{}#rtl
+ #newsletter-recitients-work_latest .center a{background-position:5px
+ -154px;}#product-item{margin-bottom:10px;}.node-type-article .home
+ .field-popup-widget-form{padding:20px 10px 10px 4px;text-align:right;}.rtl
+ .view-filters,.rtl #comments-albumang_sprite{float:left;}.node-type-nodes
+ .field-actionpoints-view-filters{padding:19px 28px 8px 0;}.rtl
+ #multimedia-latest .field-body,.view-content
+ div.field-view-layout{ulline-color:white;}.view-experts
+ .views-field-title{padding:4px;text-align:center;}.node-description
+ .views-exposed-form{overflow:visible;}#content .views-view-grid
+ tr.format{padding-bottom:10px;background:#030000;}.view-forword-source
+ .views-exposed-form #edit-submit{margin-right:0;}
+~~~
+
+This initially does not look impressive, but if we run it through a [unminifier](http://unminify.com):
+
+~~~{.CSS}
+div#sidebar {
+    margin: 0px;
+}
+#flashTopgip ul li h3 {
+    clear: both;
+    padding: 0;
+    height: 25px;
+    background: url(/images/exporibox.png) no-repeat 0 0;
+}
+.col_description {
+    text-align: left!important;
+    display: block;
+    height: 44px;
+    top: -3px;
+    left: 68%;
+    width: 150px;
+}
+.front .content h3 {
+    display: inline-block;
+    width: 100%;
+    position: fixed;
+    position: absolute;
+    left: 0;
+}
+.date-repeat #right {
+    list-style: none;
+}
+.rtl #block-agned-header {
+    padding: 10px;
+    line-height: 14px;
+    width: auto;
+}
+#block-column-right {
+    background: #63c;
+}
+.block-document_body #content,
+.activism-content-box .content,
+.rtl .archive-wide .button.input-rawignad {
+    float: left;
+}
+.rtl .panel-pane .social-view table .lim h1,
+.page-news h3.pane-title {
+    *zoom: 2 !important;
+}
+.rtl .arow-right,
+#right-fields-img {
+    display: none;
+}
+div.error {
+    background-color: #ededed;
+}
+div.page-term span.recimsregoor_contemt #aconds,
+.input-admin-widget-fill div.inner .form-submit {
+    display: block;
+    margin-right: .1em;
+}
+#edit-activism-field-actionpoint {
+    color: #8c0000;
+    background: url(/sites/all/themes/zrw/sprites/hadd.png) no-repeat 3px 0px;
+    calse: 0
+}
+.login-form p {
+    margin: 4px 25px;
+}
+.rtl .note-ssTitle {
+    margin: 0 0 3px 0
+}
+ul.secondary .page,
+#node-region {
+    background: url(/sites/all/themes/rpg_theme/images/btn/form_subscription_not-page.png) no-repeat 12px 0 #016 !important;
+}
+#network-footer:active {}#rtl #newsletter-recitients-work_latest .center a {
+    background-position: 5px -154px;
+}
+#product-item {
+    margin-bottom: 10px;
+}
+.node-type-article .home .field-popup-widget-form {
+    padding: 20px 10px 10px 4px;
+    text-align: right;
+}
+.rtl .view-filters,
+.rtl #comments-albumang_sprite {
+    float: left;
+}
+.node-type-nodes .field-actionpoints-view-filters {
+    padding: 19px 28px 8px 0;
+}
+.rtl #multimedia-latest .field-body,
+.view-content div.field-view-layout {
+    ulline-color: white;
+}
+.view-experts .views-field-title {
+    padding: 4px;
+    text-align: center;
+}
+.node-description .views-exposed-form {
+    overflow: visible;
+}
+#content .views-view-grid tr.format {
+    padding-bottom: 10px;
+    background: #030000;
+}
+.view-forword-source .views-exposed-form #edit-submit {
+    margin-right: 0;
+}
+~~~
+
+Now it's readable and we can see the RNN has done an excellent job of still writing CSS while in minified-mode, and around this level of loss, I noticed the RNN had learned to write valid-looking URLs - fragments like `background : url(/sites/all/themes/rpg_theme/images/btn/form_subscription_not-page.png)` look exactly like what a human CSS programmer would write.
+(Unfortunately, this sample has 4 validation errors: 1 from an imbalanced bracket, 1 one parse error on `*zoom: 2 !important;`, and 2 properties which don't exist.)
+
+At 0.88, I also noticed the RNN was now making a valiant attempt to write comments. Bad comments, but still:
+
+~~~{.CSS}
+/* ubuntu@ip-172-31-30-222:~/char-rnn$ th sample.lua  cv/lm_css_epoch6.07_0.8815.t7 -primetext 'div#sidebar { margin: 100px; }' -length 2000 -seed 1
+using CUDA on GPU 0...
+creating an lstm...
+seeding with div#sidebar { margin: 100px; }
+-------------------------- */
+div#sidebar { margin: 100px; }
+viv  .yeah-company:first-child, .news-row0 .colsetIcob img,
+.content .content-number { background-position: 0 -340px; text-decoration: repeat-x; }
+#content .rcper { display:none; display: block;
+}
+
+#coftelNotif .topUy { background: url('/assets/css/epwide-datetherator.png'); }
+#leftCol span.scord img { background: url(/img/text/about_links.png) no-repeat 0 -1050px; }
+
+div.subkit_snav_created, ul.up_tains li.active { width: 64% !important; }
+.hdr_outer {text-align:center; }
+  active, img {
+        top: auto;
+     margin-right: 20px;
+        margin: 0 !important;
+                    text-align: center;
+            -webkit-box-shadow: #205575 1px 0 0 rgba(0,0,0,0.6) 1px 0px  px;
+        box-shadow: 0 0 5px rgba(0,0,0,.5);
+}
+
+#ywip_section p.tab_promo,
+#search_container #slideshow .page_inner #triabel_left {
+    background: url(drop, sanc-email' }
+simple{
+    box-sizing: border-box;
+}
+
+span.naveptivionNav}
+a.nav, pre,
+html { */
+    background-color: #8ccedc;
+    background: #22a82c;
+    float: left;
+    color: #451515;
+    border: 1px solid #701020;
+    color: #0000ab;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-bottom: 50px;
+    line-height: 16px;
+    height: 49px;
+    padding: 15px 0 0 0;
+    font-size: 15px;
+    font-weight: bold;
+    background-color: #cbd2eb;
+}
+a.widespacer2,
+#jomList, #frq {
+    margin: 0 0 0 0;
+    padding: 10px -4px;
+    background-color: #FFCFCF;
+    border: 1px solid #CBD7DD;
+    padding: 0 0 4px 12px;
+    min-height: 178px;
+}
+
+.eventmenu-item, .navtonbar .article ul, .creditOd_Dectls {
+    border-top: 1px #CCC gradsed 1px solid;
+    font-size: 0.75em;
+}
+
+h2,
+div.horingnav img {
+    font-size: 5px;
+}
+
+body {
+    margin: 0 0 5px 20px;
+}
+.n-cmenuamopicated,
+.teasicOd-view td {
+    border-top: 4px solid #606c98;
+}
+
+/* Rpp-fills*/
+
+.ads{padding: 0 10px;}.statearch-header div.title img{display:table-call(}
+fieldset legend span,
+blockquote.inner ul {padding:0;}}
+
+...
+
+/* Ableft Title */
+
+/* ========================================================  helper column parting if nofis calendar image Andy "Heading Georgia" */
+.right_content {
+  position: relative;
+  width: 560px;
+  height: 94px;
+}
+~~~
+
+Ultimately, the best RNN (https://www.dropbox.com/s/5719eisknt0u9fi/lm_css_epoch24.00_0.7660.t7.xz) achieved a loss of 0.7660 before I decided to shut it down because it wasn't making much further progress.
+
+##### Samples
+
+It stalwartly continued to try to write comments, approximating slightly English (even though there is not that much English text in those 20MB, only 8.5k lines with `/*` in them - it's CSS, not text).
+Examples of comments extracted from a large sample of 0.766's output (https://www.dropbox.com/s/bo137n58e8wm0rk/best.txt `fgrep '/*' best.txt`):
+
+~~~{.CSS}
+*//* COpToMNINW BDFER
+/*
+.snc .footer li a.diprActy a:hover, #sciam table {/*height: 164px;*//*/* }
+body.node-type-xplay-info #newsletter,body.node-type-update
+#header{min-width:128px;height:153px;float:left;}#main-content
+.newsletternav,#ntype-audio
+.block-title{background:url(/sites/www.amnesty.org/modules/civicrm/print-widget.clu))
+/*gray details */
+/* Grid >> 1px 0 : k0004_0 */
+/* corner */
+/* ST LETTOTE/ CORCRE TICEm langs 7 us1 Q+S. Sap q i blask */
+/*/*/
+/* Side /**/
+/* Loading Text version Links white to 10ths */
+/*-modaty pse */
+/**/div#sb-adrom{display:none !important;}
+/*
+/* `Grid >> Global
+/* `Grid >> 16 Columns
+/* `Grid >> 16 Columns
+/* `Suffix Extra Space >> 16 Columns
+/* `Prefix Extra Space >> 12 Columns
+/* `Prefix Extra Space >> 12 Columns
+/* `Clear Floated Elements
+/* `Prefix Extra Space >> 12 Columns
+/* `Push Space >> 16 Columns
+/* `Suffix Extra Space >> 16 Columns
+/* `Suffix Extra Space >> 16 Columns
+/* `Suffix Extra Space >> 16 Columns
+/* `Prefix Extra Space >> 16 Columns
+/* `Suffix Extra Space >> 16 Columns
+  /* IE7 inline-block hack */
+/* T* */
+~~~
+
+Not too great, but still more than I expected
+Still, the (unminified) CSS looks good:
+
+~~~{.CSS}
+div#sidebar { margin: 100px; }
+.ep_summary_box_body { float: left; width: 550px; }
+.dark_search span { margin-right: 5px; }
+h1.highlight_column { text-align: right; display: block; font-size: 18px; }
+h3 {
+        font-weight: bold;
+        font-size: 12px;
+}
+col.teas h2 {
+        clear: both;
+        width: 100%;
+        z-index: 190;
+        action: !important;
+}
+#full_content .fancybox.no-float {
+        background-image: url('/static/onion/img/description.png');
+        max-width: 33px;
+        height: 40px;
+        margin-top: 20px;
+        color: #3D5042;
+        font-size: 0.75em;
+        padding-left: 25px !important;
+        }
+
+
+.filter-container iframe{
+        width: 990px;
+}
+
+#funcy-oneTom {
+        margin: 0;
+        padding: 10px 1%;
+        line-height: 30px;
+}
+#utb_documentAlert {
+        color: #222;
+}
+
+#utb_column02 a.button:focus {
+        display: block;
+        font-family: Arial, Helvetica, sans-serif;
+}
+
+#utb_column02 ul.blogs-listing aundoc1 ul:before,
+#utb_column01 a:active,
+h1 { font-weight: bold; font-family: line-heetprind, AnimarzPromo, Atial;   line-height: 1.4; font-size:                1 9px; }
+#utb_column03 ul.fourder { width: 500px; padding: 4px 10px; }
+~~~
+
+The RNN also seems to have a thing for Amnesty International, regularly spitting out Amnesty URLs like`url(/sites/www.amnesty.org/modules/civicrm/i/mast2adCbang.png)` (not actually valid URLs).
+
+Once that was done, I generated samples from all the checkpoints:
+
+~~~{.RNN}
+for NN in cv/*.t7; do th sample.lua $NN -primetext 'div#sidebar { margin: 0px; }' -length 2000 > $NN.txt; done
+## https://www.dropbox.com/s/xgstn9na3efxb43/smallrnn-samples.tar.xz
+## if we want to watch the CSS evolve as the loss decreased:
+for SAMPLE in `ls cv/lm_css*.txt | sort --field-separator="_" --key=4 --numeric-sort --reverse`;
+    do echo $SAMPLE: && tail -5 $SAMPLE | head -5; done
+~~~
+
+### Evaluation
+
+In under a day of GPU training on 20MB of CSS, a medium-sized RNN (~30M parameters) learned to produce high quality CSS, which passes visual inspection and on some batches yields few CSS syntactic errors.
+This strikes me as fairly impressive: I did not train a very large RNN, did not train it for very long, did not train it on very much, did no optimization of the many hyper-parameters, and it is doing unsupervised learning in the sense that it doesn't know how well emitted CSS validates or renders in web browsers -  yet the results still look good.
+I would say this is a positive first step.
+
+Lessons learned:
+
+- GPUs > CPUs
+- `char-rnn`, while rough-edged, is excellent for quick prototyping
+- NNs are slow:
+
+    - major computation is required for the best results
+    - meaningful exploration of NN sizes or other hyperparameters will be challenging when a single run can cost days
+- computing large datasets or NNs on Amazon EC2 will entail substantial financial costs; it's adequate for short runs but bills around \$25 for two days of playing around are not a long-term solution
+- pretraining an RNN on CSS may be useful for a CSS reinforcement learner
 
 # Appendix
 ## Covariate impact on power
