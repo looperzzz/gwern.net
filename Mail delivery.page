@@ -216,11 +216,14 @@ mail <- data.frame(Time=clockS(as.POSIXct(c("2015-06-20 11:00AM", "2015-06-21 11
                                  "2015-07-10 11:10AM", "2015-07-11 11:12AM", "2015-07-13 11:05AM", "2015-07-14 11:14AM",
                                  "2015-07-15 11:40AM", "2015-07-16 11:24AM", "2015-07-17 11:03AM", "2015-07-18 10:46AM",
                                  "2015-07-20 11:05AM", "2015-07-21 10:56AM", "2015-07-22 11:00AM", "2015-07-23 11:17AM",
-                                 "2015-07-24 11:15AM"),
+                                 "2015-07-24 11:15AM", "2015-07-27 11:11AM", "2015-07-28 10:44AM", "2015-07-29 11:18AM",
+                                 "2015-07-30 11:08AM", "2015-07-31 10:44AM", "2015-08-01 11:25AM", "2015-08-03 10:45AM",
+                                 "2015-08-04 10:45AM", "2015-08-05 10:44AM", "2015-08-06 10:33AM", "2015-08-07 10:55AM"),
                                 "EDT")),
                    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE,
                                FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE,
-                               FALSE, FALSE, TRUE, TRUE, TRUE))
+                               FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE,
+                               FALSE, FALSE, FALSE))
 
 mail <- data.frame(Time1 = ifelse(mail$Delivered, 0, mail$Time),
                            Time2 = ifelse(mail$Delivered,  mail$Time, 1440))
@@ -241,10 +244,11 @@ data <- list("dt"=mail, "n"=nrow(mail), "y"=rep(1, nrow(mail)))
 inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mail,1,mean))) }
 params <- c("mu","sd", "y.new")
 j1 <- jags(data, inits, params, model1, n.iter=100000); j1
-##          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
-## mu       654.729  11.602 632.661 647.582 654.028 661.585 679.687 1.001  3000
-## sd        38.216  12.575  15.549  28.264  38.223  49.039  58.797 1.001  3000
-## y.new    653.316  40.900 569.077 629.991 652.904 677.081 738.161 1.001  2500
+#          mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
+# mu       653.894   7.436 638.141 649.561 654.045 658.691 668.241 1.001  3000
+# sd        36.383  11.545  17.628  26.924  35.207  45.370  58.256 1.001  2500
+# y.new    653.530  39.937 574.558 630.656 653.608 676.572 733.351 1.001  3000
+# deviance   0.000   0.000   0.000   0.000   0.000   0.000   0.000 1.000     1
 
 lowerMean <- j1$BUGSoutput$summary[c(2),][3]
 medianMean  <- j1$BUGSoutput$mean$mu
@@ -264,6 +268,7 @@ library(ggplot2)
 png(file="~/wiki/images/maildelivery-real.png", width = 900, height = 600)
 ggplot(mail) + geom_segment(aes(x=Time1, xend=Time2, y=1:nrow(mail), yend=1:nrow(mail))) +
     ylab("Day") + xlab("Time") +
+    coord_cartesian(xlim = c(7*60, 13*60)) +
     geom_vline(xintercept=medianMean, color="blue") +
     geom_vline(xintercept=lowerMean, color="green") +
     geom_vline(xintercept=upperMean, color="green") +
@@ -375,13 +380,13 @@ mail_abc <- function(samples) {
 sims <- mail_abc(1000)
 results <- matrix(unlist(sims), ncol=2, byrow=TRUE)
 summary(results)
-##       V1                 V2
-## Min.   :621.0812   Min.   :10.00167
-## 1st Qu.:644.7149   1st Qu.:15.71872
-## Median :648.0593   Median :20.57838
-## Mean   :652.3028   Mean   :23.42996
-## 3rd Qu.:651.2694   3rd Qu.:28.52015
-## Max.   :739.4133   Max.   :59.89326
+##        V1                 V2
+##  Min.   :613.7729   Min.   :10.02594
+##  1st Qu.:651.9860   1st Qu.:13.78808
+##  Median :655.2138   Median :16.68179
+##  Mean   :653.1099   Mean   :18.11844
+##  3rd Qu.:657.7102   3rd Qu.:20.87232
+##  Max.   :698.5301   Max.   :57.65834
 ~~~
 
 The mean value here is somewhat acceptable but the SD is considerably off from the JAGS estimate (which I assume to be correct).
@@ -415,13 +420,13 @@ mail_abc <- function(samples) {
 sims <- mail_abc(10000)
 results <- matrix(unlist(sims), ncol=2, byrow=TRUE)
 summary(results)
-##       V1                 V2
-## Min.   :550.4086   Min.   :10.00066
-## 1st Qu.:640.0134   1st Qu.:22.33501
-## Median :660.2284   Median :34.76427
-## Mean   :660.2783   Mean   :34.83866
-## 3rd Qu.:680.5165   3rd Qu.:47.45385
-## Max.   :760.6862   Max.   :59.99828
+##        V1                 V2
+##  Min.   :571.3127   Min.   :10.00442
+##  1st Qu.:636.2064   1st Qu.:22.76214
+##  Median :649.8232   Median :35.41042
+##  Mean   :649.7943   Mean   :35.20876
+##  3rd Qu.:663.2624   3rd Qu.:47.68031
+##  Max.   :725.4359   Max.   :59.99888
 ~~~
 
 This summary, simple as it is, does better in replicating the JAGS estimates.
@@ -444,25 +449,13 @@ mailExact <- data.frame(Date=as.POSIXct(c("2010-04-29 11:33AM", "2010-05-12 11:3
                                           "2015-06-24 10:53AM", "2015-06-25 10:55AM", "2015-06-30 10:36AM",
                                           "2015-07-02 10:45AM", "2015-07-06 11:19AM", "2015-07-10 10:54AM",
                                           "2015-07-11 11:09AM", "2015-07-15 10:29AM", "2015-07-16 11:02AM",
-                                          "2015-07-17 10:46AM"),
+                                          "2015-07-17 10:46AM", "2015-07-27 11:12AM"),
                         "EDT"))
 mailExact$TimeDelivered <- clockS(mailExact$Date)
-##                   Date TimeDelivered Group
-## 1  2010-04-29 11:33:00           693 FALSE
-## 2  2010-05-12 11:31:00           691 FALSE
-## 3  2014-08-20 12:14:00           734 FALSE
-## 4  2014-09-29 11:15:00           675 FALSE
-## 5  2014-12-15 12:02:00           722 FALSE
-## 6  2015-03-09 11:19:00           679  TRUE
-## 7  2015-06-10 10:34:00           634  TRUE
-## 8  2015-06-20 11:02:00           662  TRUE
-## 9  2015-06-23 10:58:00           658  TRUE
-## 10 2015-06-24 10:53:00           653  TRUE
-## 11 2015-06-25 10:55:00           655  TRUE
 mean(mailExact$TimeDelivered)
-## [1] 672.5714286
+## [1] 667.4
 sd(mailExact$TimeDelivered)
-## [1] 29.95307686
+## [1] 27.34073498
 library(ggplot2); qplot(Date, TimeDelivered, data=mailExact)
 ## https://i.imgur.com/oJlGp6t.png
 ~~~
@@ -476,18 +469,19 @@ Besides the visual evidence, a _t_-test agrees with there being a difference bet
 ~~~{.R}
 mailExact$Group <- year(mailExact$Date) > 2014
 t.test(TimeDelivered ~ Group, data=mailExact)
+##
 ##  Welch Two Sample t-test
 ##
 ## data:  TimeDelivered by Group
-## t = 3.9062026, df = 6.0576883, p-value = 0.007779051
+## t = 4.105, df = 5.152, p-value = 0.008741
 ## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
-##  17.75123851 76.91542816
+##  18.00369556 76.92963777
 ## sample estimates:
 ## mean in group FALSE  mean in group TRUE
-##         703.0000000         655.6666667
+##         703.0000000         655.5333333
 sd(mailExact[mailExact$Group,]$TimeDelivered)
-## [1] 16.24807681
+## [1] 15.59
 ~~~
 
 Why might there be two clusters?
@@ -536,17 +530,17 @@ params <- c("grand.mean","delta.between.group", "sigma.between.group", "group.de
             "group.within.sigma", "y.new2")
 k1 <- jags(data=data, parameters.to.save=params, inits=NULL, model.file=model2); k1
 ##                       mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
-## delta.between.group    38.893  26.066   1.657  16.729  35.032  57.902  93.315 1.007   290
-## grand.mean            649.865  25.119 598.778 633.944 650.467 666.242 697.722 1.005   770
-## group.delta[1]         48.216  28.700  -3.307  27.326  47.108  67.704 105.533 1.010   210
-## group.delta[2]          6.824  25.934 -44.377  -9.815   7.041  23.387  58.706 1.003   970
-## group.mean[1]         698.081  17.806 656.591 688.958 699.312 708.848 731.170 1.013   240
-## group.mean[2]         656.689   6.973 643.565 652.261 656.566 660.734 671.159 1.001  3000
-## group.within.sigma[1]  36.198  17.004  15.766  23.857  31.771  43.761  82.646 1.008   260
-## group.within.sigma[2]  19.635   6.049  11.534  15.388  18.297  22.623  34.887 1.001  3000
-## sigma.between.group    47.123  24.488   5.955  28.037  44.269  65.176  94.786 1.024   170
-## y.new2                657.223  21.579 613.914 644.011 656.743 669.990 702.825 1.001  3000
-## deviance              125.536   3.849 120.363 122.622 124.745 127.786 134.486 1.007   470
+## delta.between.group    40.507  25.039   2.354  20.631  37.412  58.775  92.712 1.002  1700
+## grand.mean            645.629  18.825 606.884 633.280 645.989 658.322 682.017 1.001  3000
+## group.delta[1]         52.764  24.302   5.309  36.717  52.991  68.608 100.232 1.001  3000
+## group.delta[2]         10.475  19.271 -27.404  -2.572  10.308  22.807  49.381 1.001  3000
+## group.mean[1]         698.393  17.665 657.704 689.190 699.706 708.878 731.648 1.009  3000
+## group.mean[2]         656.104   4.535 647.273 653.114 656.101 659.051 665.312 1.001  3000
+## group.within.sigma[1]  36.124  16.999  15.897  24.210  31.250  43.269  83.633 1.018   180
+## group.within.sigma[2]  17.293   3.735  11.718  14.679  16.696  19.129  26.794 1.004  3000
+## sigma.between.group    46.836  24.157   7.854  27.498  43.892  64.723  95.735 1.011   570
+## y.new2                655.946  17.791 621.060 644.478 655.762 667.243 692.420 1.000  3000
+## deviance              174.435   3.629 169.615 171.603 173.642 176.616 182.813 1.016   170
 
 posteriorTimes <- k1$BUGSoutput$sims.list[["y.new2"]]
 lossFunction <- function(t, walk_cost, predictions, lastResortT) {
@@ -556,8 +550,8 @@ lossFunction <- function(t, walk_cost, predictions, lastResortT) {
     }
 losses <- sapply(c(0:1440), function (tm) { lossFunction(tm, 60, posteriorTimes, 780);})
 which.min(losses)
-# [1] 688
-## 11:28AM
+# [1] 683
+## 11:23AM
 ~~~
 
 ## Combined data
@@ -607,22 +601,22 @@ lossFunction <- function(t, walk_cost, predictions, lastResortT) {
     }
 losses <- sapply(c(0:1440), function (tm) { lossFunction(tm, 60, posteriorTimes, 780);})
 which.min(losses)
-# [1] 696
-## 11:36AM
+# [1] 697
+## 11:37AM
 qplot(0:1440, losses)
 ~~~
 
 ### Total costs
 
-We can compare the cost of check times. If I check at 11:28AM rather than the current estimated optimal time of 11:38AM, then the loss each time is -2.1:
+We can compare the cost of check times. If I check at 11:28AM rather than the current estimated optimal time of 11:37AM, then the loss each time is -2.1:
 
 ~~~{.R}
-losses[698]
-# [1] 125.1687367
+losses[which.min(losses)]
+# [1] 122.9
 losses[688]
-# [1] 127.2646144
-losses[698] - losses[688]
-# [1] -2.095877679
+# [1] 124.92
+losses[which.min(losses)] - losses[688]
+# [1] -2.006
 ~~~
 
 With average losses per check time, an estimate of number of check times per year, and a discount rate, we can derive a [net present value](!Wikipedia); I usually use the approximation $\frac{\text{gain}}{ln(1 + \text{discount rate})}$ and a discount rate of 5% annually, but in this case assuming an indefinite horizon is wrong - the delivery time will change and the problem will reset as soon as the next mailman begins this route, which has already happened once in the 4 years thus far, so I instead assume that any estimate is worthless after 3 years (the mailman will have changed, the route or USPS will have changed, I may not even be living in the same place in 3 years).
@@ -631,7 +625,7 @@ So if I check for a package 30 times a year (which is roughly as much as I did i
 ~~~{.R}
 netPresentValue <- function(p) { ((p / (1 + 0.05)^1) + (p / (1 + 0.05)^2) + (p / (1 + 0.05)^3)) * 30  }
 netPresentValue(-2)
-## [1] -163
+## [1] -163.4
 ~~~
 
 # Value of Information
@@ -647,7 +641,7 @@ The EVPI is the cost of the current optimum versus a possible alternative time, 
 
 ~~~{.R}
 mean(sapply(round(posteriorTimes), function(time) { netPresentValue((losses[time] - min(losses))) } ))
-# [1] 5633.847961
+# [1] 5277
 ~~~
 
 Perfect information is not available at any cost, however.^[I could always resort to additional technology like motion-activated cameras or radio bugs on the mailbox which send alerts when it's been opened if I *really* wanted, but for the purpose of this exercise, let's ignore those possibilities.]
@@ -658,7 +652,7 @@ So EVPI represents an upper bound on how much any lesser amount of information c
 
 The next kind is what is the "[expected value of sample information](!Wikipedia)" (EVSI): what is the value of collecting one more additional datapoint, which can help pin down the optimal time a little more precisely and reduce the risk of loss from picking a bad time?
 EVSI can be defined as "expected value of best decision with some additional sample information" minus "expected value of best current decision".
-More specifically, if many times we draw a sample from the posterior (which represents our best estimate of the world), turn it into a new interval-censored datapoint, create an updated posterior distribution incorporating that datapoint, run the loss function again & calculate a new optimal check time, and compute the improvement of the new check time's NPV over the old check time's NPV to get the EVSI, what is the mean of the EVSIs?
+More specifically, if many times we draw a sample from the posterior (which represents our best estimate of the world), turn it into a new interval-censored datapoint, create an updated posterior distribution incorporating that or several more datapoints, run the loss function again & calculate a new optimal check time, and compute the improvement of the new check time's NPV over the old check time's NPV to get the EVSI, what is the mean of the EVSIs?
 
 ~~~{.R}
 sampleValues <- NULL
@@ -700,18 +694,19 @@ evsis <- replicate(100, {
     sampleValuesProfit[i] <- mean(evsis - (i*60))
 }
 sampleValues
-##  [1]  621.9099624  676.3511205  711.6662485  828.0513308  771.5025080  758.5178942  883.5654301
-##  [8]  878.3814885  792.5198993  935.5268629  924.4320994  961.1936763  895.4424611 1024.0913322
-## [15] 1091.0730761 1007.0386573 1043.8139893 1107.7887113 1039.2301437 1070.4069060  979.9023277
-## [22] 1071.9631383 1070.6226339 1067.4642958 1132.5503132 1048.9637609 1001.1076490 1239.8961317
-## [29] 1079.4585210 1083.7775260
+##  [1] 1409.818578 1359.429945 1340.286687 1335.345371 1349.943217 1265.340542 1292.981573 1300.750659
+##  [9] 1271.982692 1145.183432 1280.760519 1219.252372 1243.082917 1198.060893 1177.112060 1160.555414
+## [17] 1247.673372 1222.709100 1186.314089 1114.251468 1187.558411 1044.326663 1239.584750 1151.635004
+## [25] 1139.284523 1215.855418 1054.601586 1106.963438  999.223432 1129.849752
 sampleValuesProfit
-##  [1]  561.90996235  556.35112053  531.66624852  588.05133078  471.50250798  398.51789419
-##  [7]  463.56543005  398.38148850  252.51989929  335.52686294  264.43209935  241.19367629
-## [13]  115.44246111  184.09133217  191.07307609   47.03865732   23.81398930   27.78871132
-## [19] -100.76985626 -129.59309403 -280.09767225 -248.03686170 -309.37736610 -372.53570425
-## [25] -367.44968683 -511.03623905 -618.89235097 -440.10386832 -660.54147903 -716.22247398
+##  [1] 1349.81857846 1239.42994476 1160.28668709 1095.34537052 1049.94321723  905.34054191
+##  [7]  872.98157272  820.75065871  731.98269166  545.18343216  620.76051939  499.25237214
+## [13]  463.08291724  358.06089348  277.11205984  200.55541356  227.67337156  142.70910040
+## [19]   46.31408878  -85.74853225  -72.44158866 -275.67333668 -140.41525003 -288.36499620
+## [25] -360.71547661 -344.14458163 -565.39841364 -573.03656181 -740.77656800 -670.15024828
 ~~~
+
+This would suggest that while we are running into diminishing returns, it's still optimal to collect another 19-20 datapoints (at which point we will likely discover the remaining uncertainty to not yield enough reduction in bad decisions to justify the cost of running out each morning to collect some more data).
 
 # Conclusions
 
