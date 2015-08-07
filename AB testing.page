@@ -3056,6 +3056,7 @@ Something to think about.
 - ["Learning and sequential decision making"](http://webdocs.cs.ualberta.ca/~sutton/papers/BSW-90-full.pdf), by Barto, A.G., Sutton, R.S., & Watkins, C.J.C.H., in Learning and Computational Neuroscience, M. Gabriel and J.W. Moore (Eds.), pp. 539--602, 1990, MIT Press.
 - Sutton, R.S. (1989). ["Implementation details of the TD(lambda) procedure for the case of vector predictions and backpropagation"](http://webdocs.cs.ualberta.ca/~sutton/papers/sutton-89.pdf). GTE Laboratories Technical Report TR87-509.1, as corrected August 1989. GTE Laboratories, 40 Sylvan Road, Waltham, MA 02254.
 - ["Deep Reinforcement Learning"](http://videolectures.net/rldm2015_silver_reinforcement_learning/), Silver 2015 lecture
+- [_Dynamic Programming_](/docs/statistics/1957-bellman-dynamicprogramming.djvu), Bellman 1957
 
 recurrent Q-learning:
 - Lin & Mitchell 1992 "Memory approaches to reinforcement learning in non-Markovian domains"
