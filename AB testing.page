@@ -3065,7 +3065,7 @@ recurrent Q-learning:
 
 ## Training a neural net to generate CSS
 
-It would be nifty if I could set up a NN to generate and optimize the CSS on `gwern.net` so I don't have to learn CSS & devise tests myself (http://www.gwern.net/AB%20testing#deep-reinforcement-learning); as a first step towards this, I wanted to see how well a [recurrent neural network](!Wikipedia) (RNN) could generate CSS.
+It would be nifty if I could set up a NN to generate and optimize the CSS on `gwern.net` so [I don't have to learn CSS & devise tests myself](#deep-reinforcement-learning); as a first step towards this, I wanted to see how well a [recurrent neural network](!Wikipedia) (RNN) could generate CSS.
 
 ### `char-rnn`
 
@@ -3122,8 +3122,8 @@ With Tiny Shakespeare, the loss drops quickly at first, getting <4 within second
 ### GPU vs CPU
 
 This is a toy dataset and suggests that for a real dataset I'd be waiting weeks or months. GPU acceleration is critical.
-I spent several days trying to get Nvidia's CUDA to work, even signing up as a developer & using the unreleased version 7.5 preview of CUDA, but it seems that when they say Ubuntu *14*.04 and not *15*.04 (the latter is what I have installed), they are quite serious: everything I tried yielded bloodcurdling ATA hard drive errors (!) upon boot followed by a hard freeze the instant X began to run.
-This made me unhappy since my old laptop began dying in late July 2015 and I had purchased this Acer Aspire V17 Nitro Black Edition VN7-791G-792A laptop with the express goal of using its NVIDIA GeForce GTX 960M for deep learning. But at the moment I am out of ideas for how to get CUDA working aside from either reinstalling to downgrade to Ubuntu 14.04 or simply waiting for version 8 of CUDA which will hopefully support the latest Ubuntu.
+I spent several days trying to get Nvidia's CUDA to work, even signing up as a developer & using the unreleased version 7.5 preview of CUDA, but it seems that when they say Ubuntu *14*.04 and not *15*.04 (the latter is what I have installed), they are quite serious: everything I tried yielded bloodcurdling ATA hard drive errors (!) upon boot followed by a hard freeze the instant X began to run.^[Several days after I gave up, Nvidia released a 7.5 RC which did claim to support Ubuntu 15.04, but installing it yielded the same lockup. I then installed Ubuntu 14.04 and tried the 14.04 version of that 7.5 RC, and that worked flawlessly for GPU acceleration of both graphics & NNs.]
+This made me unhappy since my old laptop began dying in late July 2015 and I had purchased my [Acer Aspire V17 Nitro Black Edition VN7-791G-792A](http://www.amazon.com/Acer-Aspire-Edition-VN7-791G-792A-17-3-Inch/dp/B00WJSQRN0) laptop with the express goal of using its NVIDIA GeForce GTX 960M for deep learning. But at the moment I am out of ideas for how to get CUDA working aside from either reinstalling to downgrade to Ubuntu 14.04 or simply waiting for version 8 of CUDA which will hopefully support the latest Ubuntu.
 (Debian is not an option because on Debian Stretch, I could not even get the GPU driver to work, much less CUDA.)
 
 Frustrated, I finally gave up and went the *easy* way: Torch provides an Amazon OS image preconfigured with Torch, CUDA, and other relevant libraries for deep learning.
@@ -3135,7 +3135,7 @@ The two GPU instances seem to have the same number and kind of GPUs (1 Nvidia[^G
 ("Cheaper" here is relative; "g2.2xlarge" still costs [\$0.65/hr](https://aws.amazon.com/ec2/pricing/) and when I looked at spot that day, ~\$0.21.)
 
 
-[^GPU-cost]: The EC2 price chart describes it as "High-performance NVIDIA GPUs, each with 1,536 CUDA cores and 4GB of video memory". These apparently are NVIDIA Quadro K5000 cards, which cost somewhere around $1500. (Price & performance-wise, it seems there are a lot of [better options now](https://timdettmers.wordpress.com/2014/08/14/which-gpu-for-deep-learning/ "Which GPU(s) to Get for Deep Learning: My Experience and Advice for Using GPUs in Deep Learning").) At \$0.65/hr, that's ~2300 hours or 96 days; at spot, 297 days. Even adding in local electricity cost and the cost of building a desktop PC around the GPUs, it's clear that breakeven is under a year and that for more than the occasional dabbling, one's own hardware is key. If nothing else, you won't feel anxious about the clock ticking on your Amazon bill!
+[^GPU-cost]: The EC2 price chart describes it as "High-performance NVIDIA GPUs, each with 1,536 CUDA cores and 4GB of video memory". These apparently are NVIDIA Quadro K5000 cards, which cost somewhere around $1500. (Price & performance-wise, it seems there are these days a lot of [better options now](https://timdettmers.wordpress.com/2014/08/14/which-gpu-for-deep-learning/ "Which GPU(s) to Get for Deep Learning: My Experience and Advice for Using GPUs in Deep Learning"); for example, my GeForce GTX 960M seems to train at similar speed at the EC2 instances do.) At \$0.65/hr, that's ~2300 hours or 96 days; at spot, 297 days. Even adding in local electricity cost and the cost of building a desktop PC around the GPUs, it's clear that breakeven is under a year and that for more than the occasional dabbling, one's own hardware is key. If nothing else, you won't feel anxious about the clock ticking on your Amazon bill!
 
 Once started, you can SSH using your registered public key like any other EC2 instance. The default username for this image is "ubuntu", so:
 
@@ -3804,6 +3804,76 @@ Lessons learned:
 - computing large datasets or NNs on Amazon EC2 will entail substantial financial costs; it's adequate for short runs but bills around \$25 for two days of playing around are not a long-term solution
 - pretraining an RNN on CSS may be useful for a CSS reinforcement learner
 
+### External links
+
+- [HN discussion](https://news.ycombinator.com/item?id=10012625)
+
+<!--
+
+https://news.ycombinator.com/item?id=10013772 generative model
+
+10:00:55 < feepbot> gwern: Houshalter left a note 4 hours, 31 minutes ago: i think your css is overfitting, perhaps by a lot. That would explain the loss explosion on the validation set,
+                    while it still produced nice looking CSS. It accurately reproduced this URL: https://www.redditstatic.com/sprite-reddit.jzJhk9_9j8Q.png . My guess is it just memorized
+                    it.
+10:00:56 < feepbot> gwern: Houshalter left a note 4 hours, 27 minutes ago: well that specific url could just appear in the text a lot i suppose.
+10:00:56 < feepbot> gwern: Houshalter left a note 3 hours, 39 minutes ago: https://news.ycombinator.com/item?id=10015552 sorry for all the notes
+10:02:21 < cpopell9> kuudes : well, this is a professional data scientist. I think it's more that gwern gets to sit and read and write and do stats most (all?) day
+10:02:45 <@gwern> Houshalter: that's possible. I chose the parameter count with reference to character count because that's what karpathy said to do in char-rnn but last night I thought to
+                  myself, 'what if that is too optimistic? css files will be very repetitive. maybe the 'true' size of my css corpus is way smaller and so even my small RNN was overfitting
+                  after a few epochs'
+10:03:31 <@gwern> Houshalter: on the other hand, the large rnn exploded without ever getting through the full 1gb corpus, so it seems to me, how could it be overfitting when it still had
+                  like 900MB ofdata it'd never seen?
+10:03:58 < Houshalter> gwern, no way it's overfitting on 1gb
+10:04:37 <@gwern> but on the gripping hand, it's possible the sort-key led to a localized explosion after it hit a run of 100 identical css files or something
+10:05:02 < Houshalter> although altough those data uris might be making it spend all it's resources to fit base 64 encoded pngs
+10:05:39 <@gwern> yes, I'm very suspicious of the data uris. the occasional 7k chars of gibberish can't be good for learning
+10:05:44 < nshepperd> oh yeah, you don't want to do SGD on sorted data
+10:05:51 < bildramer> isn't there a way to do verification in order to prevent overfitting?
+10:06:07 < nshepperd> ideally it would be randomized
+10:06:36 <@gwern> bildramer: yes, this is part of why I was thinking about overfitting: with the small rnn, by the time I killed it, the score on the held-out validation data was like
+                  double the training score
+10:06:59 <@gwern> nshepperd: makes sense. this is something I'd like to check.... if I ever get cuda working, anyway
+10:07:25 <@gwern> increase the lookback, switch to unsorted data, maybe filter out data URIs with grep, train on the full 1gb corpus...
+10:08:01 < nshepperd> I think Houshalter has the right idea of generating style tags given the html nodes though, that would hugely simplify the issue over learning the additional syntax
+                      of css
+10:10:50 <@gwern> nshepperd: that's a next step, yes: feed in pairs of html/css and train the rnn to emit css predicted from the html. that doesn't fit into the char-rnn framework, though,
+                  and I'd also need to do more work to create the html/css pairs... not as simple as just dumping in every css file on disk, I have to find the original html and then
+                  associate it with a css
+10:11:26 < nshepperd> yeah
+10:12:56 < nshepperd> well, you can use char-rnn to train key-value associations, by building your input as |key|value| on a line or something
+10:13:17 < nshepperd> but some of the intelligence would be wasted trying to predict the keys
+10:13:39 <@gwern> you mean serialize entire html/css pairs to single lines?
+10:14:34 <@gwern> mm. I think that would stretch the memory/lookback too much, if it has to eat the entire html file before it can see any of the css
+10:15:03 < nshepperd> hmm, yeah, it's far from ideal
+10:17:31 <@gwern> imagine you stick in two mb of html on one line followed by 100kb of css. by the time the rnn gets to the css, how does it remember most or any of the html?
+10:21:19 < Houshalter> gwern, you could put the relevant CSS rules inline with each node of html.
+
+10:50:48 < nshepperd> I think what might be best would be to take an RNN "summary" of the chain of parent nodes with their attributes, and some distributed theme vector (initially a random
+                      100-vector, say) fixed for each document/site, and feed that into an RNN tasked only with filling out the style attr for that node
+10:51:12 < nshepperd> maybe you also want sibling nodes for clues about structure I dunno
+10:51:47 < Betawolf> even better, make it add up to some silly error away from 100%, so you have a gradient of reading comprehension: people just accept the chart, people who do go 'oh,
+                     it's got a rounding error', and people who notice that none of these things are like the others.
+10:51:51 < nshepperd> but this is definitely way outside the char-rnn model
+10:53:18 <@gwern> nshepperd: I'd want to see evidence that the end to end approaches don't work first before I started holding its hand like that
+11:00:31 < nshepperd> well, you would train this end-to-end in that you do backprop on the whole model at once
+11:00:46 < nshepperd> but yes, generating pure css files takes less pipe-fitting
+11:05:19 < Houshalter> gwern, it's a tree structure. human programmers don't just read an html file, and then write up an entire CSS document for it, entirely from memory.
+11:05:54 <@gwern> (people don't just look at a entire screen and emit one action, but it seems to work for the atari player)
+11:06:26 < Houshalter> just barely, and for reflex games only
+11:06:41 < nshepperd> bad players do :p
+11:07:35 < Houshalter> but the point is 500 neurons isn't enough memory to store the names of every single id, let alone enough information to reproduce the entire document
+11:09:29 <@gwern> you're not trying to reproduce every id or the entire document. most css only styles some of the html
+11:15:49 < nshepperd> how are you intending to traing on the associated html/css pairs anyway?
+11:16:28 < nshepperd> if not just feeding in the entire html followed by producing the entire css
+11:18:21 <@gwern> nshepperd: I was thinking of basing it on the translation rnns
+11:18:52 <@gwern> you can think of it as 'translating' or 'compiling' the html to its most likely css styling
+11:18:53 < nshepperd> oh? I was just going to suggest a soft attention model
+11:19:05 <@gwern> well, the best translation rnns do use soft attention now, don't they?
+11:19:21 < nshepperd> that would certainly mitigate the memory issue a lot
+11:20:23 < nshepperd> so it would only "look" at the piece of html currently being styled
+11:22:55 <@gwern> entirely possibly. I don't mind focusing on particular nodes, I just want it to be learned end-to-end on its own, to see how far NNs can go
+11:23:43 < nshepperd> yes, indeed, the best part of that model is that it avoids you having to manually match up nodes to the relevant css
+-->
 
 # Appendix
 ## Covariate impact on power
