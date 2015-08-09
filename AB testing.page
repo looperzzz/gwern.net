@@ -3827,34 +3827,11 @@ Lessons learned:
 
 https://news.ycombinator.com/item?id=10013772 generative model
 
-10:00:55 < feepbot> gwern: Houshalter left a note 4 hours, 31 minutes ago: i think your css is overfitting, perhaps by a lot. That would explain the loss explosion on the validation set,
-                    while it still produced nice looking CSS. It accurately reproduced this URL: https://www.redditstatic.com/sprite-reddit.jzJhk9_9j8Q.png . My guess is it just memorized
-                    it.
-10:00:56 < feepbot> gwern: Houshalter left a note 4 hours, 27 minutes ago: well that specific url could just appear in the text a lot i suppose.
-10:00:56 < feepbot> gwern: Houshalter left a note 3 hours, 39 minutes ago: https://news.ycombinator.com/item?id=10015552 sorry for all the notes
-10:02:21 < cpopell9> kuudes : well, this is a professional data scientist. I think it's more that gwern gets to sit and read and write and do stats most (all?) day
-10:02:45 <@gwern> Houshalter: that's possible. I chose the parameter count with reference to character count because that's what karpathy said to do in char-rnn but last night I thought to
-                  myself, 'what if that is too optimistic? css files will be very repetitive. maybe the 'true' size of my css corpus is way smaller and so even my small RNN was overfitting
-                  after a few epochs'
-10:03:31 <@gwern> Houshalter: on the other hand, the large rnn exploded without ever getting through the full 1gb corpus, so it seems to me, how could it be overfitting when it still had
-                  like 900MB ofdata it'd never seen?
-10:03:58 < Houshalter> gwern, no way it's overfitting on 1gb
-10:04:37 <@gwern> but on the gripping hand, it's possible the sort-key led to a localized explosion after it hit a run of 100 identical css files or something
-10:05:02 < Houshalter> although altough those data uris might be making it spend all it's resources to fit base 64 encoded pngs
-10:05:39 <@gwern> yes, I'm very suspicious of the data uris. the occasional 7k chars of gibberish can't be good for learning
-10:05:44 < nshepperd> oh yeah, you don't want to do SGD on sorted data
-10:05:51 < bildramer> isn't there a way to do verification in order to prevent overfitting?
-10:06:07 < nshepperd> ideally it would be randomized
-10:06:36 <@gwern> bildramer: yes, this is part of why I was thinking about overfitting: with the small rnn, by the time I killed it, the score on the held-out validation data was like
-                  double the training score
-10:06:59 <@gwern> nshepperd: makes sense. this is something I'd like to check.... if I ever get cuda working, anyway
-10:07:25 <@gwern> increase the lookback, switch to unsorted data, maybe filter out data URIs with grep, train on the full 1gb corpus...
 10:08:01 < nshepperd> I think Houshalter has the right idea of generating style tags given the html nodes though, that would hugely simplify the issue over learning the additional syntax
                       of css
 10:10:50 <@gwern> nshepperd: that's a next step, yes: feed in pairs of html/css and train the rnn to emit css predicted from the html. that doesn't fit into the char-rnn framework, though,
                   and I'd also need to do more work to create the html/css pairs... not as simple as just dumping in every css file on disk, I have to find the original html and then
                   associate it with a css
-10:11:26 < nshepperd> yeah
 10:12:56 < nshepperd> well, you can use char-rnn to train key-value associations, by building your input as |key|value| on a line or something
 10:13:17 < nshepperd> but some of the intelligence would be wasted trying to predict the keys
 10:13:39 <@gwern> you mean serialize entire html/css pairs to single lines?
@@ -3873,9 +3850,6 @@ https://news.ycombinator.com/item?id=10013772 generative model
 11:00:31 < nshepperd> well, you would train this end-to-end in that you do backprop on the whole model at once
 11:00:46 < nshepperd> but yes, generating pure css files takes less pipe-fitting
 11:05:19 < Houshalter> gwern, it's a tree structure. human programmers don't just read an html file, and then write up an entire CSS document for it, entirely from memory.
-11:05:54 <@gwern> (people don't just look at a entire screen and emit one action, but it seems to work for the atari player)
-11:06:26 < Houshalter> just barely, and for reflex games only
-11:06:41 < nshepperd> bad players do :p
 11:07:35 < Houshalter> but the point is 500 neurons isn't enough memory to store the names of every single id, let alone enough information to reproduce the entire document
 11:09:29 <@gwern> you're not trying to reproduce every id or the entire document. most css only styles some of the html
 11:15:49 < nshepperd> how are you intending to traing on the associated html/css pairs anyway?
@@ -3888,6 +3862,181 @@ https://news.ycombinator.com/item?id=10013772 generative model
 11:20:23 < nshepperd> so it would only "look" at the piece of html currently being styled
 11:22:55 <@gwern> entirely possibly. I don't mind focusing on particular nodes, I just want it to be learned end-to-end on its own, to see how far NNs can go
 11:23:43 < nshepperd> yes, indeed, the best part of that model is that it avoids you having to manually match up nodes to the relevant css
+-->
+
+<!--
+## RNN: CSS -> HTML
+
+After showing good-looking CSS can be generated from learning on a CSS corpus and mastery of the syntactic rules, the next question is how to incorporate *meaning*.
+The generated CSS doesn't mean anything and will only 'do' anything if it happens to have generated CSS modifying a sufficiently universal ID or CSS element (you might call the generated CSS 'what the average CSS looks like', although like the 'average man', average CSS does not exist in real life).
+We trained it to generate CSS from CSS. What if we trained it to generate CSS from *HTML*?
+Then we could feed in a particular HTML page and, if it has learned to generate meaningfully-connected CSS, then it should write CSS targeted on that HTML page. If a HTML page has a `div` named `lightbox`, then instead of the previous nonsense like `.logo-events .show-luset .box-content li {  width: 30px; }`, perhaps it will learn to write instead something meaningful like `lightbox li { width: 30px; }`.
+(Setting that to 30px is not a good idea, but once it has learned to generate CSS for a particular page, then it can learn to generate good CSS for a particular page.)
+
+### Creating a Corpus
+
+Before, creating a big CSS corpus was easy: simply find all the CSS files on disk, and cat them together into a single file which `char-rnn` could be fed. From a supervised learning perspective, the labels were also the inputs.
+But to learn to generate CSS from HTML, we need pairs of HTML and CSS: all the CSS for a particular HTML page.
+
+I could try to take the CSS files and work backwards to where the original HTML page may be, but most of them are not easily found and a single HTML page may call several CSS files or vice versa.
+It seems simpler instead to generate a fresh set of files by taking some large list of URLs, downloading each URL, saving its HTML and then parsing it for CSS links which then get downloaded and combined into a paired CSS file, with that single CSS file hopefully formatted and cleaned up in other ways.
+
+I don't know of any existing clean corpus of HTML/CSS pairs: existing databases like [Common Crawl](!Wikipedia) would provide more data than I need but in the wrong format (split over multiple files as the live website serves it), and I can't reuse my current archive downloads (how to map all the downloaded CSS back onto their original HTML file and then combine them appropriately?). So I will generate my own.
+
+I would like to crawl a wide variety of sites, particularly domains which are more likely to provide clean and high-quality CSS exercising lots of functionality, so I grab URLs from:
+
+- exports of my personal Firefox browsing history, URLs linked on `gwern.net`, and URLs generated from my past archives
+- exports of the [Hacker News submission history](https://github.com/sytelus/HackerNewsData)
+- the [CSS Zen Garden](http://www.csszengarden.com/) (hundreds of pages with the same HTML but wildly different & carefully hand-written CSS)
+
+#### Personal
+
+To filter out useless URLs, files with bad extensions, & de-duplicate:
+
+    cd ~/css/
+    rm urls.txt
+    xzcat  ~/doc/backups/urls/*-urls.txt.xz | cut --delimiter=',' --fields=2 | tr --delete "'" >> urls.txt
+    find ~/www/ -type f | cut -d '/' -f 4- | awk '{print "http://" $0}' >> urls.txt
+    find ~/wiki/ -name "*.page" -type f -print0 | parallel --null runhaskell ~/wiki/haskell/link-extractor.hs | fgrep http >> urls.txt
+    cat ~/.urls.txt >> urls.txt
+    firefox-urls >> urls.txt
+    sqlite3 -separator ',' -batch "$(find ~/.mozilla/firefox/ -name 'places.sqlite' | sort | head -1)" "SELECT datetime(visit_date/1000000,'unixepoch') AS visit_date, quote(url), quote(title), visit_count, frecency FROM moz_places, moz_historyvisits WHERE moz_places.id = moz_historyvisits.place_id and visit_date > strftime('\%s','now','-1 year)*1000000 ORDER by visit_date;" >> urls.txt
+
+    cat urls.txt | filter-urls | egrep --invert-match -e '.onion/' -e '.css$' -e '.gif$' -e '.svg$' -e '.jpg$' -e '.png$' -e '.pdf$' -e 'ycombinator.com' -e 'reddit.com' -e 'nytimes.com' -e .woff -e .ttf -e .eot -e '\.css$'| sort | uniq --check-chars=18 | shuf >> tmp; mv tmp urls.txt
+    wc --lines urls.txt
+    ## 136328 urls.txt
+
+(uniq --check-chars=18 is there as a hack for deduplication: we don't need to waste time on 1000 URLs all from the same domain, since their CSS will usually all be near-identical; this defines all URLs with the same first 18 characters as being duplicates and so to be removed.)
+
+#### HN
+
+HN:
+
+    wget 'https://archive.org/download/HackerNewsStoriesAndCommentsDump/HNStoriesAll.7z'
+    cat HNStoriesAll.json  | tr ' ' '\n' | tr '"' '\n' | egrep '^http://' | sort --unique >> hn.txt
+    cat hn.txt >> urls.txt
+
+
+#### CSS Zen Garden
+
+CSS Zen Garden:
+
+    nice linkchecker --complete -odot -v --ignore-url=^mailto --no-warnings --timeout=100 --threads=1 'http://www.csszengarden.com' | fgrep http | fgrep -v "label=" | fgrep -v -- "->" | fgrep -v '" [' | fgrep -v "/ " | sed -e "s/href=\"//" -e "s/\",//" | tr -d ' ' | filter-urls | tee css/csszengarden.txt # ]
+    cat csszengarden.txt  | sort -u | filter-urls | egrep --invert-match -e '.onion/' -e '.css$' -e '.gif$' -e '.svg$' -e '.jpg$' -e '.png$' -e '.pdf$' -e 'ycombinator.com' -e 'reddit.com' -e 'nytimes.com' -e .woff -e .ttf -e .eot -e '\.css$' > tmp
+    mv tmp csszengarden.txt
+    cat csszengarden.txt >> urls.txt
+
+#### Downloading
+
+To describe the download algorithm in pseudocode:
+
+    For each URL index i in 1:n:
+
+        download the HTML
+        parse
+        filter out `<link rel='stylesheet'>`, `<style>`
+        forall stylesheets,
+            download & concatenate into a single css
+        concatenate style into the single css
+        write html->./i.html
+        write css->./i.css
+
+Downloading the HTML part of the URL can be done with wget as usual, but if instructed to `--page-requisites`, it will spit CSS files over the disk and the CSS would need to be stitched together into one file.
+It would also be good if unused parts of the CSS could be ignored, the formatting be cleaned up & consistent across all pages, and while we're wishing, JS evaluated just in case that makes a difference (since so many sites are unnecessarily dynamic these days).
+[`uncss`](https://github.com/giakki/uncss) does all this in a convenient command-line format; the only downside I noticed is that it is inherently much slower, there is an unnecessary two-line header prefixed to the emitted CSS (specifying the URL evaluated) which is easily removed, and `uncss` sometimes hangs & so something must be arranged to kill laggard instances so progress can be made.
+(Originally, I was looking for a tool which would download all the CSS on a page and emit it in a single stream/file rather than write my own tagsoup parser, but when I saw `uncss`, I realized that the minimizing/optimizing was better than what I had intended and would be useful - why make the RNN learn CSS which isn't used by the paired HTML?)
+Installing:
+
+    # Debian/Ubuntu workaround:
+    sudo ln -s /usr/bin/nodejs /usr/bin/node
+    # possibly helpful:
+    sudo apt-get install phantomjs
+
+    npm install -g path-is-absolute
+    npm install -g uncss --prefix ~/bin/
+    npm install -g brace-expansion --prefix ~/bin/
+    npm install -g uncss --prefix ~/bin/
+
+Then having generated the URL list previously, it is simple to download each HTML/CSS pair:
+
+downloadCSS () {
+      echo "$@"
+      ID=`echo "$@" | md5sum | cut -f1 -d' '`
+      echo $ID
+      if [[ ! -s $ID.css ]]; then
+       wget --quiet "$@" -O $ID.html &
+       uncss --timeout 2000 "$@" | tail --lines=+3 >> $ID.css &
+       UNCSS_PID=$!
+       echo $UNCSS_PID
+       (sleep 4m ; kill -9 $UNCSS_PID) &
+       wait $UNCSS_PID
+       fi
+}
+export -f downloadCSS
+cat urls.txt | parallel --jobs 4 downloadCSS
+
+
+downloadCSS "https://github.com/giakki/uncss"
+
+After finish, find and delete duplicates with `fdupes`; and delete any stray HTML/CSS:
+
+    # delete any empty file indicating CSS or HTML download failed:
+    find . -type f -size 0 -delete
+    # delete duplicates:
+    fdupes . --delete --noprompt
+    # delete any file without a pair (empty or duplicate CSS having been previously deleted, now we clean up widows):
+    for i in `ls *.css *.html | sed -e 's/.html//' -e 's/.css//' | sort --unique`; do
+        if [[ ! -a $i.html || ! -a $i.css ]];
+        then rm $i*;
+        fi;
+    done
+
+This yields a good-sized corpus of clean HTML/CSS pairs:
+
+    ls *.css | wc --lines; cat *.css | wc --char
+
+
+TODO: yield seems very low: 1 in 5? will this be enough even with 136k+ URLs?
+NYT seems to lock up uncss! had to filter it out, too bad, their CSS was nice and complex
+
+#### Data augmentation
+
+Data augmentation is a way to increase corpus size by transforming each data point into multiple variants which are different on a low level but semantically are the same.
+For example, the best move in a particular Go board position is the same whether you rotate it by 45 degrees or 180 degrees; an upside-down or slightly brighter or slightly darker photograph of a fox is still a photograph of a fox, etc.
+By transforming them, we can make our dataset much larger and also force the NN to learn more about the semantics and not focus all its learning on mimicking surface appearances or making unwarranted assumptions.
+It seems to help image classification a lot (where the full set of data augmentation techniques used can be quite elaborate), and is a way you can address concerns about an NN not being robust to a particular kind of noise or transformation: you can include that noise/transformation as part of your data augmentation.
+
+HTML and CSS can be transformed in various ways which textually look different but still mean the same thing to a browser: they can be minified, they can be reformatted per a style guide, some optimizations can be done to combine CSS declarations or write them in better ways, CSS files can be permuted ([sometimes](http://www.w3.org/TR/2011/REC-CSS2-20110607/cascade.html#cascade) shuffling the order of declarations will change things by changing which of two overlapping declarations gets used, but apparently it's rare in practice and [CSS developers often write in random order](https://css-tricks.com/poll-results-how-do-you-order-your-css-properties/)), [comments](!Wikipedia "Comment (computer programming)") by definition can be deleted without affecting the displayed page,and so on.
+
+TODO: use html5-tidy to clean up the downloaded html too? http://www.htacg.org/tidy-html5/documentation/#part_building
+keep both the original and clean version: this will be good data augmentation
+
+Data augmentation:
+
+- raw HTML + uncss
+- tidy-html5 + uncss
+- tidy-html5 + csstidy(uncss)
+- tidy-html5 + minified CSS
+- tidy-html5 + shuffle CSS order as well? CSS is not fully but *mostly* declarative: http://www.w3.org/TR/2011/REC-CSS2-20110607/cascade.html#cascade
+
+### RNN
+
+encoder-decoder? attention models? neural Turing machines?
+
+http://devblogs.nvidia.com/parallelforall/introduction-neural-machine-translation-with-gpus/ / http://devblogs.nvidia.com/parallelforall/introduction-neural-machine-translation-gpus-part-2/ / http://devblogs.nvidia.com/parallelforall/introduction-neural-machine-translation-gpus-part-3/
+
+possible example to steal from: https://github.com/nicholas-leonard/dp/blob/master/examples/recurrentlanguagemodel.lua / https://dp.readthedocs.org/en/latest/languagemodeltutorial/index.html#neural-network-language-model simple tutorial: https://dp.readthedocs.org/en/latest/neuralnetworktutorial/index.html (more lowlevel: https://github.com/Element-Research/rnn )
+char-rnn seems too hardwired in character at a time, bidirectional?
+pure Python implementation: https://github.com/karpathy/neuraltalk rip out the image stuff...?
+https://github.com/wojzaremba/lstm
+https://github.com/Element-Research/rnn#rnn.BiSequencerLM ?
+
+http://www6.in.tum.de/pub/Main/Publications/Graves2008c.pdf
+"Reinforcement Learning Neural Turing Machines" http://arxiv.org/abs/1505.00521
+"Learning to Execute" http://arxiv.org/abs/1410.4615 https://github.com/wojciechz/learning_to_execute
+"Sequence to Sequence Learning with Neural Networks" http://arxiv.org/abs/1409.3215
+"Generating Sequences With Recurrent Neural Networks" http://arxiv.org/pdf/1308.0850v5
+"Neural Machine Translation by Jointly Learning to Align and Translate" http://arxiv.org/abs/1409.0473 "In this paper, we conjecture that the use of a fixed-length vector is a bottleneck in improving the performance of this basic encoder-decoder architecture, and propose to extend this by allowing a model to automatically (soft-)search for parts of a source sentence that are relevant to predicting a target word, without having to form these parts as a hard segment explicitly. With this new approach, we achieve a translation performance comparable to the existing state-of-the-art phrase-based system on the task of English-to-French translation. Furthermore, qualitative analysis reveals that the (soft-)alignments found by the model agree well with our intuition."
 -->
 
 # Appendix
