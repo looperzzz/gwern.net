@@ -3066,11 +3066,13 @@ recurrent Q-learning:
 
 ## Training a neural net to generate CSS
 
-It would be nifty if I could set up a NN to generate and optimize the CSS on `gwern.net` so [I don't have to learn CSS & devise tests myself](#deep-reinforcement-learning); as a first step towards this, I wanted to see how well a [recurrent neural network](!Wikipedia) (RNN) could generate CSS.
+It would be nifty if I could set up a NN to generate and optimize the CSS on `gwern.net` so [I don't have to learn CSS & devise tests myself](#deep-reinforcement-learning); as a first step towards this, I wanted to see how well a [recurrent neural network](!Wikipedia) (RNN) could generate CSS after being trained on CSS.
+(If it can't do a good job mimicking the 'average' syntax/appearance of CSS based on a large CSS corpus, then it's unlikely it can learn more useful things like generating usable CSS given a particular HTML file, or the ultimate goal - learn to generate optimal CSS given HTML files and user reactions.)
 
 ### `char-rnn`
 
-Fortunately, Karpathy has already written an easy-to-use tool [`char-rnn`](https://github.com/karpathy/char-rnn) which works well on [XML/LaTeX/C](https://karpathy.github.io/2015/05/21/rnn-effectiveness/).
+Fortunately, Karpathy has already written an easy-to-use tool [`char-rnn`](https://github.com/karpathy/char-rnn) which has already been shown to work well on [XML/LaTeX/C](https://karpathy.github.io/2015/05/21/rnn-effectiveness/).
+(I was particularly amused by the LaTeX/math textbook, which yielded a compiling and even good-looking document after Karpathy fixed some errors in it; if the RNN had been trained against compile errors/warnings as well, perhaps it would not have needed any fixing at all...?)
 
 `char-rnn` relies on the [Torch NN framework](http://torch.ch/) & NVIDIA's CUDA GPU framework (http://docs.nvidia.com/cuda/cuda-getting-started-guide-for-linux/index.html#ubuntu-installation / https://developer.nvidia.com/cuda-downloads?sid=907142).
 
@@ -3117,8 +3119,14 @@ th train.lua -data_dir data/tinyshakespeare/ -gpuid 0 -rnn_size 512 -num_layers 
 ~~~
 
 Unfortunately, even on my i7 CPU, training is quite slow: ~3s a batch on the Tiny Shakespeare example.
-The important parameter is `train_loss` here; after some experimenting, I found that >3=output is total garbage, 1-2=lousy, and with <1=good, with <0.8=very good.
+The important parameter is `train_loss` here[^char-rnn-loss-meaning]; after some experimenting, I found that >3=output is total garbage, 1-2=lousy, and with <1=good, with <0.8=very good.
+
 With Tiny Shakespeare, the loss drops quickly at first, getting <4 within seconds and into the 2s within 20 minutes, but then the 1s take a long time to surpass, and <1 even longer (hours of waiting).
+
+[^char-rnn-loss-meaning]: The loss here seems to be the average Negative Log Likelihood of each character; so a training loss of 3.78911860 means `exp(-3.78911860) ~> 0.02` or 2% chance of predicting the next character.
+    This is not better than the base-rate of uniformly guessing each of the 128 ASCII characters, which would yield `1/128 ~> 0.0078125` or 0.7% chance. However, after a few hours to train and getting down to ~0.8, then it's starting to become quite impressive: 0.8 here translates to a 45% chance - not shabby!
+    At that point, the RNN is starting to become a good natural-language compressor as it's approaching estimates of the [entropy of natural human English](/Notes#efficient-natural-language) and RNNs have [gotten close](http://arxiv.org/abs/1308.0850 "'Generating Sequences With Recurrent Neural Networks', Graves 2014") to records like [1.278 bits per character](http://prize.hutter1.net/).
+    (Which, after converting to bits per character, implies that for English text similarly complicated as Wikipedia, we shouldn't expect our RNN to do any better than a training loss of ~0.87 and more realistically 0.9-1.1.)
 
 ### GPU vs CPU
 
@@ -3222,9 +3230,11 @@ If we really wanted to stress the EC2 image's hardware, we could go as large as 
 th train.lua -data_dir data/css/ -rnn_size 1306 -num_layers 4 -dropout 0.5 -eval_val_every 1
 ~~~
 
-This turns out to not be a good idea since it will take forever to train (eg after ~70m of training, still at train-loss of 3.7!).
+This turns out to not be a good idea since it will take forever to train - eg after ~70m of training, still at train-loss of 3.7!
+I suspect some of the hyperparameters may be important - the level of dropout doesn't seem to matter much but more than 3 layers seems to be unnecessary and slow if there are a lot of neurons to store state (perhaps because RNNs are said to 'unroll' computations over each character/time-step instead of being forced to do all their computation in a single deep network with >4 layers?) - but with the EC2 clock ticking and my own impatience, there's no time to try a few dozen random sets of hyperparameters to see which achieves best validation scores.
 
-Undeterred, I decided to upload *all* the CSS (using the sort-key trick to reduce the archive size):
+
+Undeterred, I decided to upload *all* the CSS (using the [`sort-key` trick](/Archiving%20URLs#sort---key-compression-trick) to reduce the archive size):
 
 ~~~{.Bash}
 find / -type f -name "*.css" | rev | sort | rev | tar c --to-stdout --no-recursion --files-from - | xz -9 --stdout > ~/src/char-rnn/data/css/all.tar.xz
@@ -3351,7 +3361,7 @@ Chastened by the exploding-error problem and the mostly waste of ~26 hours of pr
 ##### Data URI problem
 
 One flaw in the RNN I stumbled across but was unable to reproduce was that it seemed to have a problem with [data URIs](!Wikipedia).
-A data URI is a special kind of URL which is its own content, letting one write small files inline and avoiding needing a separate file; for example, this would yield a PNG image without any further network roundtrips or the developer needing to define a tiny file:
+A data URI is a special kind of URL which is its own content, letting one write small files inline and avoiding needing a separate file; for example, this following CSS fragment would yield a PNG image without the user's browser making additional network requests or the developer needing to create a tiny file just for an icon or something:
 
 ~~~{.CSS}
 url('data:image/png;base64,iVBORw0KGgoAA
@@ -3360,17 +3370,18 @@ EQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4Ug9C9zwz3gVLMDA/A6
 P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC')
 ~~~
 
-So it's a standard prefix followed by an indefinitely long string of ASCII gibberish, which is a textual encoding of the true binary encoding.
-The RNN sometimes starts a data URI and generates the prefix but then gets stuck continually producing hundreds or thousands of characters of ASCII gibberish without closing the data URI and getting back to writing regular CSS.
+So it's a standard prefix like `data:image/png;base64,` followed by an indefinitely long string of ASCII gibberish, which is a textual base-64 encoding of the underlying binary encoding.
+The RNN sometimes starts a data URI and generates the prefix but then gets stuck continually producing hundreds or thousands of characters of ASCII gibberish without ever closing the data URI with a quote & parentheses and getting back to writing regular CSS.
 
 What's going on there?
 Since PNG/JPG are compressed image formats, the binary encoding will be near-random and the base-64 encoding likewise near-random.
-The RNN can easily generate another character once it has started the base-64, but how does it know when to *stop*? ("I know how to spell Mississippi, I just don't know when to stop!")
-Possibly it has run into the limits of its 'memory' and once it has started emitting base-64 and has reached a plausible length of at least a few score characters (very few things can be encoded in less), it's now too far away from the original CSS, and all it can see is base-64; so of course the maximal probability goes to further base-64 characters...
+The RNN can easily generate another character once it has started the base-64, but how does it know when to *stop*? ("I know how to spell [banana](http://www.catb.org/jargon/html/B/banana-problem.html), I just don't know when to stop! BA NA NA NA...")
+Possibly it has run into the limits of its 'memory' and once it has started emitting base-64 and has reached a plausible length of at least a few score characters (few images can be encoded in less), it's now too far away from the original CSS, and all it can see is base-64; so of course the maximal probability is an additional base-64 character...
 
 This might be fixable by either giving the RNN more neurons in the hope that with more memory it can break out of the base-64 trap, training more (perhaps data URIs are too rare for it to have adequately learned it with the few epochs thus far), or backpropagating error further in time/the sequence by increasing the size of the RNN in terms of unrolling (increasing `-seq_length` from 50).
 Or of course one could delete data URIs and other undesirable features from the corpus, in which case those problems will never come up; still, I would prefer the RNN to handle issues on its own and have as little domain knowledge engineered in as possible.
 I wonder if the data URI issue might be what killed the large RNN at the end?
+(My other hypothesis is that the `sort-key` trick accidentally led to a multi-megabyte set of repetitions of the same common CSS file, which caused the large RNN to overfit, and then once the training reached a new section of normal CSS, the large RNN began making extremely confident predictions of more repetition, which were wrong and would lead to very large losses, possibly triggering the exploding-error killer.)
 
 ##### Progress
 
@@ -3807,7 +3818,10 @@ Lessons learned:
 
 ### External links
 
-- [HN discussion](https://news.ycombinator.com/item?id=10012625)
+- Discussion:
+
+    - [HN discussion](https://news.ycombinator.com/item?id=10012625)
+    - Reddit: [1](http://www.reddit.com/r/MachineLearning/comments/3fzau7/training_a_neural_network_to_generate_css/), [2](https://www.reddit.com/r/compsci/comments/3fy9b0/training_a_neural_net_to_generate_css/)
 
 <!--
 
