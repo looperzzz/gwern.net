@@ -62,6 +62,7 @@ Posts:
 
 - ["Darknet Market [Evolution] Basket Analysis"](http://ryancompton.net/2015/03/24/darknet-market-basket-analysis/), Ryan Compton
 - ["Deanonymizing Darknet Data": GPS coordinates in image metadata](http://atechdad.com/Deanonymizing-Darknet-Data/)
+- ["What illegal drugs cost on the dark web"](http://qz.com/466273/what-illegal-drugs-cost-on-the-dark-web/)
 
 ## Citing
 
@@ -762,6 +763,10 @@ Despite all this, not all markets can be crawled or present other difficulties:
 - Middle Earth rate-limits crawls per session, limiting how much can be downloaded without investing a lot of time or in a CAPTCHA-breaking service
 - Abraxas leads to peculiarly high RAM usage by wget, which can lead to the OOM killer ending the crawl prematurely
 
+See also the comments on crawling in ["Measuring the Longitudinal Evolution of the Online Anonymous Marketplace Ecosystem"](https://www.usenix.org/system/files/conference/usenixsecurity15/sec15-paper-soska-updated.pdf), Soska & Christin 2015.
+
+## Crawler wishlist
+
 In retrospect, had I known I was going to be scraping so many sites for 3 years, I probably would have worked on writing a custom crawler.
 A custom crawler could have simplified the blacklist part and allowed some other desirable features (in descending order of importance):
 
@@ -780,7 +785,7 @@ A number of other datasets are known to exist but are unavailable, including:
 - law enforcement scrapes (see [the Force briefing](https://www.reddit.com/r/DarkNetMarkets/comments/336p83/the_force_briefing_le_dnm_investigative_methods/)), seized server images
 - National Drug and Alcohol Research Centre (NDARC) in Sydney, Australia; Australian vendor focused crawls, non-release may be due to concerns over Australian police interest in them as documentation of sales volume to use against the many arrested Australian sellers
 - unknown Princeton grad student
-- Christin CMU group: uncensored SR1 crawls, indefinite number of other markets crawled post-2012
+- Christin CMU group: uncensored SR1 crawls, large number of other markets crawled 2012-2015 (see Soska & Christin 2015)
 - Digital Citizens Alliance
 - Dolliver 2015 (claimed NDA on SR2 crawls)
 
@@ -792,8 +797,3 @@ A number of other datasets are known to exist but are unavailable, including:
     - [HN](https://news.ycombinator.com/item?id=9894570)
 - ["You Can Now Download a Copy of Pretty Much Every Dark Web Market Ever Made"](http://motherboard.vice.com/read/you-can-now-download-a-copy-of-pretty-much-every-dark-web-market-ever-made)
 - ["There's a searchable cache of the web's darkest corners of the anonymous internet"](http://fusion.net/story/168035/theres-a-searchable-cache-of-the-webs-darkest-corners-of-the-anonymous-internet/)
-
-<!-- TODO:
-Release:
-all market-specific subreddits
--->
