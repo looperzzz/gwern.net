@@ -1096,6 +1096,242 @@ The expected-value of a replacement is $100\% \cdot -\$42$ or -\$42, and the exp
 
 Hence we can be confident that not getting a new AC really is the right decision.
 
+# Some ways of dealing with measurement error
+
+Prompted by [a question on LessWrong](http://lesswrong.com/r/discussion/lw/mk8/stupid_questions_august_2015/cngg), some examples of how to analyze noisy measurements in R:
+
+~~~
+## Create a simulated dataset with known parameters, and then run a ML multilevel model, a ML SEM,
+## and a Bayesian multilevel model; with the last, calculate Expected Value of Sample Information (EVSI):
+
+## SIMULATE
+set.seed(2015-08-11)
+## "There is a variable X, x belongs to [0, 100]."
+toplevel <- rnorm(n=1, 50, 25)
+## "There are n ways of measuring it, among them A and B are widely used."
+## "For any given measurer, the difference between x(A) and x(B) can be up to 20 points."
+A <- toplevel + runif(1, min=-10, max=10)
+B <- toplevel + runif(1, min=-10, max=10)
+c(toplevel, A, B)
+# [1] 63.85938385 55.43608379 59.42333264
+### the true level of X we wish to recover is '63.85'
+
+## "Between two any measurers, x(A)1 and x(A)2 can differ on average 10 points, likewise with B."
+### let's imagine 10 hypothetical points are sample using method A and method B
+### assume 'differ on average 10 points' here means something like 'the standard deviation is 10'
+A_1 <- rnorm(n=10, mean=A, sd=10)
+B_1 <- rnorm(n=10, mean=B, sd=10)
+
+data <- rbind(data.frame(Measurement="A", Y=A_1), data.frame(Measurement="B", Y=B_1)); data
+#    Measurement           Y
+# 1            A 56.33870025
+# 2            A 69.07267213
+# 3            A 40.36889573
+# 4            A 48.67289213
+# 5            A 79.92622603
+# 6            A 62.86919410
+# 7            A 53.12953462
+# 8            A 66.58894990
+# 9            A 47.86296948
+# 10           A 60.72416003
+# 11           B 68.60203507
+# 12           B 58.24702007
+# 13           B 45.47895879
+# 14           B 63.45308935
+# 15           B 52.27724328
+# 16           B 56.89783535
+# 17           B 55.93598486
+# 18           B 59.28162022
+# 19           B 70.92341777
+# 20           B 49.51360373
+
+## MLM
+
+## multi-level model approach:
+library(lme4)
+mlm <- lmer(Y ~ (1|Measurement), data=data); summary(mlm)
+# Random effects:
+#  Groups      Name        Variance Std.Dev.
+#  Measurement (Intercept)  0.0000  0.000000
+#  Residual                95.3333  9.763877
+# Number of obs: 20, groups:  Measurement, 2
+#
+# Fixed effects:
+#              Estimate Std. Error  t value
+# (Intercept) 58.308250   2.183269 26.70685
+confint(mlm)
+#                    2.5 %       97.5 %
+# .sig01       0.000000000  7.446867736
+# .sigma       7.185811525 13.444112087
+# (Intercept) 53.402531768 63.213970887
+
+## So we estimate X at 58.3 but it's not inside our confidence interval with such little data. Bad luck?
+
+## SEM
+
+library(lavaan)
+X.model <- '        X =~ B + A
+                    A =~ a
+                    B =~ b'
+X.fit <- sem(model = X.model, meanstructure = TRUE, data = data2)
+summary(X.fit)
+# ...                   Estimate  Std.err  Z-value  P(>|z|)
+# Latent variables:
+#   X =~
+#     B                 1.000
+#     A              7619.504
+#   A =~
+#     a                 1.000
+#   B =~
+#     b                 1.000
+#
+# Intercepts:
+#     a                58.555
+#     b                58.061
+#     X                 0.000
+#     A                 0.000
+#     B                 0.000
+## Well, that didn't work well - explodes, unfortunately. Probably still not enough data.
+
+## MLM (Bayesian)
+
+library(R2jags)
+## rough attempt at writing down an explicit multilevel model which
+## respects the mentioned priors about errors being reasonably small:
+model <- function() {
+  grand.mean ~ dunif(0,100)
+
+  delta.between.group ~ dunif(0, 10)
+
+  sigma.between.group ~ dunif(0, 100)
+  tau.between.group <- pow(sigma.between.group, -2)
+
+  for(j in 1:K){
+   # let's say the group-level differences are also normally-distributed:
+   group.delta[j] ~ dnorm(delta.between.group, tau.between.group)
+   # and each group also has its own standard-deviation, potentially different from the others':
+   group.within.sigma[j] ~ dunif(0, 20)
+   group.within.tau[j] <- pow(group.within.sigma[j], -2)
+
+   # save the net combo for convenience & interpretability:
+   group.mean[j] <- grand.mean + group.delta[j]
+  }
+
+  for (i in 1:N) {
+   # each individual observation is from the grand-mean + group-offset, then normally distributed:
+   Y[i] ~ dnorm(grand.mean + group.delta[Group[i]], group.within.tau[Group[i]])
+  }
+
+  }
+jagsData <- list(N=nrow(data), Y=data$Y, K=length(levels(data$Measurement)),
+             Group=data$Measurement)
+params <- c("grand.mean","delta.between.group", "sigma.between.group", "group.delta", "group.mean",
+            "group.within.sigma")
+k1 <- jags(data=jagsData, parameters.to.save=params, inits=NULL, model.file=model); k1
+# ...                      mu.vect sd.vect    2.5%     25%     50%     75%   97.5%  Rhat n.eff
+# delta.between.group     4.971   2.945   0.221   2.353   4.967   7.594   9.791 1.008   260
+# grand.mean             52.477  11.321  23.453  47.914  53.280  58.246  74.080 1.220    20
+# group.delta[1]          6.017  11.391 -16.095   0.448   5.316  10.059  34.792 1.152    21
+# group.delta[2]          5.662  11.318 -15.836   0.054   5.009  10.107  33.548 1.139    21
+# group.mean[1]          58.494   3.765  50.973  56.188  58.459  60.838  66.072 1.001  3000
+# group.mean[2]          58.139   2.857  52.687  56.366  58.098  59.851  63.999 1.003   920
+# group.within.sigma[1]  12.801   2.766   8.241  10.700  12.446  14.641  18.707 1.002  1100
+# group.within.sigma[2]   9.274   2.500   5.688   7.475   8.834  10.539  15.700 1.002  1600
+# sigma.between.group    18.031  21.159   0.553   3.793   9.359  23.972  82.604 1.006  1700
+# deviance              149.684   2.877 145.953 147.527 149.081 151.213 156.933 1.001  3000
+
+## VOI
+
+posteriorXs <- k1$BUGSoutput$sims.list[["grand.mean"]]
+MSE <- function(x1, x2) { (x2 - x1)^2 }
+lossFunction <- function(x, predictions) { mean(sapply(predictions, function(x2) { MSE(x, x2)}))}
+## our hypothetical mean-squared loss if we predicted, say, X=60:
+lossFunction(60, posteriorXs)
+# [1] 184.7087612
+## of the possible values for X, 1-100, what value of X minimizes our squared error loss?
+losses <- sapply(c(1:100), function (n) { lossFunction(n, posteriorXs);})
+which.min(losses)
+# [1] 52
+## 52 also equals the mean estimate of X, which is good since it's well known that the mean is what minimizes
+## the loss when the loss is squared-error so it suggests that I have not screwed up the definitions
+losses[52]
+[1] 128.3478462
+
+## to calculate EVSI, we repeatedly simulate a few hundred times the existence of a hypothetical 'C' measurement
+## and draw n samples from it;
+## then we add the C data to our existing A & B data; run our Bayesian multilevel model again on the bigger dataset;,
+## calculate what the new loss is, and compare it to the old loss to see how much the new data
+## reduced the loss/mean-squared-error.
+## Done for each possible n (here, 1-30) and averaged out, this tells us how much 1 additional datapoint is worth,
+## 2 additional datapoints, 3 additional datapoints, etc.
+sampleValues <- NULL
+for (i in seq(from=1, to=30)) {
+
+    evsis <- replicate(500, {
+        n <- i
+
+        C <- toplevel + runif(1, min=-10, max=10)
+        C_1 <- rnorm(n=n, mean=C, sd=10)
+        ## all as before, more or less:
+        newData <- rbind(data, data.frame(Measurement="C", Y=C_1))
+
+        jagsData <- list(N=nrow(newData), Y=newData$Y, K=length(levels(newData$Measurement)),
+                         Group=newData$Measurement)
+        params <- c("grand.mean","delta.between.group", "sigma.between.group", "group.delta", "group.mean",
+                    "group.within.sigma")
+        jEVSI <- jags(data=jagsData, parameters.to.save=params, inits=NULL, model.file=model)
+
+        posteriorTimesEVSI <- jEVSI$BUGSoutput$sims.list[["grand.mean"]]
+        lossesEVSI <- sapply(c(1:100), function (n) { lossFunction(n, posteriorTimesEVSI);})
+
+        oldOptimum <- 128.3478462 # losses[52]
+        newOptimum <- losses[which.min(lossesEVSI)]
+        EVSI <- newOptimum - oldOptimum
+        return(EVSI)
+        }
+        )
+
+    print(i)
+
+    print(mean(evsis))
+    sampleValues[i] <- mean(evsis)
+}
+sampleValues
+#  [1] 13.86568780 11.07101087 14.15645538 13.05296681 11.98902668 13.86866619 13.65059093 14.05991443
+#  [9] 14.80018511 16.36944874 15.47624541 15.64710237 15.74060632 14.79901214 13.36776390 15.35179426
+# [17] 14.31603459 13.70914727 17.20433606 15.89925289 16.35350861 15.09886204 16.30680175 16.27032067
+# [25] 16.30418553 18.84776433 17.86881713 16.65973397 17.04451609 19.17173439
+
+## As expected, the gain in reducing MSE continues increasing as data comes in but with diminishing returns;
+## this is probably because in a multilevel model like this, you aren't using the _n_ datapoints to estimate X
+## directly so much as you are using them to estimate a much smaller number of latent variables, which are then
+## the _n_ used to estimate X. So instead of getting hyperprecise estimates of A/B/C, you need to sample from additional
+## groups D/E/F/... Trying to improve your estimate of X by measuring A/B/C many times is like trying to estimate
+## IQ precisely by administering a WM test a hundred times.
+
+## If we wanted to compare with alternatives like instead sampling n data points from C and a D, it's easy to modify
+## the EVSI loop to do so: generate `D <- toplevel + runif(1, min=-10, max=10); D_1 <- rnorm(n=n, mean=D, sd=10)`
+## and now `rbind` D_1 in as well. At a guess, after 5-10 samples from the current group, estimates of X will be improved more
+## by then sampling from a new group.
+
+## Or the loss function could be made more realistic. It's unlikely one is paid by MSE, and if one adds in how much
+## money each sample costs, with a realistic loss function, one could decide exactly how much data is optimal to collect.
+
+## To very precisely estimate X, when our measurements are needed to measure at least 3 latent variables,
+## requires much more data than usual.
+
+## In general, we can see the drawbacks and benefits of each approach. A canned MLM
+## is very fast to write but doesn't let us include prior information or easily run
+## additional analyses like how much additional samples are worth. SEM works poorly
+## on small samples but is still easy to write in if we have more complicated
+## models of measurement error. A full-blown modeling language like JAGS is quite
+## difficult to write in and MCMC is slower than other approaches but handles small
+## samples without any errors or problems and offers maximal flexibility in using
+## the known prior information and then doing decision-theoretic stuff. Overall for
+## this problem, I think JAGS worked out best, but possibly I wasn't using LAVAAN
+## right and that's why SEM didn't seem to work well.
+~~~
+
 <!--
 "Estimating the genotypic intelligence of populations and assessing the impact of socioeconomic factors and migrations.", Piffer https://thewinnower.com/papers/estimating-the-genotypic-intelligence-of-populations-and-assessing-the-impact-of-socioeconomic-factors-and-migrations
 
