@@ -508,6 +508,9 @@ Thor Bache-Wiig       M   29                       seller                       
                       M   29                       seller                                      Norway                     marijuana                             TRUE  2015-06-09 2015-06-09
                       M   30                       seller                                      Norway                     marijuana                             TRUE  2015-06-09 2015-06-09
                       M   31                       seller                                      Norway                     marijuana                             TRUE  2015-06-09 2015-06-09
+J Manikantan          M   24                       buyer     Agora                             India       Bengaluru      MDMA, LSD, marijuana                  TRUE  2015-08-06 2015-08-09
+Debyendu Roy          M   26                       buyer     Agora                             India       Bengaluru      MDMA, LSD, marijuana                  TRUE  2015-08-06 2015-08-09
+Jag Saipravesh        M   23                       buyer     Agora                             India       Bengaluru      MDMA, LSD, marijuana                  TRUE  2015-08-06 2015-08-09
 
 # Confirmed
 ## Agora
@@ -537,6 +540,10 @@ On 29 January 2015, German police searched several locations & [arrested 5](http
 The next day the Agora gun (and auto/semi-auto gun) seller Dosensuppe went on vacation, leading to [questions on the Agora forums](http://lacbzxobeprssrfx.onion/index.php/topic,58397.0/ "Dosensuppe BUSTED") about whether he, MaxMustermann or PROJEKTIL was the arrested man.
 Dosensuppe [replied on 11 March 2015](http://lacbzxobeprssrfx.onion/index.php/topic,58397.msg8640671.html#msg8640671) that he had not been arrested but was going on vacation for his personal safety; he did not respond to requests for a PGP signature or posted or sold since.
 Given the Vice connection and the rash of German/Dutch arrests 2014-2015, it seems highly likely that this was either Agora or Evolution associated, and of the few gun sellers, Dosensuppe fits the best.
+
+### India
+
+On 6 August 2015, 3 Indian men (J Manikantan, Debyendu Roy, Jag Saipravesh) [were arrested after a police informant bought from them](http://timesofindia.indiatimes.com/city/bengaluru/Peddlers-procure-narcotics-from-darknet/articleshow/48368502.cms "Peddlers procuring narcotics from dark world of internet") drugs ("Ecstasy, LSD, charas and ganja") which they had purchased on Agora and were selling to "students of reputed engineering colleges in the city".
 
 ### Netherlands
 
@@ -1157,7 +1164,7 @@ They apparently had been selling marijuana and unspecified other products on the
 
 ### UK
 
-[On 3 November 2014](http://www.dailymail.co.uk/news/article-2823411/Teenager-accused-plotting-pipe-bomb-attack-targeting-education-college.html "Teenager accused of plotting pipe bomb attack 'was targeting further education college'"), the then-18yo Newcastle man Liam Lyburd (buyer ["The Joker"/"I Love My Anger"](http://www.dailymail.co.uk/news/article-3172374/Teenager-stockpiled-weapons-explosives-carry-mass-murder-former-college.html)/"Donald Trump") [was arrested](http://www.mirror.co.uk/news/uk-news/first-picture-teenager-accused-plotting-6124856 "Liam Lyburd: Bitter teen 'planned mass murder at college with kill bag full of weapons and explosives'") after a 2 November 2014 Facebook post threatening to carry out a mass-killing at Newcastle College was reported to police by a friend.
+[On 3 November 2014](http://www.dailymail.co.uk/news/article-2823411/Teenager-accused-plotting-pipe-bomb-attack-targeting-education-college.html "Teenager accused of plotting pipe bomb attack 'was targeting further education college'"), the then-18yo Newcastle man Liam Lyburd (buyer ["The Joker"/"I Love My Anger"](http://www.dailymail.co.uk/news/article-3172374/Teenager-stockpiled-weapons-explosives-carry-mass-murder-former-college.html)/"Donald Trump") [was arrested](http://www.mirror.co.uk/news/uk-news/first-picture-teenager-accused-plotting-6124856 "Liam Lyburd: Bitter teen 'planned mass murder at college with kill bag full of weapons and explosives'") after a 2 November 2014 Facebook post threatening to carry out a mass-killing at Newcastle College was reported to police by a friend & [convicted 30 July 2015](http://www.bbc.com/news/uk-33722658).
 The police search turned up a handgun & ammo, 7 bombs, and other items; some of which he had ["bought using bitcoins, the decentralised internet currency, from the dark or deep web, the black market where illegal commodities are know to be traded"](http://www.theladbible.com/articles/a-guy-used-bitcoin-to-stockpile-weapons-and-ammunition-in-a-bid-to-carry-out-mass-murder-at-his-former-college "A Guy Used Bitcoin To Stockpile Weapons And Ammunition In A Bid To Carry Out Mass Murder At His Former College"), one of the markets being [Evolution](http://www.mirror.co.uk/news/uk-news/liam-lyburd-teen-accused-plotting-6149495 "Liam Lyburd: Bomb suspect teen 'left note blaming establishment for his miserable life'")
 
 ### Scandinavia
@@ -1367,6 +1374,8 @@ The [Drugs Global Incident Map](http://drugs.globalincidentmap.com/) features ma
     - ["Cannabis worth €1m found hidden in soap"](http://utv.ie/News/2015/06/11/Cannabis-worth-1m-found-hidden-in-soap-38901)
     - ["Fall River police intercept package of cocaine from Puerto Rico"](http://www.heraldnews.com/article/20150603/NEWS/150608405)
     - ["Fewer Pot Packages Found in Mail As Legalization Takes Hold Pot intercepts dropped 12 percent as Colorado and Washington opened stores"](http://www.usnews.com/news/articles/2015/05/29/fewer-pot-packages-found-in-mail-as-legalization-takes-hold)
+    - ["Agents arrest Tuscaloosa postal workers accused of helping criminals traffic 500 pounds of weed"](http://www.al.com/news/tuscaloosa/index.ssf/2015/08/narcotics_agents_arrest_postal.html)
+    - ["Pittsburgh Native Arrested, Accused Of Selling Pot Through Mail"](http://pittsburgh.cbslocal.com/2015/07/28/pittsburgh-native-arrested-accused-of-selling-pot-through-the-mail/)
 
 Most are likely unrelated to the black-markets, and some rumors are wrong or flatly made up (for example, a seller may be covering up an exit scam with a fake story about being busted, or one seller may be trying to hurt another's sales eg [the TedDanzig incident](https://www.reddit.com/r/SilkRoad/comments/1xq97t/teddanzig_arrested/) or the 4lb PureFireMeds FUD), but of course, some will turn out to be real.
 
@@ -1621,3 +1630,40 @@ qplot(YearMonth, log1p(Freq), color=Country, facets=. ~ Country, data=x)
 - [Vocativ visualization/map of geographical distribution of arrests](http://www.vocativ.com/interactive/underworld/drugs/darknet-arrests-map/ "Beyond Ross Ulbricht: A Map Of Dark Net Arrests Around The World")
 - ["This Researcher Is Tallying All the Arrests From Dark Web Markets"](http://motherboard.vice.com/read/this-researcher-is-tallying-arrests-from-dark-web-markets)
 - Discussion: [Reddit](https://www.reddit.com/r/DarkNetMarkets/comments/34z5xi/list_of_known_dnm_arrests/)
+
+<!--
+from https://www.reddit.com/r/DarkNetMarkets/comments/3gg0z5/fent_darknet_dealer_indictment/
+
+Daniel Vivas Ceron M 34yo
+fentanyl, ANPP, two fentanyl analogues (acetyl fentanyl, beta-hydroxy-thiofentanyl)
+http://www.justice.gov/opa/file/640976/download
+http://www.justice.gov/opa/file/640966/download
+arrested 17 July 2015 http://koin.com/2015/07/28/colombian-nabbed-in-panama-in-oregon-fentanyl-case/ http://globalnews.ca/news/2135735/man-accused-of-running-drug-smuggling-ring-in-u-s-from-inside-canadian-prison/ http://www6.lexisnexis.com/publisher/EndUser?Action=UserDisplayFullDocument&orgId=685&topicId=14279&docId=l:2415848438&Em=7&start=5 "COLOMBIAN MAN ARRESTED IN CENTRAL AMERICA FOR OPERATING CRIMINAL ENTERPRISE FROM CANADIAN PRISON"
+learned of 10 August 2015
+part of Hubbard case
+
+existing charges:
+
+DISTRICT OF NORTH DAKOTA
+
+* Jameson Robert Sele, 20, of Grand Forks, pleaded guilty to conspiracy to distribute controlled substances and was sentenced July 27 to 36 months imprisonment.
+
+* Ryan Jon Jensen, 20, of Grand Forks, pleaded guilty Feb. 27 to conspiracy to distribute controlled substances resulting in serious bodily injury and death; two counts of distribution of a controlled substance resulting in death; distribution of a controlled substance resulting in serious bodily injury, and money laundering conspiracy. He's currently awaiting sentencing.
+
+* David Todd Noye Jr., 18, of Grand Forks, pleaded guilty May 4 to conspiracy to distribute controlled substances. He's currently awaiting sentencing.
+
+* Joshua Tyler Fulp, 20, of Grand Forks, pleaded guilty June 23 to conspiracy to distribute controlled substances resulting in serious bodily injury and death, and money laundering conspiracy. He's currently awaiting sentencing.
+
+* Kain Daniel Schwandt, 19, of Grand Forks, pleaded guilty July 24 to conspiracy to distribute controlled substances. He's currently awaiting sentencing.
+
+* Brandon Corde Hubbard, 40, of Portland, Oregon, was indicted for conspiracy to distribute controlled substances resulting in serious bodily injury and death; conspiracy to distribute controlled substances resulting in death and money laundering conspiracy. Trial is currently set for Sept. 15.
+
+DISTRICT OF OREGON
+
+* Steven Fairbanks Locke was indicted for conspiracy to distribute and possess with intent to distribute a controlled substance. Trial is set for Sept. 15.
+
+* Channing Laceywas indicted for conspiracy to distribute a controlled substance resulting in serious bodily injury; distribution of a controlled substances resulting in death; possession of a controlled substance with intent to distribute. Trial is set for Sept. 22.
+
+* Carissa Marie Laprall was indicted for three counts of distribution of a controlled substance resulting in serious bodily injury and possession of a controlled substance with the intent to distribute. Trial is set for Sept. 22.
+
+-->
