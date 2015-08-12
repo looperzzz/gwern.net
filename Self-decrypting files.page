@@ -86,6 +86,8 @@ Rivest [has actually used](http://people.csail.mit.edu/rivest/lcs35-puzzle-descr
 
     Moore's law, in the original formulation of transistors per dollar, may have continued post-1997, but the gains increasingly came by parallelism, which is not useful for repeated squaring.
 
+Further refinements to the modular exponentiation proposal have been made, such as [Kuppusamy & Rangasamy 2015](/docs/2015-kuppusamy.pdf "Improved Cryptographic Puzzle Based on Modular Exponentiation").
+
 ## Constant factors
 
 How well does this work? The complexity seems correct, but I worry about the constant factors. Back in 1996, computers were fairly homogeneous, and Rivest et al could reasonably write
