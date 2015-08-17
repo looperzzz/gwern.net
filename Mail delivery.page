@@ -716,66 +716,130 @@ So EVPI represents an upper bound on how much any lesser amount of information c
 
 The next kind is what is the "[expected value of sample information](!Wikipedia)" (EVSI): what is the value of collecting one more additional datapoint, which can help pin down the optimal time a little more precisely and reduce the risk of loss from picking a bad time?
 EVSI can be defined as "expected value of best decision with some additional sample information" minus "expected value of best current decision".
-More specifically, if many times we draw a sample from the posterior (which represents our best estimate of the world), turn it into a new interval-censored datapoint, create an updated posterior distribution incorporating that or several more datapoints, run the loss function again & calculate a new optimal check time, and compute the improvement of the new check time's NPV over the old check time's NPV to get the EVSI, what is the mean of the EVSIs?
+More specifically, if many times we created a new datapoint, create an updated posterior distribution incorporating that new datapoint, run the loss function again & calculate a new optimal check time, and compute the improvement of the new check time's NPV over improved estimate of the old check time's NPV to estimate a possible EVSI, what is the mean of the EVSIs?
+
+This tells us the benefit of that datapoint, and then we can subtract the cost of collecting one more datapoint; if it's still positive, we want to collect more data, but if it's negative (the gain from the estimate improved by one more datapoint) is less than a datapoint would cost to collect, then we have hit diminishing returns and it may be time to stop collecting data.
+
+We could do this for one datapoint to decide whether to stop. But we could also go back and look at how the EVSI & profit shrank during the original collection of the mail data.
 
 ~~~{.R}
-sampleValues <- NULL
-sampleValuesProfit <- NULL
-for (n in seq(from=1, to=30)) {
+data <- mail # original interval-only data
+sampleValues <- data.frame(N=NULL, newOptimum=NULL, newOptimumLoss=NULL, sampleValue=NULL, sampleValueProfit=NULL)
+for (n in seq(from=0, to=(nrow(data)+10))) {
 
     evsis <- replicate(100, {
-            # deliveryTime <- sample(posteriorTimes, size=n, replace=TRUE)
-            # checkTime <- round(rnorm(n, mean = 660, sd = 30))
-            # newSamples <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
-            #                          checkTime, deliveryTime)
-            # newSamples <- data.frame(Date=NA, Time1=newSamples[1,], Time2=newSamples[2,], Group=TRUE)
-            newSamples <- mail2[sample(1:nrow(mail2), n, replace=TRUE),] # bootstrap new data
+            # if n is more than we collected, bootstrap hypothetical new data; otherwise, just take that prefix
+            # and pretend we are doing a sequential trial where we have only collected the first n observations thus far
+            if (n > nrow(data)) { newData <- rbind(data, data[sample(1:nrow(data), n - nrow(data) , replace=TRUE),]) }
+                              else { newData <- data[1:n,] }
 
-            newData <- rbind(mail2, newSamples)
-
-            dataEVSI <- list(N=nrow(newData), K=max(newData$Group+1),
-                         Group=(newData$Group+1), "dt"=subset(newData, select=c("Time1", "Time2")),
+            dataEVSI <- list(n=nrow(newData), "dt"=subset(newData, select=c("Time1", "Time2")),
                          "y"=rep(1, nrow(newData)))
-            paramsEVSI <- c("grand.mean","delta.between.group", "sigma.between.group", "group.delta", "group.mean",
-            "group.within.sigma", "y.new2015")
-            initsEVSI <- function() { list(grand.mean=650, group.within.sigma=c(15,15), t=as.vector(apply(dataEVSI[["dt"]],1,mean))) }
-            kEVSI <- jags(data=dataEVSI, parameters.to.save=paramsEVSI, inits=initsEVSI, model.file=model3, n.iter=2000, progress.bar="none")
+            paramsEVSI <- c("mu","sd", "y.new")
+            initsEVSI <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(dataEVSI[["dt"]],1,mean))) }
+            kEVSI <- jags(data=dataEVSI, parameters.to.save=paramsEVSI, inits=initsEVSI, model.file=model1,
+                          n.iter=2000, progress.bar="none")
 
-            posteriorTimesEVSI <- kEVSI$BUGSoutput$sims.list[["y.new2015"]]
+            posteriorTimesEVSI <- kEVSI$BUGSoutput$sims.list[["y.new"]]
             lossesEVSI <- sapply(c(0:1440), function (tm) { lossFunction(tm, 60, posteriorTimesEVSI, 780);})
 
-            oldOptimum <- lossesEVSI[which.min(losses)]
+            if (n==0) { oldOptimum <- min(lossesEVSI)  }
+                 else {oldOptimum <- lossesEVSI[sampleValues[sampleValues$N==0,]$newOptimum] } # compare to the estimate based on priors
             print(oldOptimum)
             newOptimum <- min(lossesEVSI)
             print(newOptimum)
-            EVSI <- netPresentValue(oldOptimum - newOptimum)
-            print(EVSI)
-            return(EVSI)
-        }
+            sampleValue <- netPresentValue(newOptimum - oldOptimum)
+            sampleValueProfit <- sampleValue + (n*60)
+
+            return(list(N=n, newOptimum=which.min(lossesEVSI), newOptimumLoss=newOptimum,
+                        sampleValue=sampleValue, sampleValueProfit=sampleValueProfit))
+            }
         )
 
-    print(n)
-
-    print(mean(evsis))
-    sampleValues[n] <- mean(evsis)
-
-    print(mean(evsis) - (n*60))
-    sampleValuesProfit[n] <- mean(evsis) - (n*60)
-}
+    sampleValues <- rbind(sampleValues, data.frame(N=n, newOptimum=mean(unlist(evsis[2,])), newOptimumLoss=mean(unlist(evsis[3,])),
+                                                   sampleValue=mean(unlist(evsis[4,])), sampleValueProfit=mean(unlist(evsis[5,]))))
+    }
 sampleValues
-#  [1] 34.77799986 31.73329273 38.18455282 30.41835831 30.30426792 38.47955050 37.21461532 31.92700556
-#  [9] 32.08643635 32.16569858 36.52455934 34.21948839 36.93884932 27.31557841 37.12863984 40.03678608
-# [17] 37.95875284 36.96553883 33.13387511 41.53953025 36.22350159 36.49455117 32.02881222 34.83234063
-# [25] 32.74584788 39.10580698 31.28452866 32.45303489 39.71965061 37.91183401
-sampleValuesProfit
-#  [1]   -25.22200014   -88.26670727  -141.81544718  -209.58164169  -269.69573208  -321.52044950
-#  [7]  -382.78538468  -448.07299444  -507.91356365  -567.83430142  -623.47544066  -685.78051161
-# [13]  -743.06115068  -812.68442159  -862.87136016  -919.96321392  -982.04124716 -1043.03446117
-# [19] -1106.86612489 -1158.46046975 -1223.77649841 -1283.50544883 -1347.97118778 -1405.16765937
-# [25] -1467.25415212 -1520.89419302 -1588.71547134 -1647.54696511 -1700.28034939 -1762.08816599
+#     N newOptimum newOptimumLoss    sampleValue sampleValueProfit
+# 1   0        718    125.8357254     0.00000000       0.000000000
+# 2   1        710    126.8240370   -63.84148199      -3.841481994
+# 3   2        720    122.9326133   -22.58026127      97.419738729
+# 4   3        706    126.9510567  -111.37300483      68.626995169
+# 5   4        701    129.6445670  -331.91760647     -91.917606467
+# 6   5        699    127.9200591  -507.49271093    -207.492710926
+# 7   6        691    131.1700565  -733.57443177    -373.574431774
+# 8   7        685    130.6522411 -1014.18538063    -594.185380628
+# 9   8        695    129.4621961  -823.39923082    -343.399230816
+# 10  9        695    130.8990327 -1060.76312943    -520.763129429
+# 11 10        690    130.0317575  -838.94029123    -238.940291227
+# 12 11        687    132.3408161 -1005.18345763    -345.183457629
+# 13 12        688    128.7024209 -1076.94790629    -356.947906285
+# 14 13        691    128.7847298  -781.50178967      -1.501789674
+# 15 14        694    127.9369339  -656.59121984     183.408780158
+# 16 15        694    126.0566269  -806.00166533      93.998334671
+# 17 16        689    124.5453033  -947.17295899      12.827041010
+# 18 17        696    124.5155382  -685.92119890     334.078801099
+# 19 18        693    122.8995356  -725.39111464     354.608885358
+# 20 19        694    123.3752243  -792.03436869     347.965631308
+# 21 20        691    122.8474381  -831.65766875     368.342331248
+# 22 21        688    122.7410579  -750.58671816     509.413281836
+# 23 22        694    123.2427787  -821.84683912     498.153160877
+# 24 23        690    120.1369382  -939.21452046     440.785479536
+# 25 24        691    119.0625880  -917.24791546     522.752084536
+# 26 25        692    123.2839660  -873.21545675     626.784543253
+# 27 26        691    116.7310231 -1010.16256553     549.837434471
+# 28 27        696    124.3753999  -583.49150221    1036.508497791
+# 29 28        690    119.1707395  -757.89151532     922.108484681
+# 30 29        695    123.0719875  -679.71422876    1060.285771237
+# 31 30        694    117.5349448  -888.91580706     911.084192938
+# 32 31        690    113.1367215 -1118.51137381     741.488626190
+# 33 32        696    118.6698765  -694.74315672    1225.256843281
+# 34 33        695    121.7969435  -764.28504781    1215.714952188
+# 35 34        695    119.6718169  -938.93149794    1101.068502063
+# 36 35        695    121.8038276  -696.14112529    1403.858874715
+# 37 36        692    125.7647608  -654.69249793    1505.307502073
+# 38 37        695    125.3250553  -742.07206983    1477.927930167
+# 39 38        694    122.9168281  -749.27589711    1530.724102885
+# 40 39        695    123.8710234  -821.75300571    1518.246994294
+# 41 40        693    124.7621471  -618.07035210    1781.929647903
+# 42 41        693    123.4579322  -728.01090711    1731.989092889
+# 43 42        693    121.9374441  -758.56355408    1761.436445920
+# 44 43        695    120.8718921  -755.58336561    1824.416634385
+# 45 44        701    122.1483864  -593.38140787    2046.618592126
+# 46 45        698    123.2369851  -680.63721939    2019.362780612
+# 47 46        695    122.7351259  -621.83757171    2138.162428291
+# 48 47        694    120.1966761  -734.45067986    2085.549320144
+# 49 48        692    119.3265300  -822.87473602    2057.125263980
+# 50 49        696    117.4465648  -927.46155981    2012.538440194
+# 51 50        694    122.1675006  -675.98909714    2324.010902856
+# 52 51        693    120.2015674  -886.63409328    2173.365906715
+# 53 52        695    118.8483897  -917.01453558    2202.985464415
+# 54 53        692    124.2345194  -850.90283850    2329.097161502
+# 55 54        695    118.9698745  -899.27253120    2340.727468796
+# 56 55        695    118.6969422  -943.72597938    2356.274020619
+# 57 56        693    116.2807985 -1133.68427562    2226.315724378
+# 58 57        693    122.8494599  -648.61314593    2771.386854071
+
 ~~~
 
-This would suggest that while we are running into diminishing returns, it's still optimal to collect another 19-20 datapoints (at which point we will likely discover the remaining uncertainty to not yield enough reduction in bad decisions to justify the cost of running out each morning to collect some more data).
+This would suggest that diminishing returns were reached early on (possibly the informative priors had done more work than I appreciated).
+
+<!--
+# Bayesian Model Averaging
+
+Possibilities:
+
+nested sampling
+reversible jump MCMC
+product-space method
+BIC/DIC/WAIC deviance criteria
+non-Bayesian: cross-validation
+
+"Bayesian model choice via Markov chain Monte Carlo methods" Carlin & Chib 1995 http://stats.ma.ic.ac.uk/~das01/MyWeb/SCBI/Papers/CarlinChib.pdf
+"A tutorial on Bayes factor estimation with the product space method", Lodewyckx et al 2011 http://ejwagenmakers.com/2011/LodewyckxEtAl2011.pdf
+
+
+-->
 
 # Conclusions
 
