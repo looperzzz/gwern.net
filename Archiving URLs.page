@@ -384,7 +384,7 @@ The directories are indeed sorted, but aside from the initial 2 letters or so, l
          '--debug' option to help determine the part of the line being used
          in the sort.
 
-[^BigTable-sort]: ["BigTable: A Distributed Storage System for Structured Data"](http://research.google.com/archive/bigtable-osdi06.pdf), Chang et al 2006:
+[^BigTable-sort]: ["BigTable: A Distributed Storage System for Structured Data"](http://tsegcloudmining.googlecode.com/files/Bigtable-%20A%20Distributed%20Storage%20System%20for%20Structured%20Data.pdf), Chang et al 2006:
 
     > BigTable maintains data in lexicographic order by row key. The row range for a table is dynamically partitioned. Each row range is called a *tablet*, which is the unit of distribution and load balancing. As a result, reads of short row ranges are efficient and typically require communication with only a small number of machines. Clients can exploit this property by selecting their row keys so that they get good locality for their data accesses. For example, in Webtable, pages in the same domain are grouped together into contiguous rows by reversing the hostname components of the URLs. For example, we store data for `maps.google.com/index.html` under the key `com.google.maps/index.html`. Storing pages from the same domain near each other makes some host and domain analyses more efficient.
 
@@ -531,7 +531,7 @@ find . -type f -print0 | sort --zero-terminated --key=3 --field-separator="/"
 Used on my two Silk Road 2 mirrors which together weigh 1800M, a normal run without the `--key`/`--field-separator` options, as mentioned before, yields a 308M archive. That's not too bad. Certainly much better than hauling around almost 2GB. However - if I switch to the sort-key trick, however, the archive is now 271M, or 37M less. Same compression algorithm, same files, same unpacked results, same speed, just 2 little obscure `sort` options... and I get an archive 87% the size of the original.
 
 Not impressed? Well, I did say that the advantage increases with the number of mirrors to extract redundancy from. With only 2 mirrors, the SR2 results can't be too impressive. How about the Pandora mirrors? 5 of them gives the technique more scope to shine. And as expected, it's even more impressive when I compare the Pandora archives: 71M vs 162M. The sort-keyed archive saves 56% of the regular archive's size.
-The final Pandora archive, [released as part of my DNM archive](/Black-market scrapes), boasts 105 mirrors from 2013-12-25 to 2014-11-05 of 1,745,778 files (many duplicates due to being present over multiple crawls) taking up 32GB uncompressed.
+The final Pandora archive, [released as part of my DNM archive](/Black-market archives), boasts 105 mirrors from 2013-12-25 to 2014-11-05 of 1,745,778 files (many duplicates due to being present over multiple crawls) taking up 32GB uncompressed.
 This archive is 0.58GB (606,203,320 bytes) when sort-keyed; when sorted alphabetically, it is instead 7.5GB (7,466,374,836 bytes) or 12.31x larger, so the sort-keyed archive saves 92%.
 Forum mirrors are even more redundant than market mirrors because all content added to a forum will be present in all subsequent crawls, so each crawl will yield the previous crawl plus some additional posts; hence, the Pandora forums's raw size of 8,894,521,228 bytes shrinks to 283,747,148 bytes when compressed alphabetically but shrinks dramatically to the 31x smaller sort-keyed archive of 9,084,508 bytes, saving 97%!
 
