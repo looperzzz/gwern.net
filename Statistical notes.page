@@ -65,7 +65,7 @@ But if we try a quick call to `censReg`, we are confounded: a Tobit model expect
 All we know is that it must be below 398, we weren't told it was exactly 395, 394, etc.
 Fortunately, this is a solved problem. For example: ["The Tobit model with a non-zero threshold"](http://econweb.ucsd.edu/~rcarson/papers/TobitEJ07.pdf), Carson & Sun 2007 tells us:
 
-> In this paper, we consider estimating the unknown censoring threshold by the minimum of the uncensored $y_i$'s. We show that the estimator $γ'$ of $γ$ is superconsistent and asymptotically exponentially distributed. Carson (1988, 1989) also suggests estimating the unknown censoring threshold by the minimum of the uncensored $y_i$'s. In a recent paper, [Zuehlke (2003)](/docs/statistics/20013-zuehlke.pdf "Estimation of a Tobit model with unknown censoring threshold") rediscovers these unpublished results and demonstrates via simulations that the asymptotic distribution of the maximum likelihood estimator does not seem to be affected by the estimation of the censoring threshold.
+> In this paper, we consider estimating the unknown censoring threshold by the minimum of the uncensored $y_i$'s. We show that the estimator $γ'$ of $γ$ is superconsistent and asymptotically exponentially distributed. Carson (1988, 1989) also suggests estimating the unknown censoring threshold by the minimum of the uncensored $y_i$'s. In a recent paper, [Zuehlke (2003)](/docs/statistics/2003-zuehlke.pdf "Estimation of a Tobit model with unknown censoring threshold") rediscovers these unpublished results and demonstrates via simulations that the asymptotic distribution of the maximum likelihood estimator does not seem to be affected by the estimation of the censoring threshold.
 
 That seems to be almost *too* simple and easy, but it makes sense and reminds me a little of the [German tank problem](!Wikipedia): the minimum might not be that accurate a guess (it's unlikely you just happened to draw a sample right on the censoring threshold) and it definitely can't be wrong in the sense of being too low. (A Bayesian method might be able to do better with a prior like a exponential.)
 
@@ -1370,3 +1370,101 @@ Piffer, D., & Kirkegaard, E. O. The genetic correlation between educational atta
 https://www.google.com/search?num=100&q=%22Date%20of%20Birth%22%20site%3Amy.pgp-hms.org%2Fprofile%2F eg https://my.pgp-hms.org/profile/hu594129
 https://opensnp.org/phenotypes/148#users eg https://opensnp.org/users/3866
 -->
+
+# Bayesian Model Averaging
+
+~~~{.R}
+## original: "Bayesian model choice via Markov chain Monte Carlo methods" Carlin & Chib 1995 http://stats.ma.ic.ac.uk/~das01/MyWeb/SCBI/Papers/CarlinChib.pdf
+## Kobe example & data from: "A tutorial on Bayes factor estimation with the product space method", Lodewyckx et al 2011 http://ejwagenmakers.com/2011/LodewyckxEtAl2011.pdf
+## Lodewyckx code can be downloaded after registration & email from http://ppw.kuleuven.be/okp/software/scripts_tut_bfepsm/ (still waiting on my copy to check I set it up right)
+
+## "Table 2: Observed field goals (y) and attempts (n) by Kobe Bryant during the NBA seasons of 1999 to 2006."
+kobe <- read.csv(stdin(),header=TRUE)
+Year, y,   n,    y.n
+1999, 554, 1183, 0.47
+2000, 701, 1510, 0.46
+2001, 749, 1597, 0.47
+2002, 868, 1924, 0.45
+2003, 516, 1178, 0.44
+2004, 573, 1324, 0.43
+2005, 978, 2173, 0.45
+2006, 399,  845, 0.47
+
+library(runjags)
+model1<-"model{
+      # 1) MODEL INDEX
+      # Model index is 1 or 2.
+      # Prior probabilities based on argument prior1.
+      # Posterior probabilities obtained by averaging
+      # over postr1 and postr2.
+      M ~ dcat(p[])
+      p[1] <- prior1
+      p[2] <- 1-prior1
+      postr1 <- 2-M
+      postr2 <- 1-postr1
+
+      # 2) MODEL LIKELIHOOD
+      # For each year, successes are Binomially distributed.
+      # In M1, the success rate is fixed over years.
+      # In M2, the success rate is year-specific.
+      for (i in 1:n.years){
+       successes[i] ~ dbin(pi[M,i], attempts[i])
+
+       pi[1,i] <- pi.fixed
+       pi[2,i] <- pi.free[i]
+      }
+
+      # 3) MODEL 1 (one single rate)
+      # The fixed success rate is given a Beta prior and pseudoprior.
+      # Whether it is a prior or pseudoprior depends on the Model index.
+      pi.fixed ~ dbeta(alpha.fixed[M],beta.fixed[M])
+      alpha.fixed[1] <- alpha1.prior
+      beta.fixed[1] <- beta1.prior
+      alpha.fixed[2] <- alpha1.pseudo
+      beta.fixed[2] <- beta1.pseudo
+
+      # 4) MODEL 2 (multiple independent rates)
+      # The year-specific success rate is given a Beta prior and pseudoprior.
+      # Whether it is a prior or pseudoprior depends on the Model index.
+      for (i in 1:n.years){
+       pi.free[i] ~ dbeta(alpha.free[M,i],beta.free[M,i])
+       alpha.free[2,i] <- alpha2.prior
+       beta.free[2,i] <- beta2.prior
+       alpha.free[1,i] <- alpha2.pseudo[i]
+       beta.free[1,i] <- beta2.pseudo[i]
+      }
+      # predictive interval for hypothetical 2007 data in which Kobe makes 1000 shots:
+      successes.new.1 ~ dbin(pi.fixed, 1000)
+      successes.new.2 ~ dbin(pi.free[n.years], 1000)
+
+#      success.new.weighted ~ dcat(M
+  }"
+# 'prior1' value from paper
+data <- list("prior1"=0.000000007451, "n.years"= length(kobe$Year), "successes"=kobe$y, "attempts"=kobe$n,
+             "alpha1.prior"=1, "beta1.prior"=1, "alpha2.prior"=1, "beta2.prior"=1,
+             "alpha1.pseudo"=1, "beta1.pseudo"=1, "alpha2.pseudo"=rep(1,8), "beta2.pseudo"=rep(1,8) )
+# inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mailSim,1,mean))) }
+params <- c("pi.free", "pi.fixed", "postr1", "postr2", "M", "successes.new.1", "successes.new.2")
+j1 <- run.jags(model=model1, monitor=params, data=data, n.chains=8, method="rjparallel", sample=500000); j1
+# JAGS model summary statistics from 4000000 samples (chains = 8; adapt+burnin = 5000):
+#
+#                  Lower95  Median Upper95    Mean      SD Mode      MCerr MC%ofSD SSeff
+# pi.free[1]        0.3145 0.46864 0.98709 0.47383 0.11553   -- 0.00041958     0.4 75810
+# pi.free[2]       0.10099 0.46447 0.77535 0.47005  0.1154   -- 0.00042169     0.4 74887
+# pi.free[3]       0.19415  0.4692 0.86566  0.4741 0.11457   -- 0.00040171     0.4 81342
+# pi.free[4]      0.020377 0.45146 0.69697 0.45867 0.11616   -- 0.00042696     0.4 74023
+# pi.free[5]      0.024472 0.43846  0.7036 0.44749 0.11757   -- 0.00043352     0.4 73548
+# pi.free[6]      0.076795 0.43325 0.74944 0.44318 0.11684   -- 0.00043892     0.4 70863
+# pi.free[7]       0.06405 0.45033 0.73614 0.45748 0.11541   -- 0.00041715     0.4 76543
+# pi.free[8]       0.30293 0.47267 0.97338 0.47708 0.11506   -- 0.00040938     0.4 79000
+# pi.fixed        0.039931 0.45756 0.97903 0.49256 0.26498   -- 0.00099537     0.4 70868
+# postr1                 0       0       1 0.15601 0.36287    0    0.15113    41.6     6
+# postr2                 0       1       1 0.84399 0.36287    1    0.15113    41.6     6
+# M                      1       2       2   1.844 0.36287    2    0.15113    41.6     6
+# successes.new.1        0     463     940  492.57  265.28  454    0.99543     0.4 71019
+# successes.new.2      300     473     971  477.05  116.03  473     0.4152     0.4 78094
+getLogBF <- function(prior0, postr0) { log((postr0/(1-postr0)) / (prior0/(1-prior0))) }
+getLogBF(0.000000007451, 0.15601)
+# [1] 17.02669704
+## analytic BF: 18.79; paper's MCMC estimate: 18.80; not sure where I lost 1.8 of the BF.
+~~~
