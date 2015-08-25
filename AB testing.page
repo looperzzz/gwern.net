@@ -3048,6 +3048,7 @@ I'm not sure how to make use of a generative approach here.
 Something to think about.
 
 - [_Reinforcement Learning: An Introduction_](http://webdocs.cs.ualberta.ca/~sutton/book/ebook/the-book.html), Sutton & Barto 1998 ([second edition draft, April 2015](https://www.dropbox.com/s/7jl597kllvtm50r/book2015april.pdf))
+- ["Successes of Reinforcement Learning"](http://umichrl.pbworks.com/w/page/7597597/Successes%20of%20Reinforcement%20Learning)
 - [_Neural Networks and Deep Learning_](http://neuralnetworksanddeeplearning.com/), Nielsen 2015
 - ["Reinforcement Learning with Recurrent Neural Networks"](http://repositorium.uni-osnabrueck.de/bitstream/urn:nbn:de:gbv:700-2008112111/2/E-Diss839_thesis.pdf), Shafer 2008
 - DQN: ["Human-level control through deep reinforcement learning"](http://diyhpl.us/~nmz787/pdf/Human-level_control_through_deep_reinforcement_learning.pdf "Mnih et al 2015"), [source code](https://sites.google.com/a/deepmind.com/dqn/), [simple Pong version](https://github.com/soumith/cvpr2015/blob/master/DQN%20Training%20iTorch.ipynb); [parallelizing it](http://arxiv.org/abs/1507.04296 "'Massively Parallel Methods for Deep Reinforcement Learning', Nair et al 2015")
@@ -3057,6 +3058,7 @@ Something to think about.
 - Sutton, R.S. (1989). ["Implementation details of the TD(lambda) procedure for the case of vector predictions and backpropagation"](http://webdocs.cs.ualberta.ca/~sutton/papers/sutton-89.pdf). GTE Laboratories Technical Report TR87-509.1, as corrected August 1989. GTE Laboratories, 40 Sylvan Road, Waltham, MA 02254.
 - ["Deep Reinforcement Learning"](http://videolectures.net/rldm2015_silver_reinforcement_learning/), Silver 2015 lecture
 - [_Dynamic Programming_](/docs/statistics/1957-bellman-dynamicprogramming.djvu), Bellman 1957
+- ["Chapter 10; Sequence Modeling: Recurrent and Recursive Nets"](http://www.iro.umontreal.ca/~bengioy/dlbook/rnn.html), _Deep Learning_ (Bengio et al draft)
 
 recurrent Q-learning:
 - Lin & Mitchell 1992 "Memory approaches to reinforcement learning in non-Markovian domains"
@@ -3589,7 +3591,8 @@ ul.secondary .page,
 ~~~
 
 Now it's readable and we can see the RNN has done an excellent job of still writing CSS while in minified-mode, and around this level of loss, I noticed the RNN had learned to write valid-looking URLs - fragments like `background : url(/sites/all/themes/rpg_theme/images/btn/form_subscription_not-page.png)` look exactly like what a human CSS programmer would write.
-(Unfortunately, this sample has 4 validation errors: 1 from an imbalanced bracket; 1 one parse error on `*zoom: 2 !important` due to the asterisk which [is an](https://news.ycombinator.com/item?id=10013720) [old IE hack](http://nicolasgallagher.com/micro-clearfix-hack/ "A new micro clearfix hack") & arguably the RNN isn't wrong; and 2 properties which don't exist.)
+(Unfortunately, this sample has 4 validation errors: 1 from an imbalanced bracket; 1 one parse error on `*zoom: 2 !important` due to the asterisk which [is an](https://news.ycombinator.com/item?id=10013720) [old IE hack](http://nicolasgallagher.com/micro-clearfix-hack/ "A new micro clearfix hack") & arguably the RNN isn't wrong; and 2 properties which don't exist.
+Also in the RNN's favor, I should note that lots of CSS in the wild will not have 0 validation errors.)
 
 At 0.88, I also noticed the RNN was now making a valiant attempt to write comments. Bad comments, but still:
 
@@ -3973,30 +3976,65 @@ downloadCSS () {
        fi
 }
 export -f downloadCSS
-cat urls.txt | parallel --jobs 4 downloadCSS
+cat urls.txt | parallel downloadCSS
 
 
-downloadCSS "https://github.com/giakki/uncss"
+Screenshots: save as `screenshot.js`
+
+~~~{.JavaScript}
+var system = require('system');
+var url = system.args[1];
+var filename = system.args[2];
+
+var WebPage = require('webpage');
+page = WebPage.create();
+page.open(url);
+page.onLoadFinished = function() {
+   page.render(filename);
+   phantom.exit();}
+~~~
+
+~~~{.Bash}
+downloadScreenshot() {
+    echo "$@"
+    ID=`echo "$@" | md5sum | cut -f1 -d' '`
+    if [[ ! -a $ID.png ]]; then
+       phantomjs screenshot.js "$@" $ID.png &
+       SCREENSHOT_PID=$!
+       echo $SCREENSHOT_PID
+       (sleep 4m ; kill -9 $SCREENSHOT_PID) &
+       wait $SCREENSHOT_PID
+
+       optipng -o9 -fix $ID.png
+    fi
+}
+export -f downloadScreenshot
+cat urls.txt | parallel downloadScreenshot
+~~~
 
 After finish, find and delete duplicates with `fdupes`; and delete any stray HTML/CSS:
 
+~~~{.Bash}
     # delete any empty file indicating CSS or HTML download failed:
     find . -type f -size 0 -delete
     # delete duplicates:
     fdupes . --delete --noprompt
-    # delete any file without a pair (empty or duplicate CSS having been previously deleted, now we clean up widows):
+    # delete any file without a pair (empty or duplicate CSS having been previously deleted, now we clean up orphans):
     for i in `ls *.css *.html | sed -e 's/.html//' -e 's/.css//' | sort --unique`; do
         if [[ ! -a $i.html || ! -a $i.css ]];
         then rm $i*;
         fi;
     done
+~~~
+
+TODO: once the screenshotter has finished one full pass, then you can add image harvesting to enforce clean triplets of HTML/CSS/PNG
 
 This yields a good-sized corpus of clean HTML/CSS pairs:
 
     ls *.css | wc --lines; cat *.css | wc --char
 
 
-TODO: yield seems very low: 1 in 5? will this be enough even with 136k+ URLs?
+TODO: yield seems low: 1 in 3? will this be enough even with 136k+ URLs? a lot of the errors seem to be sporadic and page downloads work when retrying them
 NYT seems to lock up uncss! had to filter it out, too bad, their CSS was nice and complex
 
 #### Data augmentation
@@ -4023,7 +4061,7 @@ Data augmentation:
 
 encoder-decoder? attention models? neural Turing machines?
 
-http://devblogs.nvidia.com/parallelforall/introduction-neural-machine-translation-with-gpus/ / http://devblogs.nvidia.com/parallelforall/introduction-neural-machine-translation-gpus-part-2/ / http://devblogs.nvidia.com/parallelforall/introduction-neural-machine-translation-gpus-part-3/
+http://devblogs.nvidia.com/parallelforall/introduction-neural-machine-translation-with-gpus/ / http://devblogs.nvidia.com/parallelforall/introduction-neural-machine-translation-gpus-part-2/ / http://devblogs.nvidia.com/parallelforall/introduction-neural-machine-translation-gpus-part-3/ implementation of encoder-decoder with attention in Theano: https://github.com/kyunghyuncho/dl4mt-material/tree/master/session2 "Currently, this code includes three subdirectories; session0, session1 and session2. session0 contains the implementation of the recurrent neural network language model using gated recurrent units, and session1 the implementation of the simple neural machine translation model. In session2, you can find the implementation of the attention-based neural machine translation model we discussed today. I am planning to make a couple more sessions, so stay tuned!"
 
 possible example to steal from: https://github.com/nicholas-leonard/dp/blob/master/examples/recurrentlanguagemodel.lua / https://dp.readthedocs.org/en/latest/languagemodeltutorial/index.html#neural-network-language-model simple tutorial: https://dp.readthedocs.org/en/latest/neuralnetworktutorial/index.html (more lowlevel: https://github.com/Element-Research/rnn )
 char-rnn seems too hardwired in character at a time, bidirectional?
@@ -4036,7 +4074,12 @@ http://www6.in.tum.de/pub/Main/Publications/Graves2008c.pdf
 "Learning to Execute" http://arxiv.org/abs/1410.4615 https://github.com/wojciechz/learning_to_execute
 "Sequence to Sequence Learning with Neural Networks" http://arxiv.org/abs/1409.3215
 "Generating Sequences With Recurrent Neural Networks" http://arxiv.org/pdf/1308.0850v5
+"Neural Turing Machines" http://arxiv.org/abs/1410.5401
+"DRAW: A Recurrent Neural Network For Image Generation" http://arxiv.org/abs/1502.04623
 "Neural Machine Translation by Jointly Learning to Align and Translate" http://arxiv.org/abs/1409.0473 "In this paper, we conjecture that the use of a fixed-length vector is a bottleneck in improving the performance of this basic encoder-decoder architecture, and propose to extend this by allowing a model to automatically (soft-)search for parts of a source sentence that are relevant to predicting a target word, without having to form these parts as a hard segment explicitly. With this new approach, we achieve a translation performance comparable to the existing state-of-the-art phrase-based system on the task of English-to-French translation. Furthermore, qualitative analysis reveals that the (soft-)alignments found by the model agree well with our intuition."
+https://github.com/arctic-nmt/nmt
+http://smerity.com/articles/2015/keras_qa.html
+"Neural Transformation Machine: A New Architecture for Sequence-to-Sequence Learning", Meng et al 2015 http://arxiv.org/abs/1506.06442
 -->
 
 # Appendix
