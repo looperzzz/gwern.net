@@ -9,7 +9,7 @@ $ cd ~/wiki/ && ghc -rtsopts -threaded -O2 -fforce-recomp -optl-s --make hakyll.
   ./hakyll rebuild +RTS -N3 -RTS && echo -n -e '\a' && emacs -nw _site/Modafinil &&
   s3cmd -v -v --human-readable-sizes --reduced-redundancy --guess-mime-type --default-mime-type=text/html
         --add-header="Cache-Control: max-age=604800, public" --delete-removed sync _site/ s3://www.gwern.net/ &&
-  s3cmd --reduced-redundancy --mime-type=text/css --add-header="Cache-Control: max-age=604800, public" put ./static/css/default.css s3://www.gwern.net/static/css/ &&
+  s3cmd --reduced-redundancy --mime-type=text/css --add-header="Cache-Control: max-age=604800, public" put ./_site/static/css/default.css s3://www.gwern.net/static/css/ &&
   rm -rf ~/wiki/_cache/ ~/wiki/_site/ && rm ./hakyll *.o *.hi ;
   git push; echo -n -e '\a'
 
