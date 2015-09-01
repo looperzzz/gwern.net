@@ -16,45 +16,89 @@ This is a summary of the revision-history RSS feed, overlapping with [Changelog]
 
 Everything is heritable:
 
+- ["Polygenic Influence on Educational Attainment: New Evidence From the National Longitudinal Study of Adolescent to Adult Health"](http://ero.sagepub.com/content/1/3/2332858415599972), Domingue et al 2015 (rarely are the analyst's choices so much more informative than the results)
+- ["The Genetic Architecture & Natural History of Pigmentation"](http://www.unz.com/gnxp/the-genetic-architecture-natural-history-of-pigmentation/)
+
 Politics/religion:
+
+- ["Proving communal warfare among hunter-gatherers: The quasi-Rousseau-an error"](http://onlinelibrary.wiley.com/enhanced/doi/10.1002/evan.21446/), Gat 2015
+- [the invention of the lawn](https://en.wikipedia.org/wiki/Lawn#Origins): ["How America’s Most Useless Crop Also Became Its Most Commonly Grown One"](http://io9.com/how-america-s-most-useless-crop-also-became-its-most-co-1724553276)
 
 Statistics/AI/meta-science:
 
+- ["Deep Reinforcement Learning"](http://videolectures.net/rldm2015_silver_reinforcement_learning/) (Comprehensive overview of recent work on deep methods for reinforcement learning, culminating in the Atari player, with additional comments on extending to continuous games, Go, and why 'deep models', the apparent third member of the reinforcement learning trinity of value/policy/model learning, has failed & may be redundant. Gradient descent is magic.)
+- ["Efficient experimentation and the multi-armed bandit"](https://iosband.github.io/2015/07/19/Efficient-experimentation-and-multi-armed-bandits.html); ["Can you beat the bandit?"](https://iosband.github.io/2015/07/28/Beat-the-bandit.html)
+- ["Composing Music With Recurrent Neural Networks"](http://www.hexahedria.com/2015/08/03/composing-music-with-recurrent-neural-networks/)
+- ["The Inspection Paradox is Everywhere"](http://allendowney.blogspot.com/2015/08/the-inspection-paradox-is-everywhere.html)
+
 Psychology/biology:
 
-Technology:
+- ["Eugenics, Ready or Not"](https://quadrant.org.au/magazine/2015/05/eugenics-ready/)
+- ["Should Anyone Be Given a Blood Transfusion?"](http://www.newyorker.com/news/news-desk/should-anyone-be-given-a-blood-transfusion)
+- ["Canaries in the coal mine: a cross-species analysis of the plurality of obesity epidemics"](http://rspb.royalsocietypublishing.org/content/278/1712/1626.short), Klimentidis et al 2011
+
+Astronomy:
+
+- ["On The History and Future of Cosmic Planet Formation"](http://arxiv.org/pdf/1508.01202v1.pdf)
+- [Isaac Newton on how God stabilizes the solar system & the fate of mankind](https://plus.google.com/103530621949492999968/posts/YvT39E3ewu9)
 
 Economics:
 
+- ["Measuring the Longitudinal Evolution of the Online Anonymous Marketplace Ecosystem"](https://www.usenix.org/system/files/conference/usenixsecurity15/sec15-paper-soska-updated.pdf), Soska & Christin 2015 ([excerpts](https://www.reddit.com/r/DarkNetMarkets/comments/3gqlqu/dnm_sales_20132015_measuring_the_longitudinal/))
+- ["Costs and benefits of iodine supplementation for pregnant women in a mildly to moderately iodine-deficient population: a modelling analysis"](http://www.gwern.net/docs/iodine/2015-monahan.pdf) ([excerpts](http://lesswrong.com/lw/7e1/rationality_quotes_september_2011/cntj))
+
 Philosophy:
 
+- ["Do Artificial Reinforcement-Learning Agents Matter Morally?"](http://arxiv.org/abs/1410.8233), Tomasik 2014
+
 Fiction:
+
+- ["RING THEORY: The Hidden Artistry of the _Star Wars_ Prequels"](http://www.starwarsringtheory.com/ring-composition-chiasmus-hidden-artistry-star-wars-prequels/)
+
+Misc:
+
+- ["One Hundred Years of arm bars: A family epic spanning the Gracie jiu-jitsu dynasty’s generations of combat and betrayal, from the Amazon to Hollywood to the UFC"](http://grantland.com/one-hundred-years-arm-bars-gracie-jiu-jitsu-mma/)
 
 <!-- Back to 13 December 2012 -->
 
 ## Books
 
-Fiction:
-
 Nonfiction:
+
+- [_A History of Life Extensionism_](http://www.longevityhistory.com/book/indexb.html), Stambler 2014 ([review](https://www.goodreads.com/review/show/1368572411))
+- [_Haikai Poet Yosa Buson and the Basho Revival_](http://www.amazon.com/Haikai-Revival-Japanese-Studies-Library/dp/9004157093), Crowley 2006 ([review](https://www.goodreads.com/review/show/1371866955))
+- [_Structural Equation Modeling: A Bayesian Approach_](http://www.wiley.com/WileyCDA/WileyTitle/productCd-0470024232.html), Sik-Yum Lee 2007 ([review](https://www.goodreads.com/review/show/1379457190))
 
 ## Film/TV
 
 Live-action:
 
-Anime:
+- [_RED_](https://en.wikipedia.org/wiki/Red_%282010_film%29): Bruce Willis action movie; too incoherent and unimaginative to be worth watching as an action-movie, too serious and too grim to work as a parody. (For the former: in the intro scene where Willis is attacked by a hit squad late at night, he walks into a kitchen to get a drink, and they bust in; then he starts killing them from *behind*, having somehow learned about them and teleported behind them. Apparently he's psychic.) As far as the latter goes, the movie is only funny perhaps once every 30 minutes as its various rape innuendos turn out to not be hilarious at all, and it only truly embraces the satire at the very end as an epilogue, which is far too little far too late. It's completely mediocre an action-movie, so naturally, there are two sequels. Wouldn't you rather rewatch _Die Hard_?
+- [_Lady Jane_](https://en.wikipedia.org/wiki/Lady_Jane_%281986_film%29): a costume drama romance which tries to cast the 9-day puppet as a Protestant martyr-heroine doomed by her utopian reformist tendencies and tragically forced to be executed when her father leads a revolt to try to restore her to the throne. Needless to say, you've never heard of Queen Jane the Reformer because there was no such thing: while she was maneuvered onto the throne somewhat as described, she did seem to have genuinely loved her husband, and Queen Mary did try to spare her life, almost the rest of it is a tissue of romantic absurdity. Her husband was a fine young man, not a dreamer driven to drink by the injustices of Henry's expropriation of the monasteries; the debasing of the coinage was not the work of some unspecified malign and corrupt politicians but driven by English exigencies and global economic forces whose solution is not so simple-minded as 'order the Mint to make coins with higher silver content' and was hardly a concern of Jane's at the time and for that matter, the two of them were well-educated enough that it's impossible to believe for even a second that they didn't know what was going on, which the movie tries to make into a huge dramatic arc in setting them up to elope into exile right before she is crowned; her father's revolt did contribute to her death but I'm not clear it was intended to put her back on the throne; etc. The anachronistic posturing is so over the top that I expected by the end to hear Jane advocate for separation of church & state and for representative democracy. Even Captain Picard can't rescue this movie. Toward the end, our main amusement was debating whether the actor playing Dudley was the same one who played Wesley in _The Princess Bride_ since from some angles, he looked the same, but he otherwise looked chubbier and had a fatter face and fluffier hair; turned out he was.
 
 ## Music
 
+Postrock: El Ten Eleven, _Fast Forward_:
+
+- ["Battle Aves"](https://www.youtube.com/watch?v=Pz8jRtxiMiM)
+- ["Be Kind, Rewind"](https://www.youtube.com/watch?v=c1qdcVfEWi8)
+- ["Fast Forward"](https://www.youtube.com/watch?v=liu-N0DAHrs)
+- ["Three Sides of a Coin"](https://www.youtube.com/watch?v=kUXWT3LzBa4)
+- ["JD"](https://www.youtube.com/watch?v=9yS9KadoNZ8)
+- ["Peter and Jack"](https://www.youtube.com/watch?v=402CIt0oOSE)
+- ["Point Breeze"](https://www.youtube.com/watch?v=3DAzAfiD43M)
+
 Touhou:
 
-- ["Sleeping Asia"](https://www.youtube.com/watch?v=u8XqTnkMTco) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
-- ["Reach for the Dream, Immortal Smoke"](https://www.youtube.com/watch?v=oBydaD3jBZU) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
-- ["Temptation of the Eternal Night"](https://www.youtube.com/watch?v=1sQcqdJhGmE) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
-- ["Septette for the Dead Princess"](https://www.youtube.com/watch?v=UNNCfcCkyZU) (Eru; _Knights of Round 3_ {C77}) [instrumental rock]
-- ["上海紅茶館 ～ Chinese Tea"](http://otokei-douj.in/tlmc//%5BSound%20Sepher%5D/2011.05.08%20%5BSEPR-0009%5D%20%E6%9D%B1%E6%96%B9%E5%B9%BB%E5%A5%8F%E7%A5%80%E5%85%B86%20-Grimoire-%20%5B%E4%BE%8B%E5%A4%A7%E7%A5%AD8%5D/04%20%5Bzunba%5D%20%E4%B8%8A%E6%B5%B7%E7%B4%85%E8%8C%B6%E9%A4%A8%20%EF%BD%9E%20Chinese%20Tea.mp3) (zunba; _Touhou Gensou Shiten 6 "Grimoire"_; {R8}) [jazz]
 - ["Awakening of the Earth Spirits"](https://www.youtube.com/watch?v=KG3yo5PCAAk) (江口孝宏 feat.Satomi Ishikawa; _Touhou Gensou Shiten 6 "Grimoire"_ {R8}) [trance]
+- ["La strada pastello"](https://www.dropbox.com/s/3yw2bzhjqtq1019/%E8%A1%97%E8%A7%92%E9%BA%BB%E5%A9%86%E8%B1%86-whereshallwegodancing-lastradapastello.ogg) (街角麻婆豆; _Where shall we go dancing?_ {R12}) [folk]
+- ["Reach for the Dream, Immortal Smoke"](https://www.youtube.com/watch?v=oBydaD3jBZU) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
+- ["上海紅茶館 ～ Chinese Tea"](http://otokei-douj.in/tlmc//%5BSound%20Sepher%5D/2011.05.08%20%5BSEPR-0009%5D%20%E6%9D%B1%E6%96%B9%E5%B9%BB%E5%A5%8F%E7%A5%80%E5%85%B86%20-Grimoire-%20%5B%E4%BE%8B%E5%A4%A7%E7%A5%AD8%5D/04%20%5Bzunba%5D%20%E4%B8%8A%E6%B5%B7%E7%B4%85%E8%8C%B6%E9%A4%A8%20%EF%BD%9E%20Chinese%20Tea.mp3) (zunba; _Touhou Gensou Shiten 6 "Grimoire"_; {R8}) [jazz]
 - ["8番目の路地"](https://www.youtube.com/watch?v=faE0AW2Yfgg) (アサヒ feat. emaru; _864_ {R12}) [trance]
+- ["Septette for the Dead Princess"](https://www.youtube.com/watch?v=UNNCfcCkyZU) (Eru; _Knights of Round 3_ {C77}) [instrumental rock]
+- ["Sleeping Asia"](https://www.youtube.com/watch?v=u8XqTnkMTco) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
+- ["Temptation of the Eternal Night"](https://www.youtube.com/watch?v=1sQcqdJhGmE) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
 - ["A Maiden's Quiet Sleep"](https://www.youtube.com/watch?v=DRAujB9XmGs) (Marasy; _幻想遊戲<眠>2_ {C86}) [classical]
-
-Kantai Collection:
+- ["X-TREME DECISION"](https://www.youtube.com/watch?v=e_aqiqJQZWI) (激戦の人; [sm23047550](http://www.nicovideo.jp/watch/sm23047550) {8 March 2014}) [instrumental rock]
+- ["夢に抱かれて眠る"](https://www.youtube.com/watch?v=zdsYvqPudnU) (O-Life Japan; _積極懐古団_ {R12}) [instrumental]
+- ["三千大世界の聖火"](https://www.dropbox.com/s/ipyflb97hj5y2hv/%E6%B0%B4%E6%A9%8B%E3%82%86%E3%81%A3%E3%81%8D-%E6%9D%B1%E6%96%B9%E5%B9%BB%E6%83%B3%E7%95%8C%E6%98%9F%E8%93%AE%E8%88%B9%E3%81%AE%E9%9F%B3-%E4%B8%89%E5%8D%83%E5%A4%A7%E4%B8%96%E7%95%8C%E3%81%AE%E8%81%96%E7%81%AB.ogg) (Fox Factory; _東方幻想界 ～星蓮船の音_ {R12}) [orchestral]
