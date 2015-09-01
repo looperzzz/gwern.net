@@ -224,13 +224,14 @@ mailInterval <- data.frame(Date=as.POSIXct(c("2015-06-20 11:00AM", "2015-06-21 1
                                  "2015-08-04 10:45AM", "2015-08-05 10:44AM", "2015-08-06 10:33AM", "2015-08-07 10:55AM",
                                  "2015-08-10 11:09AM", "2015-08-11 11:16AM", "2015-08-12 11:14AM", "2015-08-13 11:10AM",
                                  "2015-08-14 11:02AM", "2015-08-15 11:04AM", "2015-08-18 11:15AM", "2015-08-20 11:20AM",
-                                 "2015-08-22 11:46AM", "2015-08-23 11:04AM", "2015-08-24 10:56AM", "2015-08-25 10:26AM"),
+                                 "2015-08-22 11:46AM", "2015-08-23 11:04AM", "2015-08-24 10:56AM", "2015-08-25 10:26AM",
+                                 "2015-08-26 11:57AM", "2015-08-27 10:15AM", "2015-08-31 12:35AM"),
                                 "EDT"),
                    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE,
                                FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE,
                                FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE,
                                FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE,
-                               FALSE, FALSE))
+                               FALSE, FALSE, TRUE, FALSE, FALSE, TRUE))
 mailInterval$Time <- fromClock(mailInterval$Date)
 mail <- with(mailInterval, data.frame(Time1 = ifelse(Delivered, 0, Time),
                            Time2 = ifelse(Delivered,  Time, 1440)))
@@ -456,7 +457,7 @@ mailExact <- data.frame(Date=as.POSIXct(c("2010-04-29 11:33AM", "2010-05-12 11:3
                                           "2015-07-02 10:45AM", "2015-07-06 11:19AM", "2015-07-10 10:54AM",
                                           "2015-07-11 11:09AM", "2015-07-15 10:29AM", "2015-07-16 11:02AM",
                                           "2015-07-17 10:46AM", "2015-07-27 11:12AM", "2015-08-15 10:56AM",
-                                          "2015-08-17 11:40AM", "2015-08-18 11:19AM"),
+                                          "2015-08-17 11:40AM", "2015-08-18 11:19AM", "2015-08-27 10:43AM"),
                         "EDT"))
 mailExact$TimeDelivered <- fromClock(mailExact$Date)
 mean(mailExact$TimeDelivered)
@@ -654,6 +655,8 @@ In a proper [Bayesian search theory](!Wikipedia) application, if I check once, I
 
 All these considerations give me a weird-looking but nevertheless realistic loss function: if the package is delivered at _d_ and we check at a particular time _t_, then if _t_>_d_ and the package had arrived we incur a total loss of $60+(t-d)$; otherwise, we check back a second and final time at 1PM, incurring a total loss of $60+60+(780-d)$
 
+<!-- $ -->
+
 ### Finding the optimum
 
 Having figured that out, we run the loss function on each sample from the posterior, averaging over all weighted possible delivery times, and find what time of day minimizes the loss:
@@ -695,11 +698,19 @@ netPresentValue(-2)
 ## [1] -163.3948818
 ~~~
 
-# Value of Information
+## Optimal data-sampling
+
+Given a loss function, we might be able to optimize our data-sampling by balancing exploration and exploitation using a [reinforcement learning](!Wikipedia) approach to the [multi-armed bandit problem](!Wikipedia) such as [Thompson sampling](!Wikipedia)/probability-sampling/probability-matching - where different check-times are 'arms', the payoff is given by the loss, and we draw a check time from the current posterior, check at that time, and then with the new data update the posterior for the next day.
+
+While probability sampling is simple, intuitive, and optimal in a number of ways, implementing it would have required more discipline than I cared for; so I didn't use it.
+
+## Optimal sample-size: Value of Information
+
+If we are not optimizing the kind of data collected, we can optimize how *much* data we collect by periodically calculating how much additional data could improve our estimates and how much this improvement is worth on average, especially compared to how much that additional data would cost.
 
 Expected values of various kinds of information show up frequently in Bayesian decision theory, and are valuable for linking questions of how much & what data to collect to real-world outcomes (not just money but lives and welfare; [an Alzheimer's example](http://eprints.whiterose.ac.uk/946/1/claxtonk1.pdf "'Bayesian value-of-information analysis: an application to a policy model of Alzheimer's disease', Caxton et al 2001")).
 
-## EVPI
+### EVPI
 
 The first kind is "[expected value of perfect information](!Wikipedia)" (EVPI): if I estimated the optimal time as t=688 and it was actually t=698, then I could be suffering a penalty of 163 minutes and I should be willing to pay somewhere up to that (based on how certain I am it's t=688) to learn the truth and instead start checking the mail at t=698.
 The value of perfect information is simply the difference between the current estimate and whatever you hypothesize the true time is.
@@ -715,7 +726,7 @@ Perfect information is not available at any cost, however.^[I could always resor
 All I can do is go out to the mail box _n_ times, and as we saw in the simulation, diminishing returns always happens and at some point the predictive intervals stop changing noticeably.
 So EVPI represents an upper bound on how much any lesser amount of information could be worth, but doesn't tell us how much we are willing to pay for imperfect information.
 
-## EVSI
+### EVSI
 
 The next kind is what is the "[expected value of sample information](!Wikipedia)" (EVSI): what is the value of collecting one more additional datapoint, which can help pin down the optimal time a little more precisely and reduce the risk of loss from picking a bad time?
 EVSI can be defined as "expected value of best decision with some additional sample information" minus "expected value of best current decision".
