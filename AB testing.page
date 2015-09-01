@@ -3968,7 +3968,7 @@ downloadCSS () {
       echo $ID
       if [[ ! -s $ID.css ]]; then
        wget --quiet "$@" -O $ID.html &
-       uncss --timeout 2000 "$@" | tail --lines=+3 >> $ID.css &
+       nice uncss --timeout 2000 "$@" | tail --lines=+3 >> $ID.css &
        UNCSS_PID=$!
        echo $UNCSS_PID
        (sleep 4m ; kill -9 $UNCSS_PID) &
@@ -3999,13 +3999,13 @@ downloadScreenshot() {
     echo "$@"
     ID=`echo "$@" | md5sum | cut -f1 -d' '`
     if [[ ! -a $ID.png ]]; then
-       phantomjs screenshot.js "$@" $ID.png &
+       nice phantomjs screenshot.js "$@" $ID.png &
        SCREENSHOT_PID=$!
        echo $SCREENSHOT_PID
        (sleep 4m ; kill -9 $SCREENSHOT_PID) &
        wait $SCREENSHOT_PID
 
-       optipng -o9 -fix $ID.png
+       nice optipng -o9 -fix $ID.png
     fi
 }
 export -f downloadScreenshot
@@ -4017,14 +4017,17 @@ After finish, find and delete duplicates with `fdupes`; and delete any stray HTM
 ~~~{.Bash}
     # delete any empty file indicating CSS or HTML download failed:
     find . -type f -size 0 -delete
-    # delete duplicates:
+    # delete bit-identical duplicates:
     fdupes . --delete --noprompt
+    # look for extremely similar screenshots, and delete all but the first such image:
+    /usr/bin/findimagedupes -t 99% *.png | cut -d ' ' -f 2- | xargs rm
     # delete any file without a pair (empty or duplicate CSS having been previously deleted, now we clean up orphans):
-    for i in `ls *.css *.html | sed -e 's/.html//' -e 's/.css//' | sort --unique`; do
-        if [[ ! -a $i.html || ! -a $i.css ]];
-        then rm $i*;
-        fi;
-    done
+    orphanedFileRemover () {
+        if [[ ! -a $@.html || ! -a $@.css ]];
+        then ls $@*; rm $@*;
+        fi; }
+    export -f orphanedFileRemover
+    find . -name "*.css" -or -name "*.html" | sed -e 's/.html//' -e 's/.css//' | sort --unique | parallel orphanedFileRemover
 ~~~
 
 TODO: once the screenshotter has finished one full pass, then you can add image harvesting to enforce clean triplets of HTML/CSS/PNG
@@ -4078,6 +4081,7 @@ http://www6.in.tum.de/pub/Main/Publications/Graves2008c.pdf
 "DRAW: A Recurrent Neural Network For Image Generation" http://arxiv.org/abs/1502.04623
 "Neural Machine Translation by Jointly Learning to Align and Translate" http://arxiv.org/abs/1409.0473 "In this paper, we conjecture that the use of a fixed-length vector is a bottleneck in improving the performance of this basic encoder-decoder architecture, and propose to extend this by allowing a model to automatically (soft-)search for parts of a source sentence that are relevant to predicting a target word, without having to form these parts as a hard segment explicitly. With this new approach, we achieve a translation performance comparable to the existing state-of-the-art phrase-based system on the task of English-to-French translation. Furthermore, qualitative analysis reveals that the (soft-)alignments found by the model agree well with our intuition."
 https://github.com/arctic-nmt/nmt
+https://github.com/joschu/cgt/blob/master/examples/demo_neural_turing_machine.py
 http://smerity.com/articles/2015/keras_qa.html
 "Neural Transformation Machine: A New Architecture for Sequence-to-Sequence Learning", Meng et al 2015 http://arxiv.org/abs/1506.06442
 -->
