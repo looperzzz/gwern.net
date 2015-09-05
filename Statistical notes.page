@@ -1333,7 +1333,95 @@ sampleValues
 ## right and that's why SEM didn't seem to work well.
 ~~~
 
+# Value of Information: clinical prediction instruments for suicide
+
+http://slatestarcodex.com/2015/08/31/magic-markers/#comment-232970
+
+I agree. When criticizing the study for claiming the blood levels added predictive power and it's not clear they did, this is solely a statistical claim and can be done in a vacuum. But when one then goes on to pan the predictive power of the underlying clinical prediction instruments as useless in all circumstances, based on just the prediction stats:
+
+> So when people say "We have a blood test to diagnose suicidality with 92% accuracy!", even if it's true, what they mean is that they have a blood test which, if it comes back positive, there's still less than 50-50 odds the person involved is suicidal. Okay. Say you're a psychiatrist. There's a 48% chance your patient is going to be suicidal in the next year. What are you going to do? Commit her to the hospital? I sure hope not. Ask her some questions, make sure she's doing okay, watch her kind of closely? You're a psychiatrist and she's your depressed patient, you would have been doing that anyway. This blood test is not really actionable. And then remember that this isn't the blood test we have. We have some clinical prediction instruments that do this...But having "a blood test for suicide" won't be very useful, even if it works.
+
+One is implicitly making some strong cost-benefit claims here and stepping from statistics ('what are the probabilities?') to decision theory ('given these probabilities, how should I act?'). They are not identical: no AUC graph will ever tell you if a model's predictions are useful or not, and there is no universal threshold where 92% specificity/sensitivity is totally useless but 95% would make a difference - these clinical prediction instruments might be useless indeed, but that will depend on costs, base rates, and available actions. (I tried to make this point to Coyne on Twitter earlier but I don't think he understood what I was getting at & he blew me off.)
+
+Discontinuities come from our actions; our inferences are incremental. There are some contexts where a tiny 1% improvement in AUC might be worth a lot (Wall Street) and there are some contexts where sensitivity or specificity of 99% is still useless because it won't change your actions at all (I'm currently comparing my riding lawn mower to a robotic lawn mower, and thus far, it doesn't matter how precise my parameters are, the robotic lawn mowers are, to my disappointment, just too expensive right now). I think p-values have shown us how well arbitrary thresholds work out in practice (and remember where they came from in the first place! decision rules set per problem - Gosset, in optimizing a brewery, did not have the pathologies we have with p<0.05 fetishism.) I also don't believe your choices are really that restricted: you mean if you were absolutely convinced that your patient was about to commit suicide, there is absolutely nothing you could do besides treat them like any other depressive? That seems unlikely. But whatever, even if commitment is the <i>only</i> alternative, there is still a value to the information provided by a clinical prediction instrument, and we can calculate it, and you should if you want to rule it out as having any value, in the same way that in criticizing a study as weak, it's better to ignore the p-values and just work out the right posterior and demonstrate directly how little evidence it contains.
+
+---
+
+Let's try this as an example, it's not hard or terribly complex (just tedious). So we have a ward of 100 depressive patients where we are interested in preventing suicide; our prior probability is that 7.5% or ~7 of them will commit suicide. The value of a life has been given a lot of different valuations, but \$10 million is a good starting point.
+
+Action 1:
+
+What are our costs or losses? We could say that we expect a loss of 7.5*\$10m or -\$75m, and if we stand by and do no treatment or intervention whatsoever, we spend no more money and so the total loss is
+
+0 + 0.075 * 100 * 10,000,000 = -\$75,000,000
+
+Action 2:
+
+Let's say they all stay by default for one week and this costs a net \$1000 a day; let's say further that, since commitment is the mentioned alternative, while committed a suicide attempt will fail. And since we know that suicides are so often spontaneous and major depression comes and goes, a frustrated suicide attempt doesn't simply mean that they will immediately kill themselves as soon as they get out. This 7% comes from a followup period of a year, so the probability any will attempt suicide in the next week might be 0.075/52 or 0.001442307692. So this gives us our default setup: we have 100 patients staying for 7 days at a net cost of \$1000 a day or \$700,000 total, and by having them stay, we stop an expected average of 0.14 suicides and thus we prevent an expected loss of 0.14 * \$10m = \$1,440,000, for a total loss of treatment-cost minus treatment-gain plus remaining-loss:
+
+\$700,000 - (0.14 * \$10m) - \$10m * 100 * (0.075-(0.075/52)) = -\$74,257,692.
+
+Note that this loss is smaller than in the scenario in which we don't do any commitment at all; since one week of suicide-watch reduced the suicide loss more than it cost, this is not surprising.
+
+Specifically, the benefit is:
+
+action1 - action2 = gain to switching
+75000000 - 74257692 = \$742,308
+
+Not fantastic, but it's in the right order of magnitude (you can't expect more from a low base-rate event and a treatment with such a low probability of making a difference, after all) so it looks plausible, and it's still more than zero. We can reject the action of not committing them at all as being inferior to committing them for one week.
+
+Action 3:
+
+What if we were instead choosing between one week and committing them for a full year - thus catching the full 7.5% of suicides during the 1-year followup? Does that work? First, the loss from this course of action:
+
+((100*365.2*1000) - (0 * 10000000) - (10000000 * 100 * (0.075-(0.075/1)))) = -\$36,520,000
+
+Since there are no suicides, we avoid the default loss of -\$75m, but we still have to spend \$36,520,000 to pay for the long-term commitment. However, the benefit to the patients has increased dramatically since we stop so many more suicides:
+
+action 2 - action 3 = \$35,637,692.31
+
+(We go from a loss of -\$74m to a loss of -\$36m.) So we see action 3 is even better than action 2 for the patients. Of course, we can't extrapolate out any further than 1 year, because that's what our followup number is, and we don't know how the suicide risk falls after the 1 year point - if it drops to ~0, then further commitment is a terrible idea. So I'm not going to calculate out any further. (Since this is all linear stuff, the predicted benefit will increase smoothly over the year and so there's no point in calculating out alternatives like 1 month, 3 months, 6 months, 9 months, etc.) What's that, action 3 is totally infeasible and no one would ever agree to this - the patients would scream their heads off and the health insurance companies would never go for it - even if we could show that long commitments do reduce the suicide rate enough to justify the costs? And, among other things, I've oversimplified in assuming the 7% risk is evenly distributed over the year rather than a more plausible distribution like exponentially decreasing from Day 1, so likely commitment stops being a good idea more like month 3 or something? Yeah, you're probably right, so let's go back to using action 2's loss as our current best alternative.
+
+Now, having set out some of the choices available, we can find out how much better information is worth. First, let's ask what the Expected Value of Perfect Information is: if we were able to take our 100 patients and exactly predict which 7 were depressive and would commit suicide this year in the absence of any intervention, where our choice is between committing them for one week or not at all. Given such information we can eject the 93 who we now know were never a suicide risk, and we hold onto the 7 endangered patients, and we have a new loss of the commitment cost of 7 people for a week vs the prevented loss of the chance they will try to commit suicide that week of this year:
+
+((7*7*1000) - (0.14 * 10000000) - (10000000 * 7 * (1-(1/52)))) = -\$70,004,846
+
+How much did we gain from our perfect information? About \$4m:
+
+74257692 - 70004846 = \$4,252,846
+
+(This passes our sanity checks: additional information should never hurt us, so the amount should be >=\$0, but we are limited by the intervention to doing very little, so the ceiling should be a low amount compared to the total loss, which this is.)
+
+So as long as the perfect information did not cost us more than \$4m or so, we would have net gained from it: we would have been able to focus commitment on the patients at maximal risk. So suppose we had a perfect test which cost \$1000 a patient to run, and we wanted to know if the gained information was valuable enough to bother with using this expensive test; the answer in this case is definitely <i>yes</i>: with 100 patients, it'll cost \$100,000 to run the test but it'll save \$4.25m for a net profit of \$4.15m. In fact, we would be willing to pay per-patient costs up to \$42k, at which point we hit break-even (4252846 / 100).
+
+OK, so that's perfect information. What about <i>im</i>perfect information? Well, imperfect is a lot like perfect information, just, y'know - less so. Let's consider this test: with the same prior, a negative on it means the patient now has P=0.007 to commit suicide that year, and a positive means P=0.48, and the sensitivity/specificity at 92%. (Just copying that from OP & ButYouDisagree, since those sound plausible.) So when we run the test on our patients, we find of the 4 possible outcomes:
+
+- 85.1 patients are non-suicidal and the test will not flag them
+- 7.4 are non-suicidal but the test will flag them
+- 6.9 are suicidal and the test will flag them
+- 0.6 are suicidal but the test will not flag them
+
+So if we decide whether to commit or not commit solely based on this test, we will send home 85.1 + 0.6 = 85.7 patients (and indeed 0.6/85.7=0.007), and we will retain the remaining 7.4 + 6.9 = 14.3 patients (and indeed, 6.9/14.3=0.48). So our loss is the wrongly ejected patient of 0.6 suicides plus the cost of committing 14.3 patients (both safe and at-risk) for a week in exchange for the gain of a small chance of stopping the suicide of the 6.9 actually at risk:
+
+(10000000*85.7*0.007) + (14.3*7*1000) + (10000000 * (0.48*14.3) * (1-(1/52))) = -\$73,419,100
+
+How much did we gain from our imperfect information? About \$0.8m:
+
+74257692 - 73419100 = \$838,592
+
+or \$8,385.92 per patient. (This passes our sanity check: greater than \$0, but much less than the perfect information. The exact amount may seem lame, but as a fraction of the value of perfect information, it's not too bad: the test gets us 20% - 838592 / 4252846 - of the way to perfection.)
+
+And that's our answer: the test is not worth \$0 - it's worth \$8k. And once you know what the cost of administering the test is, you simply subtract it and now you have the Net Expected Value of Information for this test. (I can't imagine it costs \$8k to administer what this sounds like, so at least in this model, the value is highly likely >\$0.)
+
+---
+
+By taking the posterior of the test and integrating all the estimated costs and benefits into a single framework, we can nail down exactly how much value these clinical instruments could deliver if used to guide decision-making. And if you object to some particular parameter or assumption, just build another decision-theory model and estimate the new cost. For example, maybe commitment actually costs, once you take into account all the disruption to lives and other such side-effects, not \$1000 but net of \$5000 per day, what then? Then the gain halves to \$438,192, etc. And if it costs \$10000 then the test is worth nothing because you won't commit anyone ever because it's just way too expensive, and now you know it's worth \$0; or if commitment is so cheap that it's more like \$100 a day, then the test is also worth \$0 because you would just commit everyone (since breakeven is then a suicide probability way below 7%, all the way at ~0.4% which is still below the 0.7% which the test can deliver, so the test result doesn't matter for deciding whether to commit, so it's worth \$0), or if you adopt a more reasonable value of life like \$20m, the value of perfect information shoots up (obviously, since the avoided loss doubles) but the value of imperfect information drops like a stone (since now that one suicidal patient sent home blows away your savings from less committing) and the test becomes worthless; and playing with the formulas, you can figure out the various ranges of assumptions in which the test has positive value and estimate how much it has under particular parameters, and of course if parameters are uncertain, you can cope with that uncertainty by embedding this in a Bayesian model to get posterior distributions of particular parameters incorporating all the uncertainty.
+
+So to sum up: there are no hard thresholds in decision-making and imposing them can cost us better decision-making, so to claim additional information is worthless, more analysis needed, and this analysis must be done with respect to the available actions & their consequences, which even under the somewhat extreme conditions here of very weak interventions & low base-rates, suggests that the value of this information is positive.
+
 <!--
+# Dysgenics
+
 "Estimating the genotypic intelligence of populations and assessing the impact of socioeconomic factors and migrations.", Piffer https://thewinnower.com/papers/estimating-the-genotypic-intelligence-of-populations-and-assessing-the-impact-of-socioeconomic-factors-and-migrations
 
 http://openpsych.net/forum/showthread.php?tid=127
@@ -1343,7 +1431,7 @@ http://www.unz.com/akarlin/genetics-iq-and-convergence/
 
 http://humanvarieties.org/2014/10/03/is-there-no-population-genetic-support-for-a-racial-hereditarian-hypothesis/
 
-Piffer, Davide (2015): A review of intelligence GWAS hits: their relationship to country IQ and the issue of spatial autocorrelation. Figshare.
+Piffer, Davide (2015): "A review of intelligence GWAS hits: their relationship to country IQ and the issue of spatial autocorrelation", _Intelligence_
 http://dx.doi.org/10.6084/m9.figshare.1393160
 
 Factor Analysis of Population Allele Frequencies as a Simple, Novel Method of Detecting Signals of Recent Polygenic Selection: The Example of Educational Attainment and IQ. D Piffer
@@ -1370,6 +1458,8 @@ Piffer, D., & Kirkegaard, E. O. The genetic correlation between educational atta
 
 https://www.google.com/search?num=100&q=%22Date%20of%20Birth%22%20site%3Amy.pgp-hms.org%2Fprofile%2F eg https://my.pgp-hms.org/profile/hu594129 https://workbench.su92l.arvadosapi.com/collections/22d61dd43786c65cd175b04ad6954af0+3119/html/index.html 1252 people with registered birthdates according to `demographics.tsv`? but how many with genetics...
 https://opensnp.org/phenotypes/148#users eg https://opensnp.org/users/3866
+http://www.snpedia.com/index.php/Genomes
+http://genomesunzipped.org/data
 -->
 
 # Bayesian Model Averaging
