@@ -9,13 +9,20 @@ belief: highly likely
 
 <!-- <a href="https://www.modafinilcat.com/#gwern"><img alt="Sponsored placement for the modafinil vendor ModafinilCat" width="500" height="100" src="https://www.modafinilcat.com/images/finest-modafinil.png"></a> -->
 
-[Modafinil](!Wikipedia) is a wakefulness drug developed in the 1980s. It is prescribed for narcolepsy but is widely used off-label for its stimulating effects and to deal with sleep deficits. As such, many believe it helps their cognitive performance & productivity. It probably does. (However, comparing it to the fictional drug NZT in the 2011 movie _Limitless_ is a gross exaggeration.)
+> Modafinil is a prescription stimulant drug. I discuss informally, from a cost-benefit-informed perspective, the cognitive effects, the risks of side-effects and addiction/tolerance and law enforcement, and give a table of current grey-market suppliers and discuss how to order from them.
+
+[Modafinil](!Wikipedia) is a wakefulness drug developed in the 1980s.
+It is prescribed for narcolepsy but is widely used off-label for its stimulating effects and to deal with sleep deficits. As such, many believe it helps their cognitive performance & productivity. (However, comparing it to the fictional drug NZT in the 2011 movie _Limitless_ is a gross exaggeration.)
+I would describe its advantages over other common stimulants as: more powerful and less addictive & tolerating than caffeine or khat; much longer-lasting than nicotine; less likely to alter mood or produce 'tweaking' behavior than Adderall or Vyvanse; and much more legal & with almost no side-effects compared to methamphetamine or cocaine.
+On any specific aspect, there may be a stimulant superior to modafinil, but few stimulants come close to modafinil's overall package of being a long-lasting, safe, effective, non-mood-altering, quasi-legal stimulant, and that is why it has become so popular.
 
 Its development stems from [adrafinil](!Wikipedia "Adrafinil"), a wakefulness drug developed back in the late 1970s. It worked reasonably well in animals and humans^[See the 1999 Milgram review, ["Adrafinil: A Novel Vigilance Promoting Agent"](http://www.nevapress.com/cnsdr/full/5/3/193.pdf)], and interestingly enough, in a different way from most stimulants.[^amphetamines] Inside the body, adrafinil is metabolized by the liver into modafinil. So using adrafinil is inferior to using a straight dose of modafinil both because it stresses the liver (which apparently [caused its discontinuation by the usual manufacturer](http://www.smarternootropics.com/2012/01/cephalon-europe-discontinues-olmifon-adrafinil/)[^Yvain-adrafinil]) and because reportedly you need about 3 times more adrafinil to be metabolized into an equivalent dose of modafinil. Its chief advantages were that all patents on it expired long ago, and it's very rarely proscribed - so it was relatively cheap & easy to get.
 
 [^Yvain-adrafinil]: There's some question whether the dismissal of adrafinil may be overblown. In [](http://slatestarcodex.com/2014/02/16/nootropics-survey-results-and-analysis/), Alexander comments:
 
     > There is some theoretical concern about liver-related side effects from adrafinil, but some pharmacologists say these are overblown and that its liver profile is similar to Tylenol - ie don't take a massive overdose on it or use it every day for years and you'll be fine. None of my respondents reported ever having any liver problems with adrafinil - not even asymptomatic elevation of liver enzymes - but _n_ = only 17 so the results don't rule out even moderately common adverse reactions.
+
+<!-- https://www.reddit.com/r/Nootropics/comments/3ivm0o/liver_enzyme_readout_before_and_after_adrafinil/ -->
 [^amphetamines]: See Minzenberg et al:
 
     > It is currently approved by the United States Food and Drug Administration as a schedule IV agent to treat excessive daytime sleepiness in narcolepsy, shift work sleep disorder, and obstructive sleep apnea/hypopnea syndrome. It has been popularly categorized as a psychostimulant due to its wake-promoting properties. However, it has shown a number of effects on physiology and behavior in both animal models and in humans, which suggest a divergent mechanism of action compared to amphetamine (described in detail below). This includes a lower liability to abuse, and a lower risk of adverse effects on organ systems such as the cardiovascular system.
@@ -24,17 +31,17 @@ Modafinil is better, but the problem is that a number of forms are patented, and
 
 [^proscribed]: Admittedly, Schedule IV drugs like modafinil are not one of the scheduled drugs which send people to federal pound-you-in-the-ass prison, but it still is troublesome.
 
-Modafinil costs about $2[^angry]-12 a day[^business]; non-prescription sources are too unpredictable to say.[^prices]
+Modafinil costs about \$2[^angry]-12 a day[^business]; non-prescription sources are too unpredictable to say.[^prices]
 
-[^angry]: One American prescription user said ~2011 that his prescription was for 200mg pills; each box cost around $50 copay for 30 pills, or about $1.70 (120 mg/USD). He took one a day. In 2013, another American gave [the same price](http://www.reddit.com/r/Nootropics/comments/1eujst/my_modafinil_price_comparison_spreadsheet/ca42qks), but a third listed a [$5 copay](http://www.reddit.com/r/Nootropics/comments/1eujst/my_modafinil_price_comparison_spreadsheet/ca48knj); [a person claiming to work in a pharmacy](http://www.reddit.com/r/Nootropics/comments/1eujst/my_modafinil_price_comparison_spreadsheet/ca4gy45) said "the wholesale price for modafinil 200mg is 15 bucks per pill."
+[^angry]: One American prescription user said ~2011 that his prescription was for 200mg pills; each box cost around \$50 copay for 30 pills, or about \$1.70 (120 mg/USD). He took one a day. In 2013, another American gave [the same price](http://www.reddit.com/r/Nootropics/comments/1eujst/my_modafinil_price_comparison_spreadsheet/ca42qks), but a third listed a [$5 copay](http://www.reddit.com/r/Nootropics/comments/1eujst/my_modafinil_price_comparison_spreadsheet/ca48knj); [a person claiming to work in a pharmacy](http://www.reddit.com/r/Nootropics/comments/1eujst/my_modafinil_price_comparison_spreadsheet/ca4gy45) said "the wholesale price for modafinil 200mg is 15 bucks per pill."
 [^business]: from _[Businessweek](!Wikipedia)_'s ["The 10Q Detective: Losing Sleep Over Cephalon"](http://www.businessweek.com/investor/content/sep2009/pi20090928_251573.htm):
 
-     > Supplementing the coupon efforts: discounted pricing. The prescription cost to the patient for a 30-day supply of daily recommended dosages of Provigil (200 mg) and Nuvigil (150 mg) is \$361 and $295, respectively, a savings to cash-paying patients and health-care payers of 23%, according to pharmaceutical information site Destination Rx.
+     > Supplementing the coupon efforts: discounted pricing. The prescription cost to the patient for a 30-day supply of daily recommended dosages of Provigil (200 mg) and Nuvigil (150 mg) is \$361 and \$295, respectively, a savings to cash-paying patients and health-care payers of 23%, according to pharmaceutical information site Destination Rx.
 
      $\frac{361}{30} = 12.03$; although it's unclear what of this is the actual price to the consumer.
 [^prices]: This is just conventional wisdom, echoed by many websites. [An example](http://web.archive.org/web/20090417183624/http://www.askthesleepexperts.com/2007/02/19/is-it-safe-to-buy-modafinil-online/):
 
-    > When you buy modafinil online, make sure the company you are buying it from has a good track record and delivers orders promptly and securely. Modafinil is available in 100-mg and 200-mg doses and in packets of 30 tablets to 100 tablets. Prices may vary depending on where you are in the world. But in the United States, prices may range from $50 to more than $300. Make sure that you compare online modafinil prices to get a better deal.
+    > When you buy modafinil online, make sure the company you are buying it from has a good track record and delivers orders promptly and securely. Modafinil is available in 100-mg and 200-mg doses and in packets of 30 tablets to 100 tablets. Prices may vary depending on where you are in the world. But in the United States, prices may range from \$50 to more than \$300. Make sure that you compare online modafinil prices to get a better deal.
 
 # Usage
 
