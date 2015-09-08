@@ -1,0 +1,274 @@
+---
+title: Resorting Media Ratings
+description: Commandline tool providing interactive Bayesian pairwise ranking and sorting of items
+created: 7 Sep 2015
+tags: computer science, statistics
+status: in progress
+belief: log
+...
+
+
+In rating hundreds of media on a review site like GoodReads, Amazon, MyAnimeList etc, the distributions tend to become 'lumpy' and concentrate on the top few possible ratings: if it's a 10-point scale, you won't see many below 7, usually, or if it's 5-stars [then anything](https://xkcd.com/325/) [below 4-stars indicates profound hatred](https://xkcd.com/1098/), leading to a J-shaped distribution and the Internet's version of [grade inflation](!Wikipedia).
+After enough time and inflation, the ratings have degenerated into a noninformative binary rating scale, and some sites, recognizing this, abandon the pretense, like YouTube switching from 5-stars to like/dislike.
+
+This is unfortunate if you want to provide ratings & reviews to other people and indicate your true preferences; when I like on [MALgraph](http://graph.anime.plus/gwern/ratings,anime) and see that over half my anime ratings are in the range 8-10, then, my ratings having degenerated into a roughly 1-3 scale (crap-good-great) makes it harder to see which ones are truly worth watching & also which ones I might want to go back and rewatch.
+So the ratings carry much less information than one might have guessed from the scale (a 10-point scale has 3.32 bits of information in each rating, but if it's de facto degenerated into a 3-point scale, then the information has halved to 1.58 bits).
+If instead, my ratings were uniformly distributed over the 1-10 scale, such that 10% were rated 1, 10% were rated 2, etc, then my ratings would be much more informative, and my opinion clearer.
+(First-world problems, perhaps, but still annoying.)
+
+For only a few ratings like 10 or 20, it's easy to manually review and rescale ratings and resolve the ambiguities (which '8' is worse than the other '8's and should plummet down to 7?), but past that, it starts to become tedious and because judgment is so fragile and subjective and ['choice fatigue'](!Wikipedia "Decision fatigue") begins to set in, I find myself having to repeatedly scan the list and ask myself "is X *really* better than Y...? hm...".
+So unsurprisingly, for a large corpus like my 408 anime or 2059 books, I've never bothered to try to do this - much less do it occasionally as the ratings drift.
+
+If I had some sort of program which could query me repeatedly for new ratings, store the results, and then spit out a consolidated list of exactly how to change ratings, then I might be able to, once in a great while, correct my ratings.
+But it can't ask me for absolute ratings, because if I was able to easily give uniformly-distributed ratings, I wouldn't have this problem in the first place!
+So instead it should calculate rankings, and then take the final ranking and distribute them across however many buckets there are in the scale: if I rate 100 anime for MAL's 1-10 ranking, then it will put the bottom 10 in the '1' bucket, the 10-20th into the '2' bucket, etc
+This cannot be done automatically
+
+How to get rankings: if there are 1000 media, it's impossible for me to explicitly rank a book '#952', or '#501'. Nobody has that firm a grip.
+Perhaps it would be better for it to ask me to compare pairs of media?
+Comparison is much more natural, less fatiguing, and helps my judgment by reminding me of what other media there are and how I think of them - when a terrible movie gets mentioned in the same breath as a great movie, it reminds you why one was terrible and the other great.
+Comparison also immediately suggests an implementation as the classic comparison sort algorithms like Quicksort or Mergesort, where the comparison operation simply calls out to the user; yielding a reasonable O(n * log(n)) number of queries (and possibly much less, O(n), if we have the pre-existing ratings and can treat it as an [adaptive sort](!Wikipedia)).
+
+The comparison-sort algorithms make an assumption that is outrageously unrealistic in this context: they assume that the comparison is 100% accurate.
+That is, say, you have two sorted lists of 1000 elements each and you compare the lowest element of one with the highest element of the other and the first is higher, then all 1000 items in the first are higher than all 1000 items in the second, that of the  1000^2=1000000 possible pairwise comparisons, the sorting algorithms assume that not a single item is out of place, not a single pairwise comparison would be incorrect.
+This assumption is fine in programming, since the CPU is good at comparing bits for equality & may go trillions of operations without making a single mistake; but it's absurd to expect this of a human for any task, much less one in which we are clumsily feeling for the invisible movements of our souls in response to great artists.
+
+Our comparisons of movies, or books, or music, *are* error-prone and so we need some sort of statistical sorting algorithm.
+
+So we'd like a commandline tool which consumes a list of pairs of media & ratings, then queries the user repeatedly with pairs of media to get the user's rating of which one is better, somehow modeling underlying scores while allowing for the user to be wrong in multiple comparisons and ideally picking whatever is the 'most informative' next pair to ask about, and after enough questions, inferring the full ranking of media and mapping it onto a uniform distribution for a particular scale.
+
+The natural way to see the problem is to treat every competitor as having an unobserved latent variable 'quality' or 'ability' or 'skill' on an ordinal scale, and then weaken transitivity to chain our comparisons: if A beats B and B beats C, then *probably* A beats C, weighted by how many times we've observed beating and have much precise our estimate of A-C's latent variables are.
+Paired or comparison-based data comes up a lot in competitive contexts, such as the famous [Elo rating system](!Wikipedia) or the Bayesian [TrueSkill](!Wikipedia).
+A general model for dealing with it is the [Bradley–Terry model](!Wikipedia).
+
+There are at least two packages in R for dealing with Bradley-Terry models, [`BradleyTerry2`](http://www.jstatsoft.org/v48/i09/paper"Bradley-Terry Models in R: The BradleyTerry2 Package") and [`prefmod`](http://www.jstatsoft.org/v48/i10/paper "prefmod: An R Package for Modeling Preferences Based on Paired Comparisons, Rankings, or Ratings").
+The latter supports more sophisticated analyses than the former, but it wants its data in an inconvenient format, while `BradleyTerry2` is more easily incrementally updated.
+(I want to supply my data to the library as a long list of triplets of media/media/rating, which is then easily updated with user-input by simply adding another triplet to the bottom; but `prefmod` wants a column for each possible media, which is awkward to start with and gets worse if there are 1000+ media to compare.)
+
+Here is a worked-out example using `BradleyTerry2`.
+I start with a few MAL anime ratings, which exhibit considerable lumpiness with almost half of them clustered onto a single rating & obscuring the real differences between them.
+The original ratings are useful information which should not be ignored; if BT-2 were a Bayesian library, we could use them as very informative priors, but it's not, so instead I adopt a hack in which the program runs through the list, comparing each anime with the next anime, and if equal, it's treated as a tie, and otherwise they are recorded as a win/loss - so even from the start we've made a lot of progress towards inferring their latent scores.
+Then a loop asks the user _n_ comparisons; we want to ask about the media whose estimates are most uncertain, and a way of estimating that is looking at which media have the biggest [standard error](!Wikipedia).
+You might think that asking about only the two media with the current biggest standard error would be a great strategy, but surprisingly, because of the original ratings' inclusion, this leads to asking about the same media again and again; so instead, it picks randomly with weights for each media of its standard error, so it usually focuses on the most uncertain ones but will occasionally ask about other media as well.
+After all the questions are asked, a final estimation is done, the media are sorted by rank, and mapped back onto the 1-10 MAL rating scale.
+For this example run, answering all the questions is intuitive and easy, typically requiring no thought, and the final ranking is plausible: I would say specifically that _El Hazard: The Wanderers_ &  _Chobits_ are ranked 1 too high, and _.hack//Sign_ & _Mai-HiME_ should move upwards to replace them, but those might have been fixed with some more questions and otherwise it looks good.
+
+~~~{.R}
+library(BradleyTerry2)
+## http://myanimelist.net/animelist/gwern&show=0&order=4
+ranking <- read.csv(stdin(),header=TRUE)
+Media,Rating
+"Cowboy Bebop", 10
+"Monster", 10
+"Neon Genesis Evangelion: The End of Evangelion", 10
+"Gankutsuou", 10
+"Serial Experiments Lain", 10
+"Perfect Blue", 10
+"Jin-Rou", 10
+"Death Note", 10
+"Last Exile", 9
+"Fullmetal Alchemist", 9
+"Gunslinger Girl", 9
+"RahXephon", 9
+"Trigun", 9
+"Fruits Basket", 9
+"FLCL", 9
+"Witch Hunter Robin", 7
+".hack//Sign", 7
+"Chobits", 7
+"Full Metal Panic!", 7
+"Mobile Suit Gundam Wing", 7
+"El Hazard: The Wanderers", 7
+"Mai-HiME", 6
+"Kimi ga Nozomu Eien", 6
+
+
+comparisons <- NULL
+## seed comparison dataset based on input data; same rating == tie
+for (i in 1:(nrow(ranking)-1)) {
+ rating1 <- ranking[i,]$Rating
+ media1 <- ranking[i,]$Media
+ rating2 <- ranking[i+1,]$Rating
+ media2 <- ranking[i+1,]$Media
+ if (rating1 == rating2)
+  {
+     comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=0.5, "win2"=0.5))
+  }
+  else{ if (rating1 > rating2)
+           {
+            comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=1, "win2"=0))
+            } else {
+              comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=0, "win2"=1))
+                   } } }
+### print(comparisons)
+
+priorRankings <- BTm(cbind(win1, win2), Media.1, Media.2, ~ Media, id = "Media", data = comparisons)
+## higher=better:
+### print(summary(priorRankings))
+### print(sort(BTabilities(priorRankings)[,1]))
+
+set.seed(2015-09-07)
+nQuestions <- 20
+for (i in 1:nQuestions) {
+
+ ## with the current data, calculate and extract the new estimates:
+ updatedRankings <- BTm(cbind(win1, win2), Media.1, Media.2, ~ Media, id = "Media", data = comparisons)
+ coefficients <- BTabilities(updatedRankings)
+ ### print(coefficients)
+
+ ## pick two media to compare at random but weighted by relative size of standard-error,
+ ## which is a crude indicator of its uncertainty and the ones where value of information is high:
+ targets <- sample(row.names(coefficients), 2, prob=coefficients[,2])
+ media1 <- targets[1]
+ media2 <- targets[2]
+
+ cat(paste("Do you like '", as.character(media1), "' better than '", as.character(media2), "'? (1=yes, 0=tied/unsure, -1=second is better)"))
+
+ rating <- as.integer(readline("1/0: "))
+
+ if (rating==1) {
+   comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=1, "win2"=0)) }
+  else { if (rating==-1) { comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=0, "win2"=1)) }
+   else { comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=0.5, "win2"=0.5)) } }
+}
+# Do you prefer ' Monster ' to ' Kimi ga Nozomu Eien '? (-1=second is better, 0=tied, 1=first is better)1/0: 1
+# Do you prefer ' Perfect Blue ' to ' Death Note '? (-1=second is better, 0=tied, 1=first is better)1/0: -1
+# Do you prefer ' Fruits Basket ' to ' Kimi ga Nozomu Eien '? (-1=second is better, 0=tied, 1=first is better)1/0: 1
+# Do you prefer ' Gankutsuou ' to ' Neon Genesis Evangelion: The End of Evangelion '? (-1=second is better, 0=tied, 1=first is better)1/0: -1
+# Do you prefer ' Gankutsuou ' to ' Trigun '? (-1=second is better, 0=tied, 1=first is better)1/0: 1
+# Do you prefer ' Neon Genesis Evangelion: The End of Evangelion ' to ' Mai-HiME '? (-1=second is better, 0=tied, 1=first is better)1/0: 1
+# Do you prefer ' Gankutsuou ' to ' Mai-HiME '? (-1=second is better, 0=tied, 1=first is better)1/0: 1
+# Do you prefer ' Serial Experiments Lain ' to ' Fruits Basket '? (-1=second is better, 0=tied, 1=first is better)1/0: 1
+# Do you prefer ' Neon Genesis Evangelion: The End of Evangelion ' to ' Trigun '? (-1=second is better, 0=tied, 1=first is better)1/0: 1
+# Do you prefer ' Neon Genesis Evangelion: The End of Evangelion ' to ' Serial Experiments Lain '? (-1=second is better, 0=tied, 1=first is better)1/0: 1
+# Do you prefer ' Kimi ga Nozomu Eien ' to ' Cowboy Bebop '? (-1=second is better, 0=tied, 1=first is better)1/0: -1
+# Do you prefer ' Cowboy Bebop ' to ' Fullmetal Alchemist '? (-1=second is better, 0=tied, 1=first is better)1/0: 1
+# Do you prefer ' Serial Experiments Lain ' to ' RahXephon '? (-1=second is better, 0=tied, 1=first is better)1/0: 1
+# Do you prefer ' Fruits Basket ' to ' Neon Genesis Evangelion: The End of Evangelion '? (-1=second is better, 0=tied, 1=first is better)1/0: -1
+# Do you prefer ' Perfect Blue ' to ' Serial Experiments Lain '? (-1=second is better, 0=tied, 1=first is better)1/0: -1
+# Do you prefer ' Mai-HiME ' to ' Monster '? (-1=second is better, 0=tied, 1=first is better)1/0: -1
+# Do you prefer ' Neon Genesis Evangelion: The End of Evangelion ' to ' Fruits Basket '? (-1=second is better, 0=tied, 1=first is better)1/0: 1
+# Do you prefer ' Gankutsuou ' to ' Perfect Blue '? (-1=second is better, 0=tied, 1=first is better)1/0: 1
+# Do you prefer ' Jin-Rou ' to ' Gankutsuou '? (-1=second is better, 0=tied, 1=first is better)1/0: -1
+# Do you prefer ' Monster ' to ' Trigun '? (-1=second is better, 0=tied, 1=first is better)1/0: 1
+
+## results of all the questioning:
+comparisons
+updatedRankings <- BTm(cbind(win1, win2), Media.1, Media.2, ~ Media, id = "Media", data = comparisons)
+coefficients <- BTabilities(updatedRankings)
+rownames(coefficients)[which.max(coefficients[2,])]
+
+### print(summary(updatedRankings))
+### print(sort(coefficients[,1]))
+
+foo <- as.data.frame(BTabilities(updatedRankings))
+foo$Media <- rownames(foo)
+rownames(foo) <- NULL
+
+quantiles <- seq(0,1, by=0.1)
+foo$Quantile <- with(foo, cut(ability,
+                                breaks=quantile(ability, probs=quantiles),
+                                labels=(quantiles*(length(quantiles)-1))[-1],
+                                include.lowest=TRUE))
+print(subset(foo[order(foo$Quantile, decreasing=TRUE),], select=c("Media", "Quantile")))
+#                                             Media  Quantile
+# 2                                    Cowboy Bebop     10
+# 17                                        Monster     10
+# 18 Neon Genesis Evangelion: The End of Evangelion     10
+# 9                                      Gankutsuou      9
+# 21                        Serial Experiments Lain      9
+# 3                                      Death Note      8
+# 12                                        Jin-Rou      8
+# 5                                            FLCL      7
+# 19                                   Perfect Blue      7
+# 6                                   Fruits Basket      6
+# 20                                      RahXephon      6
+# 7                             Fullmetal Alchemist      5
+# 10                                Gunslinger Girl      5
+# 22                                         Trigun      5
+# 4                        El Hazard: The Wanderers      4
+# 14                                     Last Exile      4
+# 8                               Full Metal Panic!      3
+# 16                        Mobile Suit Gundam Wing      3
+# 1                                         Chobits      2
+# 11                                    .hack//Sign      2
+# 13                            Kimi ga Nozomu Eien      1
+# 15                                       Mai-HiME      1
+# 23                             Witch Hunter Robin      1
+~~~
+
+This R demonstration code has many flaws:
+
+- it's terminal-only & cannot be run as a commandline tool
+- the data and scale are both hardwired
+- the UX leaves something to be desired ('-1' is surprisingly annoying to type repeatedly, and it'd be easier to use '1'/'2'/'3' or perhaps the arrow keys)
+- it may not be asking particularly information-optimal questions, and, worst of all,
+- it does not come with any useful indication of uncertainty
+
+The last is the biggest problem because we have no way of knowing when to stop.
+Perhaps after 20 questions, the uncertainty was still high and this is why some of them are missorted; or perhaps diminishing returns had set in and it would have taken so many more questions to stamp out the error that we would prefer just to correct the few erroneous ratings manually in a once-over.
+And we don't want to crank up the question-count to something burdensome like 200 just on the off-chance that the sorting is insufficient.
+Instead, we'd like some comprehensible probability that each media is assigned to its correct bucket, and perhaps a bound on overall error: for example, I would be satisfied if I could specify something like '90% probability that all media are at least in their correct bucket'.
+Since BF-2 is fundamentally a frequentist library, it will never give us this kind of answer; all it has to offer in this vein are _p_-values, which are answers to questions I've never asked.
+Between our interest in a sequential trial approach and our interest in producing meaningful probabilities of errors, this motivates looking at Bayesian implementations.
+
+"Paired Comparison Models for Ranking National Soccer Teams", Shawn E. Hallinan https://www.wpi.edu/Pubs/ETD/Available/etd-050505-154305/unrestricted/shawnhal.pdf
+Part 4: INTRODUCTION TO JAGS, Jim Albert http://bayes.bgsu.edu/webinar.11.2012/R%20output/Rcode.part4.html
+library(BradleyTerry2)
+data(baseball)
+head(baseball)
+teamH = as.numeric(baseball2$home.team)
+teamA = as.numeric(baseball2$away.team)
+y = baseball2$home.wins
+n = baseball2$home.wins + baseball2$away.wins
+N = length(y)
+J = max(teamH)
+model1 <- "model {
+for (i in 1:N){
+    y[i] ~ dbin (p[i], n[i])
+    logit(p[i]) <- a[teamH[i]] - a[teamA[i]]
+}
+for (j in 1:J){
+a[j] ~ dnorm(0, tau)
+}
+tau <- pow(sigma, -2)
+sigma ~ dunif (0, 100)
+}"
+data = list(y = y, n = n, N = N, J = J, teamA = teamA, teamH = teamH)
+library(rjags)
+jfit = jags.model(textConnection(model1), data = data, n.chains = 1, n.adapt = 5000)
+update(jfit, 5000)
+bfit <- coda.samples(jfit, c("a", "sigma"), n.iter = 10000, progress.bar = "gui")
+S = summary(bfit)
+S
+
+comparisons2 <- comparisons[!(comparisons$win1==0.5),]
+teamH = as.numeric(comparisons2$Media.1)
+teamA = as.numeric(comparisons2$Media.2)
+y = comparisons2$win1
+n = comparisons2$win1 + comparisons2$win2
+N = length(y)
+J = length(levels(comparisons$Media.1))
+model1 <- "model {
+for (i in 1:N){
+    y[i] ~ dbin (p[i], n[i])
+    logit(p[i]) <- a[teamH[i]] - a[teamA[i]]
+}
+for (j in 1:J){
+a[j] ~ dnorm(0, tau)
+}
+tau <- pow(sigma, -2)
+sigma ~ dunif (0, 100)
+}"
+data = list(y = y, n = n, N = N, J = J, teamA = teamA, teamH = teamH)
+library(rjags)
+jfit = jags.model(textConnection(model1), data = data, n.chains = 1, n.adapt = 5000)
+update(jfit, 5000)
+bfit <- coda.samples(jfit, c("a", "sigma"), n.iter = 10000, progress.bar = "gui")
+S = summary(bfit)
+S
+
+controlling total error: take the posterior distribution of
+                  all the anime; draw, say, 100 samples and create a new discretization into (sorted) deciles; compare all 100 with the discretization you get from the point-estimates and
+                  see if any anime shifted deciles; if <5 of the samples...
+21:39:15 <@gwern> ...have shifts & are not equal, then you have 95% certainty
