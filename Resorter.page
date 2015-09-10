@@ -380,11 +380,12 @@ if (!loaded) { write("warning: R library 'argparser' unavailable; attempting to 
 p <- arg_parser("sort a list using comparative rankings under the Bradley-Terry statistical model; see http://www.gwern.net/Resorter", name="resorter")
 p <- add_argument(p, "--input", short="-i",
                   "input file - a CSV file of items to sort: one per line, with up to two columns. (eg both 'Akira\\n' and 'Akira, 10\\n' are valid). If not set, `resorter` falls back to stdin.", type="character", )
-p <- add_argument(p, "--verbose", "whether to print out intermediate statistics", flag=TRUE, default=FALSE)
+p <- add_argument(p, "--verbose", "whether to print out intermediate statistics", flag=TRUE)
 p <- add_argument(p, "--queries", short="-n", default=.Machine$integer.max,
                   "Maximum number of questions to ask the user; if already rated, O(items) is a good max, but the more items and more levels in the scale, the more comparisons are needed.")
 p <- add_argument(p, "--levels", short="-l", default=5, "The highest level; rated items will be discretized into 1-l levels, so l=5 means items are bucketed into 5 levels: [1,2,3,4,5], etc")
 p <- add_argument(p, "--no-scale", short="-ns", flag=TRUE, "Do not discretize/bucket the final estimated latent ratings into 1-l ratings; print out inferred latent scores.")
+p <- add_argument(p, "--progress", flag=TRUE, "Print out mean standard error of items")
 argv <- parse_args(p)
 
 # read in the data from either the specified file or stdin:
@@ -442,6 +443,7 @@ for (i in 1:argv$queries) {
  media1 <- targets[1]
  media2 <- targets[2]
 
+ if (argv$progress) { cat(paste0("Mean stderr: ", round(mean(coefficients[,2]))), " | "); }
  cat(paste0("Do you like '", as.character(media1), "' better than '", as.character(media2), "'? (1=yes, 2=tied, 3=second is better, q=quit, s=skip): "))
  rating <- scan("stdin", character(), n=1, quiet=TRUE)
 
@@ -476,6 +478,7 @@ if(!(argv$`no-scale`)) {
     print(subset(ranking2[order(ranking2$Quantile, decreasing=TRUE),], select=c("Media", "Quantile")))
 } else { # print out just the latent continuous scores:
          print(sort(coefficients[,1])) }
+
 $ ./resorter.R  --input anime.txt
 Warning message:
 In eval(expr, envir, enclos) : non-integer counts in a binomial glm!
