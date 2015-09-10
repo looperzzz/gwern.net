@@ -9,7 +9,7 @@ belief: log
 
 
 In rating hundreds of media on a review site like GoodReads, Amazon, MyAnimeList etc, the distributions tend to become 'lumpy' and concentrate on the top few possible ratings: if it's a 10-point scale, you won't see many below 7, usually, or if it's 5-stars [then anything](https://xkcd.com/325/) [below 4-stars indicates profound hatred](https://xkcd.com/1098/), leading to a J-shaped distribution and the Internet's version of [grade inflation](!Wikipedia).
-After enough time and inflation, the ratings have degenerated into a noninformative binary rating scale, and some sites, recognizing this, abandon the pretense, like YouTube switching from 5-stars to like/dislike.
+After enough time and inflation, the ratings have degenerated into a noninformative binary rating scale, and some sites, recognizing this, abandon the pretense, like [YouTube switching from 5-stars to like/dislike](http://youtube-global.blogspot.com/2009/09/five-stars-dominate-ratings.html "Five Stars Dominate Ratings").
 
 This is unfortunate if you want to provide ratings & reviews to other people and indicate your true preferences; when I like on [MALgraph](http://graph.anime.plus/gwern/ratings,anime) and see that over half my anime ratings are in the range 8-10, then, my ratings having degenerated into a roughly 1-3 scale (crap-good-great) makes it harder to see which ones are truly worth watching & also which ones I might want to go back and rewatch.
 So the ratings carry much less information than one might have guessed from the scale (a 10-point scale has 3.32 bits of information in each rating, but if it's de facto degenerated into a 3-point scale, then the information has halved to 1.58 bits).
@@ -362,6 +362,8 @@ $ cat resorter.R
 # attempt to load a library implementing the Bradley-Terry model for inferring rankings based on
 # comparisons; if it doesn't load, try to install it through R's in-language package management;
 # otherwise, abort and warn the user
+# https://cran.r-project.org/web/packages/BradleyTerry2/index.html
+# http://www.jstatsoft.org/v48/i09/paper
 loaded <- library(BradleyTerry2, quietly=TRUE, logical.return=TRUE)
 if (!loaded) { write("warning: R library 'BradleyTerry2' unavailable; attempting to install locally...", stderr())
               install.packages("BradleyTerry2")
@@ -375,16 +377,18 @@ if (!loaded) { write("warning: R library 'argparser' unavailable; attempting to 
               loadedAfterInstall <- library(argparser, quietly=TRUE, logical.return=TRUE)
               if(!loadedAfterInstall) { write("error: 'argparser' unavailable and cannot be installed. Aborting.", stderr()); quit() }
 }
-
 p <- arg_parser("sort a list using comparative rankings under the Bradley-Terry statistical model; see http://www.gwern.net/Resorter", name="resorter")
 p <- add_argument(p, "--input", short="-i",
-                  "input file - a CSV file of items to sort: one per line, with up to two columns. (eg both 'Akira\\n' and 'Akira, 10\\n' are valid).", type="character", )
-p <- add_argument(p, "--verbose", "whether to print out intermediate statistics", flag=TRUE)
-p <- add_argument(p, "--queries", short="-n", "Maximum number of questions to ask the user", default=.Machine$integer.max)
+                  "input file - a CSV file of items to sort: one per line, with up to two columns. (eg both 'Akira\\n' and 'Akira, 10\\n' are valid). If not set, `resorter` falls back to stdin.", type="character", )
+p <- add_argument(p, "--verbose", "whether to print out intermediate statistics", flag=TRUE, default=FALSE)
+p <- add_argument(p, "--queries", short="-n", default=.Machine$integer.max,
+                  "Maximum number of questions to ask the user; if already rated, O(items) is a good max, but the more items and more levels in the scale, the more comparisons are needed.")
+p <- add_argument(p, "--levels", short="-l", default=5, "The highest level; rated items will be discretized into 1-l levels, so l=5 means items are bucketed into 5 levels: [1,2,3,4,5], etc")
+p <- add_argument(p, "--no-scale", short="-ns", flag=TRUE, "Do not discretize/bucket the final estimated latent ratings into 1-l ratings; print out inferred latent scores.")
 argv <- parse_args(p)
 
-# read in the data from the specified file:
-if(!is.na(argv$input)) { ranking <- read.csv(file=argv$input, header=FALSE); } else { write("error: no data available"); quit(); }
+# read in the data from either the specified file or stdin:
+if(!is.na(argv$input)) { ranking <- read.csv(file=argv$input, header=FALSE); } else { ranking <- read.csv(file=file('stdin'), header=FALSE); }
 
 # if user did not specify a second column of initial ratings, then put in a default of '1':
 if(ncol(ranking)==1) { ranking$Rating <- 1; }
@@ -392,7 +396,6 @@ colnames(ranking) <- c("Media", "Rating")
 
 # A set of ratings like 'foo,1\nbar,2' is not comparisons, though. We *could* throw out everything except the 'Media' column
 # but we would like to accelerate the interactive querying process by exploiting the valuable data the user has given us.
-#
 # So we 'seed' the comparison dataset based on input data: higher rating means +1, lower means -1, same rating == tie (0.5 to both)
 comparisons <- NULL
 for (i in 1:(nrow(ranking)-1)) {
@@ -409,7 +412,15 @@ for (i in 1:(nrow(ranking)-1)) {
             } else {
               comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=0, "win2"=1))
                    } } }
-priorRankings <- BTm(cbind(win1, win2), Media.1, Media.2, ~ Media, id = "Media", data = comparisons)
+# the use of '0.5' is recommended by the BT2 paper, despite causing quasi-spurious warnings:
+# > In several of the data examples (e.g., `?CEMS`, `?springall`, `?sound.fields`), ties are handled by the crude but
+# > simple device of adding half of a 'win' to the tally for each player involved; in each of the examples where this
+# > has been done it is found that the result is very similar, after a simple re-scaling, to the more sophisticated
+# > analyses that have appeared in the literature. Note that this device when used with `BTm` typically gives rise to
+# > warnings produced by the back-end glm function, about non-integer 'binomial' counts; such warnings are of no
+# > consequence and can be safely ignored. It is likely that a future version of `BradleyTerry2` will have a more
+# > general method for handling ties.
+suppressWarnings(priorRankings <- BTm(cbind(win1, win2), Media.1, Media.2, ~ Media, id = "Media", data = comparisons))
 
 if(argv$verbose) {
   print("higher=better:")
@@ -420,32 +431,33 @@ if(argv$verbose) {
 set.seed(2015-09-10)
 for (i in 1:argv$queries) {
 
- ## with the current data, calculate and extract the new estimates:
- updatedRankings <- BTm(cbind(win1, win2), Media.1, Media.2, ~ Media, id = "Media", data = comparisons)
+ # with the current data, calculate and extract the new estimates:
+ suppressWarnings(updatedRankings <- BTm(cbind(win1, win2), Media.1, Media.2, ~ Media, id = "Media", data = comparisons))
  coefficients <- BTabilities(updatedRankings)
  if(argv$verbose) { print(i); print(coefficients); }
 
- ## pick two media to compare at random but weighted by relative size of standard-error,
- ## which is a crude indicator of its uncertainty and the ones where value of information is high:
+ # pick two media to compare at random but weighted by relative size of standard-error,
+ # which is a crude indicator of its uncertainty and the ones where value of information is high:
  targets <- sample(row.names(coefficients), 2, prob=coefficients[,2])
  media1 <- targets[1]
  media2 <- targets[2]
 
- cat(paste0("Do you like '", as.character(media1), "' better than '", as.character(media2), "'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): "))
+ cat(paste0("Do you like '", as.character(media1), "' better than '", as.character(media2), "'? (1=yes, 2=tied, 3=second is better, q=quit, s=skip): "))
  rating <- scan("stdin", character(), n=1, quiet=TRUE)
 
- if (rating=="1") { comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=1, "win2"=0)) } else
- { if (rating=="3") { comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=0, "win2"=1)) } else
-  { if (rating=="2") { comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=0.5, "win2"=0.5)) } else
-    { if(rating=="q") { break; }}
-   }
- }
+switch(rating,
+        "1" = { comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=1, "win2"=0)) },
+        "3" = { comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=0, "win2"=1)) },
+        "2" = { comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=0.5, "win2"=0.5))},
+        "q" = { break; },
+        "s" = {}
+        )
 }
 
-## results of all the questioning:
+# results of all the questioning:
 if(argv$verbose) { print(comparisons); }
 
-updatedRankings <- BTm(cbind(win1, win2), Media.1, Media.2, ~ Media, id = "Media", data = comparisons)
+suppressWarnings(updatedRankings <- BTm(cbind(win1, win2), Media.1, Media.2, ~ Media, id = "Media", data = comparisons))
 coefficients <- BTabilities(updatedRankings)
 if(argv$verbose) { print(rownames(coefficients)[which.max(coefficients[2,])]);
                  print(summary(updatedRankings))
@@ -455,39 +467,42 @@ ranking2 <- as.data.frame(BTabilities(updatedRankings))
 ranking2$Media <- rownames(ranking2)
 rownames(ranking2) <- NULL
 
-quantiles <- seq(0,1, by=0.1)
-ranking2$Quantile <- with(ranking2, cut(ability,
-                                breaks=quantile(ability, probs=quantiles),
-                                labels=(quantiles*(length(quantiles)-1))[-1],
-                                include.lowest=TRUE))
-print(subset(ranking2[order(ranking2$Quantile, decreasing=TRUE),], select=c("Media", "Quantile")))
+if(!(argv$`no-scale`)) {
+    quantiles <- seq(0, 1, length.out=(argv$levels+1))
+    ranking2$Quantile <- with(ranking2, cut(ability,
+                                    breaks=quantile(ability, probs=quantiles),
+                                    labels=(quantiles*(length(quantiles)-1))[-1],
+                                    include.lowest=TRUE))
+    print(subset(ranking2[order(ranking2$Quantile, decreasing=TRUE),], select=c("Media", "Quantile")))
+} else { # print out just the latent continuous scores:
+         print(sort(coefficients[,1])) }
 $ ./resorter.R  --input anime.txt
 Warning message:
 In eval(expr, envir, enclos) : non-integer counts in a binomial glm!
 Calls: BTm ... <Anonymous> -> eval -> eval -> glm.fit -> eval -> eval
-Do you like 'RahXephon' better than 'Perfect Blue'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
-Do you like 'Monster' better than 'Serial Experiments Lain'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
-Do you like 'Last Exile' better than 'Gunslinger Girl'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
-Do you like 'Kimi ga Nozomu Eien' better than 'Monster'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
-Do you like 'Cowboy Bebop' better than 'Perfect Blue'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
-Do you like 'Monster' better than 'Serial Experiments Lain'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 2
-Do you like 'FLCL' better than 'Cowboy Bebop'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
-Do you like 'RahXephon' better than 'Kimi ga Nozomu Eien'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
-Do you like 'Jin-Rou' better than 'Gunslinger Girl'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
-Do you like 'Mai-HiME' better than 'Gankutsuou'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
-Do you like 'Death Note' better than 'Jin-Rou'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
-Do you like 'Gunslinger Girl' better than 'FLCL'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 2
-Do you like 'Jin-Rou' better than 'Neon Genesis Evangelion: The End of Evangelion'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
-Do you like 'Cowboy Bebop' better than 'Gunslinger Girl'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
-Do you like 'Fullmetal Alchemist' better than 'Gunslinger Girl'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
-Do you like 'Monster' better than 'Jin-Rou'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
-Do you like 'Monster' better than 'Perfect Blue'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 2
-Do you like 'Monster' better than 'Jin-Rou'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
-Do you like 'Jin-Rou' better than 'Perfect Blue'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 2
-Do you like 'Fruits Basket' better than 'Death Note'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
-Do you like 'Neon Genesis Evangelion: The End of Evangelion' better than 'Serial Experiments Lain'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
-Do you like 'Monster' better than 'Fruits Basket'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
-Do you like 'Last Exile' better than 'Serial Experiments Lain'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): q
+Do you like 'RahXephon' better than 'Perfect Blue'? (1=yes, 2=tied, 3=second is better, q=quit): 3
+Do you like 'Monster' better than 'Serial Experiments Lain'? (1=yes, 2=tied, 3=second is better, q=quit): 3
+Do you like 'Last Exile' better than 'Gunslinger Girl'? (1=yes, 2=tied, 3=second is better, q=quit): 3
+Do you like 'Kimi ga Nozomu Eien' better than 'Monster'? (1=yes, 2=tied, 3=second is better, q=quit): 3
+Do you like 'Cowboy Bebop' better than 'Perfect Blue'? (1=yes, 2=tied, 3=second is better, q=quit): 1
+Do you like 'Monster' better than 'Serial Experiments Lain'? (1=yes, 2=tied, 3=second is better, q=quit): 2
+Do you like 'FLCL' better than 'Cowboy Bebop'? (1=yes, 2=tied, 3=second is better, q=quit): 3
+Do you like 'RahXephon' better than 'Kimi ga Nozomu Eien'? (1=yes, 2=tied, 3=second is better, q=quit): 1
+Do you like 'Jin-Rou' better than 'Gunslinger Girl'? (1=yes, 2=tied, 3=second is better, q=quit): 1
+Do you like 'Mai-HiME' better than 'Gankutsuou'? (1=yes, 2=tied, 3=second is better, q=quit): 3
+Do you like 'Death Note' better than 'Jin-Rou'? (1=yes, 2=tied, 3=second is better, q=quit): 1
+Do you like 'Gunslinger Girl' better than 'FLCL'? (1=yes, 2=tied, 3=second is better, q=quit): 2
+Do you like 'Jin-Rou' better than 'Neon Genesis Evangelion: The End of Evangelion'? (1=yes, 2=tied, 3=second is better, q=quit): 3
+Do you like 'Cowboy Bebop' better than 'Gunslinger Girl'? (1=yes, 2=tied, 3=second is better, q=quit): 1
+Do you like 'Fullmetal Alchemist' better than 'Gunslinger Girl'? (1=yes, 2=tied, 3=second is better, q=quit): 3
+Do you like 'Monster' better than 'Jin-Rou'? (1=yes, 2=tied, 3=second is better, q=quit): 1
+Do you like 'Monster' better than 'Perfect Blue'? (1=yes, 2=tied, 3=second is better, q=quit): 2
+Do you like 'Monster' better than 'Jin-Rou'? (1=yes, 2=tied, 3=second is better, q=quit): 1
+Do you like 'Jin-Rou' better than 'Perfect Blue'? (1=yes, 2=tied, 3=second is better, q=quit): 2
+Do you like 'Fruits Basket' better than 'Death Note'? (1=yes, 2=tied, 3=second is better, q=quit): 3
+Do you like 'Neon Genesis Evangelion: The End of Evangelion' better than 'Serial Experiments Lain'? (1=yes, 2=tied, 3=second is better, q=quit): 1
+Do you like 'Monster' better than 'Fruits Basket'? (1=yes, 2=tied, 3=second is better, q=quit): 1
+Do you like 'Last Exile' better than 'Serial Experiments Lain'? (1=yes, 2=tied, 3=second is better, q=quit): q
 There were 44 warnings (use warnings() to see them)
 Warning messages:
 1: In eval(expr, envir, enclos) : non-integer counts in a binomial glm!
@@ -518,3 +533,7 @@ Calls: BTm ... <Anonymous> -> eval -> eval -> glm.fit -> eval -> eval
 15                                       Mai-HiME        1
 23                             Witch Hunter Robin        1
 ~~~
+
+
+- add a 'manual' option to interactive use
+- non-interactive mode: read a file full of 3-column comparisons and immediately return that
