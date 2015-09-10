@@ -20,9 +20,12 @@ For only a few ratings like 10 or 20, it's easy to manually review and rescale r
 So unsurprisingly, for a large corpus like my 408 anime or 2059 books, I've never bothered to try to do this - much less do it occasionally as the ratings drift.
 
 If I had some sort of program which could query me repeatedly for new ratings, store the results, and then spit out a consolidated list of exactly how to change ratings, then I might be able to, once in a great while, correct my ratings.
+This would help us re-rate our existing media corpuses, but it could also help us sort other things: for example, we could try to prioritize future books or movies by taking all the ones we marked 'to read' and then doing comparisons to rank each item by how excited we are about it or how important it is or how much we want to read it soon.
+(If we have way too many things to do, we could also sort our overall To Do lists this way, but probably it's very easy to sort them by hand.)
+
 But it can't ask me for absolute ratings, because if I was able to easily give uniformly-distributed ratings, I wouldn't have this problem in the first place!
 So instead it should calculate rankings, and then take the final ranking and distribute them across however many buckets there are in the scale: if I rate 100 anime for MAL's 1-10 ranking, then it will put the bottom 10 in the '1' bucket, the 10-20th into the '2' bucket, etc
-This cannot be done automatically
+This cannot be done automatically.
 
 How to get rankings: if there are 1000 media, it's impossible for me to explicitly rank a book '#952', or '#501'. Nobody has that firm a grip.
 Perhaps it would be better for it to ask me to compare pairs of media?
@@ -249,26 +252,269 @@ y = comparisons2$win1
 n = comparisons2$win1 + comparisons2$win2
 N = length(y)
 J = length(levels(comparisons$Media.1))
+data = list(y = y, n = n, N = N, J = J, teamA = teamA, teamH = teamH)
+library(rjags)
+### testjags()
 model1 <- "model {
 for (i in 1:N){
     y[i] ~ dbin (p[i], n[i])
     logit(p[i]) <- a[teamH[i]] - a[teamA[i]]
 }
 for (j in 1:J){
-a[j] ~ dnorm(0, tau)
+    a[j] ~ dnorm(0, tau)
 }
+
+for (m in 1:J){
+ for(o in 1:J){
+  Y[m,o] ~ dbin(logit(y[m] - y[o]), 10)
+  }
+}
+
 tau <- pow(sigma, -2)
 sigma ~ dunif (0, 100)
 }"
-data = list(y = y, n = n, N = N, J = J, teamA = teamA, teamH = teamH)
-library(rjags)
-jfit = jags.model(textConnection(model1), data = data, n.chains = 1, n.adapt = 5000)
+
+
+j1 <- autorun.jags(model=model1, monitor=c("a", "Y"), data=data); j1
+
+j1$mcmc[[2]]
+
+samples <- as.mcmc.list(j1)
+
+lapply
+     lapply(X, FUN, ...)
+
+
+
+bfit <- coda.samples(j1, c("a", "sigma"), n.iter = 10000, progress.bar = "gui")
+
+jfit <- jags(textConnection(model1), data = data, n.chains = 1, n.adapt = 5000)
 update(jfit, 5000)
 bfit <- coda.samples(jfit, c("a", "sigma"), n.iter = 10000, progress.bar = "gui")
 S = summary(bfit)
 S
 
+
+quantiles <- seq(0,1, by=0.1)
+foo$Quantile <- with(foo, cut(ability,
+                                breaks=quantile(ability, probs=quantiles),
+                                labels=(quantiles*(length(quantiles)-1))[-1],
+                                include.lowest=TRUE))
+foo <- foo[order(foo$Quantile),]
 controlling total error: take the posterior distribution of
                   all the anime; draw, say, 100 samples and create a new discretization into (sorted) deciles; compare all 100 with the discretization you get from the point-estimates and
                   see if any anime shifted deciles; if <5 of the samples...
 21:39:15 <@gwern> ...have shifts & are not equal, then you have 95% certainty
+
+
+R> autoextend.jags(j1, data=data)
+
+
+We use nested Monte Carlo methods to calculate EI(t) as a function of
+time. At each time, we sample a datum from the predictive distribution by
+first drawing a set of parameter values from the posterior, and then draw-
+ing a data value from the sampling distribution with those parameters. We
+then estimate p(d|t, D, I) for that datum using equation (1.5). Repeating
+this process and averaging the logarithm of the estimates provides a Monte
+Carlo estimate of equation (1.8). The thick solid curve in Figure 2d shows
+this estimate of EI(t), using base-2 logarithms so that the relative infor-
+mation gain is measured in bits (with an offset so the smallest EI(t) is at
+0 bits; the raggedness in the curve reflects the Monte Carlo uncertainties).
+EI(t) quantifies the uncertainty that is apparent in the set of thin sampled
+v(t) curves. It is maximized near the periastron crossing subsequent to the
+available data, at t = 1925 d.
+
+t=time,
+d=the value, d, of a future datum at time t; For given values of (τ, e, K), the predictive probability density for d is just the likelihood for d (a Gaus- sian centered at v(t; τ, e, K)).
+D= all the data???
+I=denotes the modeling assumptions (Keplerian orbit, noise properties, etc.).
+
+  -l FILE        --load-file=FILE         A local file for Mueval to load, providing definitions. Contents are trusted! Do not put anything dubious in it!
+
+~~~{.Bash}
+$ cat anime.txt
+"Cowboy Bebop", 10
+"Monster", 10
+"Neon Genesis Evangelion: The End of Evangelion", 10
+"Gankutsuou", 10
+"Serial Experiments Lain", 10
+"Perfect Blue", 10
+"Jin-Rou", 10
+"Death Note", 10
+"Last Exile", 9
+"Fullmetal Alchemist", 9
+"Gunslinger Girl", 9
+"RahXephon", 9
+"Trigun", 9
+"Fruits Basket", 9
+"FLCL", 9
+"Witch Hunter Robin", 7
+".hack//Sign", 7
+"Chobits", 7
+"Full Metal Panic!", 7
+"Mobile Suit Gundam Wing", 7
+"El Hazard: The Wanderers", 7
+"Mai-HiME", 6
+"Kimi ga Nozomu Eien", 6
+$ cat resorter.R
+#!/usr/bin/Rscript
+
+# attempt to load a library implementing the Bradley-Terry model for inferring rankings based on
+# comparisons; if it doesn't load, try to install it through R's in-language package management;
+# otherwise, abort and warn the user
+loaded <- library(BradleyTerry2, quietly=TRUE, logical.return=TRUE)
+if (!loaded) { write("warning: R library 'BradleyTerry2' unavailable; attempting to install locally...", stderr())
+              install.packages("BradleyTerry2")
+              loadedAfterInstall <- library(BradleyTerry2, quietly=TRUE, logical.return=TRUE)
+              if(!loadedAfterInstall) { write("error: 'BradleyTerry2' unavailable and cannot be installed. Aborting.", stderr()); quit() }
+}
+# similarly, but for the library to parse commandline arguments:
+loaded <- library(argparser, quietly=TRUE, logical.return=TRUE)
+if (!loaded) { write("warning: R library 'argparser' unavailable; attempting to install locally...", stderr())
+              install.packages("argparser")
+              loadedAfterInstall <- library(argparser, quietly=TRUE, logical.return=TRUE)
+              if(!loadedAfterInstall) { write("error: 'argparser' unavailable and cannot be installed. Aborting.", stderr()); quit() }
+}
+
+p <- arg_parser("sort a list using comparative rankings under the Bradley-Terry statistical model; see http://www.gwern.net/Resorter", name="resorter")
+p <- add_argument(p, "--input", short="-i",
+                  "input file - a CSV file of items to sort: one per line, with up to two columns. (eg both 'Akira\\n' and 'Akira, 10\\n' are valid).", type="character", )
+p <- add_argument(p, "--verbose", "whether to print out intermediate statistics", flag=TRUE)
+p <- add_argument(p, "--queries", short="-n", "Maximum number of questions to ask the user", default=.Machine$integer.max)
+argv <- parse_args(p)
+
+# read in the data from the specified file:
+if(!is.na(argv$input)) { ranking <- read.csv(file=argv$input, header=FALSE); } else { write("error: no data available"); quit(); }
+
+# if user did not specify a second column of initial ratings, then put in a default of '1':
+if(ncol(ranking)==1) { ranking$Rating <- 1; }
+colnames(ranking) <- c("Media", "Rating")
+
+# A set of ratings like 'foo,1\nbar,2' is not comparisons, though. We *could* throw out everything except the 'Media' column
+# but we would like to accelerate the interactive querying process by exploiting the valuable data the user has given us.
+#
+# So we 'seed' the comparison dataset based on input data: higher rating means +1, lower means -1, same rating == tie (0.5 to both)
+comparisons <- NULL
+for (i in 1:(nrow(ranking)-1)) {
+ rating1 <- ranking[i,]$Rating
+ media1 <- ranking[i,]$Media
+ rating2 <- ranking[i+1,]$Rating
+ media2 <- ranking[i+1,]$Media
+ if (rating1 == rating2)
+  {
+     comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=0.5, "win2"=0.5))
+  } else { if (rating1 > rating2)
+           {
+            comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=1, "win2"=0))
+            } else {
+              comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=0, "win2"=1))
+                   } } }
+priorRankings <- BTm(cbind(win1, win2), Media.1, Media.2, ~ Media, id = "Media", data = comparisons)
+
+if(argv$verbose) {
+  print("higher=better:")
+  print(summary(priorRankings))
+  print(sort(BTabilities(priorRankings)[,1]))
+}
+
+set.seed(2015-09-10)
+for (i in 1:argv$queries) {
+
+ ## with the current data, calculate and extract the new estimates:
+ updatedRankings <- BTm(cbind(win1, win2), Media.1, Media.2, ~ Media, id = "Media", data = comparisons)
+ coefficients <- BTabilities(updatedRankings)
+ if(argv$verbose) { print(i); print(coefficients); }
+
+ ## pick two media to compare at random but weighted by relative size of standard-error,
+ ## which is a crude indicator of its uncertainty and the ones where value of information is high:
+ targets <- sample(row.names(coefficients), 2, prob=coefficients[,2])
+ media1 <- targets[1]
+ media2 <- targets[2]
+
+ cat(paste0("Do you like '", as.character(media1), "' better than '", as.character(media2), "'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): "))
+ rating <- scan("stdin", character(), n=1, quiet=TRUE)
+
+ if (rating=="1") { comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=1, "win2"=0)) } else
+ { if (rating=="3") { comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=0, "win2"=1)) } else
+  { if (rating=="2") { comparisons <- rbind(comparisons, data.frame("Media.1"=media1, "Media.2"=media2, "win1"=0.5, "win2"=0.5)) } else
+    { if(rating=="q") { break; }}
+   }
+ }
+}
+
+## results of all the questioning:
+if(argv$verbose) { print(comparisons); }
+
+updatedRankings <- BTm(cbind(win1, win2), Media.1, Media.2, ~ Media, id = "Media", data = comparisons)
+coefficients <- BTabilities(updatedRankings)
+if(argv$verbose) { print(rownames(coefficients)[which.max(coefficients[2,])]);
+                 print(summary(updatedRankings))
+                 print(sort(coefficients[,1])) }
+
+ranking2 <- as.data.frame(BTabilities(updatedRankings))
+ranking2$Media <- rownames(ranking2)
+rownames(ranking2) <- NULL
+
+quantiles <- seq(0,1, by=0.1)
+ranking2$Quantile <- with(ranking2, cut(ability,
+                                breaks=quantile(ability, probs=quantiles),
+                                labels=(quantiles*(length(quantiles)-1))[-1],
+                                include.lowest=TRUE))
+print(subset(ranking2[order(ranking2$Quantile, decreasing=TRUE),], select=c("Media", "Quantile")))
+$ ./resorter.R  --input anime.txt
+Warning message:
+In eval(expr, envir, enclos) : non-integer counts in a binomial glm!
+Calls: BTm ... <Anonymous> -> eval -> eval -> glm.fit -> eval -> eval
+Do you like 'RahXephon' better than 'Perfect Blue'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
+Do you like 'Monster' better than 'Serial Experiments Lain'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
+Do you like 'Last Exile' better than 'Gunslinger Girl'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
+Do you like 'Kimi ga Nozomu Eien' better than 'Monster'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
+Do you like 'Cowboy Bebop' better than 'Perfect Blue'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
+Do you like 'Monster' better than 'Serial Experiments Lain'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 2
+Do you like 'FLCL' better than 'Cowboy Bebop'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
+Do you like 'RahXephon' better than 'Kimi ga Nozomu Eien'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
+Do you like 'Jin-Rou' better than 'Gunslinger Girl'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
+Do you like 'Mai-HiME' better than 'Gankutsuou'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
+Do you like 'Death Note' better than 'Jin-Rou'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
+Do you like 'Gunslinger Girl' better than 'FLCL'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 2
+Do you like 'Jin-Rou' better than 'Neon Genesis Evangelion: The End of Evangelion'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
+Do you like 'Cowboy Bebop' better than 'Gunslinger Girl'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
+Do you like 'Fullmetal Alchemist' better than 'Gunslinger Girl'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
+Do you like 'Monster' better than 'Jin-Rou'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
+Do you like 'Monster' better than 'Perfect Blue'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 2
+Do you like 'Monster' better than 'Jin-Rou'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
+Do you like 'Jin-Rou' better than 'Perfect Blue'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 2
+Do you like 'Fruits Basket' better than 'Death Note'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 3
+Do you like 'Neon Genesis Evangelion: The End of Evangelion' better than 'Serial Experiments Lain'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
+Do you like 'Monster' better than 'Fruits Basket'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): 1
+Do you like 'Last Exile' better than 'Serial Experiments Lain'? (1=yes, 2=tied/unsure, 3=second is better, q=quit): q
+There were 44 warnings (use warnings() to see them)
+Warning messages:
+1: In eval(expr, envir, enclos) : non-integer counts in a binomial glm!
+Calls: BTm ... <Anonymous> -> eval -> eval -> glm.fit -> eval -> eval
+2: glm.fit: fitted probabilities numerically 0 or 1 occurred
+                                            Media Quantile
+2                                    Cowboy Bebop       10
+9                                      Gankutsuou       10
+18 Neon Genesis Evangelion: The End of Evangelion       10
+17                                        Monster        9
+21                        Serial Experiments Lain        9
+3                                      Death Note        8
+19                                   Perfect Blue        8
+12                                        Jin-Rou        7
+5                                            FLCL        6
+6                                   Fruits Basket        6
+10                                Gunslinger Girl        6
+7                             Fullmetal Alchemist        5
+20                                      RahXephon        5
+22                                         Trigun        5
+4                        El Hazard: The Wanderers        4
+14                                     Last Exile        4
+8                               Full Metal Panic!        3
+16                        Mobile Suit Gundam Wing        3
+1                                         Chobits        2
+11                                    .hack//Sign        2
+13                            Kimi ga Nozomu Eien        1
+15                                       Mai-HiME        1
+23                             Witch Hunter Robin        1
+~~~
