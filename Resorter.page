@@ -385,7 +385,8 @@ p <- add_argument(p, "--verbose", "whether to print out intermediate statistics"
 p <- add_argument(p, "--queries", short="-n", default=.Machine$integer.max,
                   "Maximum number of questions to ask the user; if already rated, O(items) is a good max, but the more items and more levels in the scale, the more comparisons are needed.")
 p <- add_argument(p, "--levels", short="-l", default=5, "The highest level; rated items will be discretized into 1-l levels, so l=5 means items are bucketed into 5 levels: [1,2,3,4,5], etc")
-p <- add_argument(p, "--no-scale", short="-ns", flag=TRUE, "Do not discretize/bucket the final estimated latent ratings into 1-l ratings; print out inferred latent scores.")
+p <- add_argument(p, "--quantiles", short="-q", "What fraction to allocate to each level; space-separated; overrides `--levels`. This allows making one level of ratings narrower (and more precise) than the others, at their expense; for example, one could make 3-star ratings rarer with quantiles like `--quantiles '0 0.25 0.8 1'`. Default: uniform distribution (1-5 ~> '0.0 0.2 0.4 0.6 0.8 1.0').")
+p <- add_argument(p, "--no-scale", short="-ns", flag=TRUE, "Do not discretize/bucket the final estimated latent ratings into 1-l levels/ratings; print out inferred latent scores.")
 p <- add_argument(p, "--no-progress", flag=TRUE, "Do not print out mean standard error of items")
 argv <- parse_args(p)
 
@@ -473,10 +474,12 @@ ranking2$Media <- rownames(ranking2)
 rownames(ranking2) <- NULL
 
 if(!(argv$`no-scale`)) {
-    quantiles <- seq(0, 1, length.out=(argv$levels+1))
+
+    # if the user specified a bunch of buckets using `--quantiles`, parse it and use it, otherwise, take `--levels` and make a uniform distribution
+    quantiles <- if (!is.na(argv$quantiles)) { (sapply(strsplit(argv$quantiles, " "), as.numeric))[,1]; } else { seq(0, 1, length.out=(argv$levels+1)); }
     ranking2$Quantile <- with(ranking2, cut(ability,
                                     breaks=quantile(ability, probs=quantiles),
-                                    labels=(quantiles*(length(quantiles)-1))[-1],
+                                    labels=1:(length(quantiles)-1),
                                     include.lowest=TRUE))
     df <- subset(ranking2[order(ranking2$Quantile, decreasing=TRUE),], select=c("Media", "Quantile"));
     if (!is.na(argv$output)) { write.csv(df, file=argv$output, row.names=FALSE) } else { print(df); }
