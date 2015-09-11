@@ -3,7 +3,7 @@ title: Resorting Media Ratings
 description: Commandline tool providing interactive Bayesian pairwise ranking and sorting of items
 created: 7 Sep 2015
 tags: computer science, statistics, criticism
-status: in progress
+status: finished
 belief: log
 ...
 
@@ -19,7 +19,8 @@ Available features:
 
 ~~~{.Bash}
 $ ./resorter.R --help
-usage: resorter [--help] [--verbose] [--no-scale] [--no-progress] [--opts OPTS] [--input INPUT] [--output OUTPUT] [--queries QUERIES] [--levels LEVELS] [--quantiles QUANTILES]
+usage: resorter [--help] [--verbose] [--no-scale] [--no-progress] [--opts OPTS] [--input INPUT] [--output OUTPUT] [--queries QUERIES]
+                [--levels LEVELS] [--quantiles QUANTILES]
 
 sort a list using comparative rankings under the Bradley-Terry statistical model; see http://www.gwern.net/Resorter
 
@@ -34,9 +35,13 @@ optional arguments:
   -x, --opts OPTS           RDS file containing argument values
   -i, --input INPUT         input file - a CSV file of items to sort: one per line, with up to two columns. (eg both 'Akira\n' and 'Akira, 10\n' are valid).
   -o, --output OUTPUT           output file: a file to write the final results to. Default: printing to stdout.
-  -n, --queries QUERIES         Maximum number of questions to ask the user; if already rated, O(items) is a good max, but the more items and more levels in the scale, the more comparisons are needed. [default: 2147483647]
-  -l, --levels LEVELS           The highest level; rated items will be discretized into 1-l levels, so l=5 means items are bucketed into 5 levels: [1,2,3,4,5], etc [default: 5]
-  -q, --quantiles QUANTILES         What fraction to allocate to each level; space-separated; overrides `--levels`. This allows making one level of ratings narrower (and more precise) than the others, at their expense; for example, one could make 3-star ratings rarer with quantiles like `--quantiles '0 0.25 0.8 1'`. Default: uniform distribution (1-5 ~> '0.0 0.2 0.4 0.6 0.8 1.0').
+  -n, --queries QUERIES         Maximum number of questions to ask the user; if already rated, O(items) is a good max, but the more items and more levels in
+                                the scale, the more comparisons are needed. [default: 2147483647]
+  -l, --levels LEVELS            The highest level; rated items will be discretized into 1-l levels, so l=5 means items are bucketed into 5 levels: [1,2,3,4,5],
+                                 etc [default: 5]
+  -q, --quantiles QUANTILES         What fraction to allocate to each level; space-separated; overrides `--levels`. This allows making one level of ratings
+                                    narrower (and more precise) than the others, at their expense; for example, one could make 3-star ratings rarer with quantiles
+                                     like `--quantiles '0 0.25 0.8 1'`. Default: uniform distribution (1-5 ~> '0.0 0.2 0.4 0.6 0.8 1.0').
 ~~~
 
 Here is an example demonstrating the use of `resorter` to have the user make 10 comparisons, rescale the scores into 1-3 ratings (where 3 is rare), and write the new rankings to a file:
@@ -281,7 +286,7 @@ So unsurprisingly, for a large corpus like my 408 anime or 2059 books, I've neve
 
 If I had some sort of program which could query me repeatedly for new ratings, store the results, and then spit out a consolidated list of exactly how to change ratings, then I might be able to, once in a great while, correct my ratings.
 This would help us re-rate our existing media corpuses, but it could also help us sort other things: for example, we could try to prioritize future books or movies by taking all the ones we marked 'to read' and then doing comparisons to rank each item by how excited we are about it or how important it is or how much we want to read it soon.
-(If we have way too many things to do, we could also sort our overall To Do lists this way, but probably it's very easy to sort them by hand.)
+(If we have way too many things to do, we could also sort our overall To Do lists this way, but probably it's easy to sort them by hand.)
 
 But it can't ask me for absolute ratings, because if I was able to easily give uniformly-distributed ratings, I wouldn't have this problem in the first place!
 So instead it should calculate rankings, and then take the final ranking and distribute them across however many buckets there are in the scale: if I rate 100 anime for MAL's 1-10 ranking, then it will put the bottom 10 in the '1' bucket, the 10-20th into the '2' bucket, etc
@@ -290,17 +295,20 @@ This cannot be done automatically.
 How to get rankings: if there are 1000 media, it's impossible for me to explicitly rank a book '#952', or '#501'. Nobody has that firm a grip.
 Perhaps it would be better for it to ask me to compare pairs of media?
 Comparison is much more natural, less fatiguing, and helps my judgment by reminding me of what other media there are and how I think of them - when a terrible movie gets mentioned in the same breath as a great movie, it reminds you why one was terrible and the other great.
-Comparison also immediately suggests an implementation as the classic comparison sort algorithms like Quicksort or Mergesort, where the comparison operation simply calls out to the user; yielding a reasonable O(n * log(n)) number of queries (and possibly much less, O(n), if we have the pre-existing ratings and can treat it as an [adaptive sort](!Wikipedia)).
+Comparison also immediately suggests an implementation as the classic comparison sort algorithms like Quicksort or Mergesort, where the comparison operation simply calls out to the user; yielding a reasonable $O(n \cdot log(n))$ number of queries (and possibly much less, $O(n)$, if we have the pre-existing ratings and can treat it as an [adaptive sort](!Wikipedia)).
 
 The comparison-sort algorithms make an assumption that is outrageously unrealistic in this context: they assume that the comparison is 100% accurate.
-That is, say, you have two sorted lists of 1000 elements each and you compare the lowest element of one with the highest element of the other and the first is higher, then all 1000 items in the first are higher than all 1000 items in the second, that of the  1000^2=1000000 possible pairwise comparisons, the sorting algorithms assume that not a single item is out of place, not a single pairwise comparison would be incorrect.
+That is, say, you have two sorted lists of 1000 elements each and you compare the lowest element of one with the highest element of the other and the first is higher, then all 1000 items in the first are higher than all 1000 items in the second, that of the  1000^2^=1000000 possible pairwise comparisons, the sorting algorithms assume that not a single item is out of place, not a single pairwise comparison would be incorrect.
 This assumption is fine in programming, since the CPU is good at comparing bits for equality & may go trillions of operations without making a single mistake; but it's absurd to expect this of a human for any task, much less one in which we are clumsily feeling for the invisible movements of our souls in response to great artists.
 
 Our comparisons of movies, or books, or music, *are* error-prone and so we need some sort of statistical sorting algorithm.
 
-So we'd like a commandline tool which consumes a list of pairs of media & ratings, then queries the user repeatedly with pairs of media to get the user's rating of which one is better, somehow modeling underlying scores while allowing for the user to be wrong in multiple comparisons and ideally picking whatever is the 'most informative' next pair to ask about, and after enough questions, inferring the full ranking of media and mapping it onto a uniform distribution for a particular scale.
+So we'd like a command-line tool which consumes a list of pairs of media & ratings, then queries the user repeatedly with pairs of media to get the user's rating of which one is better, somehow modeling underlying scores while allowing for the user to be wrong in multiple comparisons and ideally picking whatever is the 'most informative' next pair to ask about, and after enough questions, inferring the full ranking of media and mapping it onto a uniform distribution for a particular scale.
 
-The natural way to see the problem is to treat every competitor as having an unobserved latent variable 'quality' or 'ability' or 'skill' on an ordinal scale, and then weaken transitivity to chain our comparisons: if A beats B and B beats C, then *probably* A beats C, weighted by how many times we've observed beating and have much precise our estimate of A-C's latent variables are.
+The natural way to see the problem is to treat every competitor as having an unobserved latent variable 'quality' or 'ability' or 'skill' on a cardinal scale, and then weaken transitivity to chain our comparisons: if A beats B and B beats C, then *probably* A beats C, weighted by how many times we've observed beating and have much precise our estimate of A-C's latent variables are.
+
+## Implementation
+
 Paired or comparison-based data comes up a lot in competitive contexts, such as the famous [Elo rating system](!Wikipedia) or the Bayesian [TrueSkill](!Wikipedia).
 A general model for dealing with it is the [Bradley–Terry model](!Wikipedia).
 
@@ -308,36 +316,47 @@ There are at least two packages in R for dealing with Bradley-Terry models, [`Br
 The latter supports more sophisticated analyses than the former, but it wants its data in an inconvenient format, while `BradleyTerry2` is more easily incrementally updated.
 (I want to supply my data to the library as a long list of triplets of media/media/rating, which is then easily updated with user-input by simply adding another triplet to the bottom; but `prefmod` wants a column for each possible media, which is awkward to start with and gets worse if there are 1000+ media to compare.)
 
-## Implementation
+We start with two vectors: the list of media, and the list of original ratings.
+The original ratings, while lumpy and in need of improving, are still useful information which should not be ignored; if BT-2 were a Bayesian library, we could use them as informative priors, but it's not, so instead I adopt a hack in which the program runs through the list, comparing each anime with the next anime, and if equal, it's treated as a tie, and otherwise they are recorded as a win/loss - so even from the start we've made a lot of progress towards inferring their latent scores.
 
-Here is a worked-out example using `BradleyTerry2`.
-I start with a few MAL anime ratings, which exhibit considerable lumpiness with almost half of them clustered onto a single rating & obscuring the real differences between them.
-The original ratings are useful information which should not be ignored; if BT-2 were a Bayesian library, we could use them as very informative priors, but it's not, so instead I adopt a hack in which the program runs through the list, comparing each anime with the next anime, and if equal, it's treated as a tie, and otherwise they are recorded as a win/loss - so even from the start we've made a lot of progress towards inferring their latent scores.
 Then a loop asks the user _n_ comparisons; we want to ask about the media whose estimates are most uncertain, and a way of estimating that is looking at which media have the biggest [standard error](!Wikipedia).
-You might think that asking about only the two media with the current biggest standard error would be a great strategy, but surprisingly, because of the original ratings' inclusion, this leads to asking about the same media again and again; so instead, it picks randomly with weights for each media of its standard error, so it usually focuses on the most uncertain ones but will occasionally ask about other media as well.
-After all the questions are asked, a final estimation is done, the media are sorted by rank, and mapped back onto the 1-10 MAL rating scale.
+You might think that asking about only the two media with the current biggest standard error would be the best exploration strategy (since this corresponds to reinforcement learning and multi-armed bandit approaches where you start off by exploring the most uncertain things), but surprisingly, this leads to asking about the same media again and again, even as the standard error plummets.
+I'm not sure why this happens, but I think it has to do with the prior information creating an ordering or hierarchy on all the media, and then the maximum-likelihood estimating leads to repeating the same question again and again to shift the ordering up or down the cardinal scale (even our discretized ratings will be invariant no matter how the estimates are translated up and down).
+So instead, it picks randomly with weights for each media of its standard error, so it usually focuses on the most uncertain ones but will occasionally ask about other media as well.
+(Somewhat analogous to fixed-epsilon exploration in RL.)
 
-- it may not be asking particularly information-optimal questions, and, worst of all,
-- it does not come with any useful indication of uncertainty
+After all the questions are asked, a final estimation is done, the media are sorted by rank, and mapped back onto the user-specified rating scale.
 
-The last is the biggest problem because we have no way of knowing when to stop.
-Perhaps after 20 questions, the uncertainty was still high and this is why some of them are missorted; or perhaps diminishing returns had set in and it would have taken so many more questions to stamp out the error that we would prefer just to correct the few erroneous ratings manually in a once-over.
+### Why not Bayes?
+#### Bayesian improvements
+
+There are two problems with this approach:
+
+1. it does not come with any principled indication of uncertainty,
+2. and as a consequence, it may not be asking the optimal questions
+
+The first is the biggest problem because we have no way of knowing when to stop.
+Perhaps after 10 questions, the *real* uncertainty is still high and our final ratings will still be missorted; or perhaps diminishing returns had set in and it would have taken so many more questions to stamp out the error that we would prefer just to correct the few erroneous ratings manually in a once-over.
 And we don't want to crank up the question-count to something burdensome like 200 just on the off-chance that the sorting is insufficient.
-Instead, we'd like some comprehensible probability that each media is assigned to its correct bucket, and perhaps a bound on overall error: for example, I would be satisfied if I could specify something like '90% probability that all media are at least in their correct bucket'.
-Since BF-2 is fundamentally a frequentist library, it will never give us this kind of answer; all it has to offer in this vein are _p_-values, which are answers to questions I've never asked.
-Between our interest in a sequential trial approach and our interest in producing meaningful probabilities of errors, this motivates looking at Bayesian implementations.
+Instead, we'd like some comprehensible probability that each media is assigned to its correct bucket, and perhaps a bound on overall error: for example, I would be satisfied if I could specify something like '90% probability that all media are at least in their correct bucket'.^[I think this could be done by sampling the posterior: draw a random sample of the estimated score from the posterior for each media and discretize them all down; do this, say, 100 times; compare the 100 discretized and see how often any media changes categories. If every media is in the same bucket, say, in 95 of those samples - _The Godfather_ is in the 5-star bucket in 95 of the 100 samples and in the 4-star bucket in the other 5 - then the remaining uncertainty in the estimated scores must be small.]
 
-"Paired Comparison Models for Ranking National Soccer Teams", Shawn E. Hallinan https://www.wpi.edu/Pubs/ETD/Available/etd-050505-154305/unrestricted/shawnhal.pdf
-Part 4: INTRODUCTION TO JAGS, Jim Albert http://bayes.bgsu.edu/webinar.11.2012/R%20output/Rcode.part4.html
-library(BradleyTerry2)
-data(baseball)
-head(baseball)
-teamH = as.numeric(baseball2$home.team)
-teamA = as.numeric(baseball2$away.team)
-y = baseball2$home.wins
-n = baseball2$home.wins + baseball2$away.wins
+Since BF-2 is fundamentally a frequentist library, it will never give us this kind of answer; all it has to offer in this vein are _p_-values - which are answers to questions I've never asked - and standard errors, which are *sort* of indicators of uncertainty & better than nothing but still imperfect.
+Between our interest in a sequential trial approach and our interest in producing meaningful probabilities of errors (and my own preference for Bayesian approaches in general), this motivates looking at Bayesian implementations.
+
+The Bradley-Terry model can be fit easily in Bugs/JAGS; two less and more elaborate examples are in [Jim Albert's implementation](http://bayes.bgsu.edu/webinar.11.2012/R%20output/Rcode.part4.html "Part 4: INTRODUCTION TO JAGS") & [Shawn E. Hallinan](https://www.wpi.edu/Pubs/ETD/Available/etd-050505-154305/unrestricted/shawnhal.pdf "Paired Comparison Models for Ranking National Soccer Teams").
+Although it doesn't implement the extended B-T with ties, Albert's example is easily adapted, and we could try to infer rankings like thus:
+
+~~~{.R}
+comparisons2 <- comparisons[!(comparisons$win1==0.5),]
+
+teamH = as.numeric(comparisons2$Media.1)
+teamA = as.numeric(comparisons2$Media.2)
+y = comparisons2$win1
+n = comparisons2$win1 + comparisons2$win2
 N = length(y)
-J = max(teamH)
+J = length(levels(comparisons$Media.1))
+data = list(y = y, n = n, N = N, J = J, teamA = teamA, teamH = teamH)
+
 model1 <- "model {
 for (i in 1:N){
     y[i] ~ dbin (p[i], n[i])
@@ -349,94 +368,30 @@ a[j] ~ dnorm(0, tau)
 tau <- pow(sigma, -2)
 sigma ~ dunif (0, 100)
 }"
-data = list(y = y, n = n, N = N, J = J, teamA = teamA, teamH = teamH)
-library(rjags)
-jfit = jags.model(textConnection(model1), data = data, n.chains = 1, n.adapt = 5000)
-update(jfit, 5000)
-bfit <- coda.samples(jfit, c("a", "sigma"), n.iter = 10000, progress.bar = "gui")
-S = summary(bfit)
-S
+library(runjags)
+j1 <- autorun.jags(model=model1, monitor=c("a", "y"), data=data); j1
+~~~
 
-comparisons2 <- comparisons[!(comparisons$win1==0.5),]
-teamH = as.numeric(comparisons2$Media.1)
-teamA = as.numeric(comparisons2$Media.2)
-y = comparisons2$win1
-n = comparisons2$win1 + comparisons2$win2
-N = length(y)
-J = length(levels(comparisons$Media.1))
-data = list(y = y, n = n, N = N, J = J, teamA = teamA, teamH = teamH)
-library(rjags)
-### testjags()
-model1 <- "model {
-for (i in 1:N){
-    y[i] ~ dbin (p[i], n[i])
-    logit(p[i]) <- a[teamH[i]] - a[teamA[i]]
-}
-for (j in 1:J){
-    a[j] ~ dnorm(0, tau)
-}
+(This reuses the converting-priors-to-data trick from before.)
+This yields sensible ratings but MCMC unavoidably have overhead compared to a quick iterative maximum-likelihood algorithm which only estimates the parameters - it takes about 1s to run on the example data.
+1s is too long for particularly pleasant interactive use (total time from response to next question should be <0.1s for best UX) but maybe it's worth paying if we can get much better questions?
 
-for (m in 1:J){
- for(o in 1:J){
-  Y[m,o] ~ dbin(logit(y[m] - y[o]), 10)
-  }
-}
+#### Optimal exploration
 
-tau <- pow(sigma, -2)
-sigma ~ dunif (0, 100)
-}"
+So moving on, with a MCMC implementation, we can look at how to optimally sample data. In this case, since we're collecting data and the user can stop anytime they feel like, we aren't interesting in loss functions so much as maximizing information gain - figuring out which pair of media yields the highest "expected information gain".
 
+EI is not too well documented at an implementation level, but the algorithm seems to go: for each possible action (in this case, each possible pair of media), draw a sample from the posterior as a hypothetical action (from the MCMC object, draw a score estimate for both media and compare which is higher), rerun & update the analysis (add the result of the comparison to the dataset & run the MCMC again on it to yield a new MCMC object), and on these two old and new MCMC objects, calculate the entropy of the distributions (in this case, the sum of all the logs of probability of the higher in each possible pair of media being higher?), and subtract new from old; do that ~10 times for each so the estimated change in entropy is reasonably stable; then find the possible action with the largest change in entropy, and execute that.
 
-j1 <- autorun.jags(model=model1, monitor=c("a", "Y"), data=data); j1
+##### Computational requirement
 
-j1$mcmc[[2]]
+Without implementing it, this is infeasible.
+From a computational perspective: there are media^2^ possible actions; each MCMC run takes ~1s; there must be 10 MCMC runs; and the entropy calculations require a bit of time.
+With just 20 media, that'd require $>\frac{20^2 \cdot 10 \cdot 1}{60} = >66$ minutes.
 
-samples <- as.mcmc.list(j1)
+We could run these in parallel, could try to cut down the MCMC iterations even more and risk the occasional non-convergence, could try calculating EI for only a limited number of choices (perhaps 20 randomly chosen options), or look for some mindbending closed-form equations written down by a bearded Russian math professor 50 years ago which we wouldn't understand - but it's hard to see how to get total runtime down to 0.5s - much less ~0.1s.
+And on the packaging side of things, requiring users to have JAGS installed at all makes `resorter harder to install and much more likely that there will be opaque runtime errors.
 
-lapply
-     lapply(X, FUN, ...)
+If asking the user to compare two things was rare and expensive data, if we absolutely had to maximize the informational value of every single question, if we were doing hardcore science like [astronomical observations](http://www.astro.cornell.edu/staff/loredo/bayes/bae.pdf "'Bayesian Adaptive Exploration', Loredo & Chernoff 2003") where every minute of telescope time might be measured in thousands of dollars, then a runtime of 1 hour to optimize question choice would be fine. But we're not.
+If the user needs to be asked 5 additional questions because the standard-error exploration heuristic is suboptimal, that costs them a couple seconds. Not a big deal.
 
-
-
-bfit <- coda.samples(j1, c("a", "sigma"), n.iter = 10000, progress.bar = "gui")
-
-jfit <- jags(textConnection(model1), data = data, n.chains = 1, n.adapt = 5000)
-update(jfit, 5000)
-bfit <- coda.samples(jfit, c("a", "sigma"), n.iter = 10000, progress.bar = "gui")
-S = summary(bfit)
-S
-
-
-quantiles <- seq(0,1, by=0.1)
-foo$Quantile <- with(foo, cut(ability,
-                                breaks=quantile(ability, probs=quantiles),
-                                labels=(quantiles*(length(quantiles)-1))[-1],
-                                include.lowest=TRUE))
-foo <- foo[order(foo$Quantile),]
-controlling total error: take the posterior distribution of
-                  all the anime; draw, say, 100 samples and create a new discretization into (sorted) deciles; compare all 100 with the discretization you get from the point-estimates and
-                  see if any anime shifted deciles; if <5 of the samples...
-21:39:15 <@gwern> ...have shifts & are not equal, then you have 95% certainty
-
-
-R> autoextend.jags(j1, data=data)
-
-
-We use nested Monte Carlo methods to calculate EI(t) as a function of
-time. At each time, we sample a datum from the predictive distribution by
-first drawing a set of parameter values from the posterior, and then draw-
-ing a data value from the sampling distribution with those parameters. We
-then estimate p(d|t, D, I) for that datum using equation (1.5). Repeating
-this process and averaging the logarithm of the estimates provides a Monte
-Carlo estimate of equation (1.8). The thick solid curve in Figure 2d shows
-this estimate of EI(t), using base-2 logarithms so that the relative infor-
-mation gain is measured in bits (with an offset so the smallest EI(t) is at
-0 bits; the raggedness in the curve reflects the Monte Carlo uncertainties).
-EI(t) quantifies the uncertainty that is apparent in the set of thin sampled
-v(t) curves. It is maximized near the periastron crossing subsequent to the
-available data, at t = 1925 d.
-
-t=time,
-d=the value, d, of a future datum at time t; For given values of (τ, e, K), the predictive probability density for d is just the likelihood for d (a Gaus- sian centered at v(t; τ, e, K)).
-D= all the data???
-I=denotes the modeling assumptions (Keplerian orbit, noise properties, etc.).
+And if we're not exploiting the additional power of Bayesian methods, why bother switching from BF-2 to JAGS?
