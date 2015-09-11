@@ -6,28 +6,8 @@ status: in progress
 belief: log
 ...
 
-<style type="text/css">
-/* CSS provided by cwillu of #lesswrong. This CSS:
-1. reflows sections to use up all horizontal whitespace so every section fits on 1 screen
-2. hides the Table of Contents (not needed since all sections are visible) */
-div#content section { display: inline-block; vertical-align: top; max-width:700px; }
-div#content div#TOC { display: none; }
-
-/* Hide donation requests */
-div#donations { display: none; }
-
-/* Hide metadata which is not interesting for index.page */
-div#metadata { display: none; }
-
-/* Get as many columns on the page as possible;
-this overrides the A/B-tested narrower max-width for content pages */
-body { max-width: 1700px; }
-
-/* Undo the quicksilver change in default.css; with the qs change, the index no longer
-fits on one page because there's too much whitespace in list entries! We want compact list there. */
-li { margin-top: 0em; }
-li p { margin: 0em; }
-</style>
+<!-- CSS provided by cwillu of #lesswrong. This CSS: 1. reflows sections to use up all horizontal whitespace so every section fits on 1 screen 2. hides the Table of Contents (not needed since all sections are visible) ; Hide donation requests ; Hide metadata which is not interesting for index.page ; Get as many columns on the page as possible; this overrides the A/B-tested narrower max-width for content pages ; Undo the quicksilver change in default.css; with the qs change, the index no longer fits on one page because there's too much whitespace in list entries! We want compact list there. -->
+<style type="text/css">div#content section { display: inline-block; vertical-align: top; max-width:700px; }; div#content div#TOC { display: none; }; div#donations { display: none; }; div#metadata { display: none; }; body { max-width: 1700px; }; li { margin-top: 0em; }; li p { margin: 0em; }</style>
 
 # Statistics
 
@@ -37,6 +17,7 @@ li p { margin: 0em; }
 - [Existential Risks & Math Errors](The Existential Risk of Mathematical Error "Mathematical mistake or error-rates limit our understanding of rare risks")
 - [Judging the 2012 election forecasters](2012 election predictions "Compiling academic and media forecaster's 2012 American presidential election predictions and statistically judging correctness; Nate Silver was not the best")
 - [Google Alerts over time](Google Alerts "Does Google Alerts return fewer results each year?")
+- [Resorting lists with comparisons](/Resorter "Resorting Media Ratings Commandline tool providing interactive Bayesian pairwise ranking and sorting of items")
 - [Miscellaneous](/Statistical notes)
 
 # Politics
