@@ -379,7 +379,8 @@ if (!loaded) { write("warning: R library 'argparser' unavailable; attempting to 
 }
 p <- arg_parser("sort a list using comparative rankings under the Bradley-Terry statistical model; see http://www.gwern.net/Resorter", name="resorter")
 p <- add_argument(p, "--input", short="-i",
-                  "input file - a CSV file of items to sort: one per line, with up to two columns. (eg both 'Akira\\n' and 'Akira, 10\\n' are valid). If not set, `resorter` falls back to stdin.", type="character", )
+                  "input file - a CSV file of items to sort: one per line, with up to two columns. (eg both 'Akira\\n' and 'Akira, 10\\n' are valid). If not set, `resorter` falls back to stdin.", type="character")
+p <- add_argument(p, "--output", "output file: a file to write the final results to. Default: printing to stdout.")
 p <- add_argument(p, "--verbose", "whether to print out intermediate statistics", flag=TRUE)
 p <- add_argument(p, "--queries", short="-n", default=.Machine$integer.max,
                   "Maximum number of questions to ask the user; if already rated, O(items) is a good max, but the more items and more levels in the scale, the more comparisons are needed.")
@@ -477,9 +478,12 @@ if(!(argv$`no-scale`)) {
                                     breaks=quantile(ability, probs=quantiles),
                                     labels=(quantiles*(length(quantiles)-1))[-1],
                                     include.lowest=TRUE))
-    print(subset(ranking2[order(ranking2$Quantile, decreasing=TRUE),], select=c("Media", "Quantile")))
-} else { # print out just the latent continuous scores:
-         print(sort(coefficients[,1])) }
+    df <- subset(ranking2[order(ranking2$Quantile, decreasing=TRUE),], select=c("Media", "Quantile"));
+    if (!is.na(argv$output)) { write.csv(df, file=argv$output, row.names=FALSE) } else { print(df); }
+} else { # return just the latent continuous scores:
+         df <- data.frame(Media=rownames(coefficients), Estimate=coefficients[,1]);
+         if (!is.na(argv$output)) { write.csv(df[order(df$Estimate, decreasing=TRUE),], file=argv$output, row.names=FALSE); } else { print(finalReport); }
+       }
 
 
 $ ./resorter.R  --input anime.txt
