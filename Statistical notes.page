@@ -34,6 +34,7 @@ belief: possible
 - sexual openness result undermined by ceiling effect http://mindhacks.com/2015/04/28/when-society-isnt-judging-womens-sex-drive-rivals-mens/#comment-362749
 - music study claiming WM interaction: possible ceiling effect? see FB PM
 - attempt to measure effect of Nazi eugenics program failed to use breeder's equation to estimate possible size of effect, which is too small to detect with available data and hence attempt is foredoomed: https://www.reddit.com/r/eugenics/comments/3hqdll/between_73_and_100_of_all_individuals_with/cul2nzw
+- claim high IQ types almost 100% failure rates due to inappropriate model assumption of normal distribution with very narrow standard deviation: http://polymatharchives.blogspot.com/2015/01/the-inappropriately-excluded.html?showComment=1441741719623#c1407914596750199739
 
 # Estimating censored test scores
 
@@ -1374,7 +1375,7 @@ Action 3:
 
 What if we were instead choosing between one week and committing them for a full year - thus catching the full 7.5% of suicides during the 1-year followup? Does that work? First, the loss from this course of action:
 
-((100*365.2*1000) - (0 * 10000000) - (10000000 * 100 * (0.075-(0.075/1)))) = -\$36,520,000
+((100\*365.2\*1000) - (0 * 10000000) - (10000000 * 100 * (0.075-(0.075/1)))) = -\$36,520,000
 
 Since there are no suicides, we avoid the default loss of -\$75m, but we still have to spend \$36,520,000 to pay for the long-term commitment. However, the benefit to the patients has increased dramatically since we stop so many more suicides:
 
@@ -1403,7 +1404,7 @@ OK, so that's perfect information. What about <i>im</i>perfect information? Well
 
 So if we decide whether to commit or not commit solely based on this test, we will send home 85.1 + 0.6 = 85.7 patients (and indeed 0.6/85.7=0.007), and we will retain the remaining 7.4 + 6.9 = 14.3 patients (and indeed, 6.9/14.3=0.48). So our loss is the wrongly ejected patient of 0.6 suicides plus the cost of committing 14.3 patients (both safe and at-risk) for a week in exchange for the gain of a small chance of stopping the suicide of the 6.9 actually at risk:
 
-(10000000*85.7*0.007) + (14.3*7*1000) + (10000000 * (0.48*14.3) * (1-(1/52))) = -\$73,419,100
+(10000000\*85.7\*0.007) + (14.3\*7\*1000) + (10000000 * (0.48*14.3) * (1-(1/52))) = -\$73,419,100
 
 How much did we gain from our imperfect information? About \$0.8m:
 
@@ -1559,3 +1560,178 @@ getLogBF(0.000000007451, 0.15601)
 # [1] 17.02669704
 ## analytic BF: 18.79; paper's MCMC estimate: 18.80; not sure where I lost 1.8 of the BF.
 ~~~
+
+# Dealing with all-or-nothing unreliability of data
+
+> Given two disagreeing polls, one small & imprecise but taken at face-value, and the other large & precise but with a high chance of being totally mistaken, what is the right Bayesian model to update on these two datapoints?
+> I give ABC and MCMC implementations of Bayesian inference on this problem and find that the posterior is bimodal with a mean estimate close to the large unreliable poll's estimate but with wide credible intervals to cover the mode based on the small reliable poll's estimate.
+
+A question was asked of me: what should one infer if one is given definitive data but data one suspects might be totally incorrect?
+An example would be if one wanted to know what fraction of people would answer 'yes' to a particular question, and one had a very small poll (_n_=10) suggesting 90% say yes, but then one was also given the results from a much larger poll (_n_=1000) saying 75% responded yes - but this poll was run by untrustworthy people who might effectively make something up half the time.
+You should be able to learn *something* from this unreliable poll, but you can't learn *everything* from it because you would be burned half the time.
+
+If not for this issue of unreliability, this would be an easy binomial problem: specify a uniform or Jeffreys prior on what percentage of people will say yes, add in the binomial data of 9/10, and look at the posterior.
+But what do we do with the unreliability joker?
+
+## Binomial
+
+First let's try the simple case, just updating on a small poll of 9/10. We would expect it to be unimodally peaked around 80-90%, but broad (due to the small sample size) and falling sharply until 100% since being that high is a priori unlikely.
+
+MCMC using [Bayesian First Aid](https://github.com/rasmusab/bayesian_first_aid):
+
+~~~{.R}
+## install.packages("devtools")
+## devtools::install_github("rasmusab/bayesian_first_aid")
+library(BayesianFirstAid)
+b <- bayes.binom.test(oldData$Yes, oldData$N); b
+# ...number of successes = 9, number of trials = 10
+# Estimated relative frequency of success:
+#   0.85
+# 95% credible interval:
+#   0.63 0.99
+# The relative frequency of success is more than 0.5 by a probability of 0.994
+# and less than 0.5 by a probability of 0.006
+~~~
+
+Which itself is a wrapper around calling out to JAGS doing something like this:
+
+~~~{.R}
+library(runjags)
+model_string <- "model {
+  x ~ dbinom(theta, n)
+  theta ~ dbeta(1, 1) }"
+model <- autorun.jags(model_string, monitor="theta", data=list(x=oldData$Yes, n=oldData$N)); model
+# JAGS model summary statistics from 20000 samples (chains = 2; adapt+burnin = 5000):
+#
+#       Lower95  Median Upper95    Mean      SD Mode     MCerr MC%ofSD SSeff    AC.10   psrf
+# theta 0.63669 0.85254  0.9944 0.83357 0.10329   -- 0.0007304     0.7 20000 0.011014 1.0004
+~~~
+
+Here is a simulation-based version of Bayesian inference using [ABC](!Wikipedia "Approximate Bayesian computation"):
+
+~~~{.R}
+oldData <- data.frame(Yes=9, N=10)
+simulatePoll <- function(n, pr)  { rbinom(1, size=n, p=pr); }
+poll_abc <- replicate(100000, {
+    # draw from our uniform prior
+    p <- runif(1,min=0,max=1)
+    # simulate a hypothetical poll dataset the same size as our original
+    newData <- data.frame(Yes=simulatePoll(oldData$N, p), N=oldData$N)
+    # were they equal? if so, save sample as part of posterior
+    if (all(oldData == newData)) { return(p) }
+   }
+  )
+resultsABC <- unlist(Filter(function(x) {!is.null(x)}, poll_abc))
+summary(resultsABC)
+#      Min.   1st Qu.    Median      Mean   3rd Qu.      Max.
+# 0.3260816 0.7750520 0.8508855 0.8336383 0.9117471 0.9991691
+hist(resultsABC)
+# https://i.imgur.com/fn3XYQW.png
+~~~
+
+They look identical, as they should.
+
+### Binomial with binary unreliability
+
+To implement our more complicated version: the original poll remains the same but we add in the complication of a very large poll which 50% of the time is a true measure of the poll response and 50% of the time is drawn uniformly at random.
+(So if the true poll response is 90%, then half the time the large poll will yield accurate data like 905/1000 or 890/1000, and the rest it will yield 10/1000 or 400/1000 or 700/1000.)
+This is different from the more common kinds of measurement-error models where it's generally assumed that the noisy measurements still have *some* informativeness to them; here there is none.
+
+Specifically, this faux poll has yielded the data not 9/10, but 750/1000.
+
+#### ABC
+
+ABC again: we generate the reliable small poll as before, and we add in an faux poll where we flip a coin to decide if we are going to return a 'yes' count based on the population parameters or just a random number, then we combine the two datasets and check that it's identical to the actual data, saving the population probability if it is.
+
+~~~{.R}
+oldData2 <- data.frame(Yes=c(9,750), N=c(10,1000)); oldData2
+#   Yes    N
+# 1   9   10
+# 2 750 1000
+simulateHonestPoll <- function(n, pr)  { rbinom(1, size=n, p=pr); }
+simulateFauxPoll <- function(n, pr, switchp) { if(sample(c(TRUE, FALSE), 1, prob=c(switchp, 1-switchp))) { rbinom(1, size=n, p=pr); } else { round(runif(1, min=0, max=n)); }}
+poll_abc <- replicate(1000000, {
+ priorp <- runif(1,min=0,max=1)
+ switch <- 0.5
+ n1 <- 10
+ n2 <- 1000
+ data1 <- data.frame(Yes=simulateHonestPoll(n1, priorp), N=n1)
+ data2 <- data.frame(Yes=simulateFauxPoll(n2, priorp, switch), N=n2)
+ newData <- rbind(data1, data2)
+ if (all(oldData2 == newData)) { return(priorp) }
+ }
+)
+resultsABC <- unlist(Filter(function(x) {!is.null(x)}, poll_abc))
+summary(resultsABC)
+#      Min.   1st Qu.    Median      Mean   3rd Qu.      Max.
+# 0.5256471 0.7427098 0.7584650 0.7860109 0.8133581 0.9765648
+hist(resultsABC)
+# https://i.imgur.com/atMz0jg.png
+~~~
+
+The results are interesting and in this case the summary statistics are misleading: the median is indeed around 75% (as we would expect! since that's the result of the highly precise poll which has a 50% chance of being the truth) but we see the mean is being pulled away towards the original 90% estimate, and plotting the histogram, bimodality emerges.
+The posterior reports that there's still a lot of credibility to the 90% point estimate, but between the original diffuseness of that posterior (leaving a lot of probability to lower responses including, say, 75%) and the high certainty that if accurate the responses will definitely be close to 75%, it winds up peaked at a little higher than 75% (since even if the larger poll is honest, the earlier poll did still find 9/10).
+So it's not so much that we think the best estimate of true population rate really is 79% (indeed, the mode is more like 75%, but it could easily be far away from 75% and in the 90%s) as we would need to think more about what we want to do with this posterior before we decide how to summarize it.
+
+#### Mixture
+
+ABC is slow and would not scale to more hypothetical polls unless we abandoned exact ABC inference and began using approximate ABC (entirely possible in this case; instead of strict equality between the original and simulated data, we'd instead accept a sample of _p_ if the simulated dataset's fractions were within, say, 1% of the originals); and the simulation would need to be rewritten anyway.
+
+MCMC can handle this if we think of our problem as a [mixture model](!Wikipedia): our problem is that we have poll data drawn from two clusters/distributions - one cluster is the true population distribution of opinion, and the other cluster just spits out noise. We have one observation which we know is from first reliable distribution (the 9/10 poll result), and one observation which we're not sure which of the two it came from (750/1000), but we do know that the indexing probability for mixing the two distributions is 50%.
+
+In JAGS, we write down a model in which `dcat` flips between 1 and 2 if the cluster is not known, specifying which distribution a sample came from and its theta probability, and then we infer the thetas for both distributions.
+Of course, we only care about the first distribution's theta since the second one is noise.
+
+~~~{.R}
+library(runjags)
+model1 <- "model {
+  for (i in 1:N) {
+   y[i] ~ dbinom(theta[i], n[i])
+   theta[i] <- thetaOfClust[ clust[i] ]
+   clust[i] ~ dcat(pi[])
+  }
+  pi[1]  <- switch[1]
+  pi[2]  <- switch[2]
+  thetaOfClust[1] ~ dbeta(1,1)
+  thetaOfClust[2] ~ dunif(0,1)
+ }"
+j1 <- autorun.jags(model1, monitor=c("theta"), data = list(N=nrow(oldData2), y=oldData2$Yes, n=oldData2$N, switch=c(0.5, 0.5), clust=c(1,NA))); j1
+# ...      Lower95  Median Upper95    Mean       SD Mode      MCerr MC%ofSD SSeff    AC.10   psrf
+# theta[1] 0.70582 0.75651 0.97263 0.77926  0.07178   --   0.001442       2  2478  0.12978 1.0011
+# theta[2] 0.72446 0.75078 0.77814 0.75054 0.013646   -- 0.00009649     0.7 20000 0.009458      1
+plot(j1)
+# https://i.imgur.com/EaqR0dD.png
+~~~
+
+Sure enough, we get a good match with the ABC estimate: a mean estimate for the population distribution of 78% with a very wide 95% CI and a clearly bimodal distribution with a huge spike at 75%.
+Since the MCMC mixture model looks completely different from the imperative simulation-based model, the consistency in estimates & distributions gives me some confidence in the results being right.
+
+So we can see how we should update our beliefs - by a perhaps surprising amount towards the unreliable datapoint.
+The original data was too weak to strongly resist the allure of that highly precise poll.
+
+#### Weakening heuristic?
+
+We might try to think of it this way: half the time, the large poll means nothing whatsoever, it contains 0% or no information about the population at all; While the other half of the time, it is exactly what it seems to be and 100% informative; so doesn't that mean that on average we should treat it as containing half the information we thought it did? And the information is directly based on the sample size: a sample 5x as big contains 5x as much information.
+So perhaps in this case of all-or-nothing accuracy, we could solve it easily by simply weakening the weight put the unreliable information and shrinking the claimed sample size - instead of treating it as 750 of 1000, treat it as 375/500; and if it had been 75,000 of 100,000, convert it to 37,500 of 50,000.
+This is a simple and intuitive shortcut, but if we think about what the binomial will return as the unreliable poll increases in size or if we look at the results...
+
+~~~{.R}
+switch <- 0.5
+oldData3 <- data.frame(Yes=c(9,(750*switch)), N=c(10,(1000*switch)))
+b2 <- bayes.binom.test(sum(oldData3$Yes), sum(oldData3$N)); b2
+#
+#   Bayesian First Aid binomial test
+#
+# data: sum(oldData3$Yes) and sum(oldData3$N)
+# number of successes = 384, number of trials = 510
+# Estimated relative frequency of success:
+#   0.75
+# 95% credible interval:
+#   0.71 0.79
+# The relative frequency of success is more than 0.5 by a probability of >0.999
+# and less than 0.5 by a probability of <0.001
+~~~
+
+Unfortunately, this doesn't work because it doesn't preserve the bimodal aspect of the posterior, and we get a unimodal distribution ever concentrating on its mean, wiping out the existence of the 0.90 peak. If our untrustworthy poll had instead, say, reported 750,000 out of 1 million, that should only make the peak at 0.75 look like a needle - it should be unable to affect the mass around 0.9, because it doesn't matter if the data is 100 or 1 million or 1 billion, it still only has a 50% chance of being true.
+It's a little hard to see this since the mean frequency of 0.75 is fairly close to the mean of 0.78 from the ABC and we might write this off as approximation error in either the ABC estimate or BFA's MCMC, but if we look at the 95% CI and note that 0.9 is not inside it or if we plot the posterior (`plot(b2)`), then the absence of bimodality jumps out.
+So this trick doesn't work.
