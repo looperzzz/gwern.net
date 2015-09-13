@@ -1735,3 +1735,107 @@ b2 <- bayes.binom.test(sum(oldData3$Yes), sum(oldData3$N)); b2
 Unfortunately, this doesn't work because it doesn't preserve the bimodal aspect of the posterior, and we get a unimodal distribution ever concentrating on its mean, wiping out the existence of the 0.90 peak. If our untrustworthy poll had instead, say, reported 750,000 out of 1 million, that should only make the peak at 0.75 look like a needle - it should be unable to affect the mass around 0.9, because it doesn't matter if the data is 100 or 1 million or 1 billion, it still only has a 50% chance of being true.
 It's a little hard to see this since the mean frequency of 0.75 is fairly close to the mean of 0.78 from the ABC and we might write this off as approximation error in either the ABC estimate or BFA's MCMC, but if we look at the 95% CI and note that 0.9 is not inside it or if we plot the posterior (`plot(b2)`), then the absence of bimodality jumps out.
 So this trick doesn't work.
+
+# RNN metadata for mimicking individual author style
+
+idea: can we teach an RNN artistic style using inline metadata?
+not quite supervised learning, not quite unsupervised
+that is, instead of hardwiring into the architecture a few nodes corresponding to a 'style' indicator (which is work, would require deep modifications to char-rnn, and may not be flexible), or trying to hack the layers of the rnn directly like in the recent 'artistic style' cnn stuff, perhaps we could provide texts from multiple authors but embed in the text markers of authorship, which the RNN may gradually learn indicates different vocabularies and syntaxes.
+
+If you told someone a quote was by Shakespeare, their expectations will be different than if you had told them, "As Charles Dickens once wrote...", and it seems reasonable to think that an RNN might be able to pick up on arbitrary prefixes and 'remember' them in its state-vector for hundreds of characters thereafter and adjust its prediction/style based on this memory.
+
+So more concretely, we might provide in training the full corpus of Shakespeare, but with each line prefixed by 'SHAKESPEARE|', and the full texts of Dickens with each line prefixed with 'DICKENS|', etc; and then when we generate new text, we hint to the RNN which to emulate by specifying a seed 'DICKENS|'.
+(Why the pipe character? Because it's rarely used in prose but isn't hard to type or work with.)
+Depending on how well this works, you could imagine specifying lots of kinds of metadata in-band: not just author, but novel title and genre, orfor music RNNs, why not specify author, instrument, genre, and maybe a bunch of tags provided by music listeners ('energetic', 'kitties', 'for_running' etc)?
+This would be especially helpful for musical applications of RNNs, which are limited in part by the difficulty of finding large textual musical datasets of a single consistent genre to train an RNN on - if you have a few hundred songs of Irish music written in ABC format and then you have a few dozen of rock or classical pieces written in MIDI, training an RNN on them all mixed together will simply yield gibberish output because you will get an 'average syntax' of ABC & MIDI and an 'average music' of Irish & Rock, which is of no interest to anyone.
+With enough data, the RNN would *probably* learn to separate them on its own, since ABC and MIDI look very different but do you have that much data?
+On the other hand, if you could make it easy on the RNN and included prefix keyword metadata like "MIDI|ROCK|..." or "ABC|IRISH|...", then perhaps it will be able to easily learn the different syntaxes & genres while still being able to benefit from the underlying similarities which makes it all music.
+
+If we just download some complete works off Project Gutenberg (googling 'Project Gutenberg "complete works of"'), prefix each line with "$AUTHOR|", concatenate the complete works, and throw them into `char-rnn`, we should not expect good results: the author metadata will now make up something like 5% of the entire character count (because PG wraps them to short lines) and by training on 5M of exclusively Austen and then 5M of exclusively Churchill, we might run into overfitting problems and due to the lack of proximity of different styles, the RNN might not 'realize' that the author metadata isn't just some easily predicted & then ignored noise but can be used to predict far into the future.
+We also don't want the PG headers explaining what PG is and make sure the files are all converted to ASCII.
+
+So to deal with these 4 issues I'm going to process the PG collected works thusly:
+
+1. delete the first 80 lines and filter out any line mentioning "Gutenberg"
+2. convert to ASCII
+3. delete all newlines and then rewrap to make lines which are 10000 bytes - long enough to have a great deal of internal structure and form a good batch to learn from, and thus can be randomly sorted with the others.
+
+    But newlines *do* carry semantic information - think about dialogues - and does deleting them carry a cost? Perhaps we should map newlines to some rare character like tilde, or use the poetry convention of denoting newlines with forward-slashes.
+4. prefix each long line with the author it was sampled from
+
+I grabbed 7 authors, giving a good final dataset of 46M:
+
+~~~{.Bash}
+cd ~/src/char-rnn/data/
+mkdir ./styles/ ; cd ./styles/
+
+## "The Complete Project Gutenberg Works of Jane Austen" http://www.gutenberg.org/ebooks/31100
+wget 'https://www.gutenberg.org/ebooks/31100.txt.utf-8' -O austen.txt
+## "The Complete Works of Josh Billings" https://www.gutenberg.org/ebooks/36556
+wget 'https://www.gutenberg.org/files/36556/36556-0.txt' -O billings.txt
+## "Project Gutenberg Complete Works of Winston Churchill" http://www.gutenberg.org/ebooks/5400
+wget 'https://www.gutenberg.org/ebooks/5400.txt.utf-8' -O churchill.txt
+## "The Project Gutenberg Complete Works of Gilbert Parker" https://www.gutenberg.org/ebooks/6300
+wget 'https://www.gutenberg.org/ebooks/6300.txt.utf-8' -O parker.txt
+## "The Complete Works of William Shakespeare" http://www.gutenberg.org/ebooks/100
+wget 'https://www.gutenberg.org/ebooks/100.txt.utf-8' -O shakespeare.txt
+## "The Entire Project Gutenberg Works of Mark Twain" http://www.gutenberg.org/ebooks/3200
+wget 'https://www.gutenberg.org/ebooks/3200.txt.utf-8' -O twain.txt
+## "The Complete Works of Artemus Ward" https://www.gutenberg.org/ebooks/6946
+wget 'https://www.gutenberg.org/ebooks/6946.txt.utf-8' -O ward.txt
+du -ch *.txt; wc --char *.txt
+# 4.2M  austen.txt
+# 836K  billings.txt
+# 9.0M  churchill.txt
+# 34M   input.txt
+# 12M   parker.txt
+# 5.3M  shakespeare.txt
+# 15M   twain.txt
+# 12K   ward.txt
+# 80M   total
+#  4373566 austen.txt
+#   849872 billings.txt
+#  9350541 churchill.txt
+# 34883356 input.txt
+# 12288956 parker.txt
+#  5465099 shakespeare.txt
+# 15711658 twain.txt
+#     9694 ward.txt
+# 82932742 total
+for FILE in *.txt; do
+  dos2unix $FILE
+  AUTHOR=$(echo $FILE | sed -e 's/\.txt//' | tr '[:lower:]' '[:upper:]')
+  cat $FILE | tail -n +80 | grep -v -i 'Gutenberg' | iconv -c -tascii | tr '\n' ' ' | fold --spaces --bytes --width=10000 | sed -e "s/^/$AUTHOR\|/" > $FILE.transformed
+done
+rm input.txt
+cat *.transformed | shuf > input.txt
+cd ../../
+th train.lua -data_dir data/styles/ -gpuid 0 -rnn_size 747 -num_layers 2 -seq_length 187
+# using CUDA on GPU 0...
+# loading data files...
+# cutting off end of data so that the batches/sequences divide evenly
+# reshaping tensor...
+# data load done. Number of data batches in train: 4852, val: 256, test: 0
+# vocab size: 96
+# creating an lstm with 2 layers
+# number of parameters in the model: 7066716
+# cloning rnn
+# cloning criterion
+# 1/242600 (epoch 0.000), train_loss = 4.57489208, grad/param norm = 9.6573e-01, time/batch = 2.03s
+~~~
+
+started: 12:57PM
+finished: ?
+
+This gets us a corpus in which every line specifies its author and then switches authors, while still being long enough to have readable meaning.
+After lots of training, we can try out our best candidate and see if it knows Shakespeare versus Austen:
+
+~~~{.Bash}
+BEST=ls cv/*.t7 | sort --field-separator="_" --key=4 --numeric-sort --reverse | tail -1`
+th sample.lua $BEST -temperature 0.5 -length 500 -primetext "SHAKESPEARE|"
+# TODO
+th sample.lua $BEST -temperature 0.5 -length 500 -primetext "AUSTEN|"
+# TODO
+~~~
+
+We can see TODO
