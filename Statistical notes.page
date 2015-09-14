@@ -1566,8 +1566,8 @@ getLogBF(0.000000007451, 0.15601)
 > Given two disagreeing polls, one small & imprecise but taken at face-value, and the other large & precise but with a high chance of being totally mistaken, what is the right Bayesian model to update on these two datapoints?
 > I give ABC and MCMC implementations of Bayesian inference on this problem and find that the posterior is bimodal with a mean estimate close to the large unreliable poll's estimate but with wide credible intervals to cover the mode based on the small reliable poll's estimate.
 
-A question was asked of me: what should one infer if one is given definitive data but data one suspects might be totally incorrect?
-An example would be if one wanted to know what fraction of people would answer 'yes' to a particular question, and one had a very small poll (_n_=10) suggesting 90% say yes, but then one was also given the results from a much larger poll (_n_=1000) saying 75% responded yes - but this poll was run by untrustworthy people who might effectively make something up half the time.
+A question was asked of me: what should one infer if one is given what would be definitive data if one could take it at face value - but one suspects this data might be totally incorrect?
+An example would be if one wanted to know what fraction of people would answer 'yes' to a particular question, and one had a very small poll (_n_=10) suggesting 90% say yes, but then one was also given the results from a much larger poll (_n_=1000) saying 75% responded yes - but this poll was run by untrustworthy people, people that, for whatever reason, you believe might make something up half the time.
 You should be able to learn *something* from this unreliable poll, but you can't learn *everything* from it because you would be burned half the time.
 
 If not for this issue of unreliability, this would be an easy binomial problem: specify a uniform or Jeffreys prior on what percentage of people will say yes, add in the binomial data of 9/10, and look at the posterior.
@@ -1822,20 +1822,58 @@ th train.lua -data_dir data/styles/ -gpuid 0 -rnn_size 747 -num_layers 2 -seq_le
 # cloning rnn
 # cloning criterion
 # 1/242600 (epoch 0.000), train_loss = 4.57489208, grad/param norm = 9.6573e-01, time/batch = 2.03s
+# ...
+# 15979/242600 (epoch 3.293), train_loss = 1.01393854, grad/param norm = 1.8754e-02, time/batch = 1.40s
 ~~~
 
 started: 12:57PM
 finished: ?
 
 This gets us a corpus in which every line specifies its author and then switches authors, while still being long enough to have readable meaning.
-After lots of training, we can try out our best candidate and see if it knows Shakespeare versus Austen:
+After about 22 hours of training yielding a validation loss of 1.0402 (with little improvement evident after the first 7 hours), we can try out our best candidate and see if it knows Shakespeare versus Austen:
 
 ~~~{.Bash}
-BEST=ls cv/*.t7 | sort --field-separator="_" --key=4 --numeric-sort --reverse | tail -1`
-th sample.lua $BEST -temperature 0.5 -length 500 -primetext "SHAKESPEARE|"
-# TODO
-th sample.lua $BEST -temperature 0.5 -length 500 -primetext "AUSTEN|"
-# TODO
+BEST=`ls cv/*.t7 | sort --field-separator="_" --key=4 --numeric-sort --reverse | tail -1`
+th sample.lua $BEST -temperature 0.8 -length 500 -primetext "SHAKESPEARE|"
+# SHAKESPEARE|is of no regular complexion.  The action of the plain chatter--"  "Alas, they have discovered what was to be afforded since then?"  "We can believe--for the signature of the Church."  "So they do, dear lord, do they their home?  Oh, no, to the devil which we have not written, the Church is not in the world; but not in this harmless way then to the captain of man--therefore while the praise of it was allurious he would not reflect on the curious man's hatch deemed that his life should be very con
+th sample.lua $BEST -temperature 0.8 -length 500 -primetext "SHAKESPEARE|" -seed 105
+# SHAKESPEARE|   CHAPTER VII  FROM A WESPERON IN STORY  "MOST INGURIFELLOWSELLES," Antoinette now looked at him a sharp pleasure in passing southward and again in portion of his mother's reach of it. Suddenly the thing was said.  "We'll sit down and find out," he inquired, with a pity to see Mr. Carvel driving beside the bedroom, which was almost as much as he could bear the potion.  "You say you're strong," said Mrs. Holy, indignantly, "you won't have to go away, about the doctor. What is it?"  "Why, we are"
+th sample.lua $BEST -temperature 0.8 -length 500 -primetext "AUSTEN|"
+# AUSTEN|business, and the gout--a constant and foolish figure in which Fellowes' ring is nearer to distemper than meek and steady interest and clean iron. The episode for the future and the war, and the seedy and effective sun-elogs and the others ventured its remote room, whose hair was a suffering man--that the work of the circumstance interested him. It had no long served to open the papers to answer up a quiet road, free from the long row of white to the lash called No. 14,000 to a sweet conversatio
+th sample.lua $BEST -temperature 0.8 -length 500 -primetext "TWAIN|"
+# TWAIN|quarrelling with a little book, and so on, considering its sensations as to whether it were not possible to eat it.  He thought that the leader of the conference with his own death would be recognized as a common expression.  The men that mounted from motive powers, how big the calf, commander of the rights of the new economic steamer, the English, a lass of manhood, will exhibit no praise or increase out of a sort of meaning in the senses, and send them back to such a winter as we can go into t
 ~~~
 
-We can see TODO
+We can see that while the RNN is producing very English-sounding novelistic prose and produces its usual mix of flawless syntax and hilarious semantics (I particularly like the phrase "Oh, no, to the devil which we have not written, the Church is not in the world"), it has failed to learn the styles I was hoping for.
+The Austen and Twain samples sound somewhat like themselves, but the Shakespeare samples are totally wrong.
+And given the lack of improvements on the validation set, it seems unlikely that another 10 epochs will remedy the situation: it should be immediately obvious to the RNN how to use the metadata.
+
+Since the style varies so little between the samples, I wonder if mimicking English uses up all the capacity in the RNN? I gave it only 747 neurons, but I could've given it much more.
+
+So to try again:
+
+- to better preserve the semantics, instead of deleting newlines, replace them with a slash
+- try much shorter lines of 1000 bytes (increasing the relative density of the metadata)
+- back off on the very long backprop through time, and instead, devote the GPU RAM to many more neurons.
+- the default setting for the validation set is a bit excessive here and I'd rather use some of that text for training
+
+~~~{.Bash}
+rm input.txt *.transformed
+for FILE in *.txt; do
+  dos2unix $FILE
+  AUTHOR=$(echo $FILE | sed -e 's/\.txt//' | tr '[:lower:]' '[:upper:]')
+  cat $FILE | tail -n +80 | grep -v -i 'Gutenberg' | iconv -c -tascii | tr '\n' '/' | fold --spaces --bytes --width=1000 | sed -e "s/^/$AUTHOR\|/" > $FILE.transformed
+done
+cat *.transformed | shuf > input.txt
+cd ../../
+th train.lua -data_dir data/styles/ -gpuid 0 -rnn_size 2600 -num_layers 2 -val_frac 0.01
+# ...data load done. Number of data batches in train: 18294, val: 192, test: 771
+# vocab size: 96
+# creating an lstm with 2 layers
+# number of parameters in the model: 82409696
+# cloning rnn
+# cloning criterion
+# 1/914700 (epoch 0.000), train_loss = 4.80300702, grad/param norm = 1.1946e+00, time/batch = 2.78s
+# 2/914700 (epoch 0.000), train_loss = 13.66862074, grad/param norm = 1.5432e+00, time/batch = 2.63s
+# ...
+~~~
