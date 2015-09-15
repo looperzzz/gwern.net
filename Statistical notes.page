@@ -1878,7 +1878,97 @@ th train.lua -data_dir data/styles/ -gpuid 0 -rnn_size 2600 -num_layers 2 -val_f
 # ...
 ~~~
 
-NOTE: If I need even more text, I can grab some more 'completes' from https://www.gutenberg.org/ebooks/search/
+errored out of memory at 11:36AM the next day:
+
+17889/914700 (epoch 0.978), train_loss = 1.22413840, grad/param norm = 2.2657e-03, time/batch = 2.58s
+/home/gwern/src/torch/install/bin/luajit: ./util/misc.lua:9: cuda runtime error (2) : out of memory at /home/gwern/src/torch/extra/cutorch/lib/THC/THCStorage.cu:30
+stack traceback:
+    [C]: in function 'clone'
+    ./util/misc.lua:9: in function 'clone_list'
+    train.lua:259: in function 'opfunc'
+    .../gwern/src/torch/install/share/lua/5.1/optim/rmsprop.lua:32: in function 'rmsprop'
+    train.lua:293: in main chunk
+    [C]: in function 'dofile'
+    .../src/torch/install/lib/luarocks/rocks/trepl/scm-1/bin/th:131: in main chunk
+    [C]: at 0x00406670
+
+Still pretty meh, but at 1.1705, can't expect much:
+
+$ th sample.lua cv/lm_lstm_epoch0.93_1.1705.t7 -temperature 0.8 -length 500 -primetext "SHAKESPEARE|"
+seeding with SHAKESPEARE|
+--------------------------
+SHAKESPEARE|jung's own,/which is on the house again.  There is no endeavour to be dressed in the midst of the/present of Belle, who persuades himself to know to have a condition of/the half, but "The garnal she was necessary, but it was high, consecrets, and/excursions of the worst and thing and different honor to flew himself.  But/since the building closed the mass of inspiration of the children of French wind,/hurried down--but he was in the second farmer of the Cald endless figures, Mary/Maeaches, and t
+$ th sample.lua cv/lm_lstm_epoch0.93_1.1705.t7 -temperature 0.8 -length 500 -primetext "AUSTEN|"
+AUSTEN|mill./And now the good deal now be alone, there is no endeavour to be dreaming./In fact, what was the story of his state, must be a steady carriages of pointing out/both till he has walked at a long time, and not convinced that he remembers/her in this story of a purpose of this captain in stock. There was/no doubt of interest, that Mr. Crewe's mother could not be got the/loss of first poor sister, and who looked warm enough by a/great hay below and making a leaver and with laid with a murder to
+$ th sample.lua cv/lm_lstm_epoch0.93_1.1705.t7 -temperature 0.8 -length 500 -primetext "TWAIN|"
+TWAIN|nor contributed/she has filled on behind him.  He had been satisfied by little just as to/deliver that the inclination of the possession of a thousand expenses in the group of feeling had destroyed/him to descend.  The physical had he darted before him that he was worth a
+PARKER|George Pasha, for instance?"//"Then it is not the marvel of laws upon Sam and the Sellers."  She said/he would ask himself to, one day standing from the floor, as he/stood for the capital.  He was no good of conversation
+
+Increase diversity of styles: amping up to 38 authors, including modern SF/F fiction authors (Robert Jordan's _Wheel of Time_, Gene Wolfe, R.A. Lafferty, Ryukishi07's _Umineko no naku koro ni_, Kafka), poetry ancient and modern (_Iliad_, _Beowulf_, Dante, Keats, Coleridge, Poe, Whitman, Gilbert & Sullivan), ancient fiction (the Bible), miscellaneous nonfiction (Aristotle, Machiavelli, Paine) etc.
+By adding in many more authors from many different genres and time periods, may force the RNN to realize that it needs to take seriously the metadata prefix.
+
+~~~{.Bash}
+wget 'http://dl.dropboxusercontent.com/u/182368464/umineko-compress.tar.xz'
+untar umineko-compress.tar.xz && rm umineko-compress.tar.xz
+mv umineko/umineko.txt  ryukishi07.txt; mv  umineko/wot.txt jordan.txt; rm -rf ./umineko/
+
+cat /home/gwern/doc/fiction/lafferty/*.txt > lafferty.txt
+cat /home/gwern/doc/fiction/wolfe/fiction/*.txt > wolfe.txt
+
+wget 'https://www.gutenberg.org/ebooks/10031.txt.utf-8' -O poe.txt
+wget 'https://www.gutenberg.org/ebooks/11.txt.utf-8' -O carroll.txt
+wget 'https://www.gutenberg.org/ebooks/1232.txt.utf-8' -O machiavelli.txt
+wget 'https://www.gutenberg.org/ebooks/12699.txt.utf-8' -O aristotle.txt
+wget 'https://www.gutenberg.org/ebooks/1322.txt.utf-8' -O whitman.txt
+wget 'https://www.gutenberg.org/ebooks/16328.txt.utf-8' -O beowulf.txt
+wget 'https://www.gutenberg.org/ebooks/1661.txt.utf-8' -O doyle.txt
+wget 'https://www.gutenberg.org/ebooks/23684.txt.utf-8' -O keats.txt
+wget 'https://www.gutenberg.org/ebooks/2383.txt.utf-8' -O chaucer.txt
+wget 'https://www.gutenberg.org/ebooks/2701.txt.utf-8' -O melville.txt
+wget 'https://www.gutenberg.org/ebooks/30.txt.utf-8' -O bible.txt
+wget 'https://www.gutenberg.org/ebooks/3090.txt.utf-8' -O maupassant.txt
+wget 'https://www.gutenberg.org/ebooks/31270.txt.utf-8' -O paine.txt
+wget 'https://www.gutenberg.org/ebooks/3253.txt.utf-8' -O lincoln.txt
+wget 'https://www.gutenberg.org/ebooks/345.txt.utf-8' -O stoker.txt
+wget 'https://www.gutenberg.org/ebooks/3567.txt.utf-8' -O bonaparte.txt
+wget 'https://www.gutenberg.org/ebooks/3600.txt.utf-8' -O montaigne.txt
+wget 'https://www.gutenberg.org/ebooks/4200.txt.utf-8' -O pepys.txt
+wget 'https://www.gutenberg.org/ebooks/4361.txt.utf-8' -O sherman.txt
+wget 'https://www.gutenberg.org/ebooks/4367.txt.utf-8' -O grant.txt
+wget 'https://www.gutenberg.org/ebooks/6130.txt.utf-8' -O homer.txt
+wget 'https://www.gutenberg.org/ebooks/7849.txt.utf-8' -O kafka.txt
+wget 'https://www.gutenberg.org/ebooks/808.txt.utf-8' -O gilbertsullivan.txt
+wget 'https://www.gutenberg.org/ebooks/8800.txt.utf-8' -O dante.txt
+wget 'https://www.gutenberg.org/files/28289/28289-0.txt' -O eliot.txt
+wget 'https://www.gutenberg.org/files/29090/29090-0.txt' -O coleridge.txt
+wget 'https://www.gutenberg.org/files/5000/5000-8.txt' -O davinci.txt
+~~~
+
+Due to OOM crash, decreasing neuron count
+with bigger neuron count, also necessary to have dropout enabled (default of 0 means progress seems to halt around a loss of 3.5 and makes no discernible progress for hours)
+
+~~~{.Bash}
+rm input.txt *.transformed
+wc --char *.txt
+# 100972224 total
+for FILE in *.txt; do
+  dos2unix $FILE
+  AUTHOR=$(echo $FILE | sed -e 's/\.txt//' | tr '[:lower:]' '[:upper:]')
+  cat $FILE | tail -n +80 | grep -v -i 'Gutenberg' | iconv -c -tascii | sed -e ':a;N;$!ba;s/\n/ \/ /g' | fold --spaces --bytes --width=1000 | sed -e "s/^/$AUTHOR\|/" > $FILE.transformed
+done
+cat *.transformed | shuf > input.txt
+cd ../../
+th train.lua -data_dir data/styles/ -gpuid 0 -rnn_size 2400 -num_layers 2 -val_frac 0.01 -dropout 0.5
+# ...data load done. Number of data batches in train: 39862, val: 419, test: 1679
+# vocab size: 98
+# creating an lstm with 2 layers
+# number of parameters in the model: 70334498
+# cloning rnn
+# cloning criterion
+# 1/1993100 (epoch 0.000), train_loss = 4.68234798, grad/param norm = 7.4220e-01, time/batch = 2.53s
+# 2/1993100 (epoch 0.000), train_loss = 13.00693768, grad/param norm = 1.7191e+00, time/batch = 2.35s
+# ...
+~~~
 
 # Bitter Melon
 
@@ -2035,10 +2125,9 @@ library(runjags)
 model1<-"
 model {
     for (i in 1:n) {
-        true.Blood.final[i] ~ dnorm(0, .001)
-        Blood.final[i] ~ dnorm(true.Blood.final[i], tau.Blood.final)
+        Blood.noise[i] ~ dnorm(0, tau.Blood.noise)
 
-        Blood.hat[i] <- a + b1*Blood.final[i] + b2*Bitter.Melon[i] + b3*Date[i] + b4*Exercise[i]  # + b5*Measurement[i]
+        Blood.hat[i] <- a + b1*Blood.noise[i] + b2*Bitter.Melon[i] + b3*Date[i] + b4*Exercise[i]  + b5*Morning[i]  + b6*am10[i] + b7*pm3[i]
         Blood[i] ~ dnorm(Blood.hat[i], tau)
     }
     a  ~ dnorm(0, .001)
@@ -2048,24 +2137,28 @@ model {
     b3 ~ dnorm(0, .001)
     b4 ~ dnorm(0, .001)
     b5 ~ dnorm(0, .001)
+    b6 ~ dnorm(0, .001)
+    b7 ~ dnorm(0, .001)
 
     sigma ~ dunif(0, 50)
     tau <- pow(sigma, -2)
 
-    tau.Blood.final <- 1 / pow((5/9.2), 2)
+    tau.Blood.noise <- 1 / pow((5/9.2), 2)
 }
 "
-j1 <- with(melon2, autorun.jags(model1, data=list(n=nrow(melon2), Blood=Read, Bitter.Melon=Bitter.Melon,
-                                   Date=as.integer(Date), Exercise=Exercise, Measurement=as.integer(as.factor(Measurement))
-),
-                         monitor=c("b1", "b2", "b3", "b4")))
+j1 <- with(melon2, run.jags(model1, data=list(n=nrow(melon2), Blood=Read, Bitter.Melon=Bitter.Melon,
+                                   Date=as.integer(Date), Exercise=Exercise, Morning=as.integer(Measurement=="wake"), am10=as.integer(Measurement=="10am"), pm3=as.integer(Measurement=="3pm")),
+                         monitor=c("b1", "b2", "b3", "b4", "b5", "b6", "b7"), sample=100000))
 j1
-JAGS model summary statistics from 20000 samples (chains = 2; adapt+burnin = 610000):
+JAGS model summary statistics from 100000 samples (chains = 2; adapt+burnin = 5000):
 
-     Lower95   Median Upper95     Mean       SD Mode     MCerr MC%ofSD SSeff    AC.10   psrf
-b1 -0.036474 0.059992 0.16036 0.059709 0.050807   --   0.00707    13.9    52  0.45628 1.0421
-b2  -0.34481    4.621  9.4978   4.6244   2.5134   --  0.042772     1.7  3453 0.041302 1.0194
-b3   0.10772  0.37527 0.63841  0.37558  0.13557   -- 0.0034196     2.5  1572  0.22336 1.0193
-b4   -3.5784   1.7658  6.9675   1.7774   2.6866   --  0.067243     2.5  1596   0.2226 1.0044
+    Lower95  Median Upper95    Mean       SD Mode     MCerr MC%ofSD SSeff   AC.50   psrf
+b1 0.004807 0.15636 0.34374 0.15391 0.079291   --  0.024881    31.4    10 0.83882 1.2435
+b2   -1.539  3.4595   8.187  3.4367   2.4577   --   0.23628     9.6   108 0.33448 1.0139
+b3 0.072507 0.34455 0.59035 0.34347  0.13264   -- 0.0085504     6.4   241 0.28808 1.0402
+b4  -4.3114   0.953  6.2876 0.95082   2.6966   --   0.19238     7.1   196   0.339 1.0059
 
-Total time taken: 3.2 minutes
+Total time taken: 18.2 seconds
+
+
+with(melon2, list(n=nrow(melon2), Blood=Read, Bitter.Melon=Bitter.Melon, Date=as.integer(Date), Exercise=Exercise, Morning=as.integer(Measurement=="wake"), am10=as.integer(Measurement=="10am"), pm3=as.integer(Measurement=="3pm")))
