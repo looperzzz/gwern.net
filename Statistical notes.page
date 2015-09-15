@@ -1877,3 +1877,195 @@ th train.lua -data_dir data/styles/ -gpuid 0 -rnn_size 2600 -num_layers 2 -val_f
 # 2/914700 (epoch 0.000), train_loss = 13.66862074, grad/param norm = 1.5432e+00, time/batch = 2.63s
 # ...
 ~~~
+
+NOTE: If I need even more text, I can grab some more 'completes' from https://www.gutenberg.org/ebooks/search/
+
+# Bitter Melon
+
+melon <- read.csv(stdin(), header=TRUE)
+Date,Exercise,Bitter.Melon,Read.wake,Read.10am,Read.3pm
+2015-08-09,1,1,105,140,99
+2015-08-10,1,1,100,106,88
+2015-08-11,1,0,99,111,91
+2015-08-12,1,0,103,100,86
+2015-08-13,1,1,91,101,87
+2015-08-14,1,0,92,114,92
+2015-08-15,1,1,112,116,103
+2015-08-16,0,0,108,105,93
+2015-08-17,1,1,115,113,114
+2015-08-18,0,1,115,118,109
+2015-08-19,1,1,105,109,105
+2015-08-20,1,0,111,116,98
+2015-08-21,1,0,109,111,103
+2015-08-22,1,1,102,120,NA
+2015-08-23,1,1,108,93,134
+2015-08-24,1,1,115,101,113
+2015-08-25,1,0,114,117,105
+2015-08-26,1,0,114,108,113
+2015-08-27,0,1,118,114,121
+2015-08-28,0,0,104,NA,100
+2015-08-29,1,0,105,NA,100
+2015-08-30,0,0,NA,NA,105
+2015-08-31,0,1,113,NA,118
+2015-09-01,0,1,112,120,NA
+2015-09-02,0,1,128,113,NA
+2015-09-03,0,1,112,115,NA
+2015-09-04,0,1,104,112,86
+2015-09-05,0,1,98,NA,NA
+2015-09-06,1,1,96,NA,NA
+2015-09-07,1,1,117,NA,119
+2015-09-08,0,1,102,119,NA
+2015-09-09,0,1,114,NA,94
+2015-09-10,0,1,119,118,NA
+2015-09-11,0,1,NA,NA,126
+2015-09-12,1,1,122,126,NA
+
+
+summary(lm(I(Read.wake + Read.10am + Read.3pm) ~ Bitter.Melon + Exercise + as.integer(Date), data=melon))
+...Coefficients:
+                    Estimate  Std. Error  t value   Pr(>|t|)
+(Intercept)      300.0368557  18.3528242 16.34827 5.7259e-11
+Bitter.Melon       9.7182611  10.0285767  0.96906    0.34788
+Exercise           2.7759120  13.3097375  0.20856    0.83760
+as.integer(Date)   1.1515280   0.8078333  1.42545    0.17450
+
+Residual standard error: 21.23433 on 15 degrees of freedom
+  (16 observations deleted due to missingness)
+Multiple R-squared:  0.1810341, Adjusted R-squared:  0.01724088
+F-statistic:  1.10526 on 3 and 15 DF,  p-value: 0.3777754
+
+ summary(lm(cbind(Read.wake, Read.10am, Read.3pm) ~ Bitter.Melon + Exercise + as.integer(Date), data=melon))
+Response Read.wake :
+Coefficients:
+                    Estimate  Std. Error  t value   Pr(>|t|)
+(Intercept)      101.7450231   6.2856302 16.18692 6.5946e-11
+Bitter.Melon       1.0533735   3.4346716  0.30669   0.763297
+Exercise          -1.1542290   4.5584313 -0.25321   0.803545
+as.integer(Date)   0.5446842   0.2766736  1.96869   0.067752
+
+Residual standard error: 7.272513 on 15 degrees of freedom
+  (16 observations deleted due to missingness)
+Multiple R-squared:  0.2679218, Adjusted R-squared:  0.1215061
+F-statistic: 1.829871 on 3 and 15 DF,  p-value: 0.1850123
+
+
+Response Read.10am :
+Coefficients:
+                    Estimate  Std. Error  t value  Pr(>|t|)
+(Intercept)      117.2706876   8.9874462 13.04828 1.365e-09
+Bitter.Melon       0.6700312   4.9110313  0.13643   0.89329
+Exercise          -4.0291779   6.5178279 -0.61818   0.54573
+as.integer(Date)  -0.3452007   0.3955990 -0.87260   0.39663
+
+Residual standard error: 10.39853 on 15 degrees of freedom
+  (16 observations deleted due to missingness)
+Multiple R-squared:  0.05544998,    Adjusted R-squared:  -0.13346
+F-statistic: 0.2935259 on 3 and 15 DF,  p-value: 0.8294508
+
+
+Response Read.3pm :
+Coefficients:
+                   Estimate Std. Error t value   Pr(>|t|)
+(Intercept)      81.0211449 10.4407357 7.76010 1.2503e-06
+Bitter.Melon      7.9948563  5.7051557 1.40134    0.18146
+Exercise          7.9593188  7.5717748 1.05118    0.30982
+as.integer(Date)  0.9520445  0.4595682 2.07161    0.05596
+
+Residual standard error: 12.08 on 15 degrees of freedom
+  (16 observations deleted due to missingness)
+Multiple R-squared:  0.2938571, Adjusted R-squared:  0.1526285
+F-statistic:  2.08072 on 3 and 15 DF,  p-value: 0.1457853
+
+need to reshape for multilevel model...
+
+library(reshape)
+reshape(melon, varying=c("Read.wake", "Read.10am", "Read.3pm"), timevar="Date", direction=long)
+melon2 <- melon2[order(melon2$Date),]
+library(lme4)
+mlm2 <- lmer(Read ~ Exercise + Bitter.Melon + Measurement + as.integer(Date) + (1|Date), data=melon2)
+summary(mlm2)
+...Scaled residuals:
+        Min          1Q      Median          3Q         Max
+-2.45028070 -0.48846791  0.01430996  0.57426709  3.08934390
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Date     (Intercept) 13.44398 3.666603
+ Residual             79.75841 8.930756
+Number of obs: 85, groups:  Date, 35
+
+Fixed effects:
+                    Estimate  Std. Error  t value
+(Intercept)      104.5433728   4.2378163 24.66916
+Exercise           0.8480363   2.8328254  0.29936
+Bitter.Melon       3.7739611   2.6027090  1.45001
+as.integer(Date)   0.3386202   0.1422834  2.37990
+Measurement3pm    -8.4730381   2.5321712 -3.34616
+Measurementwake   -4.9616823   2.3702767 -2.09329
+
+Correlation of Fixed Effects:
+            (Intr) Exercs Bttr.M as.(D) Msrmn3
+Exercise    -0.726
+Bitter.Meln -0.355  0.095
+as.ntgr(Dt) -0.649  0.495 -0.209
+Measrmnt3pm -0.337  0.017  0.093 -0.012
+Measurmntwk -0.273 -0.012  0.022 -0.086  0.527
+R> fixef(mlm2)
+     (Intercept)         Exercise     Bitter.Melon as.integer(Date)   Measurement3pm
+  104.5433727769     0.8480362546     3.7739611160     0.3386201964    -8.4730380995
+ Measurementwake
+   -4.9616822756
+R> confint(mlm2)
+Computing profile confidence intervals ...
+                           2.5 %         97.5 %
+.sig01             0.00000000000   6.2022516958
+.sigma             7.30173759853  10.6754722267
+(Intercept)       96.53558709879 112.5507720395
+Exercise          -4.51695529051   6.2003858378
+Bitter.Melon      -1.15069394879   8.6949759136
+as.integer(Date)   0.06908453319   0.6074697878
+Measurement3pm   -13.39921098464  -3.5485825386
+Measurementwake   -9.49214591713  -0.4055767680
+
+residuals are much lower than with the regular linear model because estimated random effects for measurement time and for each day
+JAGS: want to include measurement error...
+
+
+library(runjags)
+model1<-"
+model {
+    for (i in 1:n) {
+        true.Blood.final[i] ~ dnorm(0, .001)
+        Blood.final[i] ~ dnorm(true.Blood.final[i], tau.Blood.final)
+
+        Blood.hat[i] <- a + b1*Blood.final[i] + b2*Bitter.Melon[i] + b3*Date[i] + b4*Exercise[i]  # + b5*Measurement[i]
+        Blood[i] ~ dnorm(Blood.hat[i], tau)
+    }
+    a  ~ dnorm(0, .001)
+
+    b1 ~ dnorm(0, .001)
+    b2 ~ dnorm(0, .001)
+    b3 ~ dnorm(0, .001)
+    b4 ~ dnorm(0, .001)
+    b5 ~ dnorm(0, .001)
+
+    sigma ~ dunif(0, 50)
+    tau <- pow(sigma, -2)
+
+    tau.Blood.final <- 1 / pow((5/9.2), 2)
+}
+"
+j1 <- with(melon2, autorun.jags(model1, data=list(n=nrow(melon2), Blood=Read, Bitter.Melon=Bitter.Melon,
+                                   Date=as.integer(Date), Exercise=Exercise, Measurement=as.integer(as.factor(Measurement))
+),
+                         monitor=c("b1", "b2", "b3", "b4")))
+j1
+JAGS model summary statistics from 20000 samples (chains = 2; adapt+burnin = 610000):
+
+     Lower95   Median Upper95     Mean       SD Mode     MCerr MC%ofSD SSeff    AC.10   psrf
+b1 -0.036474 0.059992 0.16036 0.059709 0.050807   --   0.00707    13.9    52  0.45628 1.0421
+b2  -0.34481    4.621  9.4978   4.6244   2.5134   --  0.042772     1.7  3453 0.041302 1.0194
+b3   0.10772  0.37527 0.63841  0.37558  0.13557   -- 0.0034196     2.5  1572  0.22336 1.0193
+b4   -3.5784   1.7658  6.9675   1.7774   2.6866   --  0.067243     2.5  1596   0.2226 1.0044
+
+Total time taken: 3.2 minutes
