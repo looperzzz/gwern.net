@@ -2124,41 +2124,105 @@ JAGS: want to include measurement error...
 library(runjags)
 model1<-"
 model {
+  delta.between.group ~ dunif(0, 30)
+  tau.between.group <- pow(sigma.between.group, -2)
+  sigma.between.group ~ dunif(0, 10)
+for (j in 1:m) {
+    b3_1[j] ~ dnorm(delta.between.group, tau.between.group) # dnorm(0, .001)
+}
+
     for (i in 1:n) {
         Blood.noise[i] ~ dnorm(0, tau.Blood.noise)
 
-        Blood.hat[i] <- a + b1*Blood.noise[i] + b2*Bitter.Melon[i] + b3*Date[i] + b4*Exercise[i]  + b5*Morning[i]  + b6*am10[i] + b7*pm3[i]
+        Blood.hat[i] <- a + b1*Blood.noise[i] + b4*Exercise[i] + b2*Bitter.Melon[i] + b3_1[Date[i]] + b3_2*Date[i]  + b5*Morning[i]  + b6*am10[i] + b7*pm3[i]
         Blood[i] ~ dnorm(Blood.hat[i], tau)
     }
+
     a  ~ dnorm(0, .001)
 
     b1 ~ dnorm(0, .001)
     b2 ~ dnorm(0, .001)
-    b3 ~ dnorm(0, .001)
+    b3_2 ~ dnorm(0, .001)
     b4 ~ dnorm(0, .001)
     b5 ~ dnorm(0, .001)
     b6 ~ dnorm(0, .001)
     b7 ~ dnorm(0, .001)
 
-    sigma ~ dunif(0, 50)
+    sigma ~ dunif(0, 20)
     tau <- pow(sigma, -2)
 
     tau.Blood.noise <- 1 / pow((5/9.2), 2)
 }
 "
 j1 <- with(melon2, run.jags(model1, data=list(n=nrow(melon2), Blood=Read, Bitter.Melon=Bitter.Melon,
-                                   Date=as.integer(Date), Exercise=Exercise, Morning=as.integer(Measurement=="wake"), am10=as.integer(Measurement=="10am"), pm3=as.integer(Measurement=="3pm")),
-                         monitor=c("b1", "b2", "b3", "b4", "b5", "b6", "b7"), sample=100000))
+                                   Date=as.integer(Date), m=length(levels(Date)), Exercise=Exercise, Morning=as.integer(Measurement=="wake"), am10=as.integer(Measurement=="10am"), pm3=as.integer(Measurement=="3pm")),
+                         monitor=c("b1", "b2", "b3_2", "b4", "b5", "b6", "b7"), sample=500000))
 j1
-JAGS model summary statistics from 100000 samples (chains = 2; adapt+burnin = 5000):
+JAGS model summary statistics from 1000000 samples (chains = 2; adapt+burnin = 5000):
 
-    Lower95  Median Upper95    Mean       SD Mode     MCerr MC%ofSD SSeff   AC.50   psrf
-b1 0.004807 0.15636 0.34374 0.15391 0.079291   --  0.024881    31.4    10 0.83882 1.2435
-b2   -1.539  3.4595   8.187  3.4367   2.4577   --   0.23628     9.6   108 0.33448 1.0139
-b3 0.072507 0.34455 0.59035 0.34347  0.13264   -- 0.0085504     6.4   241 0.28808 1.0402
-b4  -4.3114   0.953  6.2876 0.95082   2.6966   --   0.19238     7.1   196   0.339 1.0059
+      Lower95  Median Upper95    Mean      SD Mode     MCerr MC%ofSD SSeff   AC.500   psrf
+b1    -17.787 0.42309  17.967 0.33449  11.746   --   0.27033     2.3  1888  0.17493 1.0003
+b2     -1.172  3.9699  9.3653  3.9906  2.6803   --  0.026348       1 10348 0.017809      1
+b3_2 0.076985 0.36628 0.65914 0.36598 0.14869   -- 0.0015911     1.1  8733 0.017328 1.0002
+b4    -4.3368  1.3828  7.1201  1.3751  2.9205   --  0.031235     1.1  8742 0.015053 1.0006
+b5    -10.561  19.604  53.525  19.768  16.298   --   0.52169     3.2   976  0.39992 1.0038
+b6    -7.4183   24.57  56.427  24.724  16.304   --   0.52847     3.2   952  0.39991 1.0042
+b7    -14.914  16.107  49.277  16.305  16.324   --   0.53595     3.3   928  0.40045 1.0039
 
-Total time taken: 18.2 seconds
+more precisely:
 
+coeff <- as.mcmc.list(j1, vars="b2")
+sum(coeff[[1]]<0) / length(coeff[[1]])
+# [1] 0.067156
 
-with(melon2, list(n=nrow(melon2), Blood=Read, Bitter.Melon=Bitter.Melon, Date=as.integer(Date), Exercise=Exercise, Morning=as.integer(Measurement=="wake"), am10=as.integer(Measurement=="10am"), pm3=as.integer(Measurement=="3pm")))
+So the posterior probability that bitter melon lowers blood glucose in this self-experiment is 7%.
+
+Cost-benefit:
+
+some browsing suggests that a good buy
+http://www.amazon.com/Bitter-Melon-Extract-600mg-Capsules/dp/B000RE4CSK 120x600mg, $14
+600mg total is a recommended dose for extract, so this is 120 days' worth at $0.12/day or $44/year or, for indefinite consumption discounted at 5% annually, 44/log(1.05) = \$901
+
+Diabetes is extremely expensive in every way: substantial ongoing costs to monitor blood sugar, serious side-effects like blindness, life-expectancy reductions etc
+Just the medical expenditures could easily be \$124,600 if developed at age 40 http://care.diabetesjournals.org/content/37/9/2557.full (implying many anti-diabetes interventions would be cost-effective: )
+So avoiding it is really important
+
+How much does a reduction in blood sugar reduce the risk of diabetes, and how much is any given reduction in risk itself worth compared to the annual cost of bitter melon?
+estimate from metformin studies: metformin reduces mg/ml, which reduces risk, so can compare mg/ml reduction to risk reduction to estimate reduction from -1mg/ml
+
+"Oral anti-diabetic drugs for the prevention of type 2 diabetes" http://dpzz.maa.com.pl/uploaded/file/cukrzyca/prewencja/Phung%202011.PDF
+unfortunately, meta-analyses don't seem to include what reduction in mg/ml was observed, just the reduction in risk (37%)
+grabbed biggest study to investigate: http://www.thelancet.com/journals/lancet/article/PIIS0140-6736%2806%2969420-8/fulltext
+
+> There was no statistical evidence of an interaction between the rosiglitazone and ramipril arms of the DREAM study for the primary outcomes, secondary outcomes, or their components (interaction p>0·11 for all; data not shown). The primary outcome of diabetes or death was seen in significantly fewer individuals in the rosiglitazone group than in the placebo group (hazard ratio [HR] 0·40, 95% CI 0·35–0·46; p<0·0001; table 2). There was no difference in the number of deaths (0·91, 0·55–1·49; p=0·7) and a large difference in the frequency of diabetes (0·38, 0·33–0·44; p<0·0001) between the two groups (table 2). The event curves for the primary outcome diverged by the time of the first assessment (after 1 year of follow-up; figure 2).
+
+> Figure 5 shows the effect of rosiglitazone on fasting and 2-h plasma glucose concentrations. The median fasting plasma glucose concentration was 0·5 mmol/L lower in the rosiglitazone group than in the placebo group (p<0·0001); the 2-h plasma glucose concentration was 1·6 mmol/L lower (p<0·0001). Mean systolic and diastolic blood pressure were 1·7 mm Hg and 1·4 mm Hg lower, respectively, in the rosiglitazone group than in the placebo group (p<0·0001). Furthermore, mean hepatic ALT concentrations during the first year of therapy were 4·2 U/L lower in patients treated with rosiglitazone than those in the placebo group (p<0·0001). All results are for the final visit apart from the ALT difference, which was at 1 year. Of note, there was no difference in the use of antihypertensive agents in the two groups during the trial. Finally, by the final visit mean bodyweight was increased by 2·2 kg more in the rosiglitazone group than in the placebo group (p<0·0001). This increase in bodyweight in the rosiglitazone group was associated with a lower waist-to-hip ratio (p<0·0001) because of an increase in hip circumference of 1·8 cm; there was no effect on waist circumference (figure 6).
+
+> This large, prospective, blinded international clinical trial shows that 8 mg of rosiglitazone daily, together with lifestyle recommendations, substantially reduces the risk of diabetes or death by 60% in individuals at high risk for diabetes. The absolute risk difference between treatment groups of 14·4% means that for every seven people with impaired fasting glucose or impaired glucose tolerance who are prescribed rosiglitazone for 3 years, one will be prevented from developing diabetes. Moreover, rosiglitazone significantly increased the likelihood of regression to normoglycaemia by about 70–80% compared with placebo. The reduction in diabetes reported here is of much the same magnitude as the reduction achieved with lifestyle approaches4, 5 and greater than the reductions reported previously with drugs such as metformin4 or acarbose.3
+
+fasting: 5.8mmol/L placebo vs 5.4mmol/L intervention
+or 104.5 vs 97.3; so they cut diabetes risk in half with a 7.2ng/ml reduction?
+implies benefit
+
+if the lifetime risk of diabetes is 0.328 http://www.ncbi.nlm.nih.gov/pubmed/14532317 , the cost of diabetes is at least \$124,600, then the expected loss is 0.328 * 124600 = 40868.8; if an intervention lowering by 7.2ng/ml is done and thus then risk is reduced by 60% to 40% of what it was, then the expected loss is (0.6 * 0.328) * 124600 = 24521.28 or a reduction in loss of \$16,347.52. Assuming linear response, then each ng/ml reduction of 1 was worth 16347.52/7.2 = \$2270.48.
+
+So for example, we might ask for the probability bitter melon reduces blood glucose by 1 ng/ml:
+
+sum(coeff[[1]]<(-1)) / length(coeff[[1]])
+[1] 0.030978
+
+3.1% is not much, but the expected value is \$70.33 ie. it's worth more than 1 year of bitter melon would cost, although not more than the lifetime cost of bitter melon.
+On the other hand, the lowest value of bitter melon's effect with any substantial probability is -5, which if it happened to be true, would be worth quite a bit: \$10,449 (since `(5*2270) - 901`).
+
+What is our loss function over the bitter-melon effect-size posterior distribution?
+In the scenario where we take bitter melon: If the effect is <0 or negative, and it reduces blood-sugar, then the loss is -2270 times the effect-size plus the cost of lifetime bitter melon (\$901 from before).
+If bitter-melon actually increases blood sugar (>0), then likewise - the increased blood sugar does harm to our health and we still pay for bitter melon extracts.
+
+On the other hand, if we don't take bitter melon, then our loss is 0 since we don't change our blood sugar and we don't pay anything more for bitter melon.
+
+mean(coeff[[1]]*2270 + 901)
+9925.345678
+
+In this case, since the posterior estimate for bitter melon is skewed so heavily towards increasing blood-glucose, the expected loss is very dismal, and since 0 is less than $9925, based on the results of this self-experiment, we would prefer to not use bitter melon in the future.
+
+Of course, we have a third option of collecting more information. Is it worthwhile to experiment more on bitter melon?
