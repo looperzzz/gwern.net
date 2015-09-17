@@ -1904,7 +1904,7 @@ $ th sample.lua cv/lm_lstm_epoch0.93_1.1705.t7 -temperature 0.8 -length 500 -pri
 TWAIN|nor contributed/she has filled on behind him.  He had been satisfied by little just as to/deliver that the inclination of the possession of a thousand expenses in the group of feeling had destroyed/him to descend.  The physical had he darted before him that he was worth a
 PARKER|George Pasha, for instance?"//"Then it is not the marvel of laws upon Sam and the Sellers."  She said/he would ask himself to, one day standing from the floor, as he/stood for the capital.  He was no good of conversation
 
-Increase diversity of styles: amping up to 38 authors, including modern SF/F fiction authors (Robert Jordan's _Wheel of Time_, Gene Wolfe, R.A. Lafferty, Ryukishi07's _Umineko no naku koro ni_, Kafka), poetry ancient and modern (_Iliad_, _Beowulf_, Dante, Keats, Coleridge, Poe, Whitman, Gilbert & Sullivan), ancient fiction (the Bible), miscellaneous nonfiction (Aristotle, Machiavelli, Paine) etc.
+Increase diversity of styles: amping up to 38 authors, including modern SF/F fiction authors (Robert Jordan's _Wheel of Time_, Gene Wolfe, R.A. Lafferty, Frank Herbert, Ryukishi07's _Umineko no naku koro ni_, Kafka), poetry ancient and modern (_Iliad_, _Beowulf_, Dante, Keats, Coleridge, Poe, Whitman, Gilbert & Sullivan), ancient fiction (the Bible), miscellaneous nonfiction (Aristotle, Machiavelli, Paine) etc.
 By adding in many more authors from many different genres and time periods, may force the RNN to realize that it needs to take seriously the metadata prefix.
 
 ~~~{.Bash}
@@ -1954,7 +1954,7 @@ wc --char *.txt
 for FILE in *.txt; do
   dos2unix $FILE
   AUTHOR=$(echo $FILE | sed -e 's/\.txt//' | tr '[:lower:]' '[:upper:]')
-  cat $FILE | tail -n +80 | grep -v -i 'Gutenberg' | iconv -c -tascii | sed -e ':a;N;$!ba;s/\n/ \/ /g' | fold --spaces --bytes --width=1000 | sed -e "s/^/$AUTHOR\|/" > $FILE.transformed
+  cat $FILE | tail -n +80 | grep -i -v -e 'Gutenberg' -e 'http' -e 'file://' -e 'COPYRIGHT' | iconv -c -tascii | sed -e ':a;N;$!ba;s/\n/ \/ /g' -e 's/  */ /g' -e 's/ \/ \/ //g' | fold --spaces --bytes --width=1000 | sed -e "s/^/$AUTHOR\|/" > $FILE.transformed
 done
 cat *.transformed | shuf > input.txt
 cd ../../
@@ -1970,8 +1970,22 @@ th train.lua -data_dir data/styles/ -gpuid 0 -rnn_size 2400 -num_layers 2 -val_f
 # ...
 ~~~
 
+did OK but seemed to have difficulty improving past a loss of 1.14, had issues with exploding error (one exploding error up to a loss of 59 terminated an overnight training run) and then began erroring out everytime I tried to resume, so I began a third try, this time experimenting with deeper layers:
+
+~~~{.Bash}
+nice th train.lua -data_dir data/styles/ -gpuid 0 -rnn_size 1000 -num_layers 3 -val_frac 0.005 -seq_length 75 -dropout 0.7
+~~~
+
 # Bitter Melon
 
+[Bitter melon](!Wikipedia "Momordica charantia#Traditional medicinal uses") is an Asian fruit which may reduce blood glucose levels (the studies apparently conflict).
+In June 2015, [Paul LaFontaine ran a self-experiment](http://quantselflafont.com/2015/09/14/disappointing-outcome-with-bitter-melon-protocol/) on 900mg of bitter melon extract taken with breakfast, randomized daily for 20 days, measuring blood glucose levels with a [normal fingerprick test kit](http://quantselflafont.com/2014/12/14/glucose-heart-rate-variability/ "Glucose & Heart Rate Variability") before breakfast, at 10AM, and 3PM; the 20-day randomization was followed by a single block of 13 days with bitter melon use. There was no placebo-control or blinding.
+
+LaFontaine reports that his t-tests indicates no statistically-significant effects, and point-values indicating bitter melon harmfully increases blood glucose.
+
+The first thing to note is that taking his data, converting to long format, and plotting it:
+
+~~~{.R}
 melon <- read.csv(stdin(), header=TRUE)
 Date,Exercise,Bitter.Melon,Read.wake,Read.10am,Read.3pm
 2015-08-09,1,1,105,140,99
@@ -2010,7 +2024,56 @@ Date,Exercise,Bitter.Melon,Read.wake,Read.10am,Read.3pm
 2015-09-11,0,1,NA,NA,126
 2015-09-12,1,1,122,126,NA
 
+library(reshape)
+melon2 <- reshape(melon, varying=c("Read.wake", "Read.10am", "Read.3pm"), timevar="Date", direction=long)
+melon2 <- melon2[order(melon2$Date),]
+library(ggplot2)
+qplot(Date, Read, color=as.logical(Bitter.Melon), data=melon2) +
+ geom_smooth(aes(group=1)) + geom_point(size=I(4)) + theme(legend.position = "none")
+~~~
 
+![LaFontaine 2015 June bitter melon self-experiment for reducing blood glucose levels](/images/nootropics/2015-lafontaine-bittermelon.png)
+
+Has an unmistakable time trend of the blood glucose levels increasing almost linearly over time.
+So while LaFontaine is certainly correctly that bitter melon does not statistically-significantly lower total daily blood glucose levels, and the point-estimates are disturbing large:
+
+~~~{.R}
+with(melon, t.test((Read.wake+Read.10am+Read.3pm) ~ Bitter.Melon))
+#
+#   Welch Two Sample t-test
+#
+# data:  (Read.wake + Read.10am + Read.3pm) by Bitter.Melon
+# t = -1.0975011, df = 16.927915, p-value = 0.2877892
+# alternative hypothesis: true difference in means is not equal to 0
+# 95% confidence interval:
+#  -30.459040732   9.618131641
+# sample estimates:
+# mean in group 0 mean in group 1
+#     314.1250000     324.5454545
+with(melon, wilcox.test((Read.wake+Read.10am+Read.3pm) ~ Bitter.Melon, conf.int=TRUE))
+#
+#   Wilcoxon rank sum test with continuity correction
+#
+# data:  (Read.wake + Read.10am + Read.3pm) by Bitter.Melon
+# W = 29.5, p-value = 0.2472612
+# alternative hypothesis: true location shift is not equal to 0
+# 95% confidence interval:
+#  -35.999976618   7.000064149
+# sample estimates:
+# difference in location
+#            -11.2627309
+~~~
+
+Neither the _t_-test nor U test can yield valid results because the iid assumption is violated (datapoints come from different distributions depending on what time they were collected), and since bitter melon is backloaded in the final 13 days, that alone could drive the estimates of harm.
+So the temporal trend needs to be modeled somehow; one way, without going to full-blown time-series models, is to regress on the index of the date
+
+Another thing to notice in the plot is that blood glucose tests are both highly variable within a day, and highly variable between days as well.
+The variability between days implies that a multilevel model here would be good.
+The variability within days, on the other hand, implies that the different measurement times should be treated as covariates themselves, but also that we should remember that home blood glucose tests are not infinitely precise but the manufacturers claim an accuracy of something like ±5ng/ml (and in using my own blood glucose test strips, I find they can be much more noisy than that), so modeling the measurement-error would be worthwhile.
+
+A first stab at controlling for the temporal effect reduces the bitter melon estimate a bit to 9.7:
+
+~~~{.R}
 summary(lm(I(Read.wake + Read.10am + Read.3pm) ~ Bitter.Melon + Exercise + as.integer(Date), data=melon))
 ...Coefficients:
                     Estimate  Std. Error  t value   Pr(>|t|)
@@ -2023,118 +2086,65 @@ Residual standard error: 21.23433 on 15 degrees of freedom
   (16 observations deleted due to missingness)
 Multiple R-squared:  0.1810341, Adjusted R-squared:  0.01724088
 F-statistic:  1.10526 on 3 and 15 DF,  p-value: 0.3777754
+~~~
 
- summary(lm(cbind(Read.wake, Read.10am, Read.3pm) ~ Bitter.Melon + Exercise + as.integer(Date), data=melon))
-Response Read.wake :
-Coefficients:
-                    Estimate  Std. Error  t value   Pr(>|t|)
-(Intercept)      101.7450231   6.2856302 16.18692 6.5946e-11
-Bitter.Melon       1.0533735   3.4346716  0.30669   0.763297
-Exercise          -1.1542290   4.5584313 -0.25321   0.803545
-as.integer(Date)   0.5446842   0.2766736  1.96869   0.067752
+Switching to long format lets us immediately fit a multilevel model with random effects for days and also treating time of day as a covariate, where the bitter melon estimate has now dropped by a third, to 3.7:
 
-Residual standard error: 7.272513 on 15 degrees of freedom
-  (16 observations deleted due to missingness)
-Multiple R-squared:  0.2679218, Adjusted R-squared:  0.1215061
-F-statistic: 1.829871 on 3 and 15 DF,  p-value: 0.1850123
-
-
-Response Read.10am :
-Coefficients:
-                    Estimate  Std. Error  t value  Pr(>|t|)
-(Intercept)      117.2706876   8.9874462 13.04828 1.365e-09
-Bitter.Melon       0.6700312   4.9110313  0.13643   0.89329
-Exercise          -4.0291779   6.5178279 -0.61818   0.54573
-as.integer(Date)  -0.3452007   0.3955990 -0.87260   0.39663
-
-Residual standard error: 10.39853 on 15 degrees of freedom
-  (16 observations deleted due to missingness)
-Multiple R-squared:  0.05544998,    Adjusted R-squared:  -0.13346
-F-statistic: 0.2935259 on 3 and 15 DF,  p-value: 0.8294508
-
-
-Response Read.3pm :
-Coefficients:
-                   Estimate Std. Error t value   Pr(>|t|)
-(Intercept)      81.0211449 10.4407357 7.76010 1.2503e-06
-Bitter.Melon      7.9948563  5.7051557 1.40134    0.18146
-Exercise          7.9593188  7.5717748 1.05118    0.30982
-as.integer(Date)  0.9520445  0.4595682 2.07161    0.05596
-
-Residual standard error: 12.08 on 15 degrees of freedom
-  (16 observations deleted due to missingness)
-Multiple R-squared:  0.2938571, Adjusted R-squared:  0.1526285
-F-statistic:  2.08072 on 3 and 15 DF,  p-value: 0.1457853
-
-need to reshape for multilevel model...
-
-library(reshape)
-reshape(melon, varying=c("Read.wake", "Read.10am", "Read.3pm"), timevar="Date", direction=long)
-melon2 <- melon2[order(melon2$Date),]
+~~~{.R}
 library(lme4)
-mlm2 <- lmer(Read ~ Exercise + Bitter.Melon + Measurement + as.integer(Date) + (1|Date), data=melon2)
-summary(mlm2)
-...Scaled residuals:
-        Min          1Q      Median          3Q         Max
--2.45028070 -0.48846791  0.01430996  0.57426709  3.08934390
+mlm <- lmer(Read ~ Exercise + Bitter.Melon + Measurement + as.integer(Date) + (1|Date), data=melon2)
+summary(mlm)
+# ...Random effects:
+#  Groups   Name        Variance Std.Dev.
+#  Date     (Intercept) 13.44398 3.666603
+#  Residual             79.75841 8.930756
+# Number of obs: 85, groups:  Date, 35
+#
+# Fixed effects:
+#                     Estimate  Std. Error  t value
+# (Intercept)      104.5433728   4.2378163 24.66916
+# Exercise           0.8480363   2.8328254  0.29936
+# Bitter.Melon       3.7739611   2.6027090  1.45001
+# as.integer(Date)   0.3386202   0.1422834  2.37990
+# Measurement3pm    -8.4730381   2.5321712 -3.34616
+# Measurementwake   -4.9616823   2.3702767 -2.09329
+#
+# Correlation of Fixed Effects:
+#             (Intr) Exercs Bttr.M as.(D) Msrmn3
+# Exercise    -0.726
+# Bitter.Meln -0.355  0.095
+# as.ntgr(Dt) -0.649  0.495 -0.209
+# Measrmnt3pm -0.337  0.017  0.093 -0.012
+# Measurmntwk -0.273 -0.012  0.022 -0.086  0.527
+confint(mlm)
+#                            2.5 %         97.5 %
+# .sig01             0.00000000000   6.2022516958
+# .sigma             7.30173759853  10.6754722267
+# (Intercept)       96.53558709879 112.5507720395
+# Exercise          -4.51695529051   6.2003858378
+# Bitter.Melon      -1.15069394879   8.6949759136
+# as.integer(Date)   0.06908453319   0.6074697878
+# Measurement3pm   -13.39921098464  -3.5485825386
+# Measurementwake   -9.49214591713  -0.4055767680
+~~~
 
-Random effects:
- Groups   Name        Variance Std.Dev.
- Date     (Intercept) 13.44398 3.666603
- Residual             79.75841 8.930756
-Number of obs: 85, groups:  Date, 35
+Blood glucose measurements definitely differ by time of day, and days do cluster, so this model works much better than the linear model or _t_-test did.
 
-Fixed effects:
-                    Estimate  Std. Error  t value
-(Intercept)      104.5433728   4.2378163 24.66916
-Exercise           0.8480363   2.8328254  0.29936
-Bitter.Melon       3.7739611   2.6027090  1.45001
-as.integer(Date)   0.3386202   0.1422834  2.37990
-Measurement3pm    -8.4730381   2.5321712 -3.34616
-Measurementwake   -4.9616823   2.3702767 -2.09329
-
-Correlation of Fixed Effects:
-            (Intr) Exercs Bttr.M as.(D) Msrmn3
-Exercise    -0.726
-Bitter.Meln -0.355  0.095
-as.ntgr(Dt) -0.649  0.495 -0.209
-Measrmnt3pm -0.337  0.017  0.093 -0.012
-Measurmntwk -0.273 -0.012  0.022 -0.086  0.527
-R> fixef(mlm2)
-     (Intercept)         Exercise     Bitter.Melon as.integer(Date)   Measurement3pm
-  104.5433727769     0.8480362546     3.7739611160     0.3386201964    -8.4730380995
- Measurementwake
-   -4.9616822756
-R> confint(mlm2)
-Computing profile confidence intervals ...
-                           2.5 %         97.5 %
-.sig01             0.00000000000   6.2022516958
-.sigma             7.30173759853  10.6754722267
-(Intercept)       96.53558709879 112.5507720395
-Exercise          -4.51695529051   6.2003858378
-Bitter.Melon      -1.15069394879   8.6949759136
-as.integer(Date)   0.06908453319   0.6074697878
-Measurement3pm   -13.39921098464  -3.5485825386
-Measurementwake   -9.49214591713  -0.4055767680
-
-residuals are much lower than with the regular linear model because estimated random effects for measurement time and for each day
-JAGS: want to include measurement error...
 
 
 library(runjags)
-model1<-"
-model {
-  delta.between.group ~ dunif(0, 30)
-  tau.between.group <- pow(sigma.between.group, -2)
-  sigma.between.group ~ dunif(0, 10)
-for (j in 1:m) {
-    b3_1[j] ~ dnorm(delta.between.group, tau.between.group) # dnorm(0, .001)
-}
+model1 <- "model {
+   delta.between.group ~ dunif(0, 30)
+   tau.between.group <- pow(sigma.between.group, -2)
+   sigma.between.group ~ dunif(0, 10)
+   for (j in 1:m) {
+        b3_1[j] ~ dnorm(delta.between.group, tau.between.group)
+   }
 
     for (i in 1:n) {
         Blood.noise[i] ~ dnorm(0, tau.Blood.noise)
-
-        Blood.hat[i] <- a + b1*Blood.noise[i] + b4*Exercise[i] + b2*Bitter.Melon[i] + b3_1[Date[i]] + b3_2*Date[i]  + b5*Morning[i]  + b6*am10[i] + b7*pm3[i]
+        Blood.hat[i] <- a + b1*Blood.noise[i] + b4*Exercise[i] + b2*Bitter.Melon[i] +
+                            b3_1[Date[i]] + b3_2*Date[i]  + b5*Morning[i]  + b6*am10[i] + b7*pm3[i]
         Blood[i] ~ dnorm(Blood.hat[i], tau)
     }
 
@@ -2151,9 +2161,11 @@ for (j in 1:m) {
     sigma ~ dunif(0, 20)
     tau <- pow(sigma, -2)
 
+    # SD of LaFontaine's blood glucose measurements is ~9.2,
+    # manufacturers claim within ~5 accuracy, so use that as the
+    # prior for the accuracy of blood glucose measurements:
     tau.Blood.noise <- 1 / pow((5/9.2), 2)
-}
-"
+}"
 j1 <- with(melon2, run.jags(model1, data=list(n=nrow(melon2), Blood=Read, Bitter.Melon=Bitter.Melon,
                                    Date=as.integer(Date), m=length(levels(Date)), Exercise=Exercise, Morning=as.integer(Measurement=="wake"), am10=as.integer(Measurement=="10am"), pm3=as.integer(Measurement=="3pm")),
                          monitor=c("b1", "b2", "b3_2", "b4", "b5", "b6", "b7"), sample=500000))
@@ -2223,6 +2235,94 @@ On the other hand, if we don't take bitter melon, then our loss is 0 since we do
 mean(coeff[[1]]*2270 + 901)
 9925.345678
 
-In this case, since the posterior estimate for bitter melon is skewed so heavily towards increasing blood-glucose, the expected loss is very dismal, and since 0 is less than $9925, based on the results of this self-experiment, we would prefer to not use bitter melon in the future.
+In this case, since the posterior estimate for bitter melon is skewed so heavily towards increasing blood-glucose, the expected loss is very dismal, and since 0 is less than \$9925, based on the results of this self-experiment, we would prefer to not use bitter melon in the future.
 
 Of course, we have a third option of collecting more information. Is it worthwhile to experiment more on bitter melon?
+
+The upper bound on the value of more information is the Expected Value of Perfect Information: our expected gain if an oracle told us the exact effect of bitter melon, and we gain only if we switch actions.
+If the oracle tells us bitter melon increases blood sugar and so we shouldn't take it, this is worthless to us since we had already decided to not take it; if it told us that it reduced by -0.4ng/ml, that exactly counterbalances the total cost of \$901, so we still wouldn't change our action; while if the oracle tells us that bitter melon reduces blood sugar by -2, then we have learned something valuable since a reduction of -2 ng/ml is worth \$4.5k to us and the intervention only costs \$901, for a big win of \$3.6k, or of course, even more if it was actually -6.
+But we know it's very unlikely that it's as extreme as -6, and still unlikely that it's as much as -2, so we need to discount these win estimates like \$3.6k by how probable they are in the first place.
+And then we want to average over all of them.
+This is easily done with the posterior: for each sample of the possible effect, we ignore it if it's not below -0.4 and note that the information was worth $0, estimate the win if it is, and then take the average.
+
+mean(sapply(coeff[[1]], function(bg) { if(bg>=(-0.4)) { return(0); } else { return(-bg*2270 - 901); }}))
+[1] 132.6411989
+
+Because we still can't totally rule out that bitter melon reduces blood glucose, which would be extremely valuable if it did, so we would be willing to pay up to $132 for certainty, since we might learn that it does reduce blood glucose by a useful amount.
+$132 also implies that we might want to do more experimenting, since another bottle of bitter melon would not cost much and could probably drive down that remaining 7%.
+How much does experimenting cost?
+Each dose costs $0.12, but there's also the hassle of randomizing and doing the analysis (since measuring blood glucose seems to be something he's doing already). Let's say each datapoint costs $2 (and since we're measuring 3 times a day, each day costs $6) between the bitter melon & hassle.
+
+data <- melon2
+sampleValues <- data.frame(N=NULL, newOptimumLoss=NULL, sampleValue=NULL, sampleValueProfit=NULL)
+for (n in seq(from=1, to=(nrow(data)+10))) {
+
+    evsis <- replicate(5, {
+            # if n is more than we collected, bootstrap hypothetical new data; otherwise, just take that prefix
+            # and pretend we are doing a sequential trial where we have only collected the first n observations thus far
+            if (n > nrow(data)) { newData <- rbind(data, data[sample(1:nrow(data), n - nrow(data) , replace=TRUE),]) } else { newData <- data[1:n,] }
+
+      kEVSI <- with(newData, run.jags(model1, data=list(n=nrow(newData), Blood=Read, Bitter.Melon=Bitter.Melon,
+                                   Date=as.integer(Date), m=length(levels(Date)), Exercise=Exercise, Morning=as.integer(Measurement=="wake"),
+                                   am10=as.integer(Measurement=="10am"), pm3=as.integer(Measurement=="3pm")),
+                         monitor=c("b2"), sample=1000, silent.jags=TRUE, summarise=FALSE))
+
+
+            coeff <- as.mcmc.list(kEVSI, vars="b2")
+
+            lossNonuse <- 0
+            lossUse <- mean(sapply(coeff[[1]], function(bg) { return(-bg*2270 + 901); }))
+
+ print("n-1 newOptimumLoss:")
+ print(sampleValues[(n-1),]$newOptimumLoss)
+            if (n==1) { oldOptimum <- 0;  } else { oldOptimum <- sampleValues[n-1,]$newOptimumLoss; } # compare to the previous estimate using n-1
+            print("current oldOptimum:")
+            print(oldOptimum)
+            newOptimum <- max(c(lossNonuse, lossUse))
+            sampleValue <- newOptimum - oldOptimum
+            sampleCost <- 2
+            sampleValueProfit <- sampleValue - (n*sampleCost)
+
+print(lossUse)
+print(list(N=n, newOptimumLoss=newOptimum,
+                        sampleValue=sampleValue, sampleValueProfit=sampleValueProfit))
+            return(list(N=n, newOptimumLoss=newOptimum,
+                        sampleValue=sampleValue, sampleValueProfit=sampleValueProfit))
+            }
+        )
+
+    sampleValues <- rbind(sampleValues, data.frame(N=n, newOptimumLoss=mean(unlist(evsis[2,])),
+                                                   sampleValue=mean(unlist(evsis[3,])), sampleValueProfit=mean(unlist(evsis[4,]))))
+    }
+sampleValues
+
+      N newOptimumLoss    sampleValue sampleValueProfit
+1     1      0.0000000     0.00000000       -2.00000000
+2     2      0.0000000     0.00000000       -4.00000000
+3     3      0.0000000     0.00000000       -6.00000000
+4     4      0.0000000     0.00000000       -8.00000000
+5     5      0.0000000     0.00000000      -10.00000000
+6     6      0.0000000     0.00000000      -12.00000000
+7     7      0.0000000     0.00000000      -14.00000000
+8     8      0.0000000     0.00000000      -16.00000000
+9     9      0.0000000     0.00000000      -18.00000000
+10   10      0.0000000     0.00000000      -20.00000000
+11   11      0.0000000     0.00000000      -22.00000000
+12   12      0.0000000     0.00000000      -24.00000000
+13   13     56.8309639    56.83096390       30.83096390
+14   14    813.8691613   757.03819735      729.03819735
+15   15      0.0000000  -813.86916125     -843.86916125
+16   16    970.0185324   970.01853242      938.01853242
+17   17   1032.9177537    62.89922133       28.89922133
+18   18   3736.4813706  2703.56361683     2667.56361683
+19   19      0.0000000 -3736.48137057    -3774.48137057
+20   20      0.0000000     0.00000000      -40.00000000
+21   21      0.0000000     0.00000000      -42.00000000
+...
+109 109      0.0000000     0.00000000     -218.00000000
+110 110      0.0000000     0.00000000     -220.00000000
+111 111      0.0000000     0.00000000     -222.00000000
+112 112      0.0000000     0.00000000     -224.00000000
+113 113      0.0000000     0.00000000     -226.00000000
+114 114      0.0000000     0.00000000     -228.00000000
+115 115      0.0000000     0.00000000     -230.00000000
