@@ -2129,9 +2129,11 @@ confint(mlm)
 ~~~
 
 Blood glucose measurements definitely differ by time of day, and days do cluster, so this model works much better than the linear model or _t_-test did.
+As far as measurement error goes, that can be modeled by linear measurement error models/error-in-variable models/Deming regression/total least squares/orthogonal regression, but these usually seem to assume that you have multiple measurements of the same datapoint (if Paul had measured 3 times immediately in the morning for each day, instead of once at 3 different times of day) from which the size of the error can be estimated, while here we just have prior information.
+So that motivates a switch to Bayesian modeling using JAGS.
+Here we have a multilevel (for days) measurement-error (blood glucose levels treated as a latent variable) model with fixed-effects for exercise, bitter melon, date index, and 3 times of day (manually turned into dummy variables since unlike `lm` and `lmer`, JAGS doesn't automatically expand a factor into multiply dummy variables):
 
-
-
+~~~{.R}
 library(runjags)
 model1 <- "model {
    delta.between.group ~ dunif(0, 30)
@@ -2167,43 +2169,48 @@ model1 <- "model {
     tau.Blood.noise <- 1 / pow((5/9.2), 2)
 }"
 j1 <- with(melon2, run.jags(model1, data=list(n=nrow(melon2), Blood=Read, Bitter.Melon=Bitter.Melon,
-                                   Date=as.integer(Date), m=length(levels(Date)), Exercise=Exercise, Morning=as.integer(Measurement=="wake"), am10=as.integer(Measurement=="10am"), pm3=as.integer(Measurement=="3pm")),
+                                   Date=as.integer(Date), m=length(levels(Date)), Exercise=Exercise,
+                                   Morning=as.integer(Measurement=="wake"), am10=as.integer(Measurement=="10am"),
+                                   pm3=as.integer(Measurement=="3pm")),
                          monitor=c("b1", "b2", "b3_2", "b4", "b5", "b6", "b7"), sample=500000))
 j1
-JAGS model summary statistics from 1000000 samples (chains = 2; adapt+burnin = 5000):
+# JAGS model summary statistics from 1000000 samples (chains = 2; adapt+burnin = 5000):
+#
+#       Lower95  Median Upper95    Mean      SD Mode     MCerr MC%ofSD SSeff   AC.500   psrf
+# b1    -17.787 0.42309  17.967 0.33449  11.746   --   0.27033     2.3  1888  0.17493 1.0003
+# b2     -1.172  3.9699  9.3653  3.9906  2.6803   --  0.026348       1 10348 0.017809      1
+# b3_2 0.076985 0.36628 0.65914 0.36598 0.14869   -- 0.0015911     1.1  8733 0.017328 1.0002
+# b4    -4.3368  1.3828  7.1201  1.3751  2.9205   --  0.031235     1.1  8742 0.015053 1.0006
+# b5    -10.561  19.604  53.525  19.768  16.298   --   0.52169     3.2   976  0.39992 1.0038
+# b6    -7.4183   24.57  56.427  24.724  16.304   --   0.52847     3.2   952  0.39991 1.0042
+# b7    -14.914  16.107  49.277  16.305  16.324   --   0.53595     3.3   928  0.40045 1.0039
+~~~
 
-      Lower95  Median Upper95    Mean      SD Mode     MCerr MC%ofSD SSeff   AC.500   psrf
-b1    -17.787 0.42309  17.967 0.33449  11.746   --   0.27033     2.3  1888  0.17493 1.0003
-b2     -1.172  3.9699  9.3653  3.9906  2.6803   --  0.026348       1 10348 0.017809      1
-b3_2 0.076985 0.36628 0.65914 0.36598 0.14869   -- 0.0015911     1.1  8733 0.017328 1.0002
-b4    -4.3368  1.3828  7.1201  1.3751  2.9205   --  0.031235     1.1  8742 0.015053 1.0006
-b5    -10.561  19.604  53.525  19.768  16.298   --   0.52169     3.2   976  0.39992 1.0038
-b6    -7.4183   24.57  56.427  24.724  16.304   --   0.52847     3.2   952  0.39991 1.0042
-b7    -14.914  16.107  49.277  16.305  16.324   --   0.53595     3.3   928  0.40045 1.0039
+This winds up not changing our estimate of the effect of bitter melon noticeably, but it does have some nice side-effects like giving us something more interpretable than a non-statistically-significant _p_ or _t_-value - the posterior probability bitter melon reduces blood glucose levels:
 
-more precisely:
-
+~~~{.R}
 coeff <- as.mcmc.list(j1, vars="b2")
 sum(coeff[[1]]<0) / length(coeff[[1]])
 # [1] 0.067156
+~~~
 
 So the posterior probability that bitter melon lowers blood glucose in this self-experiment is 7%.
 
+As well, LaFontaine is concerned to optimize his health and financial expenditures while not spending too much effort testing out an intervention:
+
+> As a result of this analysis I will no longer take Bitter Melon and save myself the money...I try to balance the strength of the statistics with pragmatic “no go” decisions on supplements and other mechanisms.
+
+With the posterior distribution from the Bayesian model, we could examine this question directly: what *is* the current value of bitter melon and is the current experiment sufficient to rule out bitter melon use, or rule out collecting additional data?
+
+To do a cost-benefit, we assign costs to the use of bitter melon, risk & cost of developing diabetes, estimate how much a reduction in blood glucose reduces diabetes risk, and then we can work with the posterior distribution to estimate
+
 Cost-benefit:
 
-some browsing suggests that a good buy
-http://www.amazon.com/Bitter-Melon-Extract-600mg-Capsules/dp/B000RE4CSK 120x600mg, $14
-600mg total is a recommended dose for extract, so this is 120 days' worth at $0.12/day or $44/year or, for indefinite consumption discounted at 5% annually, 44/log(1.05) = \$901
-
-Diabetes is extremely expensive in every way: substantial ongoing costs to monitor blood sugar, serious side-effects like blindness, life-expectancy reductions etc
-Just the medical expenditures could easily be \$124,600 if developed at age 40 http://care.diabetesjournals.org/content/37/9/2557.full (implying many anti-diabetes interventions would be cost-effective: )
-So avoiding it is really important
-
-How much does a reduction in blood sugar reduce the risk of diabetes, and how much is any given reduction in risk itself worth compared to the annual cost of bitter melon?
-estimate from metformin studies: metformin reduces mg/ml, which reduces risk, so can compare mg/ml reduction to risk reduction to estimate reduction from -1mg/ml
+1. cost of bitter melon use: [some browsing suggests that a good buy](http://www.amazon.com/Bitter-Melon-Extract-600mg-Capsules/dp/B000RE4CSK) would be 120x600mg at \$14; 600mg total is a recommended dose for extract, so this is 120 days' worth at \$0.12/day or \$44/year or, for indefinite consumption discounted at 5% annually ($\frac{44}{log(1.05)} = \$901$)
+2. cost of diabetes: while not familiar with the literature, it's clear that diabetes is extremely expensive in every way: substantial ongoing costs to monitor blood glucose (the cheapest possible test strips are still like \$0.17, which at 3+ times a day adds up), there are serious side-effects like blindness, increased rates of other diseases like cancer (themselves expensive), life-expectancy reductions etc Just the medical expenditures could easily be [\$124,600 if developed at age 40](http://care.diabetesjournals.org/content/37/9/2557.full). So avoiding it is important.
+3. How much does a reduction in blood glucose reduce the risk of diabetes, and how much is any given reduction in risk itself worth compared to the annual cost of bitter melon? My strategy here is to look at RCTs of how much drugs reduce blood glucose, how much drugs reduce diabetes rates, and assume that the drugs are exerting this effect through the blood glucose reduction and define the reduction in diabetes risk per ng/ml accordingly. Here too I am not familiar with the large literature, so what I did was I looked through one of the more recent meta-analyses; that and other meta-analyses didn't include reductions in blood glucose or any estimate of the kind I wanted, unfortunately, so I then looked for the [largest single study included](http://www.thelancet.com/journals/lancet/article/PIIS0140-6736%2806%2969420-8/fulltext). It found that in their sample, the fasting blood glucose went from 5.8mmol/L on placebo to 5.4mmol/L in their intervention (104.5 vs 97.3), and this was associated with the intervention group having 60% of the risk as the control group.
 
 "Oral anti-diabetic drugs for the prevention of type 2 diabetes" http://dpzz.maa.com.pl/uploaded/file/cukrzyca/prewencja/Phung%202011.PDF
-unfortunately, meta-analyses don't seem to include what reduction in mg/ml was observed, just the reduction in risk (37%)
 grabbed biggest study to investigate: http://www.thelancet.com/journals/lancet/article/PIIS0140-6736%2806%2969420-8/fulltext
 
 > There was no statistical evidence of an interaction between the rosiglitazone and ramipril arms of the DREAM study for the primary outcomes, secondary outcomes, or their components (interaction p>0·11 for all; data not shown). The primary outcome of diabetes or death was seen in significantly fewer individuals in the rosiglitazone group than in the placebo group (hazard ratio [HR] 0·40, 95% CI 0·35–0·46; p<0·0001; table 2). There was no difference in the number of deaths (0·91, 0·55–1·49; p=0·7) and a large difference in the frequency of diabetes (0·38, 0·33–0·44; p<0·0001) between the two groups (table 2). The event curves for the primary outcome diverged by the time of the first assessment (after 1 year of follow-up; figure 2).
