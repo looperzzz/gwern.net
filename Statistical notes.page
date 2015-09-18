@@ -1978,6 +1978,9 @@ nice th train.lua -data_dir data/styles/ -gpuid 0 -rnn_size 1000 -num_layers 3 -
 
 # Bitter Melon
 
+> I re-analyze a bitter-melon/blood-glucose self-experiment, finding a small effect of increasing blood glucose after correcting for temporal trends & daily variation, giving both frequentist & Bayesian analyses.
+> I then analyze the self-experiment from a subjective Bayesian decision-theoretic perspective, cursorily estimating the costs of diabetes & benefits of intervention in order to estimate Value Of Information for the self-experiment and the benefit of further self-experimenting; I find that the expected value of more data (EVSI) is negative and further self-experimenting would not be optimal compared to trying out other anti-diabetes interventions.
+
 [Bitter melon](!Wikipedia "Momordica charantia#Traditional medicinal uses") is an Asian fruit which may reduce blood glucose levels (the studies apparently conflict).
 In June 2015, [Paul LaFontaine ran a self-experiment](http://quantselflafont.com/2015/09/14/disappointing-outcome-with-bitter-melon-protocol/) on 900mg of bitter melon extract taken with breakfast, randomized daily for 20 days, measuring blood glucose levels with a [normal fingerprick test kit](http://quantselflafont.com/2014/12/14/glucose-heart-rate-variability/ "Glucose & Heart Rate Variability") before breakfast, at 10AM, and 3PM; the 20-day randomization was followed by a single block of 13 days with bitter melon use. There was no placebo-control or blinding.
 
@@ -2132,6 +2135,8 @@ confint(mlm)
 ~~~
 
 Blood glucose measurements definitely differ by time of day, and days do cluster, so this model works much better than the linear model or _t_-test did.
+Critically, we see that the bitter melon estimate is still *much* smaller than what we had from before, having dropped to a quarter of the effect size; this shows that the violation of assumptions was driving much of the apparent harm.
+
 As far as measurement error goes, that can be modeled by linear measurement error models/error-in-variable models/Deming regression/total least squares/orthogonal regression, but these usually seem to assume that you have multiple measurements of the same datapoint (if Paul had measured 3 times immediately in the morning for each day, instead of once at 3 different times of day) from which the size of the error can be estimated, while here we just have prior information.
 
 ### JAGS
@@ -2262,7 +2267,7 @@ sum(coeff[[1]]<(-1)) / length(coeff[[1]])
 # [1] 0.030978
 ~~~
 
-3.1% is not much, but the expected value of >=1ng/ml is >\$70.33 ($0.03 \cdot 2270.48$) ie. it's worth more than 1 year of bitter melon would cost - although still not more than the lifetime cost of bitter melon.
+3.1% is not much, but the expected value of >=1ng/ml is >\$70.33 ($0.03 \cdot 2270$) ie. it's worth more than 1 year of bitter melon would cost - although still not more than the lifetime cost of bitter melon.
 On the other hand, the lowest value of bitter melon's effect with any substantial probability is -5, which if it happened to be true, would be worth quite a bit: \$10,449 ($(5 \cdot 2270) - 901$).
 
 What is our loss function over the bitter-melon effect-size posterior distribution?
@@ -2397,11 +2402,13 @@ The final outcome suggests that LaFontaine should not take bitter melon and (pro
 
 There are many caveats to this conclusion:
 
-- I used a noninformative prior on the effects of bitter melon, which implies that it's as likely for bitter melon to drive blood glucose increases as decreases; this strikes me as implausible, and if I had tried to meta-analyze the past studies on bitter melon, I would probably have come up with a much stronger prior in favor of bitter melon, in which case the EVSI of sampling would take much longer to go negative and might have reversed the recommendations
+1. I used a noninformative prior on the effects of bitter melon, which implies that it's as likely for bitter melon to drive blood glucose increases as decreases; this strikes me as implausible, and if I had tried to meta-analyze the past studies on bitter melon, I would probably have come up with a much stronger prior in favor of bitter melon, in which case the EVSI of sampling would take much longer to go negative and might have reversed the recommendations
 
     - on the other hand, the existing bitter melon papers also suggest that taking it in tablet form may be ineffective and only the fresh or juice forms work; in which case, the failure to show benefits was a foregone conclusion and LaFontaine shouldn't've bothered with testing something already believed not to work
-- the temporal trend in the blood glucose is concerning because it is too steep to represent any kind of long-term trend (LaFontaine would be dead by now if his blood glucose really did increase by 0.36ng/ml a day) but suggests something wacky is going on; this wackiness could itself be neutralizing any benefit from bitter melon or it could not fit a linear trend in a way that increases sampling error more than it seems
-- the diabetes cost estimate is too low; I included only the direct medical costs, though the cost of lost QALYs is probably even larger and the estimate not half what it should be. This underestimation would bias benefit estimates downwards and lead to premature ending of experimenting.
-- in the other direction, the conversion from blood glucose reductions to diabetes risk is also questionable; some of the anti-diabetes drugs like metformin are already believed to have effects not mediated solely through blood glucose. This overestimation of the effect of blood glucose reductions would bias estimates upwards and lead to too much experimenting.
+2. the temporal trend in the blood glucose is concerning because it is too steep to represent any kind of long-term trend (LaFontaine would be dead by now if his blood glucose really did increase by 0.36ng/ml a day) but suggests something wacky was going on during his self-experiment; this wackiness is a joker in the deck, since whatever is causing it, could itself be neutralizing any benefit from bitter melon or it could diverge from a linear trend in a way that increases the underlying sampling error beyond what is modeled
+3. the diabetes cost estimate is too low; I included only the direct medical costs, though the cost of lost QALYs is probably even larger and the estimate not half what it should be. This underestimation would bias benefit estimates downwards and lead to premature ending of experimenting.
+4. in the other direction, the conversion from blood glucose reductions to diabetes risk is questionable; some of the anti-diabetes drugs like metformin are already believed to have effects not mediated solely through blood glucose. This overestimation of the effect of blood glucose reductions would bias estimates upwards and lead to too much experimenting.
+
+I suspect problem #3 & #4 mostly cancel out, that problem #1 would have been a problem if LaFontaine had actually conducted a sequential trial based on EVSI but since he over-collected data it doesn't wind up being an issue (a favorable prior probably would have been canceled out quickly), and #2 is the major reason that the results could be wrong.
 
 Still, an interesting self-experiment to try to analyze.
