@@ -2202,6 +2202,32 @@ sum(coeff[[1]]<0) / length(coeff[[1]])
 
 So the posterior probability that bitter melon lowers blood glucose in this self-experiment is 7%.
 
+We can also see how the posterior distribution of the bitter melon parameter evolves with the data:
+
+~~~{.R}
+library(animation)
+saveGIF(
+    for(n in 1:nrow(melon2)){
+        newData <- melon2[1:n,]
+        j <- with(newData, run.jags(model1, data=list(n=nrow(newData), Blood=Read, Bitter.Melon=Bitter.Melon,
+                                     Date=as.integer(Date), m=length(levels(Date)), Exercise=Exercise,
+                                     Morning=as.integer(Measurement=="wake"),
+                                     am10=as.integer(Measurement=="10am"), pm3=as.integer(Measurement=="3pm")),
+                                    monitor=c("b2"), sample=6000, silent.jags=TRUE, summarise=FALSE))
+        coeff <- as.mcmc.list(j, vars="b2")
+
+        p <- qplot(as.vector(coeff[[1]]), binwidth=1) +
+              coord_cartesian(xlim = c(-11, 11)) +
+              ylab("Posterior density") + xlab("Effect on blood glucose (ng/ml)") + ggtitle(n) +
+              theme(axis.text.y=element_blank())
+        print(p)
+        },
+    interval = 0.5, ani.width = 800, ani.height=800,
+    movie.name = "/home/gwern/wiki/images/nootropics/2015-lafontaine-bittermelon-samplebysample.gif")
+~~~
+
+![Simulated data: posterior estimates evolving sample by sample](/images/nootropics/2015-lafontaine-bittermelon-samplebysample.gif)
+
 ## Cost-benefit
 
 As well, LaFontaine is concerned to optimize his health and financial expenditures while not spending too much effort testing out an intervention:
