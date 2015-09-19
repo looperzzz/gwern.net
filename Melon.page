@@ -11,7 +11,7 @@ belief: likely
 > I then analyze the self-experiment from a subjective Bayesian decision-theoretic perspective, cursorily estimating the costs of diabetes & benefits of intervention in order to estimate Value Of Information for the self-experiment and the benefit of further self-experimenting; I find that the expected value of more data (EVSI) is negative and further self-experimenting would not be optimal compared to trying out other anti-diabetes interventions.
 
 [Bitter melon](!Wikipedia "Momordica charantia#Traditional medicinal uses") is an Asian fruit which may reduce blood glucose levels (the studies apparently conflict).
-In June 2015, [Paul LaFontaine ran a self-experiment](http://quantselflafont.com/2015/09/14/disappointing-outcome-with-bitter-melon-protocol/) on 900mg of bitter melon extract taken with breakfast, randomized daily for 20 days, measuring blood glucose levels with a [normal fingerprick test kit](http://quantselflafont.com/2014/12/14/glucose-heart-rate-variability/ "Glucose & Heart Rate Variability") before breakfast, at 10AM, and 3PM; the 20-day randomization was followed by a single block of 13 days with bitter melon use. There was no placebo-control or blinding.
+In June 2015, [Paul LaFontaine ran a self-experiment](http://quantselflafont.com/2015/09/14/disappointing-outcome-with-bitter-melon-protocol/) on 900mg of bitter melon extract taken with breakfast ([Vitamin World brand: 100x450mg, \$25](http://www.vitaminworld.com/blood-sugar-support/bitter-melon-0070050502.html)), randomized daily for 20 days, measuring blood glucose levels with a [normal fingerprick test kit](http://quantselflafont.com/2014/12/14/glucose-heart-rate-variability/ "Glucose & Heart Rate Variability") before breakfast, at 10AM, and 3PM; the 20-day randomization was followed by a single block of 13 days with bitter melon use. There was no placebo-control or blinding.
 
 LaFontaine reports that his _t_-tests indicates no statistically-significant effects, and point-values indicating bitter melon harmfully increases blood glucose.
 
@@ -226,15 +226,9 @@ j1
 # b7    -14.914  16.107  49.277  16.305  16.324   --   0.53595     3.3   928  0.40045 1.0039
 ~~~
 
-This winds up not changing our estimate of the effect of bitter melon noticeably, but it does have some nice side-effects like giving us something more interpretable than a non-statistically-significant _p_ or _t_-value - the posterior probability bitter melon reduces blood glucose levels:
-
-~~~{.R}
-coeff <- as.mcmc.list(j1, vars="b2")
-sum(coeff[[1]]<0) / length(coeff[[1]])
-# [1] 0.067156
-~~~
-
-So the posterior probability that bitter melon lowers blood glucose in this self-experiment is 7%.
+So here the mean estimate for bitter melon, `b2`, is 3.9 with negative values still possible.
+(Curiously, `b4`, whether LaFontaine exercised the morning of that day, is close to zero, though you would expect exercise to reduce blood glucose levels.
+Exercise may take time to kick in, so I wonder if I should have been treating it as a lagged variable and including a variable for having exercised the day before?)
 
 We can also see how the posterior distribution of the bitter melon parameter evolves with the data:
 
@@ -262,6 +256,17 @@ saveGIF(
 
 ![Simulated data: posterior estimates evolving sample by sample](/images/nootropics/2015-lafontaine-bittermelon-samplebysample.gif)
 
+We can see by eye that by the final measurements, the probability that bitter melon's effect size is negative (reduces blood glucose) has become small because so little of the posterior distribution falls below zero.
+The mean of the bitter melon winds up not changing our estimate noticeably, but going fully Bayesian does have some nice side-effects like giving us something far more interpretable than a non-statistically-significant _p_ or _t_-value - the posterior probability bitter melon reduces blood glucose levels, which in this case is:
+
+~~~{.R}
+coeff <- as.mcmc.list(j1, vars="b2")
+sum(coeff[[1]]<0) / length(coeff[[1]])
+# [1] 0.067156
+~~~
+
+So the posterior probability that bitter melon lowers blood glucose in this self-experiment is 7%.
+
 # Cost-benefit
 
 As well, LaFontaine is concerned to optimize his health and financial expenditures while not spending too much effort testing out an intervention:
@@ -280,11 +285,11 @@ Cost-benefit:
 
 [^diabetes-drug-estimate]: Specifically:
 
-    > ...There was no statistical evidence of an interaction between the rosiglitazone and ramipril arms of the DREAM study for the primary outcomes, secondary outcomes, or their components (interaction p>0·11 for all; data not shown). The primary outcome of diabetes or death was seen in significantly fewer individuals in the rosiglitazone group than in the placebo group (hazard ratio [HR] 0·40, 95% CI 0·35–0·46; p<0·0001; table 2). There was no difference in the number of deaths (0·91, 0·55–1·49; p=0·7) and a large difference in the frequency of diabetes (0·38, 0·33–0·44; p<0·0001) between the two groups (table 2). The event curves for the primary outcome diverged by the time of the first assessment (after 1 year of follow-up; figure 2).
+    > ...There was no statistical evidence of an interaction between the rosiglitazone and ramipril arms of the DREAM study for the primary outcomes, secondary outcomes, or their components (interaction p>0·11 for all; data not shown). The primary outcome of diabetes or death was seen in significantly fewer individuals in the rosiglitazone group than in the placebo group (hazard ratio [HR] 0·40, 95% CI 0·35–0·46; _p_<0·0001; table 2). There was no difference in the number of deaths (0·91, 0·55–1·49; _p_=0·7) and a large difference in the frequency of diabetes (0·38, 0·33–0·44; _p_<0·0001) between the two groups (table 2). The event curves for the primary outcome diverged by the time of the first assessment (after 1 year of follow-up; figure 2).
     >
-    > ...Figure 5 shows the effect of rosiglitazone on fasting and 2-h plasma glucose concentrations. The median fasting plasma glucose concentration was 0·5 mmol/L lower in the rosiglitazone group than in the placebo group (p<0·0001); the 2-h plasma glucose concentration was 1·6 mmol/L lower (p<0·0001). Mean systolic and diastolic blood pressure were 1·7 mm Hg and 1·4 mm Hg lower, respectively, in the rosiglitazone group than in the placebo group (p<0·0001). Furthermore, mean hepatic ALT concentrations during the first year of therapy were 4·2 U/L lower in patients treated with rosiglitazone than those in the placebo group (p<0·0001). All results are for the final visit apart from the ALT difference, which was at 1 year. Of note, there was no difference in the use of antihypertensive agents in the two groups during the trial. Finally, by the final visit mean bodyweight was increased by 2·2 kg more in the rosiglitazone group than in the placebo group (p<0·0001). This increase in bodyweight in the rosiglitazone group was associated with a lower waist-to-hip ratio (p<0·0001) because of an increase in hip circumference of 1·8 cm; there was no effect on waist circumference (figure 6).
+    > ...Figure 5 shows the effect of rosiglitazone on fasting and 2-h plasma glucose concentrations. The median fasting plasma glucose concentration was 0·5 mmol/L lower in the rosiglitazone group than in the placebo group (_p_<0·0001); the 2-h plasma glucose concentration was 1·6 mmol/L lower (_p_<0·0001). Mean systolic and diastolic blood pressure were 1·7 mm Hg and 1·4 mm Hg lower, respectively, in the rosiglitazone group than in the placebo group (_p_<0·0001). Furthermore, mean hepatic ALT concentrations during the first year of therapy were 4·2 U/L lower in patients treated with rosiglitazone than those in the placebo group (_p_<0·0001). All results are for the final visit apart from the ALT difference, which was at 1 year. Of note, there was no difference in the use of antihypertensive agents in the two groups during the trial. Finally, by the final visit mean bodyweight was increased by 2·2 kg more in the rosiglitazone group than in the placebo group (_p_<0·0001). This increase in bodyweight in the rosiglitazone group was associated with a lower waist-to-hip ratio (_p_<0·0001) because of an increase in hip circumference of 1·8 cm; there was no effect on waist circumference (figure 6).
     >
-    > ...This large, prospective, blinded international clinical trial shows that 8 mg of rosiglitazone daily, together with lifestyle recommendations, substantially reduces the risk of diabetes or death by 60% in individuals at high risk for diabetes. The absolute risk difference between treatment groups of 14·4% means that for every seven people with impaired fasting glucose or impaired glucose tolerance who are prescribed rosiglitazone for 3 years, one will be prevented from developing diabetes. Moreover, rosiglitazone significantly increased the likelihood of regression to normoglycaemia by about 70–80% compared with placebo. The reduction in diabetes reported here is of much the same magnitude as the reduction achieved with lifestyle approaches4, 5 and greater than the reductions reported previously with drugs such as metformin^4^ or acarbose.^3^
+    > ...This large, prospective, blinded international clinical trial shows that 8 mg of rosiglitazone daily, together with lifestyle recommendations, substantially reduces the risk of diabetes or death by 60% in individuals at high risk for diabetes. The absolute risk difference between treatment groups of 14·4% means that for every seven people with impaired fasting glucose or impaired glucose tolerance who are prescribed rosiglitazone for 3 years, one will be prevented from developing diabetes. Moreover, rosiglitazone significantly increased the likelihood of regression to normoglycaemia by about 70–80% compared with placebo. The reduction in diabetes reported here is of much the same magnitude as the reduction achieved with lifestyle approaches^4^,^5^ and greater than the reductions reported previously with drugs such as metformin^4^ or acarbose.^3^
 
 If the male American lifetime risk for diabetes is [0.328](http://www.lynneshealth.com/resources/Diabetes/Diabetes_Risk_JAMA_2003_Narayan.pdf "'Lifetime risk for diabetes mellitus in the United States', Narayan et al 2003"), and the cost of diabetes is at least \$124,600, then the expected loss is $0.328 \cdot 124600 = 40868.8$; if an intervention lowering by 7.2ng/ml is done and thus then risk is reduced by 60% to 40% of what it was, then the expected loss is $(0.6 \cdot 0.328) \cdot 124600 = 24521.28$ or a reduction in loss of \$16,347.52.
 Assuming linear response, then each ng/ml reduction of 1 was worth $\frac{16347.52}{7.2} = \$2270.48$.
@@ -434,7 +439,7 @@ There are many caveats to this conclusion:
 1. I used a noninformative prior on the effects of bitter melon, which implies that it's as likely for bitter melon to drive blood glucose increases as decreases; this strikes me as implausible, and if I had tried to meta-analyze the past studies on bitter melon, I would probably have come up with a much stronger prior in favor of bitter melon, in which case the EVSI of sampling would take much longer to go negative and might have reversed the recommendations
 
     - on the other hand, the existing bitter melon papers also suggest that taking it in tablet form may be ineffective and only the fresh or juice forms work; in which case, the failure to show benefits was a foregone conclusion and LaFontaine shouldn't've bothered with testing something already believed not to work
-2. the temporal trend in the blood glucose is concerning because it is too steep to represent any kind of long-term trend (LaFontaine would be dead by now if his blood glucose really did increase by 0.36ng/ml a day) but suggests something wacky was going on during his self-experiment; this wackiness is a joker in the deck, since whatever is causing it, could itself be neutralizing any benefit from bitter melon or it could diverge from a linear trend in a way that increases the underlying sampling error beyond what is modeled
+2. the temporal trend in the blood glucose is concerning because it is too steep to represent any kind of long-term trend (LaFontaine would be dead by now if his blood glucose really did increase by 0.36ng/ml a day) but suggests something wacky was going on during his self-experiment (could the test strips have expired and been going bad such that the results are near-meaningless?); this wackiness is a joker in the deck, since whatever is causing it, could itself be neutralizing any benefit from bitter melon or it could diverge from a linear trend in a way that increases the underlying sampling error beyond what is modeled
 3. the diabetes cost estimate is too low; I included only the direct medical costs, though the cost of lost QALYs is probably even larger and the estimate not half what it should be. This underestimation would bias benefit estimates downwards and lead to premature ending of experimenting.
 4. in the other direction, the conversion from blood glucose reductions to diabetes risk is questionable; some of the anti-diabetes drugs like metformin are already believed to have effects not mediated solely through blood glucose. This overestimation of the effect of blood glucose reductions would bias estimates upwards and lead to too much experimenting.
 
