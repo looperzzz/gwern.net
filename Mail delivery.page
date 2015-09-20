@@ -1,7 +1,7 @@
 ---
 title: When Does The Mail Come?
 description: Bayesian decision-theoretic analysis of local mail delivery times
-tags: statistics
+tags: statistics, decision theory
 created: 21 June 2015
 status: in progress
 belief: possible
@@ -225,13 +225,17 @@ mailInterval <- data.frame(Date=as.POSIXct(c("2015-06-20 11:00AM", "2015-06-21 1
                                  "2015-08-10 11:09AM", "2015-08-11 11:16AM", "2015-08-12 11:14AM", "2015-08-13 11:10AM",
                                  "2015-08-14 11:02AM", "2015-08-15 11:04AM", "2015-08-18 11:15AM", "2015-08-20 11:20AM",
                                  "2015-08-22 11:46AM", "2015-08-23 11:04AM", "2015-08-24 10:56AM", "2015-08-25 10:26AM",
-                                 "2015-08-26 11:57AM", "2015-08-27 10:15AM", "2015-08-31 12:35AM"),
+                                 "2015-08-26 11:57AM", "2015-08-27 10:15AM", "2015-08-31 12:35AM", "2015-09-01 11:44AM",
+                                 "2015-09-02 10:54AM", "2015-09-03 10:29AM", "2015-09-04 10:08AM", "2015-09-05 10:45AM",
+                                 "2015-09-07 10:58AM", "2015-09-08 10:25AM", "2015-09-09 10:29AM", "2015-09-10 10:48AM",
+                                 "2015-09-16 11:22AM", "2015-09-17 11:06AM", "2015-09-18 11:22AM", "2015-09-19 11:12AM"),
                                 "EDT"),
                    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE,
                                FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE,
                                FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE,
                                FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE,
-                               FALSE, FALSE, TRUE, FALSE, FALSE, TRUE))
+                               FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+                               FALSE, FALSE, TRUE, TRUE, TRUE, FALSE))
 mailInterval$Time <- fromClock(mailInterval$Date)
 mail <- with(mailInterval, data.frame(Time1 = ifelse(Delivered, 0, Time),
                            Time2 = ifelse(Delivered,  Time, 1440)))
@@ -356,7 +360,7 @@ summary(results)
 
 TODO: parallelize, print progress
 
-The first thing to note is efficiency: I can get reasonable number of samples in reasonable amount of time for _n_=1-3, but at 4 datapoints, it becomes slow.
+The first thing to note is efficiency: I can get a reasonable number of samples in reasonable amount of time for _n_=1-3, but at 4 datapoints, it becomes slow.
 There's so many possible datasets when 4 checks are simulated that almost all get rejected because they are not identical to the real dataset and it takes millions of samples and hours to run.
 And this problem only gets worse for _n_=5 and bigger.
 
@@ -457,7 +461,8 @@ mailExact <- data.frame(Date=as.POSIXct(c("2010-04-29 11:33AM", "2010-05-12 11:3
                                           "2015-07-02 10:45AM", "2015-07-06 11:19AM", "2015-07-10 10:54AM",
                                           "2015-07-11 11:09AM", "2015-07-15 10:29AM", "2015-07-16 11:02AM",
                                           "2015-07-17 10:46AM", "2015-07-27 11:12AM", "2015-08-15 10:56AM",
-                                          "2015-08-17 11:40AM", "2015-08-18 11:19AM", "2015-08-27 10:43AM"),
+                                          "2015-08-17 11:40AM", "2015-08-18 11:19AM", "2015-08-27 10:43AM",
+                                          "2015-09-04 10:56AM", "2015-09-18 11:15AM"),
                         "EDT"))
 mailExact$TimeDelivered <- fromClock(mailExact$Date)
 mean(mailExact$TimeDelivered)
@@ -508,7 +513,6 @@ model2 <- function() {
 
   # different mailman/groups will deliver at different offsets, but not by more than 2 hours or so:
   delta.between.group ~ dunif(0, 100)
-
   # similarly, both mailman times and delivery times are reasonably precise within 2 hours or so:
   tau.between.group <- pow(sigma.between.group, -2)
   sigma.between.group ~ dunif(0, 100)
@@ -858,6 +862,8 @@ non-Bayesian: cross-validation
 
 "Bayesian model choice via Markov chain Monte Carlo methods" Carlin & Chib 1995 http://stats.ma.ic.ac.uk/~das01/MyWeb/SCBI/Papers/CarlinChib.pdf
 "A tutorial on Bayes factor estimation with the product space method", Lodewyckx et al 2011 http://ejwagenmakers.com/2011/LodewyckxEtAl2011.pdf
+"A guide to Bayesian model selection for ecologists" http://www.esajournals.org/doi/full/10.1890/14-0661.1
+Hoeting et al 1999. "Bayesian model averaging: a tutorial" https://projecteuclid.org/download/pdf_1/euclid.ss/1009212519
 
 > ...It is no surprise that when this model fails, it is the [likelihood](!Wikipedia "Likelihood function") rather than the [prior](!Wikipedia "Prior probability") that is causing the problem. In the binomial model under consideration here, the prior comes into the posterior distribution only once and the likelihood comes in _n_ times. It is perhaps merely an accident of history that skeptics and subjectivists alike strain on the gnat of the prior distribution while swallowing the camel that is the likelihood.^[["'Not Only Defended But Also Applied': The Perceived Absurdity of Bayesian Inference"](http://www.stat.columbia.edu/~gelman/research/published/feller8.pdf), Gelman & Robert 2013]
 
@@ -875,7 +881,7 @@ Model uncertainty can be handled several ways ([Hooten & Hobbs 2015]( http://www
 
 - Penalty or regularization or sparsity priors (only handles selection of variables/predictors; gains largely eliminated in this case by informative priors)
 - Diagnostics like posterior predictive checks, [crossvalidation](!Wikipedia), and [AIC](!Wikipedia "Akaike information criterion")/[BIC](!Wikipedia "Bayesian information criterion")/[DIC](!Wikipedia "Deviance information criterion")/[WAIC](http://arxiv.org/pdf/1208.6338 "'A Widely Applicable Bayesian Information Criterion', Watanabe 2012") ([overview](http://www.stat.columbia.edu/~gelman/research/published/waic_understand3.pdf  "'Understanding predictive information criteria for Bayesian models', Gelman et al 2013")) can be used to check for lack of fit; but like tests in software development, they can only show the presence of bugs & not their absence
-- Maximally flexible models can be used like nonparametric Bayesian models, to minimize the possibility of model misspecification
+- Maximally flexible models can be used like nonparametric Bayesian models, to minimize the possibility of model misspecification ([Dunson 2013](/docs/statistics/2013-dunson.pdf "Nonparametric Bayes"))
 - [Ensemble approaches](!Wikipedia "Ensemble learning") (often targeted at selection of variables/predictors but should be applicable to choosing between different distributions as well)
 
    - Bayesian model choice: models can be pitted against each other (eg using Bayes factors) implemented using [nested sampling](!Wikipedia) or [reversible jump MCMC](!Wikipedia)/product-space method, and the one with highest posterior probability is selected for any further analysis while all others are ignored
@@ -886,9 +892,9 @@ Of the non-ensemble approaches: regularization is already done; some of the diag
 Of the ensemble approaches: Bayesian model combination is difficult to implement
 
 
-Hoeting, J. A., D. Madigan, A. E. Raftery, and C. T. Volinsky. 1999. Bayesian model averaging: a tutorial. Statistical Science 14:382–417
 
-http://lesswrong.com/lw/hzu/model_combination_and_adjustment/
+
+http://lesswrong.com/lw/hzu/model_combination_and_adjustment/ popularization
 
 Crossvalidation
 leave one out crossvalidation; zero-one loss
@@ -967,3 +973,55 @@ Lessons learned:
 3. ABC really is simple to implement and getting computational tractability is the problem (besides making it tedious to use, long runtimes also interfere with writing a correct implementation in the first place)
 4. while powerful, JAGS models can be confusing to write; it's easy to lose track of what the structure of your model is and write the wrong thing, and the use of precision rather than standard-deviation adds boilerplate and makes it even easier to get lost in a welter of variables & distributions, in addition to a fair amount of boilerplate in running the JAGS code at all - leading to errors where you are not certain whether you have a conceptual problem or your boilerplate is out of date
 5. the combination of `ggplot2` and [`animation`](http://cran.r-project.org/web/packages/animation/index.html) bade fair to make animations as easy as devising a ggplot2 image, but due to some ugly interactions between them (`ggplot2` interacts with the R toplevel scope/environment in a way which breaks when it's called inside a function, and `animation` has some subtle bug relating to deciding how long to delay frames in an animation which I couldn't figure out), I lost hours to getting it to work at all.
+
+# Appendix
+## Thompson sampling
+
+Simulation parameters:
+
+mean = N(658.86,4.689)
+SD = N(27.255,8.332)
+
+1. Compute the posterior distribution of observations (`y.new`)
+2. take the loss function l, and for each action (a in 1:1440), for each observation o in y.new, compute l(a,o), yielding a posterior loss distribution for each action
+3. take the mean of each posterior loss distribution, and then find the minimum of expected losses
+4. for each action, filter the posterior losses and drop anything bigger than the minimum expected loss; if after filtering, action a has 10 observations left while action a+1 has 15, then a+1 is much more likely to minimize loss
+5. sample uniformly from the filtered posterior losses, and take the action which created that particular sample
+
+~~~{.R}
+library(R2jags)
+model1 <- function() { for (i in 1:n){
+          y[i] ~ dinterval(t[i], dt[i,])
+          t[i] ~ dnorm(mu,tau)
+          }
+
+          mu ~ dnorm(650, pow(30, -2))
+          sd ~ dunif(10, 60)
+          tau <- pow(1/sd, 2)
+
+          y.new ~ dnorm(mu, tau)
+          }
+data <- list("dt"=mail, "n"=nrow(mail), "y"=rep(1, nrow(mail)))
+inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mail,1,mean))) }
+params <- c("mu","sd", "y.new")
+j1 <- jags(data, inits, params, model1, n.iter=1000, progress.bar="none"); j1
+# 0:1440 is overkill, so let's only look at the plausible region of times to actively check:
+actions <- c(600:800)
+posteriorTimes <- j1$BUGSoutput$sims.list[["y.new"]]
+lossPosterior <- function(t, walk_cost, predictions, lastResortT) {
+    sapply(predictions,
+                function(delivered) { if (delivered<t) { return(walk_cost   + (t           - delivered)); } else
+                                                       { return(2*walk_cost + (lastResortT - t) ); }})
+    }
+posteriorLosses <- sapply(actions, function (tm) { list(losses = lossPosterior(tm, 60, posteriorTimes, 780));})
+names(posteriorLosses) <- actions
+expectedLosses <- unlist(lapply(posteriorLosses, mean))
+optimumLoss <- min(expectedLosses)
+optimumAction <- which.min(expectedLosses)
+posteriorOfOptimal <- lapply(posteriorLosses, function(a) { Filter(function (l) { l<=optimumLoss; }, a); })
+library(utils)
+df <- stack(posteriorOfOptimal)
+df$ind <- as.integer(as.character(df$ind))
+set.seed(2015-09-20)
+actionToTake <- sample(df$ind, 1); actionToTake; toClock(actionToTake)
+# 683; "11:23"
