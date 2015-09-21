@@ -977,11 +977,6 @@ Lessons learned:
 # Appendix
 ## Thompson sampling
 
-Simulation parameters:
-
-mean = N(658.86,4.689)
-SD = N(27.255,8.332)
-
 1. Compute the posterior distribution of observations (`y.new`)
 2. take the loss function l, and for each action (a in 1:1440), for each observation o in y.new, compute l(a,o), yielding a posterior loss distribution for each action
 3. take the mean of each posterior loss distribution, and then find the minimum of expected losses
@@ -989,39 +984,82 @@ SD = N(27.255,8.332)
 5. sample uniformly from the filtered posterior losses, and take the action which created that particular sample
 
 ~~~{.R}
-library(R2jags)
-model1 <- function() { for (i in 1:n){
-          y[i] ~ dinterval(t[i], dt[i,])
-          t[i] ~ dnorm(mu,tau)
-          }
+posterior_losses <- function(times, actions) {
+   lossPosterior <- function(t, walk_cost, predictions, lastResortT) {
+       sapply(predictions,
+                   function(delivered) { if (delivered<t) { return(walk_cost   + (t           - delivered)); } else
+                                                          { return(2*walk_cost + (lastResortT - t) ); }})
+       }
+   pl <- sapply(actions, function (tm) { list(losses = lossPosterior(tm, 60, times, 780));})
+   names(pl) <- actions
+   return(pl)
+}
+optimize_posterior <- function(losses)  {
+   expectedLosses <- unlist(lapply(losses, mean))
+   optimumLoss <- min(expectedLosses)
+   optimumAction <- which.min(expectedLosses)
+   posteriorOfOptimal <- lapply(losses, function(a) { Filter(function (l) { l<=optimumLoss; }, a); })
+   return(list(expectedLosses, optimumLoss, as.integer(names(optimumAction)), posteriorOfOptimal))
+}
 
-          mu ~ dnorm(650, pow(30, -2))
-          sd ~ dunif(10, 60)
-          tau <- pow(1/sd, 2)
+thompsonSample <- function(dt, model) {
+   library(R2jags)
+   data <- list("dt"=dt, "n"=nrow(dt), "y"=rep(1, nrow(dt)))
+   inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(dt,1,mean))) }
+   params <- c("y.new")
+   j1 <- jags(data, inits, params, model, n.iter=1000, progress.bar="none")
 
-          y.new ~ dnorm(mu, tau)
-          }
-data <- list("dt"=mail, "n"=nrow(mail), "y"=rep(1, nrow(mail)))
-inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(mail,1,mean))) }
-params <- c("mu","sd", "y.new")
-j1 <- jags(data, inits, params, model1, n.iter=1000, progress.bar="none"); j1
-# 0:1440 is overkill, so let's only look at the plausible region of times to actively check:
-actions <- c(600:800)
-posteriorTimes <- j1$BUGSoutput$sims.list[["y.new"]]
-lossPosterior <- function(t, walk_cost, predictions, lastResortT) {
-    sapply(predictions,
-                function(delivered) { if (delivered<t) { return(walk_cost   + (t           - delivered)); } else
-                                                       { return(2*walk_cost + (lastResortT - t) ); }})
-    }
-posteriorLosses <- sapply(actions, function (tm) { list(losses = lossPosterior(tm, 60, posteriorTimes, 780));})
-names(posteriorLosses) <- actions
-expectedLosses <- unlist(lapply(posteriorLosses, mean))
-optimumLoss <- min(expectedLosses)
-optimumAction <- which.min(expectedLosses)
-posteriorOfOptimal <- lapply(posteriorLosses, function(a) { Filter(function (l) { l<=optimumLoss; }, a); })
-library(utils)
-df <- stack(posteriorOfOptimal)
-df$ind <- as.integer(as.character(df$ind))
-set.seed(2015-09-20)
-actionToTake <- sample(df$ind, 1); actionToTake; toClock(actionToTake)
-# 683; "11:23"
+   # 0:1440 is overkill, so let's only look at the plausible region of times to actively check:
+   actions <- c(600:800)
+   posteriorTimes <- j1$BUGSoutput$sims.list[["y.new"]]
+   posteriorLosses <- posterior_losses(posteriorTimes, actions)
+
+   optimums <- optimize_posterior(posteriorLosses)
+   posteriorOfOptimal <- optimums[[4]]
+
+   # now to rewrite and then sample one weighted action:
+   library(utils)
+   df <- stack(posteriorOfOptimal)
+   df$ind <- as.integer(as.character(df$ind))
+   # what's the probability the current optimum is optimal? might be nice to know, to get an idea
+   # of how much has been learned and how fast it's converging:
+   print(nrow(df[df$ind==optimums[[3]],]) / nrow(df))
+   # the Thompson sample itself!
+   actionToTake <- sample(df$ind, size=1)
+   return(actionToTake) }
+
+simulate_mab <- function(n) {
+  walk_cost = 60; lastResortT = 780
+
+  # pick a concrete mean/SD for this hypothetical run, based on the full MCMC estimates as of 2015-09-20 for verisimilitude:
+  mail_mean <- rnorm(1, mean=658.9, sd=4.69)
+  mail_sd <- rnorm(1, mean=27.3, sd=8.33)
+  # to calculate regret, we need an optimal loss, which we can actual losses to:
+  posteriorTimes <- rnorm(5000, mean=mail_mean, sd=mail_sd)
+  actions <- c(600:800)
+  posteriorLosses <- posterior_losses(posteriorTimes, actions)
+  optimums <- optimize_posterior(posteriorLosses)
+  optimalLoss <- optimums[[2]]
+  optimalAction <- optimums [[3]]
+  print(paste0("Parameters for this simulation; Mean: ", mail_mean, "; SD: ", mail_sd, "; minimum average loss: ",
+               optimalLoss, "; optimal action: ", optimalAction))
+
+  # seed data:
+  mail3 <- data.frame(Time1=660, Time2=1440, Delivered=NA, Action=660, Loss=NA,  Regret=NA, Total.regret=NA)
+
+  for (i in 1:n) {
+    # today's delivery:
+    delivered <- rnorm(1, mean=mail_mean, sd=mail_sd)
+    # when should we check?
+    t <- thompsonSample(subset(mail3,select=c(Time1,Time2)), model1)
+    # discover what our loss is, update the database:
+
+    loss <- if (delivered<t) { walk_cost  + (t - delivered); } else
+               { 2*walk_cost + (lastResortT - t); }
+    mail3 <- if(delivered<t) { rbind(mail3, data.frame(Time1=0, Time2=t,    Delivered=delivered, Action=t, Loss=loss, Regret=loss-optimalLoss, Total.regret=sum(c(loss,mail3$Regret),na.rm=TRUE))) } else
+              { rbind(mail3,                data.frame(Time1=t, Time2=1440, Delivered=delivered, Action=t, Loss=loss, Regret=loss-optimalLoss, Total.regret=sum(c(loss,mail3$Regret),na.rm=TRUE))) }
+   }
+   return(mail3)
+}
+run <- simulate_mab(100); run
+~~~
