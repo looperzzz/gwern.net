@@ -894,7 +894,7 @@ Model uncertainty can be handled several ways ([Hooten & Hobbs 2015]( http://www
    - Bayesian model averaging: posterior probabilities of models are calculated, but all models are retained and their posteriors are combined weighted by the probability that model is the true one (but with enough data, the posterior probability of the model closest to the truth will converge on 1 and BMA becomes a model selection procedure)
    - Bayesian model combination: posterior probabilities of combinations/ensembles of models are calculated, yielding a richer set of 'models' which often outperform all of the original models; such as by learning an optimal weighting in a linear combination ([Monteith et al  2011](http://axon.cs.byu.edu/papers/Kristine.ijcnn2011.pdf "Turning Bayesian Model Averaging Into Bayesian Model Combination"))
 
-Of the non-ensemble approaches: regularization is already done; some of the diagnostics will work but others won't (JAGS won't calculate DIC for interval-censored data); nonparametric approaches would be too challenging for me to implement in JAGS and I'm not sure there is enough data to allow the nonparametric models to work well.
+Of the non-ensemble approaches: regularization is already done via the informative priors; some of the diagnostics will work but others won't (JAGS won't calculate DIC for interval-censored data); nonparametric approaches would be too challenging for me to implement in JAGS and I'm not sure there is enough data to allow the nonparametric models to work well.
 Of the ensemble approaches: Bayesian model combination is difficult to implement
 
 
@@ -930,6 +930,17 @@ leave one out crossvalidation; zero-one loss
                y.new ~ dnorm(mu, tau)
                }"
 
+    modelE <- "model { for (i in 1:n){
+                y[i] ~ dinterval(t[i], dt[i,])
+                t[i] ~ dexp(theta)
+               }
+               # set the mean ~600, but remember rate is reciprocal:
+               theta ~ dexp(1/600)
+
+               y.new ~ dexp(theta)
+               }"
+
+
 I want to compare them. (You might say use DIC, but R2jags doesn't provide that for interval-censored data). Since this is small data, leave-one-out crossvalidation seems like a good idea. But what is the rror?
 
 Mean-squared-error is out due to the intervaling, as are variants like absolute error. Thinking about it some, it seems to me that each datapoint is really made of two things: the check-time, and delivery status. The check-time has nothing to do with the model quality and the model isn't trying to predict it; what I want the model to predict is whether the mail is delivered or not if I were to check at particular times. The check-time is the predictor variable and the delivery-status is the response variable.
@@ -963,11 +974,14 @@ Here's a try at implementing leave-one-out crossvalidation for those two JAGS mo
 
     loocvsN <- loocvs(mail, modelN)
     loocvsT <- loocvs(mail, modelT)
+    loocvsE <- loocvs(mail, modelE)
 
     mean(loocvsN)
     # 0.5838765432
     mean(loocvsT)
     # 0.5837777778
+    mean(loocvsE)
+    # 0.5031047619
 -->
 
 # Conclusions
