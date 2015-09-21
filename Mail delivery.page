@@ -930,6 +930,18 @@ leave one out crossvalidation; zero-one loss
                y.new ~ dnorm(mu, tau)
                }"
 
+modelL <- "model { for (i in 1:n) {
+          y[i] ~ dinterval(t[i], dt[i,])
+          t[i] ~ dlnorm(muL, tauL)
+        }
+        sd ~ dunif(10, 60)
+        tauL <- pow(1/log(sd), 2)
+        mu ~ dnorm(650, pow(30, -2))
+        muL <- log(mu)
+
+        y.new ~ dlnorm(muL, tauL)
+        }"
+
     modelE <- "model { for (i in 1:n){
                 y[i] ~ dinterval(t[i], dt[i,])
                 t[i] ~ dexp(theta)
@@ -961,7 +973,7 @@ Here's a try at implementing leave-one-out crossvalidation for those two JAGS mo
 
          # set up and run the model and extract predicted delivery times
          data   <- list("dt"=newData, "n"=nrow(newData), "y"=rep(1, nrow(newData)))
-         inits  <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(newData,1,mean))) }
+         inits  <- function() { list(mu=rnorm(1,mean=600,sd=30),sd=30,t=as.vector(apply(newData,1,mean))) }
          params <- c("y.new")
          cv1 <- jags(data, inits, params, textConnection(model), n.iter=10000, progress.bar="none")
          posteriorTimes <- cv1$BUGSoutput$sims.list[["y.new"]]
@@ -974,12 +986,15 @@ Here's a try at implementing leave-one-out crossvalidation for those two JAGS mo
 
     loocvsN <- loocvs(mail, modelN)
     loocvsT <- loocvs(mail, modelT)
+    loocvsL <- loocvs(mail, modelL)
     loocvsE <- loocvs(mail, modelE)
 
     mean(loocvsN)
     # 0.5838765432
     mean(loocvsT)
     # 0.5837777778
+    mean(loocvsL)
+    # 0.5030904762
     mean(loocvsE)
     # 0.5031047619
 -->
