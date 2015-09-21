@@ -714,6 +714,42 @@ While probability sampling is conceptually simple, intuitive, has no hyperparame
 
 Ignoring indefinite online learning, it is possible to optimize data sampling by estimating what parameter value is predicted to yield the most information, in the sense of entropy of distributions, giving Expected Information Gains (or "expected gain in Shannon information", or "expected Kullback–Leibler discrepancy").
 
+This follows the familiar pattern of calculating the current entropy (mean log of the posterior distribution), then looping over all possible actions/data-to-collect, drawing one sample from the posterior for that and comparing to the action to get a datapoint and then update the model and calculate a new entropy, and return the difference between old entropy and new entropy (repeated a number of times so one can take the mean and get a good approximation for each action).
+Whichever action would lower the entropy the most (have the biggest gain) is then the optimal action to take and make an observation using.
+An implementation:
+
+~~~{.R}
+entropyD <- function(dt) {
+   library(R2jags)
+   data <- list("dt"=dt, "n"=nrow(dt), "y"=rep(1, nrow(dt)))
+   inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(dt,1,mean))) }
+   params <- c("y.new")
+   model <- model1
+   j1 <- jags(data, inits, params, model, n.iter=1000, progress.bar="none")
+   posteriorTimes <- j1$BUGSoutput$sims.list[["y.new"]]
+   entropy <- mean(log(posteriorTimes))
+   return(list(posteriorTimes, entropy))
+   }
+actions <- c(600:750)
+oldEntropy <- entropyD(mail)
+ei <- data.frame(Action=NULL, Entropy=NULL)
+for (a in actions) {
+    for (m in 1:20) {
+       deliveryTime <- sample(oldEntropy[[1]], size=1)
+       if (deliveryTime<a) { newData <- rbind(mail, data.frame(Time1=0, Time2=a)); } else { newData <- rbind(mail, data.frame(Time1=a, Time2=1440)); }
+       newEntropy <- entropyD(newData)
+       gain <- oldEntropy[[2]] - newEntropy[[2]]
+       ei <- rbind(ei, data.frame(Action=a, Entropy=gain))
+       }
+}
+eimean <- aggregate(Entropy ~ Action, mean, data=ei)
+eimean[which.max(eimean$Entropy),]
+#     Action        Entropy
+# 120    719 0.001237891795
+toClock(eimean[which.max(eimean$Entropy),]$Action)
+# [1] "11:59"
+~~~
+
 ## Optimal sample-size: Value of Information
 
 If we are not optimizing the kind of data collected, we can optimize how *much* data we collect by periodically calculating how much additional data could improve our estimates and how much this improvement is worth on average, especially compared to how much that additional data would cost.
@@ -929,19 +965,17 @@ leave one out crossvalidation; zero-one loss
 
                y.new ~ dnorm(mu, tau)
                }"
+    modelL <- "model { for (i in 1:n) {
+              y[i] ~ dinterval(t[i], dt[i,])
+              t[i] ~ dlnorm(muL, tauL)
+            }
+            sd ~ dunif(10, 60)
+            tauL <- pow(1/log(sd), 2)
+            mu ~ dnorm(650, pow(30, -2))
+            muL <- log(mu)
 
-modelL <- "model { for (i in 1:n) {
-          y[i] ~ dinterval(t[i], dt[i,])
-          t[i] ~ dlnorm(muL, tauL)
-        }
-        sd ~ dunif(10, 60)
-        tauL <- pow(1/log(sd), 2)
-        mu ~ dnorm(650, pow(30, -2))
-        muL <- log(mu)
-
-        y.new ~ dlnorm(muL, tauL)
-        }"
-
+            y.new ~ dlnorm(muL, tauL)
+            }"
     modelE <- "model { for (i in 1:n){
                 y[i] ~ dinterval(t[i], dt[i,])
                 t[i] ~ dexp(theta)
