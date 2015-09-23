@@ -1,6 +1,6 @@
 ---
 title: September news
-created: 1 September 2015
+created: 1 Sep 2015
 tags: newsletter
 status: in progress
 belief: log
@@ -11,24 +11,72 @@ This is a summary of the revision-history RSS feed, overlapping with [Changelog]
 
 # Writings
 
+- mail?
+- modafinil survey
+- resorter tool
+- Bitter Melon experimental & cost-benefit analysis
+- Value of Information for suicide, example cost-benefit analysis
+- poll data: modeling potentially false poll data
+- RNN author failure?
+
 # Media
 ## Links
 
+Everything is heritable:
+
+- ["74 SNP hits on cognitive ability from 300k individuals"](http://infoproc.blogspot.com/2015/09/snp-hits-on-cognitive-ability-from-300k.html)
+- ["...intelligence GWAS hits: Their relationship to country IQ..."](http://emilkirkegaard.dk/en/wp-content/uploads/PifferIntelligence2015.pdf), Piffer 2015
+- ["Eugenics, Ready or Not"](https://quadrant.org.au/magazine/2015/05/eugenics-ready/), Salter
+
 Politics/religion:
+
+- ["est, Werner Erhard, and the corporatization of self-help"](http://www.believermag.com/issues/200305/?read=article_snider)
+- ["Malcolm X's Purge, Second Thoughts, and Murder (Chapters 16-19, plus Haley's Epilogue)"](http://econlog.econlib.org/archives/2012/11/the_autobiograp_2.html)
 
 Statistics/AI/meta-science:
 
+- ["The Bayesian Reproducibility Project"](http://alexanderetz.com/2015/08/30/the-bayesian-reproducibility-project/) (interpreting the psychology reproducibility projects' results not by uninterpretable _p_-values but by a direct Bayesian examination of whether the replications support or contradict the originals)
+- ["The Most Dangerous Equation"](http://press.princeton.edu/chapters/s8863.pdf) (sample size and standard error; examples: coinage, disease rates, small schools, male test scores.)
+- [Galton's problem](https://en.wikipedia.org/wiki/Galton%27s_problem) (Another name for pseudoreplication/autocorrelation/hierarchical-structure/non-independence. Definitely a concern in cross-racial genetics when you're using population-level averages.)
+- ["The perilous plight of the (non)-replicator"](https://funderstorms.wordpress.com/2012/10/31/the-perilous-plight-of-the-non-replicator/)
+- ["School Desegregation and Black Achievement: an integrative review"](http://deepblue.lib.umich.edu/bitstream/2027.42/68589/2/10.1177_0049124185013003002.pdf), Wortman & Bryant 1985 (more on publication bias)
+- ["Empirical evidence of bias in treatment effect estimates in controlled trials with different interventions and outcomes: meta-epidemiological study"](http://www.bmj.com/content/336/7644/601), Wood et al 2008
+- ["aRrgh: a newcomer's (angry) guide to R"](http://arrgh.tim-smith.us/) (I read this when starting out with R; in retrospect, it turned out to be more useful than I thought at the time)
+- ["Guessing the Truth How good are we at guessing the truth of open conjectures?"](https://rjlipton.wordpress.com/2010/06/19/guessing-the-truth/)
+- ["The Mayan Doomsday's effect on survival outcomes in clinical trials"](http://www.cmaj.ca/content/184/18/2021.full), Wheatley-Price et al 11 Dec 2012
+
 Psychology/biology:
+
+- ["A 2-Year Randomized Controlled Trial of Human Caloric Restriction: Feasibility and Effects on Predictors of Health Span and Longevity"](http://biomedgerontology.oxfordjournals.org/content/70/9/1097.full) (the CALERIE study), Ravussin et al 2015 ([excerpts](https://plus.google.com/103530621949492999968/posts/GUowvMgm3Ki))
+- ["The Evolutionary Genetics of Personality"](http://www.unm.edu/~gfmiller/newpapers_sept6/penke%202007%20targetarticle.pdf), Penke et al 2007 (holds up well after the GWASes for IQ & OCEAN; although prediction that OCEAN hits will be more plentiful than IQ seems to have fallen victim to personality being somewhat more polygenic than expected & non-additive)
+- ["The Zombie Preacher of Somerset"](http://lesswrong.com/lw/69/the_zombie_preacher_of_somerset/)
+- ["Operation Delirium: Decades after a risky Cold War experiment, a scientist lives with secrets"](http://www.newyorker.com/magazine/2012/12/17/operation-delirium)
+- [Rind et al. controversy](https://en.wikipedia.org/wiki/Rind_et_al._controversy)
 
 Technology:
 
+- ["1 to 10 billion earth-like planets in the Milky Way Galaxy"](http://nextbigfuture.com/2015/08/1-to-10-billion-earthlike-planets-in.html)
+- [_Physics Special Topics_](https://physics.le.ac.uk/journals/index.php/pst/issue/view/16)
+- ["The Web We Lost"](http://anildash.com/2012/12/the-web-we-lost.html)
+- ["Predicting and controlling NetHack's randomness"](http://taeb-nethack.blogspot.com/2009/03/predicting-and-controlling-nethacks.html)
+- ["The hum that helps to fight crime"](http://www.bbc.com/news/science-environment-20629671)
+- ["Norvig's Law"](http://norvig.com/norvigs-law.html)
+
 Economics:
+
+- ["Crockford's Club: How a Fishmonger Built a Gambling Hall and Bankrupted the British Aristocracy"](http://www.smithsonianmag.com/history/crockfords-club-how-a-fishmonger-built-a-gambling-hall-and-bankrupted-the-british-aristocracy-148268691/)
+- ["There are four ways to get fired from Caesars: (1) theft, (2) sexual harassment, (3) running an experiment without a control group, and (4) keeping a gambling addict away from the casino"](http://andrewgelman.com/2012/12/11/there-are-four-ways-to-get-fired-from-caesars-1-theft-2-sexual-harassment-3-running-an-experiment-without-a-control-group-and-4-keeping-a-gambling-addict-away-from-the-casino/)
+- ["Housewife, "Gold Miss," and Equal: The Evolution of Educated Women's Role in Asia and the U.S."](http://www.iza.org/conference_files/ESSLE2013/hwang_j9261.pdf), Hwang 2013
+- ["Money, Dear Boy"](http://tvtropes.org/pmwiki/pmwiki.php/Main/MoneyDearBoy)
 
 Philosophy:
 
 Fiction:
 
-<!-- Back to 13 Dec 2012 -->
+- ["Biases of Fiction"](http://www.overcomingbias.com/2012/12/biases-of-fiction.html)
+- ["Cavemen Were Better at Depicting Quadruped Walking than Modern Artists: Erroneous Walking Illustrations in the Fine Arts from Prehistory to Today"](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0049786), Horvath et al 2012
+
+<!-- Back to 28 Nov 2012 -->
 
 ## Books
 
@@ -36,12 +84,24 @@ Fiction:
 
 Nonfiction:
 
+- _Epic Measures_ (on Global Burden of Disease)
+- Richard's _Practical Criticism_
+- _Although Of Course You End Up Becoming Yourself: A Road Trip with David Foster Wallace_,  Lipsky 2010
+- _Mastering the Core Teachings of the Buddha_ (unrateable due to lack of personal experience)
+
+
 ## Film/TV
 
 Live-action:
 
 Anime:
 
+- _Shirobako_?
+
 ## Music
 
 Touhou:
+
+- ["Day and Night"](https://www.youtube.com/watch?v=XCT7-Atk0wA) (Maurits Cornelis feat. Vivienne; _World Trick_ {C88}) [Jpop]
+- ["Whole lotta love-spark"](https://moon-tone.bandcamp.com/track/whole-lotta-love-spark) (Moon-Tone; _Downtime Sessions - Toho Relax_ {R12}) [ambient]
+- ["The drive home"](https://moon-tone.bandcamp.com/track/the-drive-home) (Moon-Tone; _Downtime Sessions - Toho Relax_ {R12}) [ambient]
