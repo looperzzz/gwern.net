@@ -292,38 +292,6 @@ invisible(dev.off())
 
 ![Overlapping-intervals data, with the estimated mean time in blue, 95% CI around the mean time in green, and 95% predictive intervals as to when the delivery is made](/images/maildelivery-real.png)
 
-Posterior predictive checks (PPC) are a technique recommended by Gelman as a test of how appropriate the model is (as the model or likelihood often is far more important in forcing particular results than the priors one might've used), where one generates possible observations from the model and inferred posteriors, and sees how often the simulated data matches the real data; if that is rarely or never, then the model may be bad and one should fix it or possibly throw in additional models for Bayesian model comparison (which will hopefully then pick out the right model).
-For continuous data or more than trivially small data, we have the same issue as in ABC (which is similar to PPCs): the simulates will never exactly match the data, so we must define some sort of summary or distance measure which lets us say that a particular simulated dataset is similar enough to the real data.
-In the two summaries I tried for ABC, counting 'flip-flops' worked better, so I'll reuse that here.
-For the simulation, we also need check or interval-censoring times, which I also treat as a normal distribution & estimate their means and SDs from the original data.
-
-~~~{.R}
-posteriorTimes <- j1$BUGSoutput$sims.list[["y.new"]]
-
-simsPPC <- replicate(10000, {
-    nChecks <- nrow(mail)
-    checkTimes <- c(mail[mail$Time1>0,]$Time1, mail[mail$Time2<1440,]$Time2)
-    meanCheck <- mean(checkTimes)
-    sdCheck <- sd(checkTimes)
-
-    deliveryTime <- sample(posteriorTimes, size=nChecks, replace=TRUE)
-    checkTime <- round(rnorm(nChecks, mean = meanCheck, sd = sdCheck))
-    newSamples <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
-                         checkTime, deliveryTime)
-    newData <- data.frame(Time1=newSamples[1,], Time2=newSamples[2,])
-
-    return(sum(newData$Time1 == 0))
-    }
-)
-png(file="~/wiki/images/maildelivery-ppc.png", width = 800, height = 500)
-qplot(simsPPC) + geom_vline(xintercept=sum(mail$Time1 == 0), color="blue")
-invisible(dev.off())
-~~~
-
-![Similarity of posterior predictive distribution's flip-flops with the original data's flip-flops](/images/maildelivery-ppc.png)
-
-The true data has a summary near the middle of the distribution of the summaries of the posterior predictions, suggesting that the model fit to the problem is OK.
-
 ### ABC
 
 Because JAGS provides an interval-censored distribution in the form of `dinterval()` with a [likelihood function](!Wikipedia), we can use MCMC for inverse inference (reasoning from data to the underlying process)
@@ -917,29 +885,16 @@ When you include the cost of gathering data, the analysis says you should collec
 
 So this is interesting: by using informative priors and then taking a decision-theoretic approach, in this case I can make high-quality decisions on surprisingly little data.
 
-
 <!--
-# Bayesian Model Averaging
-
-Possibilities:
-
-nested sampling
-reversible jump MCMC
-product-space method
-BIC/DIC/WAIC deviance criteria
-non-Bayesian: cross-validation
-
-"Bayesian model choice via Markov chain Monte Carlo methods" Carlin & Chib 1995 http://stats.ma.ic.ac.uk/~das01/MyWeb/SCBI/Papers/CarlinChib.pdf
-"A tutorial on Bayes factor estimation with the product space method", Lodewyckx et al 2011 http://ejwagenmakers.com/2011/LodewyckxEtAl2011.pdf
-"A guide to Bayesian model selection for ecologists" http://www.esajournals.org/doi/full/10.1890/14-0661.1
-Hoeting et al 1999. "Bayesian model averaging: a tutorial" https://projecteuclid.org/download/pdf_1/euclid.ss/1009212519
+# Model checking
+## On Model Uncertainty
 
 > ...It is no surprise that when this model fails, it is the [likelihood](!Wikipedia "Likelihood function") rather than the [prior](!Wikipedia "Prior probability") that is causing the problem. In the binomial model under consideration here, the prior comes into the posterior distribution only once and the likelihood comes in _n_ times. It is perhaps merely an accident of history that skeptics and subjectivists alike strain on the gnat of the prior distribution while swallowing the camel that is the likelihood.^[["'Not Only Defended But Also Applied': The Perceived Absurdity of Bayesian Inference"](http://www.stat.columbia.edu/~gelman/research/published/feller8.pdf), Gelman & Robert 2013]
 
 In setting up an analysis, one must [make a variety of choices](http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf "'The garden of forking paths: Why multiple comparisons can be a problem, even when there is no `fishing expedition` or `p-hacking` and the research hypothesis was posited ahead of time', Gelman & Loken 2013") in what models to use, which influences the result; this neglect of "model uncertainty" can lead to overconfident inferences or miss critical details.
 In Bayesian analyses, typically the prior comes in for the most scrutiny as to how it determines the result; but the prior part of the model often has much less influence than the structural or functional form of the analysis, where it is assumed that the outcome is drawn from a normal distribution or another such common choice, although it's not.
 This choice itself is often arbitrary and can determine the result almost regardless of what the data says.
-For example, the normal distribution has thin tails and so the probability of something being far out on a tail will be extremely small and combined with other considerations like measurement error, can result in a model refusing to ever accept that a value really is 'extreme' without equally extreme amounts of data - a refusal that would not happen if any of a number of other perfectly possible distributions had been chosen instead like lognormal distributions or Cauchy distributions - despite the fact that the choice of normal distribution itself is usually due more to convenience than any extremely strong evidence that the normal distribution is the true distribution ("every model is false, but some are useful", as the saying goes), which means the best response is simply to note that [one man's modus ponens is another man's modus tollens](Prediction%20markets#modus-tollens-vs-modus-ponens).
+For example, the normal distribution has thin tails and so the probability of something being far out on a tail will be extremely small and combined with other considerations like measurement error, can result in a model refusing to ever accept that a value really is 'extreme' without equally extreme amounts of data - a refusal that would not happen if any of a number of other perfectly possible distributions had been chosen instead like lognormal distributions or Cauchy distributions - despite the fact that the choice of normal distribution itself is usually due more to convenience than any extremely strong evidence that the normal distribution is the true distribution ("every model is false, but some are useful", as the saying goes), which means the best response is simply to note that [one man's modus ponens is another man's modus tollens](Prediction%20markets#modus-tollens-vs-modus-ponens) - the probability that [one's math or model is wrong is far higher](The Existential Risk of Mathematical Error) sets an upper bound on how much we can get out of them, and a bound which often bars many of the inferences one might try to extract from them.
 
 For example:
 
@@ -962,118 +917,166 @@ For example:
 
 In the case of mail deliveries, there's clearly model uncertainty.
 While I used [normal distributions](!Wikipedia), I could as easily have used [_t_-distributions](!Wikipedia "Student's t-distribution") (fatter-tailed normals), [log-normals](!Wikipedia "Log-normal distribution"), [exponentials](!Wikipedia "Exponential distribution"), [uniforms](!Wikipedia "Uniform distribution (discrete)"), [betas](!Wikipedia "Beta distribution"), [overdispersed](!Wikipedia "Overdispersion") versions of some of the previous, or picked some even more exotic [univariate distribution](http://www.math.wm.edu/~leemis/chart/UDR/UDR.html "Univariate Distribution Relationships") and easily come up with a just-so story for some of them.
-(It's a negative-binomial because we're modeling minutes until "failure" ie delivery; no, it's a log-normal because each stop slows down the mailman and delays multiply; no, it's a normal distribution because each stop adds time and the sum of many small random deviates is itself normally distributed; no, it's a _t_-distribution because sometimes the mail arrives much earlier or later and it's a more robust distribution anyway; no, it's even wider than that and a uniform distribution because the mailman starts and ends their shift at particular times but otherwise doesn't care about speed; no, it's a beta distribution over time because that's more flexible and can include the others as special-cases...)
+(It's a negative-binomial because we're modeling minutes until "failure" ie delivery; no, it's a log-normal because each stop slows down the mailman and delays multiply; no, it's a normal distribution because each stop adds time and the sum of many small random deviates is itself normally distributed; no, it's a _t_-distribution because sometimes the mail arrives much earlier or later and it's a more robust distribution we should be using anyway; no, it's even wider than that and a uniform distribution because the mailman starts and ends their shift at particular times but otherwise doesn't care about speed; no, it's a beta distribution over time because that's more flexible and can include the others as special-cases...)
 
 Model uncertainty can be handled several ways ([Hooten & Hobbs 2015]( http://www.esajournals.org/doi/full/10.1890/14-0661.1 "A guide to Bayesian model selection for ecologists")), including:
 
 - Penalty or regularization or sparsity priors (only handles selection of variables/predictors; gains largely eliminated in this case by informative priors)
-- Diagnostics like posterior predictive checks, [crossvalidation](!Wikipedia), and [AIC](!Wikipedia "Akaike information criterion")/[BIC](!Wikipedia "Bayesian information criterion")/[DIC](!Wikipedia "Deviance information criterion")/[WAIC](http://arxiv.org/pdf/1208.6338 "'A Widely Applicable Bayesian Information Criterion', Watanabe 2012") ([overview](http://www.stat.columbia.edu/~gelman/research/published/waic_understand3.pdf  "'Understanding predictive information criteria for Bayesian models', Gelman et al 2013")) can be used to check for lack of fit; but like tests in software development, they can only show the presence of bugs & not their absence
+- Diagnostics like posterior predictive checks, crossvalidation, and [AIC](!Wikipedia "Akaike information criterion")/[BIC](!Wikipedia "Bayesian information criterion")/[DIC](!Wikipedia "Deviance information criterion")/[WAIC](http://arxiv.org/pdf/1208.6338 "'A Widely Applicable Bayesian Information Criterion', Watanabe 2012") ([overview](http://www.stat.columbia.edu/~gelman/research/published/waic_understand3.pdf  "'Understanding predictive information criteria for Bayesian models', Gelman et al 2013")) can be used to check for lack of fit; but like tests in software development, they can only show the presence of bugs & not their absence
 - Maximally flexible models can be used like nonparametric Bayesian models, to minimize the possibility of model misspecification ([Dunson 2013](/docs/statistics/2013-dunson.pdf "Nonparametric Bayes"))
-- [Ensemble approaches](!Wikipedia "Ensemble learning") (often targeted at selection of variables/predictors but should be applicable to choosing between different distributions as well)
+- [Ensemble approaches](!Wikipedia "Ensemble learning") (often targeted at the narrow use-case of selecting variables/predictors in a linear model, but some are applicable to choosing between different distributions as well)
 
    - Bayesian model choice: models can be pitted against each other (eg using Bayes factors) implemented using [nested sampling](!Wikipedia) or [reversible jump MCMC](!Wikipedia)/product-space method, and the one with highest posterior probability is selected for any further analysis while all others are ignored
    - Bayesian model averaging: posterior probabilities of models are calculated, but all models are retained and their posteriors are combined weighted by the probability that model is the true one (but with enough data, the posterior probability of the model closest to the truth will converge on 1 and BMA becomes a model selection procedure)
    - Bayesian model combination: posterior probabilities of combinations/ensembles of models are calculated, yielding a richer set of 'models' which often outperform all of the original models; such as by learning an optimal weighting in a linear combination ([Monteith et al  2011](http://axon.cs.byu.edu/papers/Kristine.ijcnn2011.pdf "Turning Bayesian Model Averaging Into Bayesian Model Combination"))
 
-Of the non-ensemble approaches: regularization is already done via the informative priors; some of the diagnostics will work but others won't (JAGS won't calculate DIC for interval-censored data); nonparametric approaches would be too challenging for me to implement in JAGS and I'm not sure there is enough data to allow the nonparametric models to work well.
-Of the ensemble approaches: Bayesian model combination is difficult to implement
+Of the non-ensemble approaches: regularization is already done via the informative priors; some of the diagnostics might work but others won't (JAGS won't calculate DIC for interval-censored data); nonparametric approaches would be too challenging for me to implement in JAGS and I'm not sure there is enough data to allow the nonparametric models to work well.
+
+This leaves PPC, crossvalidation, and the ensemble approaches:
+
+- Bayesian model combination is overkill
+- Bayesian model averaging, given Bayesian model choice, may also be overkill and not meaningfully improve predictions enough to change final decisions about mail check times
+- Bayesian model choice: nested sampling doesn't seem applicable, leaving reversible-jump/product-space; while JAGS examples are available in tutorial papers, I found them lengthy & complicated by using realistic data & models, hardwired to their specific use-case still too difficult to understand with my limited JAGS skills. So I wound up implementing using ABC.
+
+## PPC
+
+Posterior predictive checks (PPC) are a technique recommended by Gelman as a test of how appropriate the model is (as the model or likelihood often is far more important in forcing particular results than the priors one might've used), where one generates possible observations from the model and inferred posteriors, and sees how often the simulated data matches the real data; if that is rarely or never, then the model may be bad and one should fix it or possibly throw in additional models for Bayesian model comparison (which will hopefully then pick out the right model).
+For continuous data or more than trivially small data, we have the same issue as in ABC (which is similar to PPCs): the simulates will never exactly match the data, so we must define some sort of summary or distance measure which lets us say that a particular simulated dataset is similar enough to the real data.
+In the two summaries I tried for ABC, counting 'flip-flops' worked better, so I'll reuse that here.
+For the simulation, we also need check or interval-censoring times, which I also treat as a normal distribution & estimate their means and SDs from the original data.
+
+~~~{.R}
+posteriorTimes <- k2$BUGSoutput$sims.list[["y.new2015"]]
+
+simsPPC <- replicate(10000, {
+    nChecks <- nrow(mail)
+    checkTimes <- c(mail[mail$Time1>0,]$Time1, mail[mail$Time2<1440,]$Time2)
+    meanCheck <- mean(checkTimes)
+    sdCheck <- sd(checkTimes)
+
+    deliveryTime <- sample(posteriorTimes, size=nChecks, replace=TRUE)
+    checkTime <- round(rnorm(nChecks, mean = meanCheck, sd = sdCheck))
+    newSamples <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
+                         checkTime, deliveryTime)
+    newData <- data.frame(Time1=newSamples[1,], Time2=newSamples[2,])
+
+    return(sum(newData$Time1 == 0))
+    }
+)
+png(file="~/wiki/images/maildelivery-ppc.png", width = 800, height = 500)
+qplot(simsPPC) + geom_vline(xintercept=sum(mail$Time1 == 0), color="blue")
+invisible(dev.off())
+~~~
+
+![Similarity of posterior predictive distribution's flip-flops with the original data's flip-flops](/images/maildelivery-ppc.png)
+
+The true data has a summary near the middle of the distribution of the summaries of the posterior predictions, suggesting that the normal distribution's fit to the problem is OK (at least, when considered in isolation).
+
+## Crossvalidation
+
+CV comes in several flavors, but since the data is not big, I can use leave-one-out crossvalidation.
+The usual error measures are unavailable due to interval-censoring, so after some pondering, I went with a zero-one loss based on whether a delivery is predicted or not at a particular check-time.
+Mean-squared-error is out due to the intervaling, as are variants like absolute error. Thinking about it some, it seems to me that each datapoint is really made of two things: the check-time, and delivery status. The check-time has nothing to do with the model quality and the model isn't trying to predict it; what I want the model to predict is whether the mail is delivered or not *if* I were to check at particular times. The check-time is the predictor variable and the delivery-status is the response variable.
+So I could ask the model's posterior predictive distribution of delivery-times (`y.new`) whether or not the mail would or would not be delivered at a particular time, and compare it against the held-out datapoint's actual delivery status, 1 if the model correctly predicts delivered/not-delivered and 0 if it predicts the opposite of what the data said. (So a zero-one loss.)
+
+For distributions, we'll compare the normal used all along, the _t_-distribution (for its fatter tails), and for kicks, the lognormal & exponential distributions as well:
+
+~~~{.R}
+modelN <- "model { for (i in 1:n){
+            y[i] ~ dinterval(t[i], dt[i,])
+            t[i] ~ dnorm(mu,tau)
+           }
+           mu ~ dnorm(650, pow(30, -2))
+           sd ~ dunif(10, 60)
+           tau <- pow(1/sd, 2)
+           y.new ~ dnorm(mu, tau)
+           }"
+modelT <- "model { for (i in 1:n){
+            y[i] ~ dinterval(t[i], dt[i,])
+            t[i] ~ dt(mu,tau,nu)
+           }
+           nu ~ dexp(1/30)
+           mu ~ dnorm(650, pow(30, -2))
+           sd ~ dunif(10, 60)
+           tau <- pow(1/sd, 2)
+           y.new ~ dnorm(mu, tau)
+           }"
+modelL <- "model { for (i in 1:n) {
+          y[i] ~ dinterval(t[i], dt[i,])
+          t[i] ~ dlnorm(muL, tauL)
+        }
+        sd ~ dunif(10, 60)
+        tauL <- pow(1/log(sd), 2)
+        mu ~ dnorm(650, pow(30, -2))
+        muL <- log(mu)
+        y.new ~ dlnorm(muL, tauL)
+        }"
+modelE <- "model { for (i in 1:n){
+            y[i] ~ dinterval(t[i], dt[i,])
+            t[i] ~ dexp(theta)
+           }
+           # set the mean ~600, but remember rate is reciprocal:
+           theta ~ dexp(1/600)
+           y.new ~ dexp(theta)
+           }"
+~~~
+
+Here's a try at implementing leave-one-out crossvalidation for those four JAGS models on the interval-censored mail data with a zero-one loss defined that way based on delivery status:
+
+~~~{.R}
+loocvs <- function(dt, model) {
+    results <- NULL
+
+    for (i in 1:nrow(dt)) {
+     # set up relevant data for this particular fold in the crossvalidation
+     ith       <- dt[i,]
+     newData   <- dt[-i,] # drop the _i_th datapoint
+     checkTime <- if (ith$Time1==0) { ith$Time2 } else { ith$Time1 }
+     there     <- if (ith$Time1==0) { TRUE } else { FALSE }
+
+     # set up and run the model and extract predicted delivery times
+     data   <- list("dt"=newData, "n"=nrow(newData), "y"=rep(1, nrow(newData)))
+     inits  <- function() { list(mu=rnorm(1,mean=600,sd=30),sd=30,t=as.vector(apply(newData,1,mean))) }
+     params <- c("y.new")
+     cv1 <- jags(data, inits, params, textConnection(model), n.iter=10000, progress.bar="none")
+     posteriorTimes <- cv1$BUGSoutput$sims.list[["y.new"]]
+
+     # score predictions against heldout data point
+     results[i] <- mean(sapply(posteriorTimes, function(t) { if (t<checkTime && there) { 1 } else { if (t>checkTime && !there) { 1 } else { 0 } }}))
+    }
+   return(results)
+}
+
+loocvsN <- loocvs(mail, modelN)
+loocvsT <- loocvs(mail, modelT)
+loocvsL <- loocvs(mail, modelL)
+loocvsE <- loocvs(mail, modelE)
+
+mean(loocvsN)
+mean(loocvsT)
+mean(loocvsL)
+mean(loocvsE)
+~~~
+
+## Bayesian Model Selection
+
+Possibilities:
+
+nested sampling
+reversible jump MCMC
+product-space method
+BIC/DIC/WAIC deviance criteria
+non-Bayesian: cross-validation
+
+"Bayesian model choice via Markov chain Monte Carlo methods" Carlin & Chib 1995 http://stats.ma.ic.ac.uk/~das01/MyWeb/SCBI/Papers/CarlinChib.pdf
+"A tutorial on Bayes factor estimation with the product space method", Lodewyckx et al 2011 http://ejwagenmakers.com/2011/LodewyckxEtAl2011.pdf
+"A guide to Bayesian model selection for ecologists" http://www.esajournals.org/doi/full/10.1890/14-0661.1
+Hoeting et al 1999. "Bayesian model averaging: a tutorial" https://projecteuclid.org/download/pdf_1/euclid.ss/1009212519
+
+
 
 
 http://lesswrong.com/lw/hzu/model_combination_and_adjustment/ popularization
-
-Crossvalidation
-leave one out crossvalidation; zero-one loss
-
-    library(R2jags)
-    modelN <- "model { for (i in 1:n){
-                y[i] ~ dinterval(t[i], dt[i,])
-                t[i] ~ dnorm(mu,tau)
-               }
-               mu ~ dnorm(650, pow(30, -2))
-               sd ~ dunif(10, 60)
-               tau <- pow(1/sd, 2)
-
-               y.new ~ dnorm(mu, tau)
-               }"
-    modelT <- "model { for (i in 1:n){
-                y[i] ~ dinterval(t[i], dt[i,])
-                t[i] ~ dt(mu,tau,nu)
-               }
-
-               nu ~ dexp(1/30)
-
-               mu ~ dnorm(650, pow(30, -2))
-               sd ~ dunif(10, 60)
-               tau <- pow(1/sd, 2)
-
-               y.new ~ dnorm(mu, tau)
-               }"
-    modelL <- "model { for (i in 1:n) {
-              y[i] ~ dinterval(t[i], dt[i,])
-              t[i] ~ dlnorm(muL, tauL)
-            }
-            sd ~ dunif(10, 60)
-            tauL <- pow(1/log(sd), 2)
-            mu ~ dnorm(650, pow(30, -2))
-            muL <- log(mu)
-
-            y.new ~ dlnorm(muL, tauL)
-            }"
-    modelE <- "model { for (i in 1:n){
-                y[i] ~ dinterval(t[i], dt[i,])
-                t[i] ~ dexp(theta)
-               }
-               # set the mean ~600, but remember rate is reciprocal:
-               theta ~ dexp(1/600)
-
-               y.new ~ dexp(theta)
-               }"
-
-
-I want to compare them. (You might say use DIC, but R2jags doesn't provide that for interval-censored data). Since this is small data, leave-one-out crossvalidation seems like a good idea. But what is the rror?
-
-Mean-squared-error is out due to the intervaling, as are variants like absolute error. Thinking about it some, it seems to me that each datapoint is really made of two things: the check-time, and delivery status. The check-time has nothing to do with the model quality and the model isn't trying to predict it; what I want the model to predict is whether the mail is delivered or not if I were to check at particular times. The check-time is the predictor variable and the delivery-status is the response variable.
-
-So I could ask the model's posterior predictive distribution of delivery-times (`y.new`) whether or not the mail would or would not be delivered at a particular time, and compare it against the held-out datapoint's actual delivery status, 1 if the model correctly predicts delivered/not-delivered and 0 if it predicts the opposite of what the data said. (So a zero-one loss.)
-
-Here's a try at implementing leave-one-out crossvalidation for those two JAGS models on the interval-censored mail data with a zero-one loss defined that way based on delivery status:
-
-    loocvs <- function(dt, model) {
-        results <- NULL
-
-        for (i in 1:nrow(dt)) {
-         # set up relevant data for this particular fold in the crossvalidation
-         ith       <- dt[i,]
-         newData   <- dt[-i,] # drop the _i_th datapoint
-         checkTime <- if (ith$Time1==0) { ith$Time2 } else { ith$Time1 }
-         there     <- if (ith$Time1==0) { TRUE } else { FALSE }
-
-         # set up and run the model and extract predicted delivery times
-         data   <- list("dt"=newData, "n"=nrow(newData), "y"=rep(1, nrow(newData)))
-         inits  <- function() { list(mu=rnorm(1,mean=600,sd=30),sd=30,t=as.vector(apply(newData,1,mean))) }
-         params <- c("y.new")
-         cv1 <- jags(data, inits, params, textConnection(model), n.iter=10000, progress.bar="none")
-         posteriorTimes <- cv1$BUGSoutput$sims.list[["y.new"]]
-
-         # score predictions against heldout data point
-         results[i] <- mean(sapply(posteriorTimes, function(t) { if (t<checkTime && there) { 1 } else { if (t>checkTime && !there) { 1 } else { 0 } }}))
-        }
-       return(results)
-    }
-
-    loocvsN <- loocvs(mail, modelN)
-    loocvsT <- loocvs(mail, modelT)
-    loocvsL <- loocvs(mail, modelL)
-    loocvsE <- loocvs(mail, modelE)
-
-    mean(loocvsN)
-    # 0.5838765432
-    mean(loocvsT)
-    # 0.5837777778
-    mean(loocvsL)
-    # 0.5030904762
-    mean(loocvsE)
-    # 0.5031047619
 
 Bayesian model selection, comparing 4 parametric models: the normal, Student's t, lognormal, and exponential models.
 Of these, the first two are the most likely, so the model selection should put the most weight on them.
