@@ -885,7 +885,6 @@ When you include the cost of gathering data, the analysis says you should collec
 
 So this is interesting: by using informative priors and then taking a decision-theoretic approach, in this case I can make high-quality decisions on surprisingly little data.
 
-<!--
 # Model checking
 ## On Model Uncertainty
 
@@ -914,7 +913,7 @@ For example:
     This is problematic for a number of reasons: genome length is being used as a clock, but the animal and bacteria genomes involved are all *contemporary* (since no DNA older than a million years or so has ever been recovered or the full length counted) which raises some questions about why we think genome length has any connection with time and how exactly this linear increase process is supposed to work (is evolution supposed to have stopped for the prokaryotes 3-4bya and their genome lengths been static ever since?); how they defined those particular taxonomic groups of all the possibilities and those particular genome lengths & dates (and a questionable reason for excluding plants); measurement error and the very small data set implies considerable uncertainty in the estimates & a rejection of Earthly origins even at face value; genome lengths seem to have little to do with the passage of time but reflect peculiarities of biology & selection (viruses are under more selection pressure, and have faster generations than, any other kind of organism, and have innovated baffling numbers of tricks for infection, and yet instead of having ultra-long genomes reflecting these endless generations and innovation, they have ultra-small ones; and similarly, the Human Genome Project yielded humbling results in showing the human genome to be smaller than many organisms we humans look down upon, such as even some single-cell organisms, which can be bizarrely huge like the ferns, [Mimivirus](!Wikipedia)) and vary tremendously within groups; there is no direct evidence showing that early life's genome lengths increased at the claimed trendline, and no particular reason to expect recent trends to hold exactly to the origins of life and times when life may not have been DNA-based or even RNA-based at all; genomes are known to shrink in size as well as increase under the right conditions (and one would hope that contemporary prokaryotes are more genetically efficient than the earliest prokaryotes); it's unclear why one should endorse constant increase in genome size rather than a population genetics perspective of equilibriums and occasional shifts; horizontal gene flow makes it unclear how much one can compare with multicellular organisms & vertical transmission; Gould argues that any increase in complexity can be due to a random walk with a lower bound, in which case there is no underlying trend at all, merely stochastic extremes occasionally reached; and Drake's rule implies that genome length may have more to do with mutation control than any passage of time.
 
     More relevantly here is the model misspecification: the model will happily project past 1bpa and estimate how long the genomes were - in negative units - in 10bya. (To say nothing of extrapolating a few billion years into the future.) This is nonsensical: whatever life may use for genomes, it must be positive and never negative. So linearity is known a priori to be false and to break down at some point: the linear model is guaranteed to be incorrect in its predictions early in history; now, if one must reject the extrapolations for 10bya because the model has broken down by that point, why should one believe the projections from before the breakdown...? Why not infer that any linearity appears only later, after such regime-changing events as the creation of life, the switch to DNA, the expansion over the entire world, the oxygen catastrophe, etc? (If your ice cream linear model predicts selling -1000 ice cream cones at the North Pole, why believe it when it predicts selling -10 ice cream cones in Canada?) Why not use a model like a sigmoid which at least has a chance of being correct? The problem, of course, is that if one tried to fit a sigmoid or another such distribution or curve which could fit the true data, one would discover that there is no early data which could give any indication of how fast genome lengths were increasing very early on like in 4bya, since all the available data is from *now*. Where does the idea come from that genome lengths would increase slowly even in the first life forms which discovered a virgin planet of unexploited organic goop? Examined closely, since there is no evidence for early linearity, we see that the modeling produces no additional evidence, and is merely an exercise of showing the consequences of an assumption: "if one assumes that genome lengths increase linearly [...] then with this particular set of lengths and assumed times, it logically follows that the first organisms was 9bya". But one gets no more out of this than what one put in: since there was no particular reason to accept that assumption out of all possible assumptions, there's no additional reason to accept the conclusion as true either. On its own, it cannot give us any additional evidence for panspermia.
-3. independence is often a questionable model assumption: many datapoints are highly correlated with each other and calculations assuming independence will become grotesquely overconfident. Is it more likely that the probability of a tied election is 10^-90^ and one could run trillions of elections without ever once coming near a tie, or that [the binomial assumption is simply wrong about voters](http://andrewgelman.com/2014/12/25/common-sense-statistics/) being independent and victory margins being accordingly distributed? Is it more likely that stock market movements are thin-tailed and large crashes would happen only once in billions of years, or that crashes are common and the distribution is fat-tailed? Is it more likely that there are many strong predictors of human populations' wealth and social factors, or that they are [highly correlated with neighbors due to descent & proximity & common geographic conditions](!Wikipedia "Galton's problem")? Is it more likely that the the models were correct and the fisheries just accidentally collapsed, or that the models did not take into account autocorrelation/multilevelness and overstated accuracy through [pseudoreplication](!Wikipedia)?
+3. independence is often a questionable model assumption: many datapoints are highly correlated with each other and calculations assuming independence will become grotesquely overconfident. Is it more likely that the probability of a tied election is 10^-90^ and one could run trillions of elections without ever once coming near a tie, or that [the binomial assumption is simply wrong about voters](http://andrewgelman.com/2014/12/25/common-sense-statistics/) being independent and victory margins being accordingly distributed? Is it more likely that stock market movements are thin-tailed and large crashes would happen only once in billions of years, or that crashes are common and the distribution is fat-tailed? Is it more likely that there are many strong predictors of human populations' wealth and social factors, or that they are [highly correlated with neighbors due to descent & proximity & common geographic conditions](!Wikipedia "Galton's problem")? Is it more likely that the the models were correct and the fisheries just accidentally collapsed, or that the models did not take into account autocorrelation/multilevelness and overstated accuracy through [pseudoreplication](!Wikipedia)? etc
 
 In the case of mail deliveries, there's clearly model uncertainty.
 While I used [normal distributions](!Wikipedia), I could as easily have used [_t_-distributions](!Wikipedia "Student's t-distribution") (fatter-tailed normals), [log-normals](!Wikipedia "Log-normal distribution"), [exponentials](!Wikipedia "Exponential distribution"), [uniforms](!Wikipedia "Uniform distribution (discrete)"), [betas](!Wikipedia "Beta distribution"), [overdispersed](!Wikipedia "Overdispersion") versions of some of the previous, or picked some even more exotic [univariate distribution](http://www.math.wm.edu/~leemis/chart/UDR/UDR.html "Univariate Distribution Relationships") and easily come up with a just-so story for some of them.
@@ -1039,7 +1038,7 @@ loocvs <- function(dt, model) {
      data   <- list("dt"=newData, "n"=nrow(newData), "y"=rep(1, nrow(newData)))
      inits  <- function() { list(mu=rnorm(1,mean=600,sd=30),sd=30,t=as.vector(apply(newData,1,mean))) }
      params <- c("y.new")
-     cv1 <- jags(data, inits, params, textConnection(model), n.iter=10000, progress.bar="none")
+     cv1 <- jags(data, inits, params, textConnection(model), n.iter=1000, progress.bar="none")
      posteriorTimes <- cv1$BUGSoutput$sims.list[["y.new"]]
 
      # score predictions against heldout data point
@@ -1054,10 +1053,16 @@ loocvsL <- loocvs(mailCombined, modelL)
 loocvsE <- loocvs(mailCombined, modelE)
 
 mean(loocvsN)
+## [1] 0.6316747967
 mean(loocvsT)
+## [1] 0.6339715447
 mean(loocvsL)
+## [1] 0.4994674797
 mean(loocvsE)
+## [1] 0.4504227642
 ~~~
+
+By this measure, the normal & _t_ models perform almost identically, while we can reject log-normal & exponentials out of hand.
 
 ## Bayesian Model Selection
 
@@ -1087,8 +1092,12 @@ original: "Bayesian model choice via Markov chain Monte Carlo methods" Carlin & 
 Lodewyckx code can be downloaded after registration & email from http://ppw.kuleuven.be/okp/software/scripts_tut_bfepsm/ (still waiting on my copy to check I set it up right)
 "Bayesian model selection: The steepest mountain to climb", Tenan 2014 /docs/statistics/2014-tenan.pdf /docs/statistics/2014-tenan-supplement.zip
 
-simulateMailboxNT <- function(n, dTime, dSD, dNu=NA) {
-    deliveryTime <- if(is.na(dNu)) { round(rnorm(n, mean = dTime, sd = dSD)); } else { round(rt(n, dNu, dTime)); }
+~~~{.R}
+simulateMailboxMulti <- function(n, dTime, dSD, dNu=NA, dLmean=NA, dLsd=NA, eRate=NA) {
+    deliveryTime <- if(!is.na(dNu)) { round(rt(n, dNu, dTime)); } else {
+      if(!is.na(dLmean)) {round(rlnorm(1, meanlog=dLmean, sdlog=dLsd));} else {
+       if(!is.na(eRate)) {round(rexp(1, rate=eRate));} else { # must be normal
+        round(rnorm(n, mean = dTime, sd = dSD)); }}}
     checkTime <- round(rnorm(n, mean = dTime, sd = dSD))
     if(is.na(deliveryTime) || is.na(checkTime)) { print(n); print(dTime); print(dSD); print(dNu); print(deliveryTime); print(checkTime); }
     simulates <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
@@ -1103,17 +1112,21 @@ mail_abc_bmc <- function(samples) {
       # Priors: split out since we'll use them in both t & normal simulations:
       mu.n <- rnorm(n=1, mean=658.954, sd=4.550)
       sd.n <- rnorm(n=1, mean=26.676, sd=8.087)
-      if(sd.n<1) { sd.n <- rnorm(n=1, mean=26.676, sd=8.087); } # try again if too small
+      while(sd.n<1) { sd.n <- rnorm(n=1, mean=26.676, sd=8.087); } # try again if too small
+    newData <- NULL
+    type <- sample(c("normal","t", "lognormal", "exponential"), size=1)
+    switch(type,
+        "normal"      = { newData <- simulateMailboxMulti(nrow(mail), mu.n, sd.n) },
+        "t"           = { # nu is so broad many randoms are <0, so need to avoid those
+                          nu.t <- Filter(function(x){x>0;}, rnorm(n=100, mean=33.581, sd=25.859))[1]
+                          newData <- simulateMailboxMulti(nrow(mail), mu.n, sd.n, dNu=nu.t); },
+        "lognormal"   = { meanlog <- rnorm(1, mean=6.463, sd=0.046) ; sdlog <- log(rnorm(1, mean=10.475, sd=0.503));
+                          newData <- simulateMailboxMulti(nrow(mail), mu.n, sd.n, dLmean=meanlog, dLsd=sdlog); },
+        "exponential" = { theta <- 0.002; # exponential model's rate posterior too narrow to generate samples like
+                          newData <- simulateMailboxMulti(nrow(mail), mu.n, sd.n, eRate=theta);
+                        }
+               )
 
-    if (sample(c(TRUE,FALSE), size=1, prob=c(0.5,0.5))) { # sample from normal:
-      type <- "normal"
-      newData <- simulateMailboxNT(nrow(mail), mu.n, sd.n)
-    } else { # sample from t-distribution:
-      type <- "t"
-      # nu is so broad many randoms are <0, so need to avoid those
-      nu.t <- Filter(function(x){x>0;}, rnorm(n=100, mean=33.581, sd=25.859))[1]
-      newData <- simulateMailboxNT(nrow(mail), mu.n, sd.n, nu.t)
-    }
       # see if summary of the new data is within tolerance error<2 of the real data,
       # and if it is, save which distribution generated it:
       if (abs(mean(newData$Time1) - mean(mail$Time1)) < 2 &&
@@ -1125,14 +1138,17 @@ mail_abc_bmc <- function(samples) {
 sims <- mail_abc_bmc(10000)
 results <- matrix(unlist(sims), ncol=1, byrow=TRUE)
 summary(results)
+##            V1
+##  exponential:  18
+##  lognormal  :  12
+##  normal     :8415
+##  t          :1555
+~~~
 
-summary(results)
-#       V1
-#  normal:8008
-#  t     :1992
-log(8008)/log(1992)
-# [1] 1.183140873
--->
+As suggested by the crossvalidation, the exponential and lognormal models have low posterior probabilities and can be ignored, making up hardly 1% of samples.
+And the _t_-distribution has noticeably lower posterior probability than the normal, and we can see that the normal is more likely than it, making up 84% of samples to its 15%.
+If we assumed a uniform prior of 25% for each, then the log Bayes factors for exponential, lognormal, and _t_ are all negative, and only normal is positive (with a posterior probability of ~70%).
+Given the inconvenience of doing Bayesian model averaging here (I think the most straightforward way would be to fit the two distributions, and then do weighted sampling to get a single posterior distribution to work with in subsequent steps, so something like `posteriorSamples <- replicate(5000, if (runif>0.70) { sample(tPosterior,1); } else { sample(normalPosterior,1); })`), and the limited gain I expect from mixing in a _t_-distribution, I will continue to work with just the normal.
 
 # Conclusions
 
