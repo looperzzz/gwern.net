@@ -11,13 +11,13 @@ This is a summary of the revision-history RSS feed, overlapping with [Changelog]
 
 # Writings
 
-- mail?
-- modafinil survey
-- resorter tool
-- Bitter Melon experimental & cost-benefit analysis
-- Value of Information for suicide, example cost-benefit analysis
-- poll data: modeling potentially false poll data
-- RNN author failure?
+- [modafinil user survey](https://docs.google.com/forms/d/1ZNyGHl6vnHD62spZyHIqyvNM_Ts_82GvZQVdAr2LrGs/viewform) (running 26 September - 26 October 2015)
+- [`resorter` tool for statistically re-ranking a set of ratings](http://gwern.net/Resorter)
+- [Bitter Melon experimental & cost-benefit analysis](http://gwern.net/Melon)
+- [noisy polls: modeling potentially falsified poll data](http://www.gwern.net/Statistical%20notes#dealing-with-all-or-nothing-unreliability-of-data)
+- [Value of Information for suicide](http://www.gwern.net/Statistical%20notes#value-of-information-clinical-prediction-instruments-for-suicide) (example cost-benefit analysis of weakly predicting suicide)
+- [mail?](http://gwern.net/Mail%20delivery)
+- [RNN author failure?](http://www.gwern.net/Statistical%20notes#rnn-metadata-for-mimicking-individual-author-style)
 
 # Media
 ## Links
@@ -42,7 +42,7 @@ Statistics/AI/meta-science:
 - ["School Desegregation and Black Achievement: an integrative review"](http://deepblue.lib.umich.edu/bitstream/2027.42/68589/2/10.1177_0049124185013003002.pdf), Wortman & Bryant 1985 (more on publication bias)
 - ["Empirical evidence of bias in treatment effect estimates in controlled trials with different interventions and outcomes: meta-epidemiological study"](http://www.bmj.com/content/336/7644/601), Wood et al 2008
 - ["aRrgh: a newcomer's (angry) guide to R"](http://arrgh.tim-smith.us/) (I read this when starting out with R; in retrospect, it turned out to be more useful than I thought at the time)
-- ["Guessing the Truth How good are we at guessing the truth of open conjectures?"](https://rjlipton.wordpress.com/2010/06/19/guessing-the-truth/)
+- ["Guessing the Truth: How good are we at guessing the truth of open conjectures?"](https://rjlipton.wordpress.com/2010/06/19/guessing-the-truth/)
 - ["The Mayan Doomsday's effect on survival outcomes in clinical trials"](http://www.cmaj.ca/content/184/18/2021.full), Wheatley-Price et al 11 Dec 2012
 
 Psychology/biology:
@@ -84,19 +84,21 @@ Fiction:
 
 Nonfiction:
 
-- _Epic Measures_ (on Global Burden of Disease)
-- Richard's _Practical Criticism_
-- _Although Of Course You End Up Becoming Yourself: A Road Trip with David Foster Wallace_,  Lipsky 2010
-- _Mastering the Core Teachings of the Buddha_ (unrateable due to lack of personal experience)
+- [_Epic Measures: One Doctor. Seven Billion Patients._](http://www.amazon.com/Epic-Measures-Doctor-Billion-Patients/dp/0062237500) (on [Christopher Murray's](https://en.wikipedia.org/wiki/Christopher_J.L._Murray) [Global Burden of Disease](https://en.wikipedia.org/wiki/Global_burden_of_disease))
+- [_Practical Criticism_](https://archive.org/details/practicalcritici030142mbp), [I.A. Richards](https://en.wikipedia.org/wiki/I._A._Richards)
+- [_Although Of Course You End Up Becoming Yourself: A Road Trip with David Foster Wallace_](https://en.wikipedia.org/wiki/Although_of_Course_You_End_Up_Becoming_Yourself),  Lipsky 2010
+- [_Mastering the Core Teachings of the Buddha_](http://www.dharmaoverground.org/dharma-wiki/-/wiki/Main/MCTB/en) (unrateable due to lack of personal experience)
 
 
 ## Film/TV
 
 Live-action:
 
+- [_The Theory of Everything_](https://en.wikipedia.org/wiki/The_Theory_of_Everything_(2014_film))
+
 Anime:
 
-- _Shirobako_?
+- [_Shirobako_](https://en.wikipedia.org/wiki/Shirobako)?
 
 ## Music
 
