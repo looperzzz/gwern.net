@@ -229,14 +229,15 @@ mailInterval <- data.frame(Date=as.POSIXct(c("2015-06-20 11:00AM", "2015-06-21 1
                                  "2015-09-02 10:54AM", "2015-09-03 10:29AM", "2015-09-04 10:08AM", "2015-09-05 10:45AM",
                                  "2015-09-07 10:58AM", "2015-09-08 10:25AM", "2015-09-09 10:29AM", "2015-09-10 10:48AM",
                                  "2015-09-16 11:22AM", "2015-09-17 11:06AM", "2015-09-18 11:22AM", "2015-09-19 11:12AM",
-                                 "2015-09-21 11:52AM", "2015-09-23 12:02PM", "2015-09-24 10:00AM", "2015-09-25 12:08PM"),
+                                 "2015-09-21 11:52AM", "2015-09-23 12:02PM", "2015-09-24 10:00AM", "2015-09-25 12:08PM",
+                                 "2015-09-26 10:59AM"),
                                 "EDT"),
                    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE,
                                FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE,
                                FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE,
                                FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE,
                                FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
-                               FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE))
+                               FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE))
 mailInterval$Time <- fromClock(mailInterval$Date)
 mail <- with(mailInterval, data.frame(Time1 = ifelse(Delivered, 0, Time),
                            Time2 = ifelse(Delivered,  Time, 1440)))
@@ -300,6 +301,7 @@ This is a common situation: you can write a good simulation simply by describing
 
 [ABC](!Wikipedia "Approximate Bayesian computation") (exemplified in the fun example ["Tiny Data, Approximate Bayesian Computation and the Socks of Karl Broman"](http://www.sumsar.net/blog/2014/10/tiny-data-and-the-socks-of-karl-broman/); see also Wilkinson's [intro](https://darrenjw.wordpress.com/2013/03/31/introduction-to-approximate-bayesian-computation-abc/ "Introduction to Approximate Bayesian Computation (ABC)") & [summary statistics](https://darrenjw.wordpress.com/2013/09/01/summary-stats-for-abc/ "Summary stats for ABC") posts) is a remarkably simple and powerful idea which lets us take a forward simulation and use it to run backwards inference.
 (Reminds me a little of [Solomonoff induction](!Wikipedia "Solomonoff's theory of inductive inference").)
+There's [an R package, of course](https://cran.r-project.org/web/packages/abc/index.html) which implements nice features & optimizations, but ABC is so simple we might as well write our own for transparency.
 
 The simplest ABC goes like this:
 You sample possible parameters from your prior, feed the set of parameters into your simulation, and if the result is identical to your data, you save that set of parameters.
@@ -567,7 +569,7 @@ mail2$Group <- year(mail2$Date) > 2014
 
 The multilevel model is the same as before with the exception that the likelihood needs to be tweaked to put `dinterval` on top, and the input data needs to be munged appropriately to match its expectations of it being a two-column dataframe of the form `(Time1,Time2)`:
 
-~~{.R}
+~~~{.R}
 model3 <- function() {
   grand.mean          ~ dnorm(650, pow(20, -2))
   delta.between.group ~ dunif(0, 100)
@@ -724,7 +726,7 @@ entropyD <- function(dt) {
    return(list(posteriorTimes, entropy))
    }
 actions <- c(600:750)
-oldEntropy <- entropyD(mail)
+oldEntropy <- entropyD(mailCombined)
 ei <- data.frame(Action=NULL, Entropy=NULL)
 for (a in actions) {
     for (m in 1:20) {
@@ -737,13 +739,13 @@ for (a in actions) {
 }
 eimean <- aggregate(Entropy ~ Action, mean, data=ei)
 eimean[which.max(eimean$Entropy),]
-#      Action        Entropy
-# 60    659 -0.0003798551505
+##      Action        Entropy
+## 58    657 0.0117875362
 toClock(eimean[which.max(eimean$Entropy),]$Action)
-# [1] "10:59"
+## [1] "10:57"
 ~~~
 
-<!-- optimal samples taken: 12PM; 10AM; 12:08PM -->
+<!-- optimal samples taken: 12PM; 10AM; 12:08PM; 10:59AM -->
 
 ## Optimal sample-size: Value of Information metrics
 
@@ -924,10 +926,10 @@ Model uncertainty can be handled several ways ([Hooten & Hobbs 2015]( http://www
 - Penalty or regularization or sparsity priors (only handles selection of variables/predictors; gains largely eliminated in this case by informative priors)
 - Diagnostics like posterior predictive checks, crossvalidation, and [AIC](!Wikipedia "Akaike information criterion")/[BIC](!Wikipedia "Bayesian information criterion")/[DIC](!Wikipedia "Deviance information criterion")/[WAIC](http://arxiv.org/pdf/1208.6338 "'A Widely Applicable Bayesian Information Criterion', Watanabe 2012") ([overview](http://www.stat.columbia.edu/~gelman/research/published/waic_understand3.pdf  "'Understanding predictive information criteria for Bayesian models', Gelman et al 2013")) can be used to check for lack of fit; but like tests in software development, they can only show the presence of bugs & not their absence
 - Maximally flexible models can be used like nonparametric Bayesian models, to minimize the possibility of model misspecification ([Dunson 2013](/docs/statistics/2013-dunson.pdf "Nonparametric Bayes"))
-- [Ensemble approaches](!Wikipedia "Ensemble learning") (often targeted at the narrow use-case of selecting variables/predictors in a linear model, but some are applicable to choosing between different distributions as well)
+- [Ensemble approaches](!Wikipedia "Ensemble learning") (often targeted at the narrow use-case of selecting variables/predictors in a linear model, but some are applicable to choosing between different distributions as well), particularly Bayesian approaches ([popularization](http://lesswrong.com/lw/hzu/model_combination_and_adjustment/); [Hooten & Hobbs 2015](http://www.esajournals.org/doi/full/10.1890/14-0661.1 "A guide to Bayesian model selection for ecologists")):
 
-   - Bayesian model choice: models can be pitted against each other (eg using Bayes factors) implemented using [nested sampling](!Wikipedia) or [reversible jump MCMC](!Wikipedia)/product-space method, and the one with highest posterior probability is selected for any further analysis while all others are ignored
-   - Bayesian model averaging: posterior probabilities of models are calculated, but all models are retained and their posteriors are combined weighted by the probability that model is the true one (but with enough data, the posterior probability of the model closest to the truth will converge on 1 and BMA becomes a model selection procedure)
+   - Bayesian model choice: models can be pitted against each other (eg using Bayes factors) implemented using [nested sampling](!Wikipedia), or [reversible jump MCMC](!Wikipedia)/product-space method ([Carlin & Chib 1995]( http://stats.ma.ic.ac.uk/~das01/MyWeb/SCBI/Papers/CarlinChib.pdf "Bayesian model choice via Markov chain Monte Carlo methods"), [Lodewyckx et al 2011](http://ejwagenmakers.com/2011/LodewyckxEtAl2011.pdf "A tutorial on Bayes factor estimation with the product space method") & [source code](http://ppw.kuleuven.be/okp/software/scripts_tut_bfepsm/), [Tenan 2014](/docs/statistics/2014-tenan.pdf "Bayesian model selection: The steepest mountain to climb") & [source code](/docs/statistics/2014-tenan-supplement.zip)), or ABC, and the one with highest posterior probability is selected for any further analysis while all others are ignored
+   - Bayesian model averaging: posterior probabilities of models are calculated, but all models are retained and their posteriors are combined weighted by the probability that model is the true one ([Hoeting et al 1999](https://projecteuclid.org/download/pdf_1/euclid.ss/1009212519 "Bayesian model averaging: a tutorial")); but with enough data, the posterior probability of the model closest to the truth will converge on 1 and BMA becomes a model selection procedure
    - Bayesian model combination: posterior probabilities of combinations/ensembles of models are calculated, yielding a richer set of 'models' which often outperform all of the original models; such as by learning an optimal weighting in a linear combination ([Monteith et al  2011](http://axon.cs.byu.edu/papers/Kristine.ijcnn2011.pdf "Turning Bayesian Model Averaging Into Bayesian Model Combination"))
 
 Of the non-ensemble approaches: regularization is already done via the informative priors; some of the diagnostics might work but others won't (JAGS won't calculate DIC for interval-censored data); nonparametric approaches would be too challenging for me to implement in JAGS and I'm not sure there is enough data to allow the nonparametric models to work well.
@@ -1066,31 +1068,24 @@ By this measure, the normal & _t_ models perform almost identically, while we ca
 
 ## Bayesian Model Selection
 
-Possibilities:
+BIC/DIC/WAIC deviance criteria are unavailable; nested sampling cannot handle multiple distributions; this left reversible jump MCMC/product-space method and ABC.
 
-nested sampling
-reversible jump MCMC
-product-space method
-BIC/DIC/WAIC deviance criteria
-non-Bayesian: cross-validation
+I looked at product-space first. The idea is conceptually simple: we take our JAGS models and treat it as a mixture model with each model having a probability of having generated an observation, and since we believe only one is true, after inferring these probabilities, they become our posterior probabilities of each model.
+The JAGS implementations look relatively straightforward, but most of them deal with the case of different probabilities or parameters for the same distribution or with variable selection in linear regression, and the only examples with multiple distributions were totally baffling to me, as I became lost in the different distributions and categories and indices and what the 'pseudopriors' are doing etc.
 
-"Bayesian model choice via Markov chain Monte Carlo methods" Carlin & Chib 1995 http://stats.ma.ic.ac.uk/~das01/MyWeb/SCBI/Papers/CarlinChib.pdf
-"A tutorial on Bayes factor estimation with the product space method", Lodewyckx et al 2011 http://ejwagenmakers.com/2011/LodewyckxEtAl2011.pdf
-"A guide to Bayesian model selection for ecologists" http://www.esajournals.org/doi/full/10.1890/14-0661.1
-Hoeting et al 1999. "Bayesian model averaging: a tutorial" https://projecteuclid.org/download/pdf_1/euclid.ss/1009212519
+After giving up, it occurred to me that since I had no problem writing the 4 standalone models themselves, their posterior predictive distributions were, in a sense, generative models of themselves and so I could use them in ABC.
+If I generated samples from all 4 models in ABC and counted how often they (approximately) matched the original data, then would not the ratios of accepted samples then constitute posterior probabilities or at least Bayes factors? If the normal model matched the data 10x more often than the _t_ model, then surely the normal model is a much better model of the data than the _t_.
+But there's nothing new under the sun, and so while the papers on Bayesian model comparison I had read up until that point had not mentioned ABC as an option, it turns out that using ABC for Bayesian model comparison is not just possible but downright common in genetics & ecology (see the reviews [Didelot et al 2004](http://www.maths.bris.ac.uk/~madjl/DidelotEtAlPRE-ABC.pdf "Likelihood-free estimation of model evidence"), [Beaumont 2010](https://math.la.asu.edu/~jtaylor/teaching/Fall2013/APM541/papers/Beaumont2010.pdf "Approximate Bayesian Computation in Evolution and Ecology") & [Sunnaker et al 2013](http://www.ploscompbiol.org/article/fetchObject.action?uri=info%3Adoi%2F10.1371/journal.pcbi.1002803&representation=PDF "Approximate Bayesian Computation") ; examples including [Miller et al 2005](http://digitalcommons.unl.edu/cgi/viewcontent.cgi?article=1255&context=entomologyfacpub "Multiple transatlantic introductions of the Western corn rootworm"), [Pascual et al 2007](/docs/statistics/2007-pascual.pdf "Introduction history of _Drosophila subobscura_ in the New World: A microsatellite-based survey using ABC methods"), [Sainudiin et al 2011](http://link.springer.com/content/pdf/10.1007/s11538-010-9605-5.pdf "Experiments with the site frequency spectrum")).
+There is the issue that the summary statistics may [lose information and lead to bad model comparison results](http://www.pnas.org/content/108/37/15112.full "'Lack of confidence in approximate Bayesian computation model choice', Robert et al 2011"), but there's always tradeoffs.
 
 
-
-
-http://lesswrong.com/lw/hzu/model_combination_and_adjustment/ popularization
+Pritchard, J.K. et al. (1999) Population growth of human Y chromosomes: a study of Y chromosome microsatellites. Mol. Biol. Evol. 16, 1791–1798
+Francois, O. et al. (2008) Demographic history of European populations of Arabidopsis thaliana. PLoS Genet. 4, e1000075
+Grelaud, A. et al. (2009) ABC likelihood-free methods for model choice in Gibbs random fields. Bayesian Anal. 4, 317–336
+Estoup A, Beaumont M, Sennedot F, Moritz C, Cornuet J-M. 2004. Genetic analysis of complex demographic scenarios: spatially expanding populations of the cane toad, Bufo marinus. Evolution 58:2021–36
 
 Bayesian model selection, comparing 4 parametric models: the normal, Student's t, lognormal, and exponential models.
 Of these, the first two are the most likely, so the model selection should put the most weight on them.
-
-original: "Bayesian model choice via Markov chain Monte Carlo methods" Carlin & Chib 1995 http://stats.ma.ic.ac.uk/~das01/MyWeb/SCBI/Papers/CarlinChib.pdf
-"A tutorial on Bayes factor estimation with the product space method", Lodewyckx et al 2011 http://ejwagenmakers.com/2011/LodewyckxEtAl2011.pdf
-Lodewyckx code can be downloaded after registration & email from http://ppw.kuleuven.be/okp/software/scripts_tut_bfepsm/ (still waiting on my copy to check I set it up right)
-"Bayesian model selection: The steepest mountain to climb", Tenan 2014 /docs/statistics/2014-tenan.pdf /docs/statistics/2014-tenan-supplement.zip
 
 ~~~{.R}
 simulateMailboxMulti <- function(n, dTime, dSD, dNu=NA, dLmean=NA, dLsd=NA, eRate=NA) {
@@ -1147,6 +1142,7 @@ summary(results)
 
 As suggested by the crossvalidation, the exponential and lognormal models have low posterior probabilities and can be ignored, making up hardly 1% of samples.
 And the _t_-distribution has noticeably lower posterior probability than the normal, and we can see that the normal is more likely than it, making up 84% of samples to its 15%.
+The Bayes factors for each pair are the ratios, so we could say that there's a BF of 5.4 in favor of normal vs _t_, which is very strong evidence for in the Jeffreys scale.
 If we assumed a uniform prior of 25% for each, then the log Bayes factors for exponential, lognormal, and _t_ are all negative, and only normal is positive (with a posterior probability of ~70%).
 Given the inconvenience of doing Bayesian model averaging here (I think the most straightforward way would be to fit the two distributions, and then do weighted sampling to get a single posterior distribution to work with in subsequent steps, so something like `posteriorSamples <- replicate(5000, if (runif>0.70) { sample(tPosterior,1); } else { sample(normalPosterior,1); })`), and the limited gain I expect from mixing in a _t_-distribution, I will continue to work with just the normal.
 
