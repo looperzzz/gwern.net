@@ -230,14 +230,14 @@ mailInterval <- data.frame(Date=as.POSIXct(c("2015-06-20 11:00AM", "2015-06-21 1
                                  "2015-09-07 10:58AM", "2015-09-08 10:25AM", "2015-09-09 10:29AM", "2015-09-10 10:48AM",
                                  "2015-09-16 11:22AM", "2015-09-17 11:06AM", "2015-09-18 11:22AM", "2015-09-19 11:12AM",
                                  "2015-09-21 11:52AM", "2015-09-23 12:02PM", "2015-09-24 10:00AM", "2015-09-25 12:08PM",
-                                 "2015-09-26 10:59AM"),
+                                 "2015-09-26 10:59AM", "2015-09-27 10:57AM"),
                                 "EDT"),
                    Delivered=c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE,
                                FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE,
                                FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE,
                                FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE,
                                FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
-                               FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE))
+                               FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, FALSE))
 mailInterval$Time <- fromClock(mailInterval$Date)
 mail <- with(mailInterval, data.frame(Time1 = ifelse(Delivered, 0, Time),
                            Time2 = ifelse(Delivered,  Time, 1440)))
@@ -427,7 +427,6 @@ And then while recording interval data, I did sometimes spot the mailman on her 
 Exact data makes estimating a mean & SD trivial:
 
 ~~~{.R}
-library(lubridate)
 mailExact <- data.frame(Date=as.POSIXct(c("2010-04-29 11:33AM", "2010-05-12 11:31AM", "2014-08-20 12:14PM",
                                           "2014-09-29 11:15AM", "2014-12-15 12:02PM", "2015-03-09 11:19AM",
                                           "2015-06-10 10:34AM", "2015-06-20 11:02AM", "2015-06-23 10:58AM",
@@ -436,7 +435,8 @@ mailExact <- data.frame(Date=as.POSIXct(c("2010-04-29 11:33AM", "2010-05-12 11:3
                                           "2015-07-11 11:09AM", "2015-07-15 10:29AM", "2015-07-16 11:02AM",
                                           "2015-07-17 10:46AM", "2015-07-27 11:12AM", "2015-08-15 10:56AM",
                                           "2015-08-17 11:40AM", "2015-08-18 11:19AM", "2015-08-27 10:43AM",
-                                          "2015-09-04 10:56AM", "2015-09-18 11:15AM"),
+                                          "2015-09-04 10:56AM", "2015-09-18 11:15AM", "2015-09-26 10:42AM",
+                                          "2015-09-28 11:48AM"),
                         "EDT"))
 mailExact$TimeDelivered <- fromClock(mailExact$Date)
 mean(mailExact$TimeDelivered)
@@ -565,6 +565,7 @@ mail2 <- rbind(
                 Time2 = ifelse(Delivered,  Time, 1440))))
 
 mail2$Group <- year(mail2$Date) > 2014
+mailCombined <- subset(mail2,select=c("Time1","Time2"))
 ~~~
 
 The multilevel model is the same as before with the exception that the likelihood needs to be tweaked to put `dinterval` on top, and the input data needs to be munged appropriately to match its expectations of it being a two-column dataframe of the form `(Time1,Time2)`:
@@ -615,6 +616,268 @@ It's worth comparing the `y.new2015` (the posterior predictive distribution for 
 And this despite having almost 3x as much interval-censored data!
 The lesson here is to try to minimize the length of intervals if one wants to make precise inferences.
 
+## Model checking
+### On Model Uncertainty
+
+> ...It is no surprise that when this model fails, it is the [likelihood](!Wikipedia "Likelihood function") rather than the [prior](!Wikipedia "Prior probability") that is causing the problem. In the binomial model under consideration here, the prior comes into the posterior distribution only once and the likelihood comes in _n_ times. It is perhaps merely an accident of history that skeptics and subjectivists alike strain on the gnat of the prior distribution while swallowing the camel that is the likelihood.^[["'Not Only Defended But Also Applied': The Perceived Absurdity of Bayesian Inference"](http://www.stat.columbia.edu/~gelman/research/published/feller8.pdf), Gelman & Robert 2013]
+
+In setting up an analysis, one must [make a variety of choices](http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf "'The garden of forking paths: Why multiple comparisons can be a problem, even when there is no `fishing expedition` or `p-hacking` and the research hypothesis was posited ahead of time', Gelman & Loken 2013") in what models to use, which influences the result; this neglect of "model uncertainty" can lead to overconfident inferences or miss critical details.
+In Bayesian analyses, typically the prior comes in for the most scrutiny as to how it determines the result; but the prior part of the model often has much less influence than the structural or functional form of the analysis, where it is assumed that the outcome is drawn from a normal distribution or another such common choice, although it's not.
+This choice itself is often arbitrary and can determine the result almost regardless of what the data says.
+For example, the normal distribution has thin tails and so the probability of something being far out on a tail will be extremely small and combined with other considerations like measurement error, can result in a model refusing to ever accept that a value really is 'extreme' without equally extreme amounts of data - a refusal that would not happen if any of a number of other perfectly possible distributions had been chosen instead like lognormal distributions or Cauchy distributions - despite the fact that the choice of normal distribution itself is usually due more to convenience than any extremely strong evidence that the normal distribution is the true distribution ("every model is false, but some are useful", as the saying goes), which means the best response is simply to note that [one man's modus ponens is another man's modus tollens](Prediction%20markets#modus-tollens-vs-modus-ponens) - the probability that [one's math or model is wrong is far higher](The Existential Risk of Mathematical Error) sets an upper bound on how much we can get out of them, and a bound which often bars many of the inferences one might try to extract from them.
+
+For example:
+
+1. the normal distribution is commonly used for its analytic tractability and asymptotic properties, but it has some aspects that are, in a sense, *too* powerful and restrictive: specifically, that its tails are thin. Thin tails can cause serious underestimations of rare phenomenon (and not just in cases involving power laws) and can lead to unwarrantedly powerful conclusions. Two examples:
+
+    - in [one analysis of charities](http://lesswrong.com/lw/745/why_we_cant_take_expected_value_estimates/ "Why We Can't Take Expected Value Estimates Literally (Even When They're Unbiased)"), the writer uses normal distributions and thus winds up arguing that with error in our assessments of charities' values, our estimate must be shrunken far towards the mean (which is entirely true); but [this is circular](http://lesswrong.com/lw/gzq/bayesian_adjustment_does_not_defeat_existential/), since by assuming normal distributions he has also assumed away the existence of large differences in value between charities.
+        If one were to grant the apparently innocuous assumption of normally distributed effectiveness of interventions, one would be forced to ignore that there *are* large differences - consider [knitting sweaters for penguins](http://www.giantflightlessbirds.com/2011/10/the-great-penguin-sweater-fiasco/ "The Great Penguin Sweater Fiasco") vs [stopping children from being infected by parasites](!Wikipedia "Schistosomiasis Control Initiative") or [killed by malaria](!Wikipedia "Against Malaria Foundation"); are they really within a few standard deviations of each other? Should we really ignore interventions like vaccines which claim to save lives at a cost of no more than tens of thousands of dollars, on the grounds that most charities require hundreds of thousands or millions of dollars to achieve goals like that? If we look at [Global Burden of Disease](!Wikipedia) and see extreme skews in what causes loss of QALYs, with some classifications being hundreds or thousands of times more damaging than others (like indoor fires), is it more likely that the data is wrong than right solely because the normal distribution says that the largest problems are many standard deviations out? It's clear that whatever the right distribution for modeling charity or health outcomes is, it is probably not literally & exactly a normal distribution and it should allow for large differences; and having abandoned the normal, we then lose the apparently magical ability to make confident predictions about how many charities are how effective.
+    - [in another analysis](http://polymatharchives.blogspot.com/2015/01/the-inappropriately-excluded.html), the author, a Michael Ferguson, argues that American society discriminates to a truly astonishing degree against people with high IQs, claiming that people with 150IQ have 97% less chance of achieving success than people with the ideal IQ of ~133, and thus, that past that, the chance of success drops almost to 0%, and that this is due to vicious constant discrimination & persecution. His analysis takes the strategy of noting the population IQ is normally distributed, by definition, at $\matchcal{N}(100,15)$ and taking a few old studies of elite groups like students at Harvard Medical School and noting the studies report means like 122 and standard deviations like 6, inferring the students are normally distributed at $\mathcal{N}(122,6)$, and then noting that when these two normal distributions are superimposed, there will be almost no elites as high as IQ 140 or 150 despite there being many such people in the general population and this underrepresentation gets more and more extreme as one goes further out on the tail; why did all the high IQ population members fail to show up in the elite distribution? It must be discrimination. Thus, he grimly warns his readers that "If your IQ is over 150, it is a clarion call; without direct intervention, your career prospects are very poor.  If you are the parent of a child with a D15IQ over 150, immediate and dramatic action is required."
+
+        This would be a remarkable fact if true for many reasons (not least the waste & damage to science and humanity), but that is unlikely: because the underrepresentation is a mathematical necessity of the normal distribution due to the elite distribution being defined as having a smaller SD. The assumption that the elite distribution is normal drives the entire remarkable, unlikely result. But why assume elites are normally distributed? Most of the processes by which elite schools such as Harvard would select from the general population would *not* produce a normal distribution: if selected at a SAT threshold, the result will not be normal but a truncated normal; if selected on multiple factors such as test scores and personality, it will more likely be lognormal; and so on. That the studies of the Harvard students reported a mean and SD does not show that the student distribution was normal, and in fact, it's easy to simulate scenarios like the threshold model or a model in which increasing IQ produces increasing odds of admission, and show that the reported means & SDs are entirely possible under other highly non-normal distributions (intuitively, people as high as 140 or 150 are so rare that they don't affect the summary statistics much, regardless of whether they are heavily discriminated against or heavily favored for admission). The shocking conclusion follows from the mathematical/statistical assumption, but where did this assumption come from and should we grant it?
+2. linear models have a similar problem as normal distributions: while convenient and simple, they have well-known problems when at the extremes of the data or when projected beyond that. Textbooks give examples like a linear regression on ice cream sales predicting negative sales during the winter, or predicting that sales in summer will be orders of magnitude higher, and it's easy to make up other examples like a linear regression on sprinting times predicting that in another century, sprinters will finish races before they have started. Linear models have no problems predicting negative values backwards in time, or predicting absurdly high amounts in the far future, but they are convenient and for the most part, it's easy to simply ignore the nonsensical predictions or, if they're causing problems, use a technical fix like logging values, switching to a lognormal distribution (with its strictly natural support), using a sigmoid or logarithmic fit to account for the inevitable flattening out, handle ratio data with beta regression, fix the end-values with spline regression, etc; if we make the mistake of modeling a bacterial population in an agar dish as an exponentially increasing population, we'll soon learn otherwise than the sigmoid or logistic curves make a better fit. Mark Twain offered an amusing criticism in _[Life on the Mississippi](!Wikipedia)_, and indeed, one can often detect model problems watching for instances where one gets "wholesale returns of conjecture out of such a trifling investment of fact", for that indicates that we may be engaged in postulating, which has all "the advantages of theft over honest toil":
+
+    > In the space of one hundred and seventy-six years the Lower Mississippi has shortened itself two hundred and forty-two miles. That is an average of a trifle over one mile and a third per year. Therefore, any calm person, who is not blind or idiotic, can see that in the Old Oolitic Silurian Period, just a million years ago next November, the Lower Mississippi River was upwards of one million three hundred thousand miles long, and stuck out over the Gulf of Mexico like a fishing-rod. And by the same token any person can see that seven hundred and forty-two years from now the Lower Mississippi will be only a mile and three-quarters long, and Cairo and New Orleans will have joined their streets together, and be plodding comfortably along under a single mayor and a mutual board of aldermen. There is something fascinating about science. One gets such wholesale returns of conjecture out of such a trifling investment of fact.
+
+    An interesting use of OLS linear models is given in [Sharov & Gordon 2013](http://arxiv.org/abs/1304.3381 "Life Before Earth"), which follows up a [2006 paper](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1526419/ "'Genome increase as a clock for the origin and evolution of life', Sharov 2006"). By taking the [genome length](!Wikipedia "Genome size") of 8 biological groups (eg prokaryote genomes are ~5 logged and prokaryotes originated 3-4bya, so it is assumed that genome lengths were 5 3-4bya) and regressing against date of origin (on a log scale), their linear model, in the mother of all extrapolations, extrapolates backwards to the smallest possible genome (and hence, origin of all life) around 9 billion years ago - well before Earth could have supported life or even existed, and consistent only with a panspermia hypothesis.
+
+    This is problematic for a number of reasons: genome length is being used as a clock, but the animal and bacteria genomes involved are all *contemporary* (since no DNA older than a million years or so has ever been recovered or the full length counted) which raises some questions about why we think genome length has any connection with time and how exactly this linear increase process is supposed to work (is evolution supposed to have stopped for the prokaryotes 3-4bya and their genome lengths been static ever since?); how they defined those particular taxonomic groups of all the possibilities and those particular genome lengths & dates (and a questionable reason for excluding plants); measurement error and the very small data set implies considerable uncertainty in the estimates & a rejection of Earthly origins even at face value; genome lengths seem to have little to do with the passage of time but reflect peculiarities of biology & selection (viruses are under more selection pressure, and have faster generations than, any other kind of organism, and have innovated baffling numbers of tricks for infection, and yet instead of having ultra-long genomes reflecting these endless generations and innovation, they have ultra-small ones; and similarly, the Human Genome Project yielded humbling results in showing the human genome to be smaller than many organisms we humans look down upon, such as even some single-cell organisms, which can be bizarrely huge like the ferns, [Mimivirus](!Wikipedia)) and vary tremendously within groups; there is no direct evidence showing that early life's genome lengths increased at the claimed trendline, and no particular reason to expect recent trends to hold exactly to the origins of life and times when life may not have been DNA-based or even RNA-based at all; genomes are known to shrink in size as well as increase under the right conditions (and one would hope that contemporary prokaryotes are more genetically efficient than the earliest prokaryotes); it's unclear why one should endorse constant increase in genome size rather than a population genetics perspective of equilibriums and occasional shifts; horizontal gene flow makes it unclear how much one can compare with multicellular organisms & vertical transmission; Gould argues that any increase in complexity can be due to a random walk with a lower bound, in which case there is no underlying trend at all, merely stochastic extremes occasionally reached; and Drake's rule implies that genome length may have more to do with mutation control than any passage of time.
+
+    More relevantly here is the model misspecification: the model will happily project past 1bpa and estimate how long the genomes were - in negative units - in 10bya. (To say nothing of extrapolating a few billion years into the future.) This is nonsensical: whatever life may use for genomes, it must be positive and never negative. So linearity is known a priori to be false and to break down at some point: the linear model is guaranteed to be incorrect in its predictions early in history; now, if one must reject the extrapolations for 10bya because the model has broken down by that point, why should one believe the projections from before the breakdown...? Why not infer that any linearity appears only later, after such regime-changing events as the creation of life, the switch to DNA, the expansion over the entire world, the oxygen catastrophe, etc? (If your ice cream linear model predicts selling -1000 ice cream cones at the North Pole, why believe it when it predicts selling -10 ice cream cones in Canada?) Why not use a model like a sigmoid which at least has a chance of being correct? The problem, of course, is that if one tried to fit a sigmoid or another such distribution or curve which could fit the true data, one would discover that there is no early data which could give any indication of how fast genome lengths were increasing very early on like in 4bya, since all the available data is from *now*. Where does the idea come from that genome lengths would increase slowly even in the first life forms which discovered a virgin planet of unexploited organic goop? Examined closely, since there is no evidence for early linearity, we see that the modeling produces no additional evidence, and is merely an exercise of showing the consequences of an assumption: "if one assumes that genome lengths increase linearly [...] then with this particular set of lengths and assumed times, it logically follows that the first organisms was 9bya". But one gets no more out of this than what one put in: since there was no particular reason to accept that assumption out of all possible assumptions, there's no additional reason to accept the conclusion as true either. On its own, it cannot give us any additional evidence for panspermia.
+3. independence is often a questionable model assumption: many datapoints are highly correlated with each other and calculations assuming independence will become grotesquely overconfident. Is it more likely that the probability of a tied election is 10^-90^ and one could run trillions of elections without ever once coming near a tie, or that [the binomial assumption is simply wrong about voters](http://andrewgelman.com/2014/12/25/common-sense-statistics/) being independent and victory margins being accordingly distributed? Is it more likely that stock market movements are thin-tailed and large crashes would happen only once in billions of years, or that crashes are common and the distribution is fat-tailed? Is it more likely that there are many strong predictors of human populations' wealth and social factors, or that they are [highly correlated with neighbors due to descent & proximity & common geographic conditions](!Wikipedia "Galton's problem")? Is it more likely that the the models were correct and the fisheries just accidentally collapsed, or that the models did not take into account autocorrelation/multilevelness and overstated accuracy through [pseudoreplication](!Wikipedia)? etc
+
+In the case of mail deliveries, there's clearly model uncertainty.
+While I used [normal distributions](!Wikipedia), I could as easily have used [_t_-distributions](!Wikipedia "Student's t-distribution") (fatter-tailed normals), [log-normals](!Wikipedia "Log-normal distribution"), [exponentials](!Wikipedia "Exponential distribution"), [uniforms](!Wikipedia "Uniform distribution (discrete)"), [betas](!Wikipedia "Beta distribution"), [overdispersed](!Wikipedia "Overdispersion") versions of some of the previous, or picked some even more exotic [univariate distribution](http://www.math.wm.edu/~leemis/chart/UDR/UDR.html "Univariate Distribution Relationships") and easily come up with a just-so story for some of them.
+(It's a negative-binomial because we're modeling minutes until "failure" ie delivery; no, it's a log-normal because each stop slows down the mailman and delays multiply; no, it's a normal distribution because each stop adds time and the sum of many small random deviates is itself normally distributed; no, it's a _t_-distribution because sometimes the mail arrives much earlier or later and it's a more robust distribution we should be using anyway; no, it's even wider than that and a uniform distribution because the mailman starts and ends their shift at particular times but otherwise doesn't care about speed; no, it's a beta distribution over time because that's more flexible and can include the others as special-cases...)
+
+Model uncertainty can be handled several ways ([Hooten & Hobbs 2015]( http://www.esajournals.org/doi/full/10.1890/14-0661.1 "A guide to Bayesian model selection for ecologists")), including:
+
+- Penalty or regularization or sparsity priors (only handles selection of variables/predictors; gains largely eliminated in this case by informative priors)
+- Diagnostics like posterior predictive checks, crossvalidation, and [AIC](!Wikipedia "Akaike information criterion")/[BIC](!Wikipedia "Bayesian information criterion")/[DIC](!Wikipedia "Deviance information criterion")/[WAIC](http://arxiv.org/pdf/1208.6338 "'A Widely Applicable Bayesian Information Criterion', Watanabe 2012") ([overview](http://www.stat.columbia.edu/~gelman/research/published/waic_understand3.pdf  "'Understanding predictive information criteria for Bayesian models', Gelman et al 2013")) can be used to check for lack of fit; but like tests in software development, they can only show the presence of bugs & not their absence
+- Maximally flexible models can be used like nonparametric Bayesian models, to minimize the possibility of model misspecification ([Dunson 2013](/docs/statistics/2013-dunson.pdf "Nonparametric Bayes"))
+- [Ensemble approaches](!Wikipedia "Ensemble learning") (often targeted at the narrow use-case of selecting variables/predictors in a linear model, but some are applicable to choosing between different distributions as well), particularly Bayesian approaches ([popularization](http://lesswrong.com/lw/hzu/model_combination_and_adjustment/); [Hooten & Hobbs 2015](http://www.esajournals.org/doi/full/10.1890/14-0661.1 "A guide to Bayesian model selection for ecologists")):
+
+   - Bayesian model choice: models can be pitted against each other (eg using Bayes factors) implemented using [nested sampling](!Wikipedia), or [reversible jump MCMC](!Wikipedia)/product-space method ([Carlin & Chib 1995](http://stats.ma.ic.ac.uk/~das01/MyWeb/SCBI/Papers/CarlinChib.pdf "Bayesian model choice via Markov chain Monte Carlo methods"), [Lodewyckx et al 2011](http://ejwagenmakers.com/2011/LodewyckxEtAl2011.pdf "A tutorial on Bayes factor estimation with the product space method") & [source code](http://ppw.kuleuven.be/okp/software/scripts_tut_bfepsm/), [Tenan 2014](/docs/statistics/2014-tenan.pdf "Bayesian model selection: The steepest mountain to climb") & [source code](/docs/statistics/2014-tenan-supplement.zip)), or ABC, and the one with highest posterior probability is selected for any further analysis while all others are ignored
+   - Bayesian model averaging: posterior probabilities of models are calculated, but all models are retained and their posteriors are combined weighted by the probability that model is the true one ([Hoeting et al 1999](https://projecteuclid.org/download/pdf_1/euclid.ss/1009212519 "Bayesian model averaging: a tutorial")); but with enough data, the posterior probability of the model closest to the truth will converge on 1 and BMA becomes a model selection procedure
+   - Bayesian model combination: posterior probabilities of combinations/ensembles of models are calculated, yielding a richer set of 'models' which often outperform all of the original models; such as by learning an optimal weighting in a linear combination ([Monteith et al  2011](http://axon.cs.byu.edu/papers/Kristine.ijcnn2011.pdf "Turning Bayesian Model Averaging Into Bayesian Model Combination"))
+
+Of the non-ensemble approaches: regularization is already done via the informative priors; some of the diagnostics might work but others won't (JAGS won't calculate DIC for interval-censored data); nonparametric approaches would be too challenging for me to implement in JAGS and I'm not sure there is enough data to allow the nonparametric models to work well.
+
+This leaves PPC, crossvalidation, and the ensemble approaches:
+
+- Bayesian model combination is overkill
+- Bayesian model averaging, given Bayesian model choice, may also be overkill and not meaningfully improve predictions enough to change final decisions about mail check times
+- Bayesian model choice: nested sampling doesn't seem applicable, leaving reversible-jump/product-space; while JAGS examples are available in tutorial papers, I found them lengthy & complicated by using realistic data & models, hardwired to their specific use-case still too difficult to understand with my limited JAGS skills. So I wound up implementing using ABC.
+
+### PPC
+
+Posterior predictive checks (PPC) are a technique recommended by Gelman as a test of how appropriate the model is (as the model or likelihood often is far more important in forcing particular results than the priors one might've used), where one generates possible observations from the model and inferred posteriors, and sees how often the simulated data matches the real data; if that is rarely or never, then the model may be bad and one should fix it or possibly throw in additional models for Bayesian model comparison (which will hopefully then pick out the right model).
+For continuous data or more than trivially small data, we have the same issue as in ABC (which is similar to PPCs): the simulates will never exactly match the data, so we must define some sort of summary or distance measure which lets us say that a particular simulated dataset is similar enough to the real data.
+In the two summaries I tried for ABC, counting 'flip-flops' worked better, so I'll reuse that here.
+For the simulation, we also need check or interval-censoring times, which I also treat as a normal distribution & estimate their means and SDs from the original data.
+
+~~~{.R}
+posteriorTimes <- k2$BUGSoutput$sims.list[["y.new2015"]]
+
+simsPPC <- replicate(10000, {
+    nChecks <- nrow(mail)
+    checkTimes <- c(mail[mail$Time1>0,]$Time1, mail[mail$Time2<1440,]$Time2)
+    meanCheck <- mean(checkTimes)
+    sdCheck <- sd(checkTimes)
+
+    deliveryTime <- sample(posteriorTimes, size=nChecks, replace=TRUE)
+    checkTime <- round(rnorm(nChecks, mean = meanCheck, sd = sdCheck))
+    newSamples <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
+                         checkTime, deliveryTime)
+    newData <- data.frame(Time1=newSamples[1,], Time2=newSamples[2,])
+
+    return(sum(newData$Time1 == 0))
+    }
+)
+png(file="~/wiki/images/maildelivery-ppc.png", width = 800, height = 500)
+qplot(simsPPC) + geom_vline(xintercept=sum(mail$Time1 == 0), color="blue")
+invisible(dev.off())
+~~~
+
+![Similarity of posterior predictive distribution's flip-flops with the original data's flip-flops](/images/maildelivery-ppc.png)
+
+The true data has a summary near the middle of the distribution of the summaries of the posterior predictions, suggesting that the normal distribution's fit to the problem is OK (at least, when considered in isolation).
+
+### Crossvalidation
+
+CV comes in several flavors, but since the data is not big, I can use leave-one-out crossvalidation.
+The usual error measures are unavailable due to interval-censoring, so after some pondering, I went with a zero-one loss based on whether a delivery is predicted or not at a particular check-time.
+Mean-squared-error is out due to the intervaling, as are variants like absolute error. Thinking about it some, it seems to me that each datapoint is really made of two things: the check-time, and delivery status. The check-time has nothing to do with the model quality and the model isn't trying to predict it; what I want the model to predict is whether the mail is delivered or not *if* I were to check at particular times. The check-time is the predictor variable and the delivery-status is the response variable.
+So I could ask the model's posterior predictive distribution of delivery-times (`y.new`) whether or not the mail would or would not be delivered at a particular time, and compare it against the held-out datapoint's actual delivery status, 1 if the model correctly predicts delivered/not-delivered and 0 if it predicts the opposite of what the data said. (So a zero-one loss.)
+The base-rate of delivery vs non-delivery will be 50-50, so a good model should achieve a better mean zero-one loss than 0.5.
+
+For distributions, we'll compare the normal used all along, the _t_-distribution (for its fatter tails), and for kicks, the lognormal & exponential distributions as well:
+
+~~~{.R}
+modelN <- "model { for (i in 1:n){
+            y[i] ~ dinterval(t[i], dt[i,])
+            t[i] ~ dnorm(mu,tau)
+           }
+           mu ~ dnorm(650, pow(30, -2))
+           sd ~ dunif(10, 60)
+           tau <- pow(1/sd, 2)
+           y.new ~ dnorm(mu, tau) }"
+modelT <- "model { for (i in 1:n){
+            y[i] ~ dinterval(t[i], dt[i,])
+            t[i] ~ dt(mu,tau,nu)
+           }
+           nu ~ dexp(1/30)
+           mu ~ dnorm(650, pow(30, -2))
+           sd ~ dunif(10, 60)
+           tau <- pow(1/sd, 2)
+           y.new ~ dnorm(mu, tau) }"
+modelL <- "model { for (i in 1:n) {
+          y[i] ~ dinterval(t[i], dt[i,])
+          t[i] ~ dlnorm(muL, tauL)
+        }
+        sd ~ dunif(10, 60)
+        tauL <- pow(1/log(sd), 2)
+        mu ~ dnorm(650, pow(30, -2))
+        muL <- log(mu)
+        y.new ~ dlnorm(muL, tauL) }"
+modelE <- "model { for (i in 1:n){
+            y[i] ~ dinterval(t[i], dt[i,])
+            t[i] ~ dexp(theta)
+           }
+           # set the mean ~600, but remember rate is reciprocal:
+           theta ~ dexp(1/600)
+           y.new ~ dexp(theta) }"
+~~~
+
+Here's a try at implementing leave-one-out crossvalidation for those four JAGS models on the interval-censored mail data with a zero-one loss defined that way based on delivery status:
+
+~~~{.R}
+runModel <- function(newData, model, iter=5000) {
+     # set up and run the model and extract predicted delivery times
+     data   <- list("dt"=newData, "n"=nrow(newData), "y"=rep(1, nrow(newData)))
+     inits  <- function() { list(mu=rnorm(1,mean=600,sd=30),sd=30,t=as.vector(apply(newData,1,mean))) }
+     params <- c("y.new")
+     cv1 <- jags(data, inits, params, textConnection(model), n.iter=iter, progress.bar="none")
+     posteriorTimes <- cv1$BUGSoutput$sims.list[["y.new"]]
+     return(posteriorTimes)
+}
+
+loocvs <- function(dt, model) {
+    results <- NULL
+
+    for (i in 1:nrow(dt)) {
+     # set up relevant data for this particular fold in the crossvalidation
+     ith       <- dt[i,]
+     newData   <- dt[-i,] # drop the _i_th datapoint
+     checkTime <- if (ith$Time1==0) { ith$Time2 } else { ith$Time1 }
+     there     <- if (ith$Time1==0) { TRUE } else { FALSE }
+
+     posteriorTimes <- runModel(dt, model, iter=500)
+     # score predictions against heldout data point
+     results[i] <- mean(sapply(posteriorTimes, function(t) { if (t<checkTime && there) { 1 } else { if (t>checkTime && !there) { 1 } else { 0 } }}))
+    }
+   return(results)
+}
+loocvsN <- loocvs(mailCombined, modelN)
+loocvsT <- loocvs(mailCombined, modelT)
+loocvsL <- loocvs(mailCombined, modelL)
+loocvsE <- loocvs(mailCombined, modelE)
+
+mean(loocvsN)
+## [1] 0.6316747967
+mean(loocvsT)
+## [1] 0.6339715447
+mean(loocvsL)
+## [1] 0.4994674797
+mean(loocvsE)
+## [1] 0.4504227642
+~~~
+
+By this measure, the normal & _t_ models perform almost identically, while we can reject log-normal & exponentials out of hand as performing as badly as (or worse than) chance.
+
+### Bayesian Model Selection
+
+BIC/DIC/WAIC deviance criteria are unavailable; nested sampling cannot handle multiple distributions; this left reversible jump MCMC/product-space method and ABC.
+
+I looked at product-space first. The idea is conceptually simple: we take our JAGS models and treat it as a mixture model with each model having a probability of having generated an observation, and since we believe only one is true, after inferring these probabilities, they become our posterior probabilities of each model.
+The JAGS implementations look relatively straightforward, but most of them deal with the case of different probabilities or parameters for the same distribution or with variable selection in linear regression, and the only examples with multiple distributions were totally baffling to me, as I became lost in the different distributions and categories and indices and what the 'pseudopriors' are doing etc.
+
+After giving up, it occurred to me that since I had no problem writing the 4 standalone models themselves, their posterior predictive distributions were, in a sense, generative models of themselves and so I could use them in ABC.
+If I generated samples from all 4 models in ABC and counted how often they (approximately) matched the original data, then would not the ratios of accepted samples then constitute posterior probabilities or at least Bayes factors? If the normal model matched the data 10x more often than the _t_ model, then surely the normal model is a much better model of the data than the _t_.
+But there's nothing new under the sun, and so while the papers on Bayesian model comparison I had read up until that point had not mentioned ABC as an option, it turns out that using ABC for Bayesian model comparison is not just possible but downright common in genetics & ecology (see for background [Beaumont et al 2002](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1462356/pdf/12524368.pdf "Approximate Bayesian computation in population genetics"), [Marjoram et al 2003](http://www.pnas.org/content/100/26/15324.full "Markov chain Monte Carlo without likelihoods"), [Didelot et al 2004](http://www.maths.bris.ac.uk/~madjl/DidelotEtAlPRE-ABC.pdf "Likelihood-free estimation of model evidence"), [Beaumont 2010](https://math.la.asu.edu/~jtaylor/teaching/Fall2013/APM541/papers/Beaumont2010.pdf "Approximate Bayesian Computation in Evolution and Ecology") & [Sunnaker et al 2013](http://www.ploscompbiol.org/article/fetchObject.action?uri=info%3Adoi%2F10.1371/journal.pcbi.1002803&representation=PDF "Approximate Bayesian Computation") ; examples include [Pritchard et al 1999](http://mbe.oxfordjournals.org/content/16/12/1791.full.pdf "Population growth of human Y chromosomes: a study of Y chromosome microsatellites"), [Estoup et al 2004](http://webpages.icav.up.pt/PTDC/BIA-BEC/105093/2008/references/%5B23%5D.pdf "Genetic analysis of complex demographic scenarios: spatially expanding populations of the cane toad, _Bufo marinus_"), [Miller et al 2005](http://digitalcommons.unl.edu/cgi/viewcontent.cgi?article=1255&context=entomologyfacpub "Multiple transatlantic introductions of the Western corn rootworm"), [Pascual et al 2007](/docs/statistics/2007-pascual.pdf "Introduction history of _Drosophila subobscura_ in the New World: A microsatellite-based survey using ABC methods"), [Francois et al 2008](http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1000075 "Demographic history of European populations of Arabidopsis thaliana"), [Sainudiin et al 2011](http://link.springer.com/content/pdf/10.1007/s11538-010-9605-5.pdf "Experiments with the site frequency spectrum")).
+There is the issue that the summary statistics may [lose information and lead to bad model comparison results](http://www.pnas.org/content/108/37/15112.full "'Lack of confidence in approximate Bayesian computation model choice', Robert et al 2011"), but there's always tradeoffs.
+
+Fu and Li (1997)
+
+Bayesian model selection, comparing 4 parametric models: the normal, Student's _t_, lognormal, and exponential models.
+Of these, the first two are the most likely, and I think it's highly unlikely that the lognormal or exponential could fit better (because they will tend to predict extremely late deliveries, much later than I believe is at all realistic, while the _t_'s spread is more reasonable in accommodating some non-normality but not too much).
+
+~~~{.R}
+simulateMailboxMulti <- function(n, m, sd, simulation) {
+    deliveryTime <- sample(simulation, size=n, replace=TRUE)
+    checkTime <- round(rnorm(n, mean=m, sd=sd))
+    simulates <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
+                         checkTime, deliveryTime)
+    return(data.frame(Time1=simulates[1,], Time2=simulates[2,]))
+}
+mail_abc_bmc <- function(samples) {
+
+    # generate the posterior samples for each model, which serve as our generative simulations:
+    normal <- runModel(mailCombined, modelN)
+    tdistribution <- runModel(mailCombined, modelT)
+    lognormal <- runModel(mailCombined, modelL)
+    exponential <- runModel(mailCombined, modelE)
+    simulates <- nrow(mailCombined)
+
+    # create a distribution for our check times
+    checkTimes <- c(mailCombined[mailCombined$Time1>0,]$Time1, mailCombined[mailCombined$Time2<1440,]$Time2)
+    meanCheck <- mean(checkTimes)
+    sdCheck <- sd(checkTimes)
+
+    results <- list()
+    n <- 0
+
+    while (n<samples) {
+       newData <- NULL
+       type <- sample(c("normal", "t", "lognormal", "exponential"), size=1)
+       newData <- switch(type,
+           "normal"      = { simulateMailboxMulti(simulates, meanCheck, sdCheck, normal); },
+           "t"           = { simulateMailboxMulti(simulates, meanCheck, sdCheck, tdistribution); },
+           "lognormal"   = { simulateMailboxMulti(simulates, meanCheck, sdCheck, lognormal); },
+           "exponential" = { simulateMailboxMulti(simulates, meanCheck, sdCheck, exponential); } )
+
+         # see if summary of the new data is within tolerance error<1 of the real data,
+         # and if it is, save which distribution generated it:
+         if (abs(mean(newData$Time1) - mean(mail$Time1)) < 1 &&
+             abs(mean(newData$Time2) - mean(mail$Time2)) < 1)
+           { results <- list(c(Type=type), results); n <- n+1; }
+    }
+  return(results)
+  }
+sims <- mail_abc_bmc(20000)
+results <- matrix(unlist(sims), ncol=1, byrow=TRUE)
+summary(results)
+##            V1
+##  normal: 9904
+##  t     :10096
+~~~
+
+As suggested by the crossvalidation, the exponential and lognormal models have low posterior probabilities and can be ignored, as they make up none of the samples.
+(If we really wanted to estimate their probabilities more precisely than ~1/20000, we would need to increase the ABC sampling or loosen the tolerances, and then a handful of exponentials & lognormals would get accepted.)
+And the _t_-distribution is the same fraction of the samples as the normal: 50.1% to 49.9% (which given the limited sampling, means they're effectively identical).
+The Bayes factors for each pair are the ratios, so we could say that there's a BF of ~1 in favor of normal vs _t_, or no evidence; but tremendous evidence compared with the exponential or lognormal.
+
+### Bayesian Model Averaging
+
+If we started with uniform priors, then the exponential or lognormal will go to ~0, and the posterior probabilities of normal/_t_ get promoted to ~50% each.
+This means that Bayesian model averaging becomes very simple: we just lump together equally the posterior predictive samples from the two models and work with that.
+
+~~~{.R}
+normal <- runModel(mailCombined, modelN)
+tdistribution <- runModel(mailCombined, modelT)
+posteriorTimes <- c(normal, tdistribution)
+~~~
+
 # Decision theory
 
 One oft-mentioned advantage of Bayesian approaches, and subjective Bayesian probability in particular, is that it plugs immediately into economic or decision theory approaches to making choices under uncertainty, so we don't stop at merely providing an estimate of some parameter but can continue onwards to reach a decision.
@@ -652,38 +915,40 @@ All these considerations give me a weird-looking but nevertheless realistic loss
 Having figured that out, we run the loss function on each sample from the posterior, averaging over all weighted possible delivery times, and find what time of day minimizes the loss:
 
 ~~~{.R}
-posteriorTimes <- k2$BUGSoutput$sims.list[["y.new2015"]]
 lossFunction <- function(t, walk_cost, predictions, lastResortT) {
     mean(sapply(predictions,
                 function(delivered) { if (delivered<t) { return(walk_cost   + (t           - delivered)); } else
                                                        { return(2*walk_cost + (lastResortT - t) ); }}))
     }
 losses <- sapply(c(0:1440), function (tm) { lossFunction(tm, 60, posteriorTimes, 780);})
-which.min(losses)
-toClock(which.min(losses))
-# [1] 690
-## 11:30AM
 
 png(file="~/wiki/images/maildelivery-losses.png", width = 800, height = 700)
 timeLimits <- seq(from=10*60, to=13*60, by=5)
 qplot(0:1440, losses) + scale_x_continuous(breaks=timeLimits, labels=sapply(timeLimits, toClock)) + xlab("Action") + coord_cartesian(xlim = timeLimits, ylim=1:300)
 invisible(dev.off())
+
+which.min(losses)
+# [1] 701
+toClock(which.min(losses))
+## 11:41AM
 ~~~
 
 ![Expected losses in terms of waiting time for checking the mail at particular times](/images/maildelivery-losses.png)
 
+And that gives the final answer: I should check for packages around 11:40AM.
+
 ### Total costs
 
-We can compare the cost of check times. If I check 10 minutes later than the current estimated optimal time, then the loss each time is:
+We can compare the cost of check times. If I check 10 minutes later than the current estimated optimal time, then the loss each time in pseudo-minutes is:
 
 ~~~{.R}
 minIndex <- which.min(losses)
 losses[minIndex]
-# [1] 99.52658165
+# [1] 108.5026282
 losses[minIndex+10]
-# [1] 103.3143022
+# [1] 110.1791093
 losses[minIndex+10] - losses[minIndex]
-# [1] 3.787720593
+# [1] 1.676481109
 ~~~
 
 With average losses per check time, an estimate of number of check times per year, and a discount rate, we can derive a [net present value](!Wikipedia); I usually use the approximation $\frac{\text{gain}}{ln(1 + \text{discount rate})}$ and a discount rate of 5% annually, but in this case assuming an indefinite horizon is wrong - the delivery time will change and the problem will reset as soon as the next mailman begins this route, which has already happened once in the 4 years thus far, so I instead assume that any estimate is worthless after 3 years (the mailman will have changed, the route or USPS will have changed, I may not even be living in the same place in 3 years).
@@ -715,37 +980,46 @@ An implementation:
 
 ~~~{.R}
 entropyD <- function(dt) {
-   library(R2jags)
    data <- list("dt"=dt, "n"=nrow(dt), "y"=rep(1, nrow(dt)))
    inits <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(dt,1,mean))) }
    params <- c("y.new")
-   model <- model1
-   j1 <- jags(data, inits, params, model, n.iter=1000, progress.bar="none")
-   posteriorTimes <- j1$BUGSoutput$sims.list[["y.new"]]
+
+   # average together the _t_ & normal, per the Bayesian model averaging results:
+   jN <- runModel(dt, modelN)
+   jT <- runModel(dt, modelT)
+   posteriorTimesN <- c(jN, jT)
+
    entropy <- mean(log(posteriorTimes))
    return(list(posteriorTimes, entropy))
    }
 actions <- c(600:750)
-oldEntropy <- entropyD(mailCombined)
+oldEntropy <- mean(log(posteriorTimes))
 ei <- data.frame(Action=NULL, Entropy=NULL)
 for (a in actions) {
-    for (m in 1:20) {
-       deliveryTime <- sample(oldEntropy[[1]], size=1)
-       if (deliveryTime<a) { newData <- rbind(mail, data.frame(Time1=0, Time2=a)); } else { newData <- rbind(mail, data.frame(Time1=a, Time2=1440)); }
+    for (m in 1:50) {
+       deliveryTime <- sample(posteriorTimes, size=1)
+       if (deliveryTime<a) { newData <- rbind(mail, data.frame(Time1=0, Time2=a)); } else
+                           { newData <- rbind(mail, data.frame(Time1=a, Time2=1440)); }
        newEntropy <- entropyD(newData)
-       gain <- oldEntropy[[2]] - newEntropy[[2]]
+       gain <- oldEntropy - newEntropy[[2]]
        ei <- rbind(ei, data.frame(Action=a, Entropy=gain))
        }
 }
 eimean <- aggregate(Entropy ~ Action, mean, data=ei)
 eimean[which.max(eimean$Entropy),]
 ##      Action        Entropy
-## 58    657 0.0117875362
+## 53    652 0.01161258411
 toClock(eimean[which.max(eimean$Entropy),]$Action)
-## [1] "10:57"
+## [1] "10:52"
 ~~~
 
-<!-- optimal samples taken: 12PM; 10AM; 12:08PM; 10:59AM -->
+Interested in how the maximal expected information time changed, I began checking at the optimal times in late September, checking at:
+
+1. 12PM
+2. 10AM
+3. 12:08PM
+4. 10:59AM
+5. 10:57AM
 
 ## Optimal sample-size: Value of Information metrics
 
@@ -762,7 +1036,7 @@ The *expected* value or EVPI is the cost of the current estimate of the optimum 
 
 ~~~{.R}
 mean(sapply(round(posteriorTimes), function(time) { netPresentValue((losses[time] - min(losses))) } ))
-# [1] 5663.443339
+# [1] 5087.290247
 ~~~
 
 Perfect information is not available at any cost, however.^[I could always resort to additional technology like motion-activated cameras or radio bugs on the mailbox which send alerts when it's been opened if I *really* wanted, but for the purpose of this exercise, let's ignore those possibilities.]
@@ -780,24 +1054,20 @@ This tells us the benefit of that datapoint, and then we can subtract the cost o
 We could do this for one datapoint to decide whether to stop. But we could also go back and look at how the EVSI & profit shrank during the original collection of the mail data.
 
 ~~~{.R}
-data <- mail # original interval-only data
+data <- mailCombined
 sampleValues <- data.frame(N=NULL, newOptimum=NULL, newOptimumLoss=NULL, sampleValue=NULL, sampleValueProfit=NULL)
 for (n in seq(from=0, to=(nrow(data)+10))) {
 
-    evsis <- replicate(200, {
+    evsis <- replicate(10, {
             # if n is more than we collected, bootstrap hypothetical new data; otherwise, just take that prefix
             # and pretend we are doing a sequential trial where we have only collected the first n observations thus far
-            if (n > nrow(data)) { newData <- rbind(data, data[sample(1:nrow(data), n - nrow(data) , replace=TRUE),]) }
-                              else { newData <- data[1:n,] }
+            if (n > nrow(data)) { newData <- rbind(data, data[sample(1:nrow(data), n - nrow(data) , replace=TRUE),]) } else {
+                                  newData <- data[1:n,] }
 
-            dataEVSI <- list(n=nrow(newData), "dt"=subset(newData, select=c("Time1", "Time2")),
-                         "y"=rep(1, nrow(newData)))
-            paramsEVSI <- c("mu","sd", "y.new")
-            initsEVSI <- function() { list(mu=rnorm(1),sd=30,t=as.vector(apply(dataEVSI[["dt"]],1,mean))) }
-            kEVSI <- jags(data=dataEVSI, parameters.to.save=paramsEVSI, inits=initsEVSI, model.file=model1,
-                          n.iter=3000, progress.bar="none")
+            kEVSIN <- runModel(newData, modelN)
+            kEVSIT <- runModel(newData, modelT)
+            posteriorTimesEVSI <- c(kEVSIN, kEVSIT)
 
-            posteriorTimesEVSI <- kEVSI$BUGSoutput$sims.list[["y.new"]]
             lossesEVSI <- sapply(c(0:1440), function (tm) { lossFunction(tm, 60, posteriorTimesEVSI, 780);})
 
             if (n==0) { oldOptimum <- min(lossesEVSI)  }
@@ -874,7 +1144,8 @@ sampleValues
 # 56 55    693.900    119.5021316 -517.24622527   2782.7537747290
 # 57 56    693.715    119.1529502 -536.63625754   2823.3637424644
 # 58 57    693.530    118.7091686 -531.78528869   2888.2147113139
-plot(sampleValues$N, round(sampleValues$newOptimum))
+qplot(sampleValues$N, round(sampleValues$newOptimum))
+
 # https://i.imgur.com/PrkMCsr.png
 ~~~
 
@@ -883,278 +1154,22 @@ This would suggest that diminishing returns were reached early on (possibly the 
 The graph shows the estimated optimal mail-check time (700=11:40AM etc) as each datapoint was collected.
 You can see that with the priors I set, they were biased towards too-late mail times but as more data comes in, the new optimal check-time drifts steadily downwards until the bias of the prior has been neutralized and now it begins to follow a random walk around 695, with the final estimated mailchecktime being ~693/11:33AM
 And at around n=48, diminishing returns has set in so hard that the decision actually stops changing entirely, it's all small fluctuations around 693.
-When you include the cost of gathering data, the analysis says you should collect up to _n_=13 and then stop (after that, the loss does not decrease but begins to increase because each datapoint inflates costs by +60, and we want to minimize loss); at _n_=13, one decides to check at 687/11:27AM, which is extremely close to the 693 which was estimated with 4x more data (!).
+When you include the cost of gathering data, the analysis says you should collect up to _n_=13 and then stop (after that, the loss does not decrease but begins to increase because each datapoint inflates costs by +60, and we want to minimize loss); at _n_=13, one decides to check at 687/11:27AM, which is  close to the 693 which was estimated with 4x more data (!).
 
-So this is interesting: by using informative priors and then taking a decision-theoretic approach, in this case I can make high-quality decisions on surprisingly little data.
-
-# Model checking
-## On Model Uncertainty
-
-> ...It is no surprise that when this model fails, it is the [likelihood](!Wikipedia "Likelihood function") rather than the [prior](!Wikipedia "Prior probability") that is causing the problem. In the binomial model under consideration here, the prior comes into the posterior distribution only once and the likelihood comes in _n_ times. It is perhaps merely an accident of history that skeptics and subjectivists alike strain on the gnat of the prior distribution while swallowing the camel that is the likelihood.^[["'Not Only Defended But Also Applied': The Perceived Absurdity of Bayesian Inference"](http://www.stat.columbia.edu/~gelman/research/published/feller8.pdf), Gelman & Robert 2013]
-
-In setting up an analysis, one must [make a variety of choices](http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf "'The garden of forking paths: Why multiple comparisons can be a problem, even when there is no `fishing expedition` or `p-hacking` and the research hypothesis was posited ahead of time', Gelman & Loken 2013") in what models to use, which influences the result; this neglect of "model uncertainty" can lead to overconfident inferences or miss critical details.
-In Bayesian analyses, typically the prior comes in for the most scrutiny as to how it determines the result; but the prior part of the model often has much less influence than the structural or functional form of the analysis, where it is assumed that the outcome is drawn from a normal distribution or another such common choice, although it's not.
-This choice itself is often arbitrary and can determine the result almost regardless of what the data says.
-For example, the normal distribution has thin tails and so the probability of something being far out on a tail will be extremely small and combined with other considerations like measurement error, can result in a model refusing to ever accept that a value really is 'extreme' without equally extreme amounts of data - a refusal that would not happen if any of a number of other perfectly possible distributions had been chosen instead like lognormal distributions or Cauchy distributions - despite the fact that the choice of normal distribution itself is usually due more to convenience than any extremely strong evidence that the normal distribution is the true distribution ("every model is false, but some are useful", as the saying goes), which means the best response is simply to note that [one man's modus ponens is another man's modus tollens](Prediction%20markets#modus-tollens-vs-modus-ponens) - the probability that [one's math or model is wrong is far higher](The Existential Risk of Mathematical Error) sets an upper bound on how much we can get out of them, and a bound which often bars many of the inferences one might try to extract from them.
-
-For example:
-
-1. the normal distribution is commonly used for its analytic tractability and asymptotic properties, but it has some aspects that are, in a sense, *too* powerful and restrictive: specifically, that its tails are thin. Thin tails can cause serious underestimations of rare phenomenon (and not just in cases involving power laws) and can lead to unwarrantedly powerful conclusions. Two examples:
-
-    - in [one analysis of charities](http://lesswrong.com/lw/745/why_we_cant_take_expected_value_estimates/ "Why We Can't Take Expected Value Estimates Literally (Even When They're Unbiased)"), the writer uses normal distributions and thus winds up arguing that with error in our assessments of charities' values, our estimate must be shrunken far towards the mean (which is entirely true); but [this is circular](http://lesswrong.com/lw/gzq/bayesian_adjustment_does_not_defeat_existential/), since by assuming normal distributions he has also assumed away the existence of large differences in value between charities.
-        If one were to grant the apparently innocuous assumption of normally distributed effectiveness of interventions, one would be forced to ignore that there *are* large differences - consider [knitting sweaters for penguins](http://www.giantflightlessbirds.com/2011/10/the-great-penguin-sweater-fiasco/ "The Great Penguin Sweater Fiasco") vs [stopping children from being infected by parasites](!Wikipedia "Schistosomiasis Control Initiative") or [killed by malaria](!Wikipedia "Against Malaria Foundation"); are they really within a few standard deviations of each other? Should we really ignore interventions like vaccines which claim to save lives at a cost of no more than tens of thousands of dollars, on the grounds that most charities require hundreds of thousands or millions of dollars to achieve goals like that? If we look at [Global Burden of Disease](!Wikipedia) and see extreme skews in what causes loss of QALYs, with some classifications being hundreds or thousands of times more damaging than others (like indoor fires), is it more likely that the data is wrong than right solely because the normal distribution says that the largest problems are many standard deviations out? It's clear that whatever the right distribution for modeling charity or health outcomes is, it is probably not literally & exactly a normal distribution and it should allow for large differences; and having abandoned the normal, we then lose the apparently magical ability to make confident predictions about how many charities are how effective.
-    - [in another analysis](http://polymatharchives.blogspot.com/2015/01/the-inappropriately-excluded.html), the author, a Michael Ferguson, argues that American society discriminates to a truly astonishing degree against people with high IQs, claiming that people with 150IQ have 97% less chance of achieving success than people with the ideal IQ of ~133, and thus, that past that, the chance of success drops almost to 0%, and that this is due to vicious constant discrimination & persecution. His analysis takes the strategy of noting the population IQ is normally distributed, by definition, at $\matchcal{N}(100,15)$ and taking a few old studies of elite groups like students at Harvard Medical School and noting the studies report means like 122 and standard deviations like 6, inferring the students are normally distributed at $\mathcal{N}(122,6)$, and then noting that when these two normal distributions are superimposed, there will be almost no elites as high as IQ 140 or 150 despite there being many such people in the general population and this underrepresentation gets more and more extreme as one goes further out on the tail; why did all the high IQ population members fail to show up in the elite distribution? It must be discrimination. Thus, he grimly warns his readers that "If your IQ is over 150, it is a clarion call; without direct intervention, your career prospects are very poor.  If you are the parent of a child with a D15IQ over 150, immediate and dramatic action is required."
-
-        This would be a remarkable fact if true for many reasons (not least the waste & damage to science and humanity), but that is unlikely: because the underrepresentation is a mathematical necessity of the normal distribution due to the elite distribution being defined as having a smaller SD. The assumption that the elite distribution is normal drives the entire remarkable, unlikely result. But why assume elites are normally distributed? Most of the processes by which elite schools such as Harvard would select from the general population would *not* produce a normal distribution: if selected at a SAT threshold, the result will not be normal but a truncated normal; if selected on multiple factors such as test scores and personality, it will more likely be lognormal; and so on. That the studies of the Harvard students reported a mean and SD does not show that the student distribution was normal, and in fact, it's easy to simulate scenarios like the threshold model or a model in which increasing IQ produces increasing odds of admission, and show that the reported means & SDs are entirely possible under other highly non-normal distributions (intuitively, people as high as 140 or 150 are so rare that they don't affect the summary statistics much, regardless of whether they are heavily discriminated against or heavily favored for admission). The shocking conclusion follows from the mathematical/statistical assumption, but where did this assumption come from and should we grant it?
-2. linear models have a similar problem as normal distributions: while convenient and simple, they have well-known problems when at the extremes of the data or when projected beyond that. Textbooks give examples like a linear regression on ice cream sales predicting negative sales during the winter, or predicting that sales in summer will be orders of magnitude higher, and it's easy to make up other examples like a linear regression on sprinting times predicting that in another century, sprinters will finish races before they have started. Linear models have no problems predicting negative values backwards in time, or predicting absurdly high amounts in the far future, but they are convenient and for the most part, it's easy to simply ignore the nonsensical predictions or, if they're causing problems, use a technical fix like logging values, switching to a lognormal distribution (with its strictly natural support), using a sigmoid or logarithmic fit to account for the inevitable flattening out, handle ratio data with beta regression, fix the end-values with spline regression, etc; if we make the mistake of modeling a bacterial population in an agar dish as an exponentially increasing population, we'll soon learn otherwise than the sigmoid or logistic curves make a better fit. Mark Twain offered an amusing criticism in _[Life on the Mississippi](!Wikipedia)_, and indeed, one can often detect model problems watching for instances where one gets "wholesale returns of conjecture out of such a trifling investment of fact", for that indicates that we may be engaged in postulating, which has all "the advantages of theft over honest toil":
-
-    > In the space of one hundred and seventy-six years the Lower Mississippi has shortened itself two hundred and forty-two miles. That is an average of a trifle over one mile and a third per year. Therefore, any calm person, who is not blind or idiotic, can see that in the Old Oolitic Silurian Period, just a million years ago next November, the Lower Mississippi River was upwards of one million three hundred thousand miles long, and stuck out over the Gulf of Mexico like a fishing-rod. And by the same token any person can see that seven hundred and forty-two years from now the Lower Mississippi will be only a mile and three-quarters long, and Cairo and New Orleans will have joined their streets together, and be plodding comfortably along under a single mayor and a mutual board of aldermen. There is something fascinating about science. One gets such wholesale returns of conjecture out of such a trifling investment of fact.
-
-    An interesting use of OLS linear models is given in [Sharov & Gordon 2013](http://arxiv.org/abs/1304.3381 "Life Before Earth"), which follows up a [2006 paper](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1526419/ "'Genome increase as a clock for the origin and evolution of life', Sharov 2006"). By taking the [genome length](!Wikipedia "Genome size") of 8 biological groups (eg prokaryote genomes are ~5 logged and prokaryotes originated 3-4bya, so it is assumed that genome lengths were 5 3-4bya) and regressing against date of origin (on a log scale), their linear model, in the mother of all extrapolations, extrapolates backwards to the smallest possible genome (and hence, origin of all life) around 9 billion years ago - well before Earth could have supported life or even existed, and consistent only with a panspermia hypothesis.
-
-    This is problematic for a number of reasons: genome length is being used as a clock, but the animal and bacteria genomes involved are all *contemporary* (since no DNA older than a million years or so has ever been recovered or the full length counted) which raises some questions about why we think genome length has any connection with time and how exactly this linear increase process is supposed to work (is evolution supposed to have stopped for the prokaryotes 3-4bya and their genome lengths been static ever since?); how they defined those particular taxonomic groups of all the possibilities and those particular genome lengths & dates (and a questionable reason for excluding plants); measurement error and the very small data set implies considerable uncertainty in the estimates & a rejection of Earthly origins even at face value; genome lengths seem to have little to do with the passage of time but reflect peculiarities of biology & selection (viruses are under more selection pressure, and have faster generations than, any other kind of organism, and have innovated baffling numbers of tricks for infection, and yet instead of having ultra-long genomes reflecting these endless generations and innovation, they have ultra-small ones; and similarly, the Human Genome Project yielded humbling results in showing the human genome to be smaller than many organisms we humans look down upon, such as even some single-cell organisms, which can be bizarrely huge like the ferns, [Mimivirus](!Wikipedia)) and vary tremendously within groups; there is no direct evidence showing that early life's genome lengths increased at the claimed trendline, and no particular reason to expect recent trends to hold exactly to the origins of life and times when life may not have been DNA-based or even RNA-based at all; genomes are known to shrink in size as well as increase under the right conditions (and one would hope that contemporary prokaryotes are more genetically efficient than the earliest prokaryotes); it's unclear why one should endorse constant increase in genome size rather than a population genetics perspective of equilibriums and occasional shifts; horizontal gene flow makes it unclear how much one can compare with multicellular organisms & vertical transmission; Gould argues that any increase in complexity can be due to a random walk with a lower bound, in which case there is no underlying trend at all, merely stochastic extremes occasionally reached; and Drake's rule implies that genome length may have more to do with mutation control than any passage of time.
-
-    More relevantly here is the model misspecification: the model will happily project past 1bpa and estimate how long the genomes were - in negative units - in 10bya. (To say nothing of extrapolating a few billion years into the future.) This is nonsensical: whatever life may use for genomes, it must be positive and never negative. So linearity is known a priori to be false and to break down at some point: the linear model is guaranteed to be incorrect in its predictions early in history; now, if one must reject the extrapolations for 10bya because the model has broken down by that point, why should one believe the projections from before the breakdown...? Why not infer that any linearity appears only later, after such regime-changing events as the creation of life, the switch to DNA, the expansion over the entire world, the oxygen catastrophe, etc? (If your ice cream linear model predicts selling -1000 ice cream cones at the North Pole, why believe it when it predicts selling -10 ice cream cones in Canada?) Why not use a model like a sigmoid which at least has a chance of being correct? The problem, of course, is that if one tried to fit a sigmoid or another such distribution or curve which could fit the true data, one would discover that there is no early data which could give any indication of how fast genome lengths were increasing very early on like in 4bya, since all the available data is from *now*. Where does the idea come from that genome lengths would increase slowly even in the first life forms which discovered a virgin planet of unexploited organic goop? Examined closely, since there is no evidence for early linearity, we see that the modeling produces no additional evidence, and is merely an exercise of showing the consequences of an assumption: "if one assumes that genome lengths increase linearly [...] then with this particular set of lengths and assumed times, it logically follows that the first organisms was 9bya". But one gets no more out of this than what one put in: since there was no particular reason to accept that assumption out of all possible assumptions, there's no additional reason to accept the conclusion as true either. On its own, it cannot give us any additional evidence for panspermia.
-3. independence is often a questionable model assumption: many datapoints are highly correlated with each other and calculations assuming independence will become grotesquely overconfident. Is it more likely that the probability of a tied election is 10^-90^ and one could run trillions of elections without ever once coming near a tie, or that [the binomial assumption is simply wrong about voters](http://andrewgelman.com/2014/12/25/common-sense-statistics/) being independent and victory margins being accordingly distributed? Is it more likely that stock market movements are thin-tailed and large crashes would happen only once in billions of years, or that crashes are common and the distribution is fat-tailed? Is it more likely that there are many strong predictors of human populations' wealth and social factors, or that they are [highly correlated with neighbors due to descent & proximity & common geographic conditions](!Wikipedia "Galton's problem")? Is it more likely that the the models were correct and the fisheries just accidentally collapsed, or that the models did not take into account autocorrelation/multilevelness and overstated accuracy through [pseudoreplication](!Wikipedia)? etc
-
-In the case of mail deliveries, there's clearly model uncertainty.
-While I used [normal distributions](!Wikipedia), I could as easily have used [_t_-distributions](!Wikipedia "Student's t-distribution") (fatter-tailed normals), [log-normals](!Wikipedia "Log-normal distribution"), [exponentials](!Wikipedia "Exponential distribution"), [uniforms](!Wikipedia "Uniform distribution (discrete)"), [betas](!Wikipedia "Beta distribution"), [overdispersed](!Wikipedia "Overdispersion") versions of some of the previous, or picked some even more exotic [univariate distribution](http://www.math.wm.edu/~leemis/chart/UDR/UDR.html "Univariate Distribution Relationships") and easily come up with a just-so story for some of them.
-(It's a negative-binomial because we're modeling minutes until "failure" ie delivery; no, it's a log-normal because each stop slows down the mailman and delays multiply; no, it's a normal distribution because each stop adds time and the sum of many small random deviates is itself normally distributed; no, it's a _t_-distribution because sometimes the mail arrives much earlier or later and it's a more robust distribution we should be using anyway; no, it's even wider than that and a uniform distribution because the mailman starts and ends their shift at particular times but otherwise doesn't care about speed; no, it's a beta distribution over time because that's more flexible and can include the others as special-cases...)
-
-Model uncertainty can be handled several ways ([Hooten & Hobbs 2015]( http://www.esajournals.org/doi/full/10.1890/14-0661.1 "A guide to Bayesian model selection for ecologists")), including:
-
-- Penalty or regularization or sparsity priors (only handles selection of variables/predictors; gains largely eliminated in this case by informative priors)
-- Diagnostics like posterior predictive checks, crossvalidation, and [AIC](!Wikipedia "Akaike information criterion")/[BIC](!Wikipedia "Bayesian information criterion")/[DIC](!Wikipedia "Deviance information criterion")/[WAIC](http://arxiv.org/pdf/1208.6338 "'A Widely Applicable Bayesian Information Criterion', Watanabe 2012") ([overview](http://www.stat.columbia.edu/~gelman/research/published/waic_understand3.pdf  "'Understanding predictive information criteria for Bayesian models', Gelman et al 2013")) can be used to check for lack of fit; but like tests in software development, they can only show the presence of bugs & not their absence
-- Maximally flexible models can be used like nonparametric Bayesian models, to minimize the possibility of model misspecification ([Dunson 2013](/docs/statistics/2013-dunson.pdf "Nonparametric Bayes"))
-- [Ensemble approaches](!Wikipedia "Ensemble learning") (often targeted at the narrow use-case of selecting variables/predictors in a linear model, but some are applicable to choosing between different distributions as well), particularly Bayesian approaches ([popularization](http://lesswrong.com/lw/hzu/model_combination_and_adjustment/); [Hooten & Hobbs 2015](http://www.esajournals.org/doi/full/10.1890/14-0661.1 "A guide to Bayesian model selection for ecologists")):
-
-   - Bayesian model choice: models can be pitted against each other (eg using Bayes factors) implemented using [nested sampling](!Wikipedia), or [reversible jump MCMC](!Wikipedia)/product-space method ([Carlin & Chib 1995]( http://stats.ma.ic.ac.uk/~das01/MyWeb/SCBI/Papers/CarlinChib.pdf "Bayesian model choice via Markov chain Monte Carlo methods"), [Lodewyckx et al 2011](http://ejwagenmakers.com/2011/LodewyckxEtAl2011.pdf "A tutorial on Bayes factor estimation with the product space method") & [source code](http://ppw.kuleuven.be/okp/software/scripts_tut_bfepsm/), [Tenan 2014](/docs/statistics/2014-tenan.pdf "Bayesian model selection: The steepest mountain to climb") & [source code](/docs/statistics/2014-tenan-supplement.zip)), or ABC, and the one with highest posterior probability is selected for any further analysis while all others are ignored
-   - Bayesian model averaging: posterior probabilities of models are calculated, but all models are retained and their posteriors are combined weighted by the probability that model is the true one ([Hoeting et al 1999](https://projecteuclid.org/download/pdf_1/euclid.ss/1009212519 "Bayesian model averaging: a tutorial")); but with enough data, the posterior probability of the model closest to the truth will converge on 1 and BMA becomes a model selection procedure
-   - Bayesian model combination: posterior probabilities of combinations/ensembles of models are calculated, yielding a richer set of 'models' which often outperform all of the original models; such as by learning an optimal weighting in a linear combination ([Monteith et al  2011](http://axon.cs.byu.edu/papers/Kristine.ijcnn2011.pdf "Turning Bayesian Model Averaging Into Bayesian Model Combination"))
-
-Of the non-ensemble approaches: regularization is already done via the informative priors; some of the diagnostics might work but others won't (JAGS won't calculate DIC for interval-censored data); nonparametric approaches would be too challenging for me to implement in JAGS and I'm not sure there is enough data to allow the nonparametric models to work well.
-
-This leaves PPC, crossvalidation, and the ensemble approaches:
-
-- Bayesian model combination is overkill
-- Bayesian model averaging, given Bayesian model choice, may also be overkill and not meaningfully improve predictions enough to change final decisions about mail check times
-- Bayesian model choice: nested sampling doesn't seem applicable, leaving reversible-jump/product-space; while JAGS examples are available in tutorial papers, I found them lengthy & complicated by using realistic data & models, hardwired to their specific use-case still too difficult to understand with my limited JAGS skills. So I wound up implementing using ABC.
-
-## PPC
-
-Posterior predictive checks (PPC) are a technique recommended by Gelman as a test of how appropriate the model is (as the model or likelihood often is far more important in forcing particular results than the priors one might've used), where one generates possible observations from the model and inferred posteriors, and sees how often the simulated data matches the real data; if that is rarely or never, then the model may be bad and one should fix it or possibly throw in additional models for Bayesian model comparison (which will hopefully then pick out the right model).
-For continuous data or more than trivially small data, we have the same issue as in ABC (which is similar to PPCs): the simulates will never exactly match the data, so we must define some sort of summary or distance measure which lets us say that a particular simulated dataset is similar enough to the real data.
-In the two summaries I tried for ABC, counting 'flip-flops' worked better, so I'll reuse that here.
-For the simulation, we also need check or interval-censoring times, which I also treat as a normal distribution & estimate their means and SDs from the original data.
-
-~~~{.R}
-posteriorTimes <- k2$BUGSoutput$sims.list[["y.new2015"]]
-
-simsPPC <- replicate(10000, {
-    nChecks <- nrow(mail)
-    checkTimes <- c(mail[mail$Time1>0,]$Time1, mail[mail$Time2<1440,]$Time2)
-    meanCheck <- mean(checkTimes)
-    sdCheck <- sd(checkTimes)
-
-    deliveryTime <- sample(posteriorTimes, size=nChecks, replace=TRUE)
-    checkTime <- round(rnorm(nChecks, mean = meanCheck, sd = sdCheck))
-    newSamples <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
-                         checkTime, deliveryTime)
-    newData <- data.frame(Time1=newSamples[1,], Time2=newSamples[2,])
-
-    return(sum(newData$Time1 == 0))
-    }
-)
-png(file="~/wiki/images/maildelivery-ppc.png", width = 800, height = 500)
-qplot(simsPPC) + geom_vline(xintercept=sum(mail$Time1 == 0), color="blue")
-invisible(dev.off())
-~~~
-
-![Similarity of posterior predictive distribution's flip-flops with the original data's flip-flops](/images/maildelivery-ppc.png)
-
-The true data has a summary near the middle of the distribution of the summaries of the posterior predictions, suggesting that the normal distribution's fit to the problem is OK (at least, when considered in isolation).
-
-## Crossvalidation
-
-CV comes in several flavors, but since the data is not big, I can use leave-one-out crossvalidation.
-The usual error measures are unavailable due to interval-censoring, so after some pondering, I went with a zero-one loss based on whether a delivery is predicted or not at a particular check-time.
-Mean-squared-error is out due to the intervaling, as are variants like absolute error. Thinking about it some, it seems to me that each datapoint is really made of two things: the check-time, and delivery status. The check-time has nothing to do with the model quality and the model isn't trying to predict it; what I want the model to predict is whether the mail is delivered or not *if* I were to check at particular times. The check-time is the predictor variable and the delivery-status is the response variable.
-So I could ask the model's posterior predictive distribution of delivery-times (`y.new`) whether or not the mail would or would not be delivered at a particular time, and compare it against the held-out datapoint's actual delivery status, 1 if the model correctly predicts delivered/not-delivered and 0 if it predicts the opposite of what the data said. (So a zero-one loss.)
-
-For distributions, we'll compare the normal used all along, the _t_-distribution (for its fatter tails), and for kicks, the lognormal & exponential distributions as well:
-
-~~~{.R}
-modelN <- "model { for (i in 1:n){
-            y[i] ~ dinterval(t[i], dt[i,])
-            t[i] ~ dnorm(mu,tau)
-           }
-           mu ~ dnorm(650, pow(30, -2))
-           sd ~ dunif(10, 60)
-           tau <- pow(1/sd, 2)
-           y.new ~ dnorm(mu, tau)
-           }"
-modelT <- "model { for (i in 1:n){
-            y[i] ~ dinterval(t[i], dt[i,])
-            t[i] ~ dt(mu,tau,nu)
-           }
-           nu ~ dexp(1/30)
-           mu ~ dnorm(650, pow(30, -2))
-           sd ~ dunif(10, 60)
-           tau <- pow(1/sd, 2)
-           y.new ~ dnorm(mu, tau)
-           }"
-modelL <- "model { for (i in 1:n) {
-          y[i] ~ dinterval(t[i], dt[i,])
-          t[i] ~ dlnorm(muL, tauL)
-        }
-        sd ~ dunif(10, 60)
-        tauL <- pow(1/log(sd), 2)
-        mu ~ dnorm(650, pow(30, -2))
-        muL <- log(mu)
-        y.new ~ dlnorm(muL, tauL)
-        }"
-modelE <- "model { for (i in 1:n){
-            y[i] ~ dinterval(t[i], dt[i,])
-            t[i] ~ dexp(theta)
-           }
-           # set the mean ~600, but remember rate is reciprocal:
-           theta ~ dexp(1/600)
-           y.new ~ dexp(theta)
-           }"
-~~~
-
-Here's a try at implementing leave-one-out crossvalidation for those four JAGS models on the interval-censored mail data with a zero-one loss defined that way based on delivery status:
-
-~~~{.R}
-loocvs <- function(dt, model) {
-    results <- NULL
-
-    for (i in 1:nrow(dt)) {
-     # set up relevant data for this particular fold in the crossvalidation
-     ith       <- dt[i,]
-     newData   <- dt[-i,] # drop the _i_th datapoint
-     checkTime <- if (ith$Time1==0) { ith$Time2 } else { ith$Time1 }
-     there     <- if (ith$Time1==0) { TRUE } else { FALSE }
-
-     # set up and run the model and extract predicted delivery times
-     data   <- list("dt"=newData, "n"=nrow(newData), "y"=rep(1, nrow(newData)))
-     inits  <- function() { list(mu=rnorm(1,mean=600,sd=30),sd=30,t=as.vector(apply(newData,1,mean))) }
-     params <- c("y.new")
-     cv1 <- jags(data, inits, params, textConnection(model), n.iter=1000, progress.bar="none")
-     posteriorTimes <- cv1$BUGSoutput$sims.list[["y.new"]]
-
-     # score predictions against heldout data point
-     results[i] <- mean(sapply(posteriorTimes, function(t) { if (t<checkTime && there) { 1 } else { if (t>checkTime && !there) { 1 } else { 0 } }}))
-    }
-   return(results)
-}
-mailCombined <- subset(mail2,select=c("Time1","Time2"))
-loocvsN <- loocvs(mailCombined, modelN)
-loocvsT <- loocvs(mailCombined, modelT)
-loocvsL <- loocvs(mailCombined, modelL)
-loocvsE <- loocvs(mailCombined, modelE)
-
-mean(loocvsN)
-## [1] 0.6316747967
-mean(loocvsT)
-## [1] 0.6339715447
-mean(loocvsL)
-## [1] 0.4994674797
-mean(loocvsE)
-## [1] 0.4504227642
-~~~
-
-By this measure, the normal & _t_ models perform almost identically, while we can reject log-normal & exponentials out of hand.
-
-## Bayesian Model Selection
-
-BIC/DIC/WAIC deviance criteria are unavailable; nested sampling cannot handle multiple distributions; this left reversible jump MCMC/product-space method and ABC.
-
-I looked at product-space first. The idea is conceptually simple: we take our JAGS models and treat it as a mixture model with each model having a probability of having generated an observation, and since we believe only one is true, after inferring these probabilities, they become our posterior probabilities of each model.
-The JAGS implementations look relatively straightforward, but most of them deal with the case of different probabilities or parameters for the same distribution or with variable selection in linear regression, and the only examples with multiple distributions were totally baffling to me, as I became lost in the different distributions and categories and indices and what the 'pseudopriors' are doing etc.
-
-After giving up, it occurred to me that since I had no problem writing the 4 standalone models themselves, their posterior predictive distributions were, in a sense, generative models of themselves and so I could use them in ABC.
-If I generated samples from all 4 models in ABC and counted how often they (approximately) matched the original data, then would not the ratios of accepted samples then constitute posterior probabilities or at least Bayes factors? If the normal model matched the data 10x more often than the _t_ model, then surely the normal model is a much better model of the data than the _t_.
-But there's nothing new under the sun, and so while the papers on Bayesian model comparison I had read up until that point had not mentioned ABC as an option, it turns out that using ABC for Bayesian model comparison is not just possible but downright common in genetics & ecology (see the reviews [Didelot et al 2004](http://www.maths.bris.ac.uk/~madjl/DidelotEtAlPRE-ABC.pdf "Likelihood-free estimation of model evidence"), [Beaumont 2010](https://math.la.asu.edu/~jtaylor/teaching/Fall2013/APM541/papers/Beaumont2010.pdf "Approximate Bayesian Computation in Evolution and Ecology") & [Sunnaker et al 2013](http://www.ploscompbiol.org/article/fetchObject.action?uri=info%3Adoi%2F10.1371/journal.pcbi.1002803&representation=PDF "Approximate Bayesian Computation") ; examples including [Miller et al 2005](http://digitalcommons.unl.edu/cgi/viewcontent.cgi?article=1255&context=entomologyfacpub "Multiple transatlantic introductions of the Western corn rootworm"), [Pascual et al 2007](/docs/statistics/2007-pascual.pdf "Introduction history of _Drosophila subobscura_ in the New World: A microsatellite-based survey using ABC methods"), [Sainudiin et al 2011](http://link.springer.com/content/pdf/10.1007/s11538-010-9605-5.pdf "Experiments with the site frequency spectrum")).
-There is the issue that the summary statistics may [lose information and lead to bad model comparison results](http://www.pnas.org/content/108/37/15112.full "'Lack of confidence in approximate Bayesian computation model choice', Robert et al 2011"), but there's always tradeoffs.
-
-
-Pritchard, J.K. et al. (1999) Population growth of human Y chromosomes: a study of Y chromosome microsatellites. Mol. Biol. Evol. 16, 1791–1798
-Francois, O. et al. (2008) Demographic history of European populations of Arabidopsis thaliana. PLoS Genet. 4, e1000075
-Grelaud, A. et al. (2009) ABC likelihood-free methods for model choice in Gibbs random fields. Bayesian Anal. 4, 317–336
-Estoup A, Beaumont M, Sennedot F, Moritz C, Cornuet J-M. 2004. Genetic analysis of complex demographic scenarios: spatially expanding populations of the cane toad, Bufo marinus. Evolution 58:2021–36
-
-Bayesian model selection, comparing 4 parametric models: the normal, Student's t, lognormal, and exponential models.
-Of these, the first two are the most likely, so the model selection should put the most weight on them.
-
-~~~{.R}
-simulateMailboxMulti <- function(n, dTime, dSD, dNu=NA, dLmean=NA, dLsd=NA, eRate=NA) {
-    deliveryTime <- if(!is.na(dNu)) { round(rt(n, dNu, dTime)); } else {
-      if(!is.na(dLmean)) {round(rlnorm(1, meanlog=dLmean, sdlog=dLsd));} else {
-       if(!is.na(eRate)) {round(rexp(1, rate=eRate));} else { # must be normal
-        round(rnorm(n, mean = dTime, sd = dSD)); }}}
-    checkTime <- round(rnorm(n, mean = dTime, sd = dSD))
-    if(is.na(deliveryTime) || is.na(checkTime)) { print(n); print(dTime); print(dSD); print(dNu); print(deliveryTime); print(checkTime); }
-    simulates <- mapply(function (ck, dy) { if(ck>dy) { return(c(0,ck)) } else { return(c(ck,1440)) }},
-                         checkTime, deliveryTime)
-    return(data.frame(Time1=simulates[1,], Time2=simulates[2,]))
-}
-mail_abc_bmc <- function(samples) {
-    results <- list()
-    n <- 0
-    while (n<samples) {
-
-      # Priors: split out since we'll use them in both t & normal simulations:
-      mu.n <- rnorm(n=1, mean=658.954, sd=4.550)
-      sd.n <- rnorm(n=1, mean=26.676, sd=8.087)
-      while(sd.n<1) { sd.n <- rnorm(n=1, mean=26.676, sd=8.087); } # try again if too small
-    newData <- NULL
-    type <- sample(c("normal","t", "lognormal", "exponential"), size=1)
-    switch(type,
-        "normal"      = { newData <- simulateMailboxMulti(nrow(mail), mu.n, sd.n) },
-        "t"           = { # nu is so broad many randoms are <0, so need to avoid those
-                          nu.t <- Filter(function(x){x>0;}, rnorm(n=100, mean=33.581, sd=25.859))[1]
-                          newData <- simulateMailboxMulti(nrow(mail), mu.n, sd.n, dNu=nu.t); },
-        "lognormal"   = { meanlog <- rnorm(1, mean=6.463, sd=0.046) ; sdlog <- log(rnorm(1, mean=10.475, sd=0.503));
-                          newData <- simulateMailboxMulti(nrow(mail), mu.n, sd.n, dLmean=meanlog, dLsd=sdlog); },
-        "exponential" = { theta <- 0.002; # exponential model's rate posterior too narrow to generate samples like
-                          newData <- simulateMailboxMulti(nrow(mail), mu.n, sd.n, eRate=theta);
-                        }
-               )
-
-      # see if summary of the new data is within tolerance error<2 of the real data,
-      # and if it is, save which distribution generated it:
-      if (abs(mean(newData$Time1) - mean(mail$Time1)) < 2 &&
-          abs(mean(newData$Time2) - mean(mail$Time2)) < 2)
-        { results <- list(c(Type=type), results); n <- n+1; }
-    }
-  return(results)
-  }
-sims <- mail_abc_bmc(10000)
-results <- matrix(unlist(sims), ncol=1, byrow=TRUE)
-summary(results)
-##            V1
-##  exponential:  18
-##  lognormal  :  12
-##  normal     :8415
-##  t          :1555
-~~~
-
-As suggested by the crossvalidation, the exponential and lognormal models have low posterior probabilities and can be ignored, making up hardly 1% of samples.
-And the _t_-distribution has noticeably lower posterior probability than the normal, and we can see that the normal is more likely than it, making up 84% of samples to its 15%.
-The Bayes factors for each pair are the ratios, so we could say that there's a BF of 5.4 in favor of normal vs _t_, which is very strong evidence for in the Jeffreys scale.
-If we assumed a uniform prior of 25% for each, then the log Bayes factors for exponential, lognormal, and _t_ are all negative, and only normal is positive (with a posterior probability of ~70%).
-Given the inconvenience of doing Bayesian model averaging here (I think the most straightforward way would be to fit the two distributions, and then do weighted sampling to get a single posterior distribution to work with in subsequent steps, so something like `posteriorSamples <- replicate(5000, if (runif>0.70) { sample(tPosterior,1); } else { sample(normalPosterior,1); })`), and the limited gain I expect from mixing in a _t_-distribution, I will continue to work with just the normal.
+So this is interesting: by using informative priors and then taking a decision-theoretic approach, in this case I can make high-quality decisions on surprisingly little data; I could have halted data gathering much earlier.
+(Additional data does have benefits in letting me verify the diminishing returns in this case by noting how the optimal decision hardly changes, and can be used for more accurate model averaging, but ultimately I have to agree with the EVSI: I didn't need to collect all the data I did.)
 
 # Conclusions
 
 Lessons learned:
 
-1. my original prior estimate of when the mailman comes was accurate, but I seem to have underestimated the standard deviation; despite that, providing informative priors meant that the predictions from the JAGS model were sensible from the start (mostly from the small values for the SD, as the mean time was easily estimated from the intervals) and it made good use of the data.
-2. the variability of mail delivery times is high enough that the prediction intervals are inherently wide; after relatively few datapoints, whether interval or exact, diminishing returns has set in.
-3. ABC really is simple to implement and getting computational tractability is the problem (besides making it tedious to use, long runtimes also interfere with writing a correct implementation in the first place)
-4. while powerful, JAGS models can be confusing to write; it's easy to lose track of what the structure of your model is and write the wrong thing, and the use of precision rather than standard-deviation adds boilerplate and makes it even easier to get lost in a welter of variables & distributions, in addition to a fair amount of boilerplate in running the JAGS code at all - leading to errors where you are not certain whether you have a conceptual problem or your boilerplate is out of date
-5. the combination of `ggplot2` and [`animation`](http://cran.r-project.org/web/packages/animation/index.html) bade fair to make animations as easy as devising a ggplot2 image, but due to some ugly interactions between them (`ggplot2` interacts with the R toplevel scope/environment in a way which breaks when it's called inside a function, and `animation` has some subtle bug relating to deciding how long to delay frames in an animation which I couldn't figure out), I lost hours to getting it to work at all.
+2. ABC is as simple to implement and incredibly general as promised; with ABC, it's defining good summary statistics & getting computational tractability which you need to worry about (besides making it tedious to use, long runtimes also interfere with writing a correct implementation in the first place)
+3. while powerful, JAGS models can be confusing to write; it's easy to lose track of what the structure of your model is and write the wrong thing, and the use of precision rather than standard-deviation adds boilerplate and makes it even easier to get lost in a welter of variables & distributions, in addition to a fair amount of boilerplate in running the JAGS code at all - leading to errors where you are not certain whether you have a conceptual problem or your boilerplate has drifted out of date
+4. the combination of `ggplot2` and [`animation`](http://cran.r-project.org/web/packages/animation/index.html) bade fair to make animations as easy as devising a ggplot2 image, but due to some ugly interactions between them (`ggplot2` interacts with the R toplevel scope/environment in a way which breaks when it's called inside a function, and `animation` has some subtle bug relating to deciding how long to delay frames in an animation which I couldn't figure out), I lost hours to getting it to work at all.
+1. my original prior estimate of when the mailman comes was accurate, but I seem to have substantially underestimated the standard deviation and there turned out to be considerably model uncertainty about thin tails (normal) vs fatter tails (_t_); despite that, providing informative priors meant that the predictions from the JAGS model were sensible from the start (mostly from the small values for the SD, as the mean time was easily estimated from the intervals) and it made good use of the data.
+5. the variability of mail delivery times is high enough that the prediction intervals are inherently wide; after relatively few datapoints, whether interval or exact, diminishing returns has set in.
+6. Subjective Bayesianism & decision theory go together like peanut butter & chocolate. It's all just samples and posterior distributions; want to calculate expected information gains to optimize your sampling, or compare to subjective loss to decide in a principled fashion when to stop? No problem. (Instead of ad hoc rules of thumbs like going for 80% power or controlling alpha at 0.05 or trial sequential analysis stopping at an arbitrary effect size confidence interval...) Long computations are a small price to pay for approximate answers to the right questions rather than exact answers to the wrong questions.
+
 
 # Appendix
 ## Thompson sampling
