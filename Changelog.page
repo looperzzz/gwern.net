@@ -9,6 +9,14 @@ belief: log
 Following my writing can be a little difficult: while I provide [an RSS feed of the edit history](http://www.gwern.net/atom.xml), it is too fine-grained to know what is an interesting update and what is housekeeping. So periodically I write up interesting changes in a human-readable format:
 
 # 2015
+## September
+
+- [modafinil user survey](https://docs.google.com/forms/d/1ZNyGHl6vnHD62spZyHIqyvNM_Ts_82GvZQVdAr2LrGs/viewform) (running 26 September - 26 October 2015)
+- [`resorter` tool for statistically re-ranking a set of ratings](/Resorter)
+- [Bitter Melon experimental & cost-benefit analysis](/Melon)
+- [noisy polls: modeling potentially falsified poll data](/Statistical%20notes#dealing-with-all-or-nothing-unreliability-of-data)
+- [Value of Information for suicide](/Statistical%20notes#value-of-information-clinical-prediction-instruments-for-suicide) (example cost-benefit analysis of weakly predicting suicide)
+
 ## July
 
 - [Dark Net Market archives, 2011-2015](/Black-market%20archives "Mirrors of Tor-Bitcoin black-markets & forums 2013-2015, and other material")

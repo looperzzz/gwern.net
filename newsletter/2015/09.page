@@ -2,7 +2,7 @@
 title: September news
 created: 1 Sep 2015
 tags: newsletter
-status: in progress
+status: finished
 belief: log
 ...
 
@@ -16,8 +16,6 @@ This is a summary of the revision-history RSS feed, overlapping with [Changelog]
 - [Bitter Melon experimental & cost-benefit analysis](http://gwern.net/Melon)
 - [noisy polls: modeling potentially falsified poll data](http://www.gwern.net/Statistical%20notes#dealing-with-all-or-nothing-unreliability-of-data)
 - [Value of Information for suicide](http://www.gwern.net/Statistical%20notes#value-of-information-clinical-prediction-instruments-for-suicide) (example cost-benefit analysis of weakly predicting suicide)
-- [mail?](http://gwern.net/Mail%20delivery)
-- [RNN author failure?](http://www.gwern.net/Statistical%20notes#rnn-metadata-for-mimicking-individual-author-style)
 
 # Media
 ## Links
@@ -26,19 +24,22 @@ Everything is heritable:
 
 - ["74 SNP hits on cognitive ability from 300k individuals"](http://infoproc.blogspot.com/2015/09/snp-hits-on-cognitive-ability-from-300k.html)
 - ["...intelligence GWAS hits: Their relationship to country IQ..."](http://emilkirkegaard.dk/en/wp-content/uploads/PifferIntelligence2015.pdf), Piffer 2015
-- ["Population genetic differentiation of height and body mass index across Europe"](http://www.gwern.net/docs/2015-robinson.pdf), Robinson et al 2015 (to quote Yvain: "Genetic differences explain 24% of between-national-populations differences in height and 8% of between-national-populations in BMI across Europe. Now that the only two massively polygenic traits that might vary among national populations have been successfully studied, I look forward to never having to read any further research of this sort ever again."; [excerpts](https://plus.google.com/103530621949492999968/posts/HAPgyYW7ACU))
+- ["Population genetic differentiation of height and body mass index across Europe"](http://www.gwern.net/docs/2015-robinson.pdf), Robinson et al 2015 (to quote [Yvain](http://slatestarcodex.com/2015/09/28/links-915-linkua-franca/): "Genetic differences explain 24% of between-national-populations differences in height and 8% of between-national-populations in BMI across Europe. Now that the only two massively polygenic traits that might vary among national populations have been successfully studied, I look forward to never having to read any further research of this sort ever again."; [excerpts](https://plus.google.com/103530621949492999968/posts/HAPgyYW7ACU))
+- ["The Evolutionary Genetics of Personality"](http://www.unm.edu/~gfmiller/newpapers_sept6/penke%202007%20targetarticle.pdf), Penke et al 2007 (holds up well after the GWASes for IQ & OCEAN; although prediction that OCEAN hits will be more plentiful than IQ seems to have fallen victim to personality being somewhat more polygenic than expected & non-additive)
 - ["Eugenics, Ready or Not"](https://quadrant.org.au/magazine/2015/05/eugenics-ready/), Salter
 
 Politics/religion:
 
 - ["est, Werner Erhard, and the corporatization of self-help"](http://www.believermag.com/issues/200305/?read=article_snider)
 - ["The End of History?"](http://www.wesjones.com/eoh.htm)
+- [Queue hairstyle](https://en.wikipedia.org/wiki/Queue_%28hairstyle%29)
 - ["Malcolm X's Purge, Second Thoughts, and Murder (Chapters 16-19, plus Haley's Epilogue)"](http://econlog.econlib.org/archives/2012/11/the_autobiograp_2.html)
 
 Statistics/AI/meta-science:
 
 - ["The Bayesian Reproducibility Project"](http://alexanderetz.com/2015/08/30/the-bayesian-reproducibility-project/) (interpreting the psychology reproducibility projects' results not by uninterpretable _p_-values but by a direct Bayesian examination of whether the replications support or contradict the originals)
 - ["The Most Dangerous Equation"](http://press.princeton.edu/chapters/s8863.pdf) (sample size and standard error; examples: coinage, disease rates, small schools, male test scores.)
+- ["Correlation, Causation, and Confusion"](http://www.thenewatlantis.com/publications/correlation-causation-and-confusion)
 - [Galton's problem](https://en.wikipedia.org/wiki/Galton%27s_problem) (Another name for pseudoreplication/autocorrelation/hierarchical-structure/non-independence. Definitely a concern in cross-racial genetics when you're using population-level averages.)
 - ["The perilous plight of the (non)-replicator"](https://funderstorms.wordpress.com/2012/10/31/the-perilous-plight-of-the-non-replicator/)
 - ["School Desegregation and Black Achievement: an integrative review"](http://deepblue.lib.umich.edu/bitstream/2027.42/68589/2/10.1177_0049124185013003002.pdf), Wortman & Bryant 1985 (more on publication bias)
@@ -50,10 +51,9 @@ Statistics/AI/meta-science:
 Psychology/biology:
 
 - ["A 2-Year Randomized Controlled Trial of Human Caloric Restriction: Feasibility and Effects on Predictors of Health Span and Longevity"](http://biomedgerontology.oxfordjournals.org/content/70/9/1097.full) (the CALERIE study), Ravussin et al 2015 ([excerpts](https://plus.google.com/103530621949492999968/posts/GUowvMgm3Ki))
-- ["The Evolutionary Genetics of Personality"](http://www.unm.edu/~gfmiller/newpapers_sept6/penke%202007%20targetarticle.pdf), Penke et al 2007 (holds up well after the GWASes for IQ & OCEAN; although prediction that OCEAN hits will be more plentiful than IQ seems to have fallen victim to personality being somewhat more polygenic than expected & non-additive)
 - ["The Zombie Preacher of Somerset"](http://lesswrong.com/lw/69/the_zombie_preacher_of_somerset/)
 - ["Operation Delirium: Decades after a risky Cold War experiment, a scientist lives with secrets"](http://www.newyorker.com/magazine/2012/12/17/operation-delirium)
-- [Rind et al. controversy](https://en.wikipedia.org/wiki/Rind_et_al._controversy)
+- [Rind et al controversy](https://en.wikipedia.org/wiki/Rind_et_al._controversy)
 
 Technology:
 
@@ -69,10 +69,8 @@ Economics:
 
 - ["Crockford's Club: How a Fishmonger Built a Gambling Hall and Bankrupted the British Aristocracy"](http://www.smithsonianmag.com/history/crockfords-club-how-a-fishmonger-built-a-gambling-hall-and-bankrupted-the-british-aristocracy-148268691/)
 - ["There are four ways to get fired from Caesars: (1) theft, (2) sexual harassment, (3) running an experiment without a control group, and (4) keeping a gambling addict away from the casino"](http://andrewgelman.com/2012/12/11/there-are-four-ways-to-get-fired-from-caesars-1-theft-2-sexual-harassment-3-running-an-experiment-without-a-control-group-and-4-keeping-a-gambling-addict-away-from-the-casino/)
-- ["Housewife, "Gold Miss," and Equal: The Evolution of Educated Women's Role in Asia and the U.S."](http://www.iza.org/conference_files/ESSLE2013/hwang_j9261.pdf), Hwang 2013
+- ["Housewife, 'Gold Miss', and Equal: The Evolution of Educated Women's Role in Asia and the U.S."](http://www.iza.org/conference_files/ESSLE2013/hwang_j9261.pdf), Hwang 2013
 - ["Money, Dear Boy"](http://tvtropes.org/pmwiki/pmwiki.php/Main/MoneyDearBoy)
-
-Philosophy:
 
 Fiction:
 
@@ -83,25 +81,26 @@ Fiction:
 
 ## Books
 
-Fiction:
-
 Nonfiction:
 
-- [_Epic Measures: One Doctor. Seven Billion Patients._](http://www.amazon.com/Epic-Measures-Doctor-Billion-Patients/dp/0062237500) (on [Christopher Murray's](https://en.wikipedia.org/wiki/Christopher_J.L._Murray) [Global Burden of Disease](https://en.wikipedia.org/wiki/Global_burden_of_disease))
-- [_Practical Criticism_](https://archive.org/details/practicalcritici030142mbp), [I.A. Richards](https://en.wikipedia.org/wiki/I._A._Richards)
-- [_Although Of Course You End Up Becoming Yourself: A Road Trip with David Foster Wallace_](https://en.wikipedia.org/wiki/Although_of_Course_You_End_Up_Becoming_Yourself),  Lipsky 2010
+- [_Epic Measures: One Doctor. Seven Billion Patients._](http://www.amazon.com/Epic-Measures-Doctor-Billion-Patients/dp/0062237500), on [Christopher Murray's](https://en.wikipedia.org/wiki/Christopher_J.L._Murray) [Global Burden of Disease](https://en.wikipedia.org/wiki/Global_burden_of_disease)
+- [_Practical Criticism_](https://archive.org/details/practicalcritici030142mbp), [I.A. Richards](https://en.wikipedia.org/wiki/I._A._Richards) (an amusing demonstration of the incompetence of most readers in showing the bizarre incomprehension of the plain meaning of many poems and the extreme inconsistency of their critical evaluations thereof, and Richards makes that point at length; still, I remain totally unconvinced by his claim that the "tinkles" poem is of any merit!)
+- [_Although Of Course You End Up Becoming Yourself: A Road Trip with David Foster Wallace_](https://en.wikipedia.org/wiki/Although_of_Course_You_End_Up_Becoming_Yourself),  Lipsky 2010 (for DFW completionists only. As DFW himself points out during the conversations, a writer is not at his best extemporaneously; any good work is the condensation of the peak moments of months or years. It is interesting to see DFW express his thoughts in a rather raw, unfiltered, and direct way, but I don't think anyone needed confirmation of the standard interpretations of _Infinite Jest_ when he already laid out all his cards in his "E Unibus Pluram" essay on television, did they?)
 - [_Mastering the Core Teachings of the Buddha_](http://www.dharmaoverground.org/dharma-wiki/-/wiki/Main/MCTB/en) (unrateable due to lack of personal experience)
-
 
 ## Film/TV
 
 Live-action:
 
-- [_The Theory of Everything_](https://en.wikipedia.org/wiki/The_Theory_of_Everything_(2014_film))
+- [_The Theory of Everything_](https://en.wikipedia.org/wiki/The_Theory_of_Everything_\(2014_film\)) (2014 biopic movie of Stephen Hawking, focusing on his first marriage to Jane Wilde as a student until the divorce. Flaws include the standard Hollywood portrayal of geeks and some lamentably missed opportunities for explaining the ideas involved in Hawking's life-work - for example, in explaining Hawking radiation, which is probably one of the easiest and most interesting possible ideas in 20th century cosmology to explain in a few seconds for laymen, the director instead decides to cut back and forth between Hawking's lecture and an incoherent pub discussion of same. I also have to wonder if debates about God were really as central to their lives as the movie made them, as they felt shoe-horned in; physicists tend to only bring up God in a Noble Lie way, for funding.  What *is* good - perhaps even great - about the movie, is (a) the remarkable job Eddie Redmayne does in acting out the physical deterioration of Hawking, so uncannily well that my suspension of disbelief became absolute and I totally forgot that he was not really Hawking himself, and (b) the decay of the Hawkings' marriage and eventual divorce, which is an unexpected topic to focus on but made sense once I learned it was based on Jane Wilde's memoirs. I was not sure it was worth watching in the early part showing the romance, but once Hawking's ALS enters the plot, then it became gripping for me.)
 
 Anime:
 
-- [_Shirobako_](https://en.wikipedia.org/wiki/Shirobako)?
+- [_Shirobako_](https://en.wikipedia.org/wiki/Shirobako) ([review](http://myanimelist.net/reviews.php?id=200297))
+
+## Other Media
+
+- [_XCOM: Enemy Unknown_](https://en.wikipedia.org/wiki/XCOM:_Enemy_Unknown): 2012 turn-based tactical strategy (isometric 3D) game; on Steam for Linux. You kill aliens. Very heavy on the atmosphere and moody graphics, with many special effects and little cut-scenes. As a tactical strategy, it has weaknesses; units must be trained & upgraded over many missions so they are worth their weight in gold, one-shot kills are always possible, getting in the first shot is critical, and the level layout has the standard mechanism where clusters of aliens are triggered when one moves, all of which combine to force on you an extremely conservative gameplay style where you move as slowly as possible through the level with all your soldiers always in cover, lest you trigger 3 or 4 groups of aliens simultaneously and lose one or more near-irreplaceable units. As such, the snipers level up with the greatest of ease as they do most of the killing, and they only get more overpowered when Archangel armor is developed and they can now shoot across almost entire levels without having to move! The levels themselves are not very imaginative either, with all of them boiling down to search-and-destroy in levels which are copies of each other, even the hostage-rescue and bomb-defusing missions (where the best strategy seems to be to, yes, just killing the aliens as fast as possible). Tech upgrades are doled out sparingly, so that one only gets the funnest weapons like the Ghost armor (temporary invisibility) or Blaster Launcher (rockets that go around corners) as the game is ending. I have to contrast the tactical strategy aspect of _XCOM_ unfavorably to the last game I was playing, [_Advance Wars: Dual Strike_](https://en.wikipedia.org/wiki/Advance_Wars:_Dual_Strike): units can be risked in gambits and attacks because losing them is not so devastating, the first-attacker still has a huge advantage but this makes for interesting ambushes and tactics rather than forcing passivity, and since the enemy is always in motion, you are constantly under pressure to act too. Overall, I enjoyed it, but don't feel any need to play it again.
 
 ## Music
 
