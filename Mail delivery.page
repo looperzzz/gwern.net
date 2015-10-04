@@ -641,7 +641,7 @@ Model uncertainty can be handled several ways ([Hooten & Hobbs 2015]( http://www
 - Penalty or regularization or sparsity priors (only handles selection of variables/predictors; gains largely eliminated in this case by informative priors)
 - Diagnostics like posterior predictive checks, crossvalidation, and [AIC](!Wikipedia "Akaike information criterion")/[BIC](!Wikipedia "Bayesian information criterion")/[DIC](!Wikipedia "Deviance information criterion")/[WAIC](http://arxiv.org/pdf/1208.6338 "'A Widely Applicable Bayesian Information Criterion', Watanabe 2012") ([overview](http://www.stat.columbia.edu/~gelman/research/published/waic_understand3.pdf  "'Understanding predictive information criteria for Bayesian models', Gelman et al 2013")) can be used to check for lack of fit; but like tests in software development, they can only show the presence of bugs & not their absence
 - Maximally flexible models can be used like nonparametric Bayesian models, to minimize the possibility of model misspecification ([Dunson 2013](/docs/statistics/2013-dunson.pdf "Nonparametric Bayes"))
-- [Ensemble approaches](!Wikipedia "Ensemble learning") (often targeted at the narrow use-case of selecting variables/predictors in a linear model, but some are applicable to choosing between different distributions as well), particularly Bayesian approaches ([popularization](http://lesswrong.com/lw/hzu/model_combination_and_adjustment/); [Hooten & Hobbs 2015](http://www.esajournals.org/doi/full/10.1890/14-0661.1 "A guide to Bayesian model selection for ecologists")):
+- [Ensemble approaches](!Wikipedia "Ensemble learning") (often targeted at the narrow use-case of selecting variables/predictors in a linear model, but some are applicable to choosing between different distributions as well), particularly Bayesian approaches ([popularization](http://lesswrong.com/lw/hzu/model_combination_and_adjustment/); [Friel & Wyse 2011](http://www.arxiv.org/pdf/1111.1957v1.pdf "Estimating the model evidence: a review"); [Hooten & Hobbs 2015](http://www.esajournals.org/doi/full/10.1890/14-0661.1 "A guide to Bayesian model selection for ecologists")):
 
    - Bayesian model choice: models can be pitted against each other (eg using Bayes factors) implemented using [nested sampling](!Wikipedia), or [reversible jump MCMC](!Wikipedia)/product-space method ([Carlin & Chib 1995](http://stats.ma.ic.ac.uk/~das01/MyWeb/SCBI/Papers/CarlinChib.pdf "Bayesian model choice via Markov chain Monte Carlo methods"), [Lodewyckx et al 2011](http://ejwagenmakers.com/2011/LodewyckxEtAl2011.pdf "A tutorial on Bayes factor estimation with the product space method") & [source code](http://ppw.kuleuven.be/okp/software/scripts_tut_bfepsm/), [Tenan 2014](/docs/statistics/2014-tenan.pdf "Bayesian model selection: The steepest mountain to climb") & [source code](/docs/statistics/2014-tenan-supplement.zip)), or ABC, and the one with highest posterior probability is selected for any further analysis while all others are ignored
    - Bayesian model averaging: posterior probabilities of models are calculated, but all models are retained and their posteriors are combined weighted by the probability that model is the true one ([Hoeting et al 1999](https://projecteuclid.org/download/pdf_1/euclid.ss/1009212519 "Bayesian model averaging: a tutorial")); but with enough data, the posterior probability of the model closest to the truth will converge on 1 and BMA becomes a model selection procedure
@@ -976,14 +976,14 @@ entropyD <- function(dt) {
    params <- c("y.new")
 
    # average together the _t_ & normal, per the Bayesian model averaging results:
-   jN <- runModel(dt, modelN)
-   jT <- runModel(dt, modelT)
+   jN <- runModel(dt, modelN, iter=500)
+   jT <- runModel(dt, modelT, iter=500)
    posteriorTimesN <- c(jN, jT)
 
    entropy <- mean(log(posteriorTimes))
    return(list(posteriorTimes, entropy))
    }
-actions <- c(600:750)
+actions <- c(600:728)
 oldEntropy <- mean(log(posteriorTimes))
 ei <- data.frame(Action=NULL, Entropy=NULL)
 for (a in actions) {
@@ -1017,7 +1017,7 @@ Interested in how the maximal expected information time changed, I began checkin
 
 If we are not optimizing the kind of data collected, we can optimize how *much* data we collect by periodically calculating how much additional data could improve our estimates and how much this improvement is worth on average, especially compared to how much that additional data would cost.
 
-Expected values of various kinds of information show up frequently in Bayesian decision theory, and are valuable for linking questions of how much & what data to collect to real-world outcomes (not just money but lives and welfare; [an Alzheimer's example](http://eprints.whiterose.ac.uk/946/1/claxtonk1.pdf "'Bayesian value-of-information analysis: an application to a policy model of Alzheimer's disease', Caxton et al 2001")).
+Expected values of various kinds of information show up frequently in Bayesian decision theory, and are valuable for linking questions of how much & what data to collect to real-world outcomes (not just money but lives and welfare; [a review](/docs/statistics/2004-ades.pdf "'Expected Value of Sample Information Calculations in Medical Decision Modeling', Ades et al 2004"); [an Alzheimer's example](http://eprints.whiterose.ac.uk/946/1/claxtonk1.pdf "'Bayesian value-of-information analysis: an application to a policy model of Alzheimer's disease', Caxton et al 2001")).
 
 ### EVPI
 
