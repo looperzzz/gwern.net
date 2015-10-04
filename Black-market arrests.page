@@ -415,7 +415,7 @@ Liam Lyburd           M   18  The Joker, ILM, DT   buyer     Evolution          
 Blake Benthall        M   26  Defcon               operator  Silk Road 2                       USA         California                                           FALSE 2014-11-05 2014-11-05    San Francisco
                       M                            operator  Hydra                             Hungary                                                          TRUE  2014-11-05 2014-11-11
                       M   20                                 Silk Road 2                       UK                                                                     2014-11-05 2014-11-07    "20-year-old man from Liverpool"
-Alex Middleton        M   19  MaximusDecimus      seller     Silk Road 2                       UK         Linoclnshire   MXE, Xanax                             TRUE  2014-11-05 2014-11-07    Was finally publicly identified in September 2015.
+Alex Middleton        M   19  MaximusDecimus      seller     Silk Road 2                       UK         Lincolnshire   MXE, Xanax, 4-MEC                      TRUE  2014-11-05 2014-11-07    Was finally publicly identified in September 2015.
                       M   30                                 Silk Road 2                       UK                                                                     2014-11-05 2014-11-07    "a 30-year-old man from Cleethorpes"
 Cei William Owens     M   29                       seller    Silk Road 2                       UK          Wales                                                      2014-11-05 2014-11-07    Aberdovey
 Robin C. Bradshaw     M   59                       buyer     Silk Road 2                       UK          Wales                                                      2014-11-05 2014-11-07    Aberdovey
@@ -510,9 +510,12 @@ Thor Bache-Wiig       M   29                       seller                       
                       M   29                       seller                                      Norway                     marijuana                             TRUE  2015-06-09 2015-06-09
                       M   30                       seller                                      Norway                     marijuana                             TRUE  2015-06-09 2015-06-09
                       M   31                       seller                                      Norway                     marijuana                             TRUE  2015-06-09 2015-06-09
+Darren Hillyer        M   38  Emma                 buyer                                       UK          Milton Keynes  gun                                         2015-07-28 2015-09-10
+Ian MacPhee           M   47                       buyer                                       UK          Devon          gun                                         2015-07-28 2015-09-10      drop for Hillyer
 J Manikantan          M   24                       buyer     Agora                             India       Bengaluru      MDMA, LSD, marijuana                  TRUE  2015-08-06 2015-08-09
 Debyendu Roy          M   26                       buyer     Agora                             India       Bengaluru      MDMA, LSD, marijuana                  TRUE  2015-08-06 2015-08-09
 Jag Saipravesh        M   23                       buyer     Agora                             India       Bengaluru      MDMA, LSD, marijuana                  TRUE  2015-08-06 2015-08-09
+Benjamin Koops        M   21                       buyer                                       UK          Lenton         marijuana                             TRUE             2015-10-03
 
 # Confirmed
 ## Agora
@@ -1089,7 +1092,7 @@ During the 5 November 2014 busted of SR2, the [authorities announced](http://www
 
 > The NCA described the six British arrests as "significant", adding that a large amount of computer equipment has been seized at all the addresses searched and will now be forensically examined. The six - a 20-year-old man from Liverpool, a 19-year-old man from New Waltham in Lincolnshire, a 30-year-old man from Cleethorpes [Lincolnshire], a 29-year-old man from Aberdovey in Wales and a man and woman, both 58, also from Aberdovey, have all been bailed after being interviewed.
 
-The "19-year-old man from New Waltham" turns out to be Alex Middleton ("MaximusDecimus" on SR2), who sold [methoxetamine](!Wikipedia)/MXE & Xanax [internationally](http://www.nationalcrimeagency.gov.uk/news/716-dark-web-drug-dealer-selling-super-strength-ketamine-jailed "Dark web drug dealer selling super strength ketamine substitute jailed"); he pled guilty in June 2015 and was sentenced to [2 years 4 months in September 2015](http://www.mirror.co.uk/news/technology-science/technology/dark-web-drug-dealer-jailed-6546740 "Dark web drug dealer jailed for selling horse tranquiliser drug ketamine disguised as health food").
+The "19-year-old man from New Waltham" turns out to be Alex Middleton ("MaximusDecimus" on SR2), who sold [methoxetamine](!Wikipedia)/MXE & Xanax & [4-MEC](http://motherboard.vice.com/read/surprise-now-illegal-legal-highs-are-widely-available-on-the-dark-web) [internationally](http://www.nationalcrimeagency.gov.uk/news/716-dark-web-drug-dealer-selling-super-strength-ketamine-jailed "Dark web drug dealer selling super strength ketamine substitute jailed"); he pled guilty in June 2015 and was sentenced to [2 years 4 months in September 2015](http://www.mirror.co.uk/news/technology-science/technology/dark-web-drug-dealer-jailed-6546740 "Dark web drug dealer jailed for selling horse tranquiliser drug ketamine disguised as health food").
 
 In February 2015, [charges were announced for 5 people](http://motherboard.vice.com/read/silk-road-fallout-5-more-charged-in-the-uk-with-deep-web-crimes "Silk Road Fallout: 5 More Charged in the UK with Deep Web Crimes"):
 
@@ -1210,6 +1213,10 @@ It's unclear if they were Silk Road related or not - 3 of them *may* be the stil
 (The ages & location do not match the charges announced with PlutoPete, however.)
 
 <!-- TODO: 14 May followup; https://www.reddit.com/r/DarkNetMarkets/comments/32loc7/5_men_in_their_20s_charged_with_drug_offences_on/ -->
+
+[On 28 July 2015](http://www.nationalcrimeagency.gov.uk/news/697-dark-web-gun-fantasist-pleads-guilty "http://www.nationalcrimeagency.gov.uk/news/697-dark-web-gun-fantasist-pleads-guilty"), the 47yo man Ian MacPhee was arrested while serving as the drop for the 38yo man Darren Hillyer ("Emma"), receiving a CD over "a Luger LC9 9mm handgun and 50 rounds of ammunition" that [Hillyer had ordered from yet another undercover agent on an unnamed market](http://www.onemk.co.uk/news/crime/courts/2015/9/bletchley-gun-fantasist-posing-as-woman-on-the-dark-web-pleads-guilty-at-court-100920150027.html "Bletchley gun fantasist posing as woman on the dark web pleads guilty at court: Man pleads guilty to conspiracy to import firearm and ammunition") (likely not Evolution which had closed March 2015; Agora banned gun sales on 15 July 2015, so that's possible).
+
+A [29 September 2015 media article](http://www.nottinghampost.com/Nottingham-philosophy-student-caught-importing/story-27890513-detail/story.html "Nottingham philosophy student caught importing cannabis from USA") reported that 21yo college student Benjamin Koops had been sentenced after pleading guilty to importing marijuana from the USA through the 'dark web', which he resold locally to his friends, being busted after "two packages of cannabis were intercepted by the National Crime Agency and traced to Koops". It does not specify the market, whether Customs intercepted the packages, or when he was raided.
 
 ### USA
 
