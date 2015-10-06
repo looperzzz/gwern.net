@@ -779,6 +779,7 @@ One way to evaluate whether something is 'too good to be true' is to figure out 
 
 So what's the raw cost of modafinil to these online pharmacies? We can get a first estimate by looking at affiliate commissions. Commissions are part of the cost structure, so we can subtract the commission from the price and get an upper bound on how much the modafinil cost. (A company might be willing to pay a commission so high it makes a sale unprofitable if it generates a lot of return business, but this seems unlikely in an online pharmacy scenario.)
 
+For pharmaceutical affiliate marketing programs, particularly the Russian/East-European _partnerka_ ecosystem like GlavMed which dominated modafinil sales until the early 2010s, [commissions historically were around 30-50%](https://www.sophos.com/it-it/medialibrary/PDFs/technical%20papers/samosseikovb2009paper.pdf "'The Partnerka - What is it, and why should you care?', Samosseiko").
 I signed up for 3 affiliate programs between April 2011 and January 2012^[I dropped them when I checked into my accounts and discovered I had been credited with \$0 after that time-span. Why bother?]; in order, by price per mg as given in the above chart (cheapest first):
 
 1. EDAndMore: 20%[^edandmore]
@@ -895,7 +896,14 @@ Of course, this does require you to already have beliefs about the reliability o
 
 We could also try applying the rule of three and Laplace's rule of succession to estimating seizures by customs: I personally have ordered modafinil perhaps 7 times, one of which was not seized by customs but unusual circumstances meant I dastn't get it; so I would obtain $\frac{3+1}{7} = 0.57 = 57\%$ by the rule of three or $\frac{1+1}{6+2} = 0.25 = 25\%$.
 
-And the real rates? One supplier told me of 20-30 shipments without seizure, which would be $\frac{3}{20} = 15\%$ or $\frac{0+1}{20+2} = 4.5\%$, and specifically claims a 3% rate; another supplier claims in their [FAQ](http://sunmodalert.ru/faq.php#shipping) a 3% rate for all packages which are "stolen, returned, delayed till deadline". These low rates seem plausible given how rarely I hear of *actual* seizures. (People ask what the odds of seizure are far more often than seizures actually happen, it seems.)
+And the real rates? One supplier told me of 20-30 shipments without seizure, which would be $\frac{3}{20} = 15\%$ or $\frac{0+1}{20+2} = 4.5\%$, and specifically claims a 3% rate; another supplier claims in their [FAQ](http://sunmodalert.ru/faq.php#shipping) a 3% rate for all packages which are "stolen, returned, delayed till deadline".
+[Levchenko et al 2011](http://www.icir.org/christian/publications/2011-oakland-trajectory.pdf "'Click Trajectories: End-to-End Analysis of the Spam Value Chain', Levchenko et al 2011") reports that of 120 purchase attempts, 56 purchases went through and only 3 were not delivered for any reason, for a failure rate of ~5%.[^Levchenko]
+Darknet market sellers seem to enjoy similar success rates, I infer from the general tenor of forum posts.
+In general, these low rates seem plausible given how rarely I hear of *actual* seizures. (People ask what the odds of seizure are far more often than seizures actually happen, it seems.)
+
+[^Levchenko]: Due to the problems in processing credit card payments & the researchers' mailbox expiring, it's a little more complicated than that, but I believe 53/56 is the most relevant proportion here:
+
+    > We attempted 120 purchases, of which 76 authorized and 56 settled.^10^ Of those that settled, all but seven products were delivered. We confirmed via tracking information that two undelivered packages were sent several weeks after our mailbox lease had ended, two additional transactions received no follow-up email, another two sent a follow-up email stating that the order was re-sent after the mailbox lease had ended, and one sent a follow-up email stating that our money had been refunded (this refund, however, had not been processed three months after the fact).
 
 ## Ordering when learning isn't free
 
