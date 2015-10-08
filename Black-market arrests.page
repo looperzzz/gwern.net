@@ -676,7 +676,7 @@ The female was released immediately, and the male eventually [received a 12-mont
 "In or about mid-2014" the TCF/Evolution seller "Dark_Mart" was taken over by the FBI^[See Cheng Le complaint: "In or about mid-2014, an FBI online covert employee (the 'OCE') assumed  online Dark-Web identity, which had previously been used by a trafficker in illicit materials, including, among other things, biological toxins."].
 The details are unknown, but Dark_Mart rejoined the Evolution forums after a long absence spanning that period with a comment about guns bringing heat on his suppliers^[Dark_Mart last posts on Evolution 2014-03-03 normally then posts again on 2014-08-29 that "I just recently logged back into evo and contacted some of you about my status. The bottom line is that one of my suppliers got arrested on gun charges and it brought some heat on our operation. I had to go off the grid for a while but Dark_Mart is back!"], which may or may not be the FBI agent telling the truth to be safe.
 
-Stephen & Cynthia Jones [were arrested 2 October 2014](http://www.accessnorthga.com/detail.php?n=280308 "Flowery Branch couple busted on drug charges") after a controlled delivery ("CD") of a package of MDMA from what may be the Evolution Dutch seller "weedybusnis" (he had many complaints of non-arriving or slow packages, suggesting his stealth is subpar or he's been profiled).
+Stephen & Cynthia Jones [were arrested 2 October 2014](http://www.accessnorthga.com/detail.php?n=280308 "Flowery Branch couple busted on drug charges") after [a controlled delivery ("CD")](/docs/sr/2003-steffen-druginterdiction-ch10-drugparcelsystems.pdf "_Drug Interdiction Partnerships, Legal Principles, and Investigative Methodologies for Law Enforcement_: Chapter 10: 'Drug Parcel Systems'") of a package of MDMA from what may be the Evolution Dutch seller "weedybusnis" (he had many complaints of non-arriving or slow packages, suggesting his stealth is subpar or he's been profiled).
 
 The New York carder Cheng Le (Evolution seller "FNU"/"fnufnu") [was arrested 23 December 2014](http://www.reuters.com/article/2015/01/20/us-usa-crime-ricin-idUSKBN0KT2G020150120 "New York man charged with trying to buy ricin 'death pills' online") & convicted [August 2015](http://www.reuters.com/article/2015/08/27/us-usa-crime-ricin-idUSKCN0QW2JE20150827 "N.Y. man convicted of trying to buy ricin 'death pills' online") after buying the poison ricin from the Evolution seller "Dark_Mart", who turned out to have been flipped "In or about mid-2014" by the FBI ([press release](http://www.justice.gov/opa/pr/new-york-man-indicted-attempting-acquire-deadly-toxin-ricin); [complaint](http://www.justice.gov/sites/default/files/opa/press-releases/attachments/2015/01/21/cheng_le_complaint_comp.pdf); [Evolution pages](/docs/sr/2015-02-24-evolution-chenglericin.tar.xz)).
 (See also the two UK arrests in February 2015 for abrin.)
@@ -1169,7 +1169,7 @@ On 11 August 2014, the 22yo [polytechnic college student](http://www.odt.co.nz/n
 
 ### Norway
 
-[A](https://www.reddit.com/r/LSD/comments/2u75vv/guess_i_need_to_say_goodbye_psychonauts/ "Guess i need to say goodbye, Psychonauts") [Redditor](https://www.reddit.com/r/DarkNetMarkets/comments/2ubnqf/xpost_from_rlsd_guess_i_need_to_say_goodbye/ "(X-post from /r/LSD) Guess i need to say goodbye, Psychonauts") reports being busted 29 January 2015 in [Norway](https://www.reddit.com/r/DarkNetMarkets/comments/34z5xi/list_of_known_dnm_arrests/cqzzywy) after a package of LSD from the Netherlands which he bought from LucyandMolly (who sells on Agora/Evolution/Nucleus) was intercepted by customs; he received just a knock-and-talk but confessed his guilt.
+[A](https://www.reddit.com/r/LSD/comments/2u75vv/guess_i_need_to_say_goodbye_psychonauts/ "Guess i need to say goodbye, Psychonauts") [Redditor](https://www.reddit.com/r/DarkNetMarkets/comments/2ubnqf/xpost_from_rlsd_guess_i_need_to_say_goodbye/ "(X-post from /r/LSD) Guess i need to say goodbye, Psychonauts") reports being busted 29 January 2015 in [Norway](https://www.reddit.com/r/DarkNetMarkets/comments/34z5xi/list_of_known_dnm_arrests/cqzzywy) after a package of LSD from the Netherlands which he bought from LucyandMolly (who sells on Agora/Evolution/Nucleus) was intercepted by customs; he received just a knock-and-talk^[For background on the "knock and talk", see [ch3 of Steffen & Candelaria 2003](/docs/sr/2003-steffen-druginterdiction-ch3-knockandtalk.pdf).] but confessed his guilt.
 
 On 9 June 2015, the arrest in the "previous days" of 4 men aged 29-31 from "Oslo and Skien"  was announced by Norwegian police (media:
 [1](http://www.dagbladet.no/2015/06/09/nyheter/innenriks/politiet/narkotika/39577386/ "Fire siktet i narkoaksjonen «Det mørke nettet»: Pågrepet for salg av narkotika på internett."),
@@ -1645,6 +1645,13 @@ qplot(YearMonth, log1p(Freq), data=x) + facet_grid(Country ~ .)
 ## try stacking the other way: https://imgur.com/gsol6Vr still pretty meh
 qplot(YearMonth, log1p(Freq), color=Country, facets=. ~ Country, data=x)
 ~~~
+
+# See also
+
+[_Drug Interdiction Partnerships, Legal Principles, and Investigative Methodologies for Law Enforcement_, Steffen & Candelaria 2003](http://www.amazon.com/Drug-Interdiction-Partnerships-Investigative-Methodologies/dp/0849312523):
+
+- [Chapter 3: "Knock and Talk Technique"](/docs/sr/2003-steffen-druginterdiction-ch3-knockandtalk.pdf)
+- [Chapter 10: "Drug Parcel Systems"](/docs/sr/2003-steffen-druginterdiction-ch10-drugparcelsystems.pdf)
 
 # External links
 
