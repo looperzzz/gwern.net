@@ -813,6 +813,22 @@ In September 2015, [another redditor](https://www.reddit.com/r/afinil/comments/3
 
     > thepharmacyexpress.com is actually the same source as usadiscreetmeds and a whole bunch of other sites (see my first post in this thread). Monarchpharm just uses different sites (that also look really similar) to sell the same meds at sometimes different prices. I think when I ordered from usadiscreetmeds.com the [SSL] certificate was also expired - but NP [no problem]. I'd say go for it!
 
+### Estimates
+
+So to review:
+
+- your standard blister-pack of 200mg Sun modafinil will run one around \$4 in an Indian pharmacy. Since real fake medicine costs about as much and the cost of the modafinil is one of the smallest costs involved, we can assume that it is probably real and the Indian pharmacy prices apply.
+- The India Post shipping from India to USA will cost [~\$14](http://www.indiapost.gov.in/SP_Int.aspx).
+- On the clearnet end, the costs are domain name, hosting, customer support, and processing bitcoins;
+
+    - cashing out bitcoins to pay the India drop-shipper might cost 5% of that in various fees
+    - a domain name shouldn't cost more than \$20/year even for a Russian registrar
+    - hosting an ecommerce site is also maybe \$20/month which totals to~\$300 (the modafinil business can be rough so probably a seller will actually be paying more for security than I include here)
+    - support might be something like minimum wage at a 40-hour year-round job or $8 \cdot 365 = 2920$ handling all the orders; domain, hosting, and support are amortized over all orders, which for a top modafinil seller should easily be thousands of orders per year, so let's say 2000 orders
+
+Hence, if you order a 40x200mg Sun Modalert, it will generally run you something like \$80 from a seller; then the bare minimum that modafinil seller could manage is a cost of $(4+14)\cdot 1.05 + (\frac{300}{2000})+(\frac{8 \cdot 365}{2000}) = ~20$ for a maximum possible margin of <74%.
+Being more conservative and assuming a 50% profit margin, this is consistent with (ie, greater than) both the affiliate percentages from past modafinil sellers and with the general affiliate percentages quoted by spam researchers, so it seems safe to assume that once a modafinil seller is up and running with a secure bugfree ecommerce website, a reliable dropshipper & modafinil source, and a good reputation, then it is profitable.
+
 # Ordering behavior
 
 Internet suppliers are not known for their transparency or reliability, and on top of the [technical difficulties](http://web.archive.org/web/20060322040019/http://www.nutraceuticalsworld.com/articles/2000/09/how-to-get-your-supplement-right-and-avoid-disaste.php) it is [well-known](http://www.plosmedicine.org/article/info:doi/10.1371/journal.pmed.0020100) that suppliers can be untrustworthy and actively deceptive; and the few retailers online of modafinil which are trustworthy tend to be more expensive (as a look at the above chart shows) or they require prescriptions for US buyers (like the Canadian online pharmacies). It's hard to get any hard numbers on how likely a particular supplier is to be a scam, or how many customers of a particular site are happy. A [BBC online poll](http://www.bbc.co.uk/news/health-15600900 "Do cognitive-enhancing drugs work?")^[Note, incidentally, that the BBC writer took a modafinil and a placebo blinded - and guessed wrong which day was modafinil, but saw some computer test scores improve.] (for what that's worth) about "cognitive-enhancing drugs" (eg. modafinil, Adderall, and Ritalin) got 761 responses, of which 38% were users at any point (~289), of which "nearly 40% said they had bought the drug online, and 92% said they would try it again." In the worst case scenario that the 8% who wouldn't try it again were all online buyers, that'd implies be a $\frac{8}{39}=0.2051$ or 21% unsatisfied rate or 79% satisfaction rate.
