@@ -145,7 +145,7 @@ Merkle:
 - http://lesswrong.com/r/discussion/lw/8f4/neil_degrasse_tyson_on_cryonics/6wbb
 - http://lesswrong.com/lw/d5u/plastination_is_maturing_and_needs_funding_says/6wbi
 
-["Electron imaging technology for whole brain neural circuit mapping"](http://www.brainpreservation.org/sites/default/files/ElectronImagingTechnologyForWholeBrainNeuralCircuitMapping_Hayworth2012.pdf), Hayworth 2012:
+["Electron imaging technology for whole brain neural circuit mapping"](/docs/2012-hayworth.pdf), Hayworth 2012:
 
 > As mentioned above, the diameter of neuronal processes routinely shrink to less than 100 nm; for example, dendritic spine necks and fine axons can shrink down to ~40nm. With standard tissue fixation and embedding protocols the membranes of these tubular structures are made electron dense, hence to resolve the tubular nature of these neuronal processes one requires resolutions on the order of 10 nm or less. Today both the transmission electron microscope (TEM) and the scanning electron microscope (SEM) can easily achieve such resolution while providing a signal to noise ratio sufficient to trace the finest neuropil in osmium fixed, heavy metal stained tissue. However, until relatively recently only the TEM was used for tracing neuronal circuits. This reliance on TEM has been a major roadblock to attempts at large-scale automation since TEM requires that sections be physically cut thin enough (<100nm) for electrons to pass through and that they be mounted on gossamer thin plastic films throughout the imaging process. If scanning, as opposed to transmission, electron microscopy could be used it would open up many more possibilities for robust automation since then at least the thin sections could be collected and imaged on a thick sturdy substrate [Hayworth, 2008], but before the widespread introduction of high-brightness field emission electron sources (as opposed to tungsten thermionic sources) one simply could not achieve SEM electron probes of small enough diameter (5 nm) and high enough current to allow quality imaging of neural tissue [Bogner et al., 2007; Joy, 1991].
 >
@@ -166,3 +166,4 @@ Merkle:
 - http://io9.com/5943304/how-to-preserve-your-brain-by-turning-it-into-plastic
 - http://ieet.org/index.php/IEET/more/dvorsky20120917
 - http://eversmarterworld.wordpress.com/2012/09/24/preserving-the-self-for-later-emulation-what-brain-features-do-we-need/
+- http://ieet.org/index.php/IEET/more/cerullo20150908
