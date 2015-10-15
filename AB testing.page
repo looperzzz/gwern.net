@@ -3962,6 +3962,7 @@ Installing:
 
 Then having generated the URL list previously, it is simple to download each HTML/CSS pair:
 
+~~~{.Bash}
 downloadCSS () {
       echo "$@"
       ID=`echo "$@" | md5sum | cut -f1 -d' '`
@@ -3972,12 +3973,14 @@ downloadCSS () {
        UNCSS_PID=$!
        echo $UNCSS_PID
        (sleep 4m ; kill -9 $UNCSS_PID) &
+       killall --quiet --older-than 1h phantomjs &
+       killall --quiet --older-than 1h uncss &
        wait $UNCSS_PID
        fi
 }
 export -f downloadCSS
 cat urls.txt | parallel downloadCSS
-
+~~~
 
 Screenshots: save as `screenshot.js`
 
@@ -3999,13 +4002,12 @@ downloadScreenshot() {
     echo "$@"
     ID=`echo "$@" | md5sum | cut -f1 -d' '`
     if [[ ! -a $ID.png ]]; then
-       nice phantomjs screenshot.js "$@" $ID.png &
+       (nice phantomjs screenshot.js "$@" $ID.png && nice optipng -o9 -fix $ID.png)&
        SCREENSHOT_PID=$!
        echo $SCREENSHOT_PID
        (sleep 4m ; kill -9 $SCREENSHOT_PID) &
+       (killall --quiet --older-than 1h phantomjs) &
        wait $SCREENSHOT_PID
-
-       nice optipng -o9 -fix $ID.png
     fi
 }
 export -f downloadScreenshot
@@ -4020,7 +4022,7 @@ After finish, find and delete duplicates with `fdupes`; and delete any stray HTM
     # delete bit-identical duplicates:
     fdupes . --delete --noprompt
     # look for extremely similar screenshots, and delete all but the first such image:
-    /usr/bin/findimagedupes -t 99% *.png | cut -d ' ' -f 2- | xargs rm
+    nice /usr/bin/findimagedupes --fingerprints=./.fp --threshold=99% *.png | cut --delimiter=' ' --field=2- | xargs rm
     # delete any file without a pair (empty or duplicate CSS having been previously deleted, now we clean up orphans):
     orphanedFileRemover () {
         if [[ ! -a $@.html || ! -a $@.css ]];
