@@ -6,7 +6,8 @@ status: in progress
 belief: log
 ...
 
-Following my writing can be a little difficult: while I provide [an RSS feed of the edit history](http://www.gwern.net/atom.xml), it is too fine-grained to know what is an interesting update and what is housekeeping. So periodically I write up interesting changes in a human-readable format:
+Following my writing can be a little difficult: while I provide [an RSS feed of the edit history](http://www.gwern.net/atom.xml), it is too fine-grained to know what is an interesting update and what is housekeeping.
+So periodically I write up interesting changes in a human-readable format and [send it out to the mailing list](http://eepurl.com/Kc155).
 
 # 2015
 ## September
@@ -457,5 +458,5 @@ Per my past practice of linking stuff I think LWers will find interesting, here 
 <li>notes on <a href="http://www.gwern.net/intermittent-fasting">intermittent fasting</a></li>
 </ul>
 </li>
-<li>I stuck a link in the footer of every page to a Google spreadsheet form, borrowing the idea from <a href="http://lesswrong.com/lw/8bt/tell_me_what_you_think_of_me/">Luke Muehlhauser</a> - I've only gotten 1 feedback so far, IIRC, but that was before I put it in the footer and updated all the pages a few hours ago.</li>
+<li>I stuck a link in the footer of every page to a Google spreadsheet form, borrowing the idea from <a href="http://lesswrong.com/lw/8bt/tell_me_what_you_think_of_me/">Luke Muehlhauser</a> - I've only gotten 1 feedback so far, IIRC, but that was before I put it in the footer and updated all the pages a few hours ago. (As of 2015, there are hundreds of responses and I consider the feedback form to have paid its way; see my later writeup detailing the benefits.)</li>
 </ol>
