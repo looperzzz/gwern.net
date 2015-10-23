@@ -1593,13 +1593,111 @@ So the 4 hits do reduce the necessary sample size to detect a decrease, but it's
 
 In the current GWAS literature, there are ~9 hits we could use, but the upcoming SSGAC paper promises ~75 hits. How much would 75 improve over 4?
 75*0.5=37.5, sd=sqrt(75*0.5*0.5)=4.33; 75*0.497=37.275, sd=sqrt(75*0.497*(1-0.497))=4.33; d=(37.5-37.275)/4.33=0.052:
+~~~{.R}
 R> power.t.test(delta=(37.5-37.275)/4.33, power=0.8)
 
      Two-sample t test power calculation
 
               n = 5814.604421
+...
+~~~
+
 so with 75, it drops from 200k to 12k.
 
+To work backwards: we know with 1 hit, we need almost a million genomes (infeasible for any but the largest databanks, who have no interest in studying this hypothesis), and with all hits we need more like 200 genomes (entirely doable with just publicly available datasets like PGP), but how many hits do we need to work with an in-between amount of data like the ~2k genomes with ages I guess may be publicly available now or in the near future?
+
+~~~{.R}
+power.t.test(n=1000, power=0.8)
+#     Two-sample t test power calculation
+#
+#              n = 1000
+#          delta = 0.1253508704
+hits=437; mean1=hits*0.5; sd1=sqrt(hits*0.5*0.5); mean2=hits*0.497; sd2=sqrt(hits*0.497*(1-0.497)); d=(mean1-mean2)/mean(c(sd1,sd2)); d
+# [1] 0.1254283986
+~~~
+
+With a polygenic score drawing on 437 hits, then a sample of 2k suffices to detect the maximum decrease.
+
+This is pessimistic because the 10k alleles are not all the same effect size and GWAS studies inherently will tend to find the largest effects first. So the first 4 (or 75) hits are worth more.
+The distribution of effects is probably something like an inverse exponential distribution: many small near-zero effects and a few large ones.
+With a mean of 1, we can simulate creating a set of 10k effect sizes which are exponentially distributed and have mean 5000 and SD close to (but larger than) 50 and mimicks closely the binomial model:
+
+~~~{.R}
+effects <- sort(rexp(10000)/1, decreasing=TRUE)
+genomeOld <- function() { ifelse(sample(c(FALSE,TRUE), prob=c(0.5, 0.5), 10000, replace = TRUE), 0, effects) }
+mean(replicate(10000, sum(genomeOld())))
+# [1] 5000.270218
+sd(replicate(10000, sum(genomeOld())))
+# [1] 69.82652816
+genomeNew <- function() { ifelse(sample(c(FALSE,TRUE), prob=c(0.497, 1-0.497), 10000, replace = TRUE), 0, effects) }
+~~~
+
+With a dysgenic effect of -0.445sds, that's a fall of the sum of random exponentials of ~31, which agrees closely with the difference in polygenic genome scores:
+
+~~~{.R}
+mean(replicate(10000, sum(genomeOld() - genomeNew())))
+# [1] 29.75354558
+~~~
+
+For each draw from the old and new populations, we can take the first 4 alleles, which were the ones assigned the largest effects, and build a weak polygenic score and compare means
+For example:
+
+~~~{.R}
+polyNew <- replicate(1000, sum(genomeNew()[1:4]))
+polyOld <- replicate(1000, sum(genomeOld()[1:4]))
+t.test(polyOld, polyNew, alternative="greater")
+#
+#   Welch Two Sample t-test
+#
+# data:  polyOld and polyNew
+# t = 0.12808985, df = 1995.8371, p-value = 0.8980908
+# alternative hypothesis: true difference in means is not equal to 0
+# 95 percent confidence interval:
+#  -0.7044731204  0.8029267301
+# sample estimates:
+#   mean of x   mean of y
+# 17.72741040 17.67818359
+~~~
+
+Or to mimick 75 hits:
+
+~~~{.R}
+t.test(replicate(1000, sum(genomeOld()[1:75])), replicate(1000, sum(genomeNew()[1:75])))
+#
+#     Welch Two Sample t-test
+#
+# data:  replicate(1000, sum(genomeOld()[1:75])) and replicate(1000, sum(genomeNew()[1:75]))
+# t = 1.9880219, df = 1996.8114, p-value = 0.04694562
+# alternative hypothesis: true difference in means is not equal to 0
+# 95 percent confidence interval:
+#  0.03237261927 4.75806691195
+# sample estimates:
+#   mean of x   mean of y
+# 234.7609064 232.3656866
+~~~
+
+Using the exponential simulation, we can simulate several draws (i=10) & tests for a variety of sample sizes to get an idea of what sample size we need to get decent power in that model:
+
+~~~{.R}
+powerExponential <- data.frame()
+for (n in seq(1000, 5000, by=50)) {
+ for (i in 1:100) {
+      effects <- sort(rexp(10000)/1, decreasing=TRUE)
+      genomeOld <- function() { ifelse(sample(c(FALSE,TRUE), prob=c(0.5, 0.5), 10000, replace = TRUE), 0, effects) }
+      genomeNew <- function() { ifelse(sample(c(FALSE,TRUE), prob=c(0.497, 1-0.497), 10000, replace = TRUE), 0, effects) }
+
+      polyOld <- replicate(n, sum(genomeOld()[1:75]))
+      polyNew <- replicate(n, sum(genomeNew()[1:75]))
+      t <- t.test(polyOld, polyNew, alternative="greater")
+
+      powerExponential <- rbind(powerExponential, data.frame(N=n, P=t$p.value, PO.mean=mean(polyOld), PO.sd=sd(polyOld), PN.mean=mean(polyNew), PN.sd=sd(polyNew)))
+     }
+}
+powerExponential$Power <- powerExponential$P<0.05
+powers <- aggregate(Power ~ N, mean, data=powerExponential)
+library(ggplot2)
+qplot(N, Power, data=powers)  + stat_smooth()
+~~~
 -->
 
 # Bayesian Model Averaging
@@ -2120,7 +2218,7 @@ This one eventually exploded too, having maxed out at a loss of 1.185.
 for FILE in *.txt; do
   dos2unix $FILE;
   AUTHOR=$(echo $FILE | sed -e 's/\.txt//' | tr '[:lower:]' '[:upper:]')
-  cat $FILE | fold --spaces --bytes --width=1000 | sed -e "s/^/$AUTHOR\|/" > $FILE.transformed
+  cat $FILE | fold --spaces --bytes --width=1500 | sed -e "s/^/$AUTHOR\|/" > $FILE.transformed
 done
 cat *.transformed | shuf > input.txt
 cd ../../
@@ -2150,3 +2248,7 @@ back to flat 1-layer 2600-nn rnn
 got down to 1.0414 before validation loss began increasing a bit
 
 question: how much do multiple authors penalize learning ability? let's try seeing what the flat rnn can do on solely the Robert Jordan corpus (but still formatted with prefixes etc).
+got down to 0.9638, which yields pretty good output!
+
+OK, let's try just Bible & Jordan, deleting everything else
+09:53 PM 56Mb$ rm churchill.txt  twain.txt wolfe.txt
