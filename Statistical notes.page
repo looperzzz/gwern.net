@@ -1544,6 +1544,13 @@ So variation in these estimates (quoted estimates per generation range from .3 t
 Without formally meta-analyzing all dysgenics studies, a good starting point seems like a genetic selection of 1 point per decade or 0.1 points per year or 0.007 standard deviations per year (or 0.7 standard deviations per century).
 
 Dysgenics effects should be observable by looking at longitudinal genome sequences. The paternal mutation load should show up as a increase (70 new mutations per generation) over the past century, while the genetic selection will operate by reducing the frequency of variants which increase intelligence.
+
+If there are ~70 new mutations per generation and 2 harmful, and there is no longer any purifying selection so that all 70 will tend to remain present,  http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0090097
+"The deleterious mutation load is insensitive to recent population history", Simons et al 2014,  using data from "Analysis of 6,515 exomes reveals the recent origin of most human protein-coding variants", Fu et al 2012; figure 3, number of single-nucleotide variants per person over the European-American sample, split by estimates of harm: 21345 + 15231 + 5338 + 1682 + 1969 = 45565.
+
+
+
+
 The most common available genetic data is genotyped SNPs, which sequence only the variants most common in the general population; SNP data can look at the effects of genetic selection but will not look at new mutations (since a new mutation would not be common enough to be worth putting onto a SNP chip).
 
 Given a large sample of SNP data, a birth year (or age), and a set of binary SNP variables which cause intelligence (coded as 1 for the good variant, 0 for the others), we could formulate this as a multivariate regression: glm(cbind(SNP1, SNP2, ... SNPN) ~ Year, family=binomial) and see if the year variable has a negative sign (increasing passage of time predicts lower levels of the good genes); if it does, this is evidence for dysgenics.
@@ -1676,28 +1683,69 @@ t.test(replicate(1000, sum(genomeOld()[1:75])), replicate(1000, sum(genomeNew()[
 # 234.7609064 232.3656866
 ~~~
 
-Using the exponential simulation, we can simulate several draws (i=10) & tests for a variety of sample sizes to get an idea of what sample size we need to get decent power in that model:
+Using the exponential simulation, we can do a parallelized power analysis: simulate draws (i=200) & tests for a variety of sample sizes to get an idea of what sample size we need to get decent power with 75 hits.
 
 ~~~{.R}
-powerExponential <- data.frame()
-for (n in seq(1000, 5000, by=50)) {
- for (i in 1:100) {
-      effects <- sort(rexp(10000)/1, decreasing=TRUE)
-      genomeOld <- function() { ifelse(sample(c(FALSE,TRUE), prob=c(0.5, 0.5), 10000, replace = TRUE), 0, effects) }
-      genomeNew <- function() { ifelse(sample(c(FALSE,TRUE), prob=c(0.497, 1-0.497), 10000, replace = TRUE), 0, effects) }
+library(ggplot2)
+library(parallel)
+library(plyr)
+hits <- 1:75
+sampleSizes <- seq(3000, 7000, by=300)
+iters <- 300
+powerExponential <- ldply(mclapply(sampleSizes,
+ function(n) { results <- data.frame()
+   for (i in 1:iters) {
+        effects <- sort(rexp(10000)/1, decreasing=TRUE)
+        genomeOld <- function() { ifelse(sample(c(FALSE,TRUE), prob=c(0.5, 0.5), 10000, replace = TRUE), 0, effects) }
+        genomeNew <- function() { ifelse(sample(c(FALSE,TRUE), prob=c(0.497, 1-0.497), 10000, replace = TRUE), 0, effects) }
 
-      polyOld <- replicate(n, sum(genomeOld()[1:75]))
-      polyNew <- replicate(n, sum(genomeNew()[1:75]))
-      t <- t.test(polyOld, polyNew, alternative="greater")
+        polyOld <- replicate(n, sum(genomeOld()[hits]))
+        polyNew <- replicate(n, sum(genomeNew()[hits]))
+        t <- t.test(polyOld, polyNew, alternative="greater")
 
-      powerExponential <- rbind(powerExponential, data.frame(N=n, P=t$p.value, PO.mean=mean(polyOld), PO.sd=sd(polyOld), PN.mean=mean(polyNew), PN.sd=sd(polyNew)))
-     }
-}
+        results <- rbind(results, data.frame(N=n, P=t$p.value, PO.mean=mean(polyOld), PO.sd=sd(polyOld), PN.mean=mean(polyNew), PN.sd=sd(polyNew)))
+       }
+   results
+ }))
 powerExponential$Power <- powerExponential$P<0.05
 powers <- aggregate(Power ~ N, mean, data=powerExponential)
-library(ggplot2)
 qplot(N, Power, data=powers)  + stat_smooth()
 ~~~
+
+This is still too optimistic since we assumed the ideal scenario of only very old and very new genomes, while available genomes are more likely to be distributed fairly uniformly between 1950 and 2015.
+To get the effect size for each year, we simply split the frequency decrease over each year and generate hypothetical genomes with less of a frequency decrease, and do a linear regression to get a _p_-value for the year predictor:
+
+~~~{.R}
+genome <- function(effects, hits) {
+  t <- sample(c(1:(2015-1950)), 1)
+  decreasedFrequency <- 0.5 - (((0.5-0.497)/(2015-1950)) * t)
+  return(data.frame(Year=1950+t,
+                    PolygenicScore=sum(ifelse(sample(c(FALSE,TRUE), prob=c(decreasedFrequency, 1-decreasedFrequency), 10000, replace = TRUE), 0, effects)[hits])))
+  }
+hits <- 1:75
+sampleSizes <- seq(4000, 7000, by=500)
+iters <- 300
+powerExponentialDistributed <- ldply(mclapply(sampleSizes,
+   function(n) {
+     results <- data.frame()
+     for (i in 1:iters) {
+      effects <- sort(rexp(10000)/1, decreasing=TRUE)
+      d <- ldply(replicate(2*n, genome(effects, hits), simplify=FALSE))
+      l <- lm(PolygenicScore ~ Year, data=d)
+      p <- anova(l)$`Pr(>F)`[1]
+      results <- rbind(results, data.frame(N=n, P=p,
+                                           PO.mean=predict(l, newdata=data.frame(Year=1950)),
+                                           PN.mean=predict(l, newdata=data.frame(Year=2015))))
+     }
+     return(results)
+   }
+))
+powerExponentialDistributed$Power <- powerExponentialDistributed$P<0.05
+powers <- aggregate(Power ~ N, mean, data=powerExponentialDistributed)
+qplot(N, Power, data=powers)  + stat_smooth()
+~~~
+
+
 -->
 
 # Bayesian Model Averaging
