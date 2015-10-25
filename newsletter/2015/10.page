@@ -11,21 +11,43 @@ This is a summary of the revision-history RSS feed, overlapping with [Changelog]
 
 # Writings
 
+- modafinil survey results?
 - [mail?](http://gwern.net/Mail%20delivery)
 - [RNN author failure?](http://www.gwern.net/Statistical%20notes#rnn-metadata-for-mimicking-individual-author-style)
+- dysgenics power estimate?
 
 # Media
 ## Links
 
 Everything is heritable:
 
+- ["Thinking positively: The genetics of high intelligence"](http://www.sciencedirect.com/science/article/pii/S0160289614001676) ([commentary](https://plus.google.com/103530621949492999968/posts/fDJFgJJ95pE))
+- ["Political Attitudes Develop Independently of Personality Traits"](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0118106), Hatemi & Verhulst 2015
+
 Politics/religion:
+
+- ["'Ethics' is advertising"](https://meaningness.wordpress.com/2015/10/05/buddhist-ethics-is-advertising/), ["The Strange Case of Anna Stubblefield"](http://www.nytimes.com/2015/10/25/magazine/the-strange-case-of-anna-stubblefield.html "She told the family of a severely disabled man that she could help him to communicate with the outside world. The relationship that followed would lead to a criminal trial.") ("Woe to you, teachers of the law and Pharisees...", "organisms are adaptation-executers, not fitness-maximizers")
+- ["The Cost of Crime to Society: New Crime-Specific Estimates for Policy and Program Evaluation"](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2835847/)
 
 Statistics/AI/meta-science:
 
+- ["A New, Life-or-Death Approach to Funding Heart Research"](http://www.nytimes.com/2015/10/20/health/a-new-life-or-death-approach-to-funding-heart-research.html)
+- ["Magnesium l-threonate/Magtein: publication bias in its human trials"](https://www.reddit.com/r/Nootropics/comments/3pk4yv/magnesium_lthreonatemagtein_publication_bias_in/)
+- ["Auto-Generating Clickbait With Recurrent Neural Networks"](http://larseidnes.com/2015/10/13/auto-generating-clickbait-with-recurrent-neural-networks/)
+- ["Page Weight Matters"](http://blog.chriszacharias.com/page-weight-matters) (Simpson's paradox: when a better treatment - faster YouTube page loads - makes aggregate numbers worse - average latency goes _up_)
+
 Psychology/biology:
 
+- ["Reconstruction and Simulation of Neocortical Microcircuitry"](http://www.cell.com/cell/abstract/S0092-8674%2815%2901191-5), Markram et al 2015 ([media](http://www.theguardian.com/science/2015/oct/08/complex-living-brain-simulation-replicates-sensory-rat-behaviour "Complex living brain simulation replicates sensory rat behaviour: Blue Brain Project supercomputer recreates part of rodent’s brain with 30,000 neurons connected by 40m synapses to show patterns of behaviour triggered, for example, when whiskers are touched"))
+- ["Synchronizing education to adolescent biology: 'let teens sleep, start school later'"](http://www.researchgate.net/profile/Paul_Kelley5/publication/271991912_Synchronizing_education_to_adolescent_biology_let_teens_sleep_start_school_later/links/5527fc7a0cf2779ab78b5e8f.pdf), Kelley et al 2014:
+- ["Evolution of the human brain: when bigger is better"](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3973910/), Hofman 2014
+- ["When Evolution Is Infectious"](http://nautil.us/issue/29/scaling/when-evolution-is-infectious)
+- ["The Dubious Quick Kill, part 1: Sword wounds and the circulatory system"](http://www.classicalfencing.com/articles/bloody.php)
+- [Dealing with a mercury spill](http://www.jefftk.com/p/mercury-spill)
+
 Technology:
+
+- ["Crush Point: When large crowds assemble, is there a way to keep them safe?"](http://www.newyorker.com/magazine/2011/02/07/crush-point)
 
 Economics:
 
@@ -33,20 +55,62 @@ Philosophy:
 
 Fiction:
 
+- ["It Was You Who Made My Eyes Blue"](http://slatestarcodex.com/2015/10/15/it-was-you-who-made-my-blue-eyes-blue/)
+
 <!-- Back to 28 Nov 2012 -->
 
 ## Books
 
 Fiction:
 
+- _The Wind-up Girl_ ([review](https://www.goodreads.com/review/show/1411687919))
+- [_The Great Gatsby_](https://en.wikipedia.org/wiki/The_Great_Gatsby)
+
 Nonfiction:
+
+- [_Bias in Mental Testing_](https://en.wikipedia.org/wiki/Bias_in_Mental_Testing), Jensen 1980 ([review](https://www.goodreads.com/review/show/1412079619))
+- _Drug Interdiction Partnerships, Legal Principles, and Investigative Methodologies for Law Enforcement_ ([review](https://www.goodreads.com/review/show/1411688271?book_show_action=false))
+- _The Master Algorithm_ ([review](https://www.goodreads.com/review/show/1424450849))
 
 ## Film/TV
 
 Live-action:
 
+- _The Martian_
+- [_The Great Gatsby_](https://en.wikipedia.org/wiki/The_Great_Gatsby_%282013_film%29)
+- _Back to the Future II_
+
 Anime:
+
+- _Nekomonogatari Shiro_
+- _Nekomonogatari Kuro_
+- [_A Letter To Momo_](https://en.wikipedia.org/wiki/A_Letter_to_Momo) ([review](http://myanimelist.net/reviews.php?id=201877))
 
 ## Music
 
 Touhou:
+
+- ["Fairy Dance"](https://www.youtube.com/watch?v=17p6ufiPFzQ) (Pine Tree feat. Mii; _Shinsoku_ {C86}) [rock]
+- ["Shanghai Teahouse ~ Chinese Tea"](https://www.youtube.com/watch?v=sKqoPP4cydA) (Ex-calibur; _Knights of Round_ {C73}) [instrumental rock]
+
+Doujin:
+
+- ["homephone TE"](https://macaroom.bandcamp.com/track/homephone-te) (Asahi feat.emaru; _homephone TE_ {2014}) [electronica]
+- ["yume"](https://macaroom.bandcamp.com/track/yume) (Asahi feat.emaru; _homephone TE_ {2014}) [electronica]
+- ["tsuiraku"](https://macaroom.bandcamp.com/track/tsuiraku) (Asahi feat.emaru; _homephone TE_ {2014}) [electronica]
+- ["sinwave"](https://macaroom.bandcamp.com/track/sinwave) (Asahi feat.emaru; _homephone TE_ {2014}) [electronica]
+- ["handmade"](https://www.youtube.com/watch?v=lhyKoQ0UKZM) (宮沢もよよ; _PLAY_ {C85}) [electronica]
+- ["IVY"](https://www.dropbox.com/s/pp7ltuw7fsine7g/fullkawapfeatutaukitchen-girlfriendfromkyoto-ivy.ogg) (Fullkawa-P feat. Utau Kitchen; _Girlfriend from Kyoto_ {2012}) [Jpop]
+- ["Purl"](https://www.youtube.com/watch?v=nlbWRAMMKc8) (ITM; _Bayside Dreamer_ {C88}) [house]
+- ["Fresh Air"](https://www.dropbox.com/s/mzxxlsnc97rdswn/lumina-baysidedreamer-freshair.ogg) (Lumina; _Bayside Dreamer_ {C88}) [house]
+
+Kantai Collection:
+
+- ["昼戦・砲雷撃戦、初め! -ピアノ協奏曲-"](https://www.youtube.com/watch?v=AKIkY9OdO8A) (TAM; _KanColle Piano Concerto_ {C88}) [orchestral]
+
+Vocaloid:
+
+- ["Crawlers"](https://croissantchicago.bandcamp.com/track/crawlers) (Miku; Croissant Chicago, _Morning Act_ {2015}) [Jpop]
+- ["Osmium"](https://www.jamendo.com/en/track/1231597/osmium) (Avanna; Omega+, _Transgalactic Flight_ {2015}) [trance/electronic]
+- ["Parades (monaca:factory Hadal Zone Remix)"](https://www.dropbox.com/s/ciwfukgs0aye1rb/whoo%2Bmonacafactory-vrushup05whootribute-paradesmonacafactoryhadalzone.ogg) (Miku; whoo & monaca:factory, _VRUSH UP! #05 -whoo Tribute-_ {2013}) [trance]
+- ["ice (Guitar/Michael Lueckner Fire+Ice Remix)"](https://www.dropbox.com/s/l40mh4v6c9o33lo/whoo%2Bmichaellueckner-vrushup05whootribute-iceguitarmichaellueckner.ogg) (Miku; whoo & Michael Lueckner, _VRUSH UP! #05 -whoo Tribute-_ {2013}) [trance]
