@@ -1696,51 +1696,97 @@ Using the exponential simulation, we can do a parallelized power analysis: simul
 library(ggplot2)
 library(parallel)
 library(plyr)
-hits <- 1:86
-sampleSizes <- seq(3000, 7000, by=300)
+hits <- 86
+sampleSizes <- seq(500, 5000, by=100)
 iters <- 300
-powerExponential <- ldply(mclapply(sampleSizes,
- function(n) { results <- data.frame()
-   for (i in 1:iters) {
-        effects <- sort(rexp(10000)/1, decreasing=TRUE)
-        genomeOld <- function() { ifelse(sample(c(FALSE,TRUE), prob=c(0.5, 0.5), 10000, replace = TRUE), 0, effects) }
-        genomeNew <- function() { ifelse(sample(c(FALSE,TRUE), prob=c(0.497, 1-0.497), 10000, replace = TRUE), 0, effects) }
-
-        polyOld <- replicate(n, sum(genomeOld()[hits]))
-        polyNew <- replicate(n, sum(genomeNew()[hits]))
+genomeOld <- function(efft) { ifelse(sample(c(FALSE,TRUE), prob=c(0.5, 0.5), length(efft), replace = TRUE), 0, efft) }
+genomeNew <- function(efft) { ifelse(sample(c(FALSE,TRUE), prob=c(0.497, 1-0.497), length(efft), replace = TRUE), 0, efft) }
+simulateStudy <- function(n, hits) {
+        effects <- sort(rexp(10000)/1, decreasing=TRUE)[1:hits]
+        polyOld <- replicate(n, sum(genomeOld(effects)))
+        polyNew <- replicate(n, sum(genomeNew(effects)))
         t <- t.test(polyOld, polyNew, alternative="greater")
-
-        results <- rbind(results, data.frame(N=n, P=t$p.value, PO.mean=mean(polyOld), PO.sd=sd(polyOld), PN.mean=mean(polyNew), PN.sd=sd(polyNew)))
-       }
-   results
- }))
+        return(data.frame(N=n, P=t$p.value, PO.mean=mean(polyOld), PO.sd=sd(polyOld), PN.mean=mean(polyNew), PN.sd=sd(polyNew))) }
+parallelStudies <- function(n, itr) { ldply(mclapply(1:itr, function(x) { simulateStudy(n, hits); })); }
+powerExponential <- ldply(lapply(sampleSizes, function(n) { parallelStudies(n, iters) })); summary(powerExponential)
+#        N              P                  PO.mean             PO.sd             PN.mean
+#  Min.   : 500   Min.   :0.000000000   Min.   :222.5525   Min.   :23.84966   Min.   :221.2894
+#  1st Qu.:1600   1st Qu.:0.002991554   1st Qu.:242.8170   1st Qu.:26.46606   1st Qu.:241.3242
+#  Median :2750   Median :0.023639517   Median :247.2059   Median :27.04467   Median :245.7044
+#  Mean   :2750   Mean   :0.093184735   Mean   :247.3352   Mean   :27.06300   Mean   :245.8298
+#  3rd Qu.:3900   3rd Qu.:0.107997575   3rd Qu.:251.7787   3rd Qu.:27.64103   3rd Qu.:250.2157
+#  Max.   :5000   Max.   :0.997322161   Max.   :276.2614   Max.   :30.67000   Max.   :275.7741
+#      PN.sd
+#  Min.   :23.04527
+#  1st Qu.:26.45508
+#  Median :27.04299
+#  Mean   :27.05750
+#  3rd Qu.:27.63241
+#  Max.   :30.85065
 powerExponential$Power <- powerExponential$P<0.05
 powers <- aggregate(Power ~ N, mean, data=powerExponential); powers
-#       N        Power
-# 1  3000 0.5933333333
-# 2  3300 0.6533333333
-# 3  3600 0.7166666667
-# 4  3900 0.7366666667
-# 5  4200 0.7566666667
-# 6  4500 0.8033333333
-# 7  4800 0.7900000000
-# 8  5100 0.8433333333
-# 9  5400 0.8733333333
-# 10 5700 0.8766666667
-# 11 6000 0.8600000000
-# 12 6300 0.8866666667
-# 13 6600 0.9100000000
-# 14 6900 0.9133333333
+# 1   500 0.2133333333
+# 2   600 0.2833333333
+# 3   700 0.2833333333
+# 4   800 0.3133333333
+# 5   900 0.3033333333
+# 6  1000 0.3400000000
+# 7  1100 0.4066666667
+# 8  1200 0.3833333333
+# 9  1300 0.4133333333
+# 10 1400 0.4166666667
+# 11 1500 0.4700000000
+# 12 1600 0.4600000000
+# 13 1700 0.4666666667
+# 14 1800 0.4733333333
+# 15 1900 0.5233333333
+# 16 2000 0.5366666667
+# 17 2100 0.6000000000
+# 18 2200 0.5900000000
+# 19 2300 0.5600000000
+# 20 2400 0.6066666667
+# 21 2500 0.6066666667
+# 22 2600 0.6700000000
+# 23 2700 0.6566666667
+# 24 2800 0.7133333333
+# 25 2900 0.7200000000
+# 26 3000 0.7300000000
+# 27 3100 0.7300000000
+# 28 3200 0.7066666667
+# 29 3300 0.7433333333
+# 30 3400 0.7133333333
+# 31 3500 0.7233333333
+# 32 3600 0.7200000000
+# 33 3700 0.7766666667
+# 34 3800 0.7933333333
+# 35 3900 0.7700000000
+# 36 4000 0.8100000000
+# 37 4100 0.7766666667
+# 38 4200 0.8000000000
+# 39 4300 0.8333333333
+# 40 4400 0.8466666667
+# 41 4500 0.8700000000
+# 42 4600 0.8633333333
+# 43 4700 0.8166666667
+# 44 4800 0.8366666667
+# 45 4900 0.8666666667
+# 46 5000 0.8800000000
 qplot(N, Power, data=powers)  + stat_smooth()
-# https://i.imgur.com/LWut7uw.png
+# https://i.imgur.com/Fpj8iKN.png
 ~~~
 
-So for a well-powered two-group comparison of 1950 & 2015 genotypes using 75 SNPs, we would want ~4900 in each group for a total_n_=9800.
+So for a well-powered two-group comparison of 1950 & 2015 genotypes using 86 SNPs, we would want ~4000 in each group for a total _n_=8000; we do have nontrivial power even at a total _n_=1000 (500 in each group means 21% power) but a non-statistically-significant result will be difficult to interpret and if one wanted to do that, reporting a Bayes factor from a Bayesian hypothesis test would make much more sense to express clearly whether the (non-definitive) data is evidence for or against dysgenics.
 
 This is still too optimistic since we assumed the optimal scenario of only very old and very new genomes, while available genomes are more likely to be distributed fairly uniformly between 1950 and 2015.
 To get the effect size for each year, we simply split the frequency decrease over each year and generate hypothetical genomes with less of a frequency decrease uniformly distributed 1950-2015, and do a linear regression to get a _p_-value for the year predictor:
 
 ~~~{.R}
+library(ggplot2)
+library(parallel)
+library(plyr)
+hits <- 86
+sampleSizes <- seq(8000, 30000, by=1000)
+iters <- 100
 genome <- function(effects) {
   t <- sample(c(1:(2015-1950)), 1)
   decreasedFrequency <- 0.5 - (((0.5-0.497)/(2015-1950)) * t)
@@ -1749,42 +1795,18 @@ genome <- function(effects) {
   return(data.frame(Year=1950+t,
                     PolygenicScore=sum(geneValues)))
   }
-hits <- 1:75
-sampleSizes <- seq(20000, 30000, by=1000)
-iters <- 100
-powerExponentialDistributed <- ldply(mclapply(sampleSizes,
-   function(n) {
-     results <- data.frame()
-     for (i in 1:iters) {
-      effects <- sort(rexp(10000)/1, decreasing=TRUE)[hits]
-      d <- ldply(replicate(n, genome(effects), simplify=FALSE))
-      l <- lm(PolygenicScore ~ Year, data=d)
-      p <- anova(l)$`Pr(>F)`[1]
-      results <- rbind(results, data.frame(N=n, P=p,
-                                           PO.mean=predict(l, newdata=data.frame(Year=1950)),
-                                           PN.mean=predict(l, newdata=data.frame(Year=2015))))
-     }
-     return(results)
-   }
-))
+simulateStudy <- function(n, hits) {
+        effects <- sort(rexp(10000)/1, decreasing=TRUE)[1:hits]
+        d <- ldply(replicate(n, genome(effects), simplify=FALSE))
+        l <- lm(PolygenicScore ~ Year, data=d)
+        p <- anova(l)$`Pr(>F)`[1]
+        return(data.frame(N=n, P=p, PO.mean=predict(l, newdata=data.frame(Year=1950)),
+                                           PN.mean=predict(l, newdata=data.frame(Year=2015)))) }
+parallelStudies <- function(n, itr) { ldply(mclapply(1:itr, function(x) { simulateStudy(n, hits); })); }
+powerExponentialDistributed <- ldply(lapply(sampleSizes, function(n) { parallelStudies(n, iters) })); summary(powerExponential)
 powerExponentialDistributed$Power <- powerExponentialDistributed$P<0.05
 powers <- aggregate(Power ~ N, mean, data=powerExponentialDistributed); powers
-#    N        Power
-# 4000  0.2600000000
-# 4500  0.3366666667
-# 5000  0.3266666667
-# 5500  0.3466666667
-# 6000  0.3966666667
-# 6500  0.3866666667
-# 7000  0.3900000000
-# 10000 0.3125
-# 12000 0.3775
-# 14000 0.4600
-# 16000 0.4475
-# 18000 0.5250
-# 20000 0.5200
 qplot(N, Power, data=powers)  + stat_smooth()
-# https://i.imgur.com/9Zvn3hj.png
 ~~~
 
 -->
