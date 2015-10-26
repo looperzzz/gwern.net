@@ -1565,11 +1565,11 @@ If we were given access to all alleles from a sample of 1950 and 2015 genomes an
 
 ~~~{.R}
 power.t.test(delta=0.455, power=0.8, alternative="one.sided")
-
-     Two-sample t test power calculation
-
-              n = 60.4155602
-...
+#
+#      Two-sample t test power calculation
+#
+#               n = 60.4155602
+# ...
 ~~~
 
 A total n=120 is doable, but it is unlikely that we will know all intelligence genes anytime soon; instead, we know a few.
@@ -1578,38 +1578,45 @@ To go to the other extreme, if we know only a single gene and we want to test a 
 
 ~~~{.R}
 power.prop.test(p1=0.5, p2=0.497725, power=0.8, alternative="one.sided")
-
-     Two-sample comparison of proportions power calculation
-
-              n = 597272.2524
-...
+#
+#      Two-sample comparison of proportions power calculation
+#
+#               n = 597272.2524
+# ...
 ~~~
 
 We know a number of genes, though. Rietveld gives 4 good hits, so we can look at a polygenic score from that. They are all of similar effect size and frequency, so we'll continue under the same assumptions of 1/0 and p=50%. The non-dysgenic average score is 4*0.5=2, sd=sqrt(4*0.5*0.5)=1. (Naturally, the SD is *much* larger than before because with so few random variables...) The predicted shift is from frequencies of 0.5 to 0.497, so the dysgenic scores should be 4*0.497=1.988, sd=sqrt(4*0.497*0.503)=0.999. The difference of 0.012 on the reduced polygenic score is d=((2-1.988) / 0.999)=0.012, giving a necessary power of:
 
 ~~~{.R}
 power.t.test(delta=0.012006003, power=0.8)
-
-     Two-sample t test power calculation
-
-              n = 108904.194
-...
+#
+#      Two-sample t test power calculation
+#
+#               n = 108904.194
+# ...
 ~~~
 
 So the 4 hits do reduce the necessary sample size to detect a decrease, but it's still not feasible to require 200k genotypes (unless you are 23andMe or SSGAC or an entity like that).
 
-In the current GWAS literature, there are ~9 hits we could use, but the upcoming SSGAC paper promises ~75 hits. How much would 75 improve over 4?
-75*0.5=37.5, sd=sqrt(75*0.5*0.5)=4.33; 75*0.497=37.275, sd=sqrt(75*0.497*(1-0.497))=4.33; d=(37.5-37.275)/4.33=0.052:
+In the current GWAS literature, there are ~9 hits we could use, but the [upcoming SSGAC paper promises: "We identified 86 independent SNPs associated with EA (p < 5E-8)."](http://drjamesthompson.blogspot.com/2015/09/scholar-in-86-snps.html "'86 genomic sites associated with educational attainment provide insight into the biology of cognitive performance', James J Lee, (at least 200 co-authors)").
+So how much would 86 improve over 4?
+
+- mean old: 86*0.5=43
+- sd old=sqrt(86*0.5*0.5)=4.6368;
+- mean new: 86*0.497=42.742
+- sd new=sqrt(86*0.497*(1-0.497))=4.6367
+- so d=(43-42.742)/4.63675=0.0556
+
 ~~~{.R}
-R> power.t.test(delta=(37.5-37.275)/4.33, power=0.8)
-
-     Two-sample t test power calculation
-
-              n = 5814.604421
-...
+power.t.test(delta=((43-42.742)/4.63675), power=0.8)
+#
+#      Two-sample t test power calculation
+#
+#               n = 5071.166739
+# ...
 ~~~
 
-so with 75, it drops from 200k to 12k.
+so with 75, it drops from 200k to 10.1k.
 
 To work backwards: we know with 1 hit, we need almost a million genomes (infeasible for any but the largest databanks, who have no interest in studying this hypothesis), and with all hits we need more like 200 genomes (entirely doable with just publicly available datasets like PGP), but how many hits do we need to work with an in-between amount of data like the ~2k genomes with ages I guess may be publicly available now or in the near future?
 
@@ -1625,8 +1632,9 @@ hits=437; mean1=hits*0.5; sd1=sqrt(hits*0.5*0.5); mean2=hits*0.497; sd2=sqrt(hit
 
 With a polygenic score drawing on 437 hits, then a sample of 2k suffices to detect the maximum decrease.
 
-This is pessimistic because the 10k alleles are not all the same effect size and GWAS studies inherently will tend to find the largest effects first. So the first 4 (or 75) hits are worth more.
+This is pessimistic because the 10k alleles are not all the same effect size and GWAS studies inherently will tend to find the largest effects first. So the first 4 (or 86) hits are worth the most.
 The distribution of effects is probably something like an inverse exponential distribution: many small near-zero effects and a few large ones.
+Rietveld 2013 released the betas for all SNPs, and [the beta estimates can be plotted](http://emilkirkegaard.dk/en/?p=5574 "Polygenic traits and the distribution of effect sizes: years of education from Rietveld et al (2013)"); each estimate is imprecise and there are some artifacts in beta sizes (probably due to rounding somewhere in the analysis pipeline), but the distribution looks like a radioactive half-life graph, an inverse exponential distribution.
 With a mean of 1, we can simulate creating a set of 10k effect sizes which are exponentially distributed and have mean 5000 and SD close to (but larger than) 50 and mimicks closely the binomial model:
 
 ~~~{.R}
@@ -1666,30 +1674,29 @@ t.test(polyOld, polyNew, alternative="greater")
 # 17.72741040 17.67818359
 ~~~
 
-Or to mimick 75 hits:
+Or to mimic 86 hits:
 
 ~~~{.R}
-t.test(replicate(1000, sum(genomeOld()[1:75])), replicate(1000, sum(genomeNew()[1:75])))
+t.test(replicate(1000, sum(genomeOld()[1:86])), replicate(1000, sum(genomeNew()[1:86])))
 #
 #     Welch Two Sample t-test
 #
-# data:  replicate(1000, sum(genomeOld()[1:75])) and replicate(1000, sum(genomeNew()[1:75]))
-# t = 1.9880219, df = 1996.8114, p-value = 0.04694562
+# t = 1.2268929, df = 1997.6307, p-value = 0.2200074
 # alternative hypothesis: true difference in means is not equal to 0
-# 95 percent confidence interval:
-#  0.03237261927 4.75806691195
+# 95% confidence interval:
+#  -0.8642674547  3.7525210076
 # sample estimates:
 #   mean of x   mean of y
-# 234.7609064 232.3656866
+# 244.5471658 243.1030390
 ~~~
 
-Using the exponential simulation, we can do a parallelized power analysis: simulate draws (i=200) & tests for a variety of sample sizes to get an idea of what sample size we need to get decent power with 75 hits.
+Using the exponential simulation, we can do a parallelized power analysis: simulate draws (i=200) & tests for a variety of sample sizes to get an idea of what sample size we need to get decent power with 86 hits.
 
 ~~~{.R}
 library(ggplot2)
 library(parallel)
 library(plyr)
-hits <- 1:75
+hits <- 1:86
 sampleSizes <- seq(3000, 7000, by=300)
 iters <- 300
 powerExponential <- ldply(mclapply(sampleSizes,
@@ -2350,15 +2357,16 @@ But if we included each of the 12 prefixes, then we wouldn't know if it had mana
 At the end, we should get an RNN with a validation loss slightly worse than 0.9763 (the extra transformation & keyword must cost something), and one which will hopefully be able to yield the correct output for the prefixes `JORDAN|U|` and `C|BIBLE|`
 
 ~~~{.BASH}
+rm *.t7 *.transformed input.txt
 for FILE in *.txt; do
   AUTHOR=$(echo $FILE | sed -e 's/\.txt//' | tr '[:lower:]' '[:upper:]')
   TEXT=$(cat $FILE | tail -n +80 | grep -i -v -e 'Gutenberg' -e 'http' -e 'file://' -e 'COPYRIGHT' -e 'ELECTRONIC VERSION' -e 'ISBN' | tr -d '\f' | tr -d '^M' | iconv -c -tascii | sed -e ':a;N;$!ba;s/\n/ /g' -e 's/  */ /g' -e 's/ \/ \/ //g')
-  echo $TEXT | fold --spaces --bytes --width=1500 |                              sed -e "s/^/$AUTHOR\|M\|/" >> $FILE.transformed
-  echo $TEXT | fold --spaces --bytes --width=1500 | tr '[:lower:]' '[:upper:]' | sed -e "s/^/$AUTHOR\|U\|/" >> $FILE.transformed
-  echo $TEXT | fold --spaces --bytes --width=1500 | tr '[:upper:]' '[:lower:]' | sed -e "s/^/$AUTHOR\|D\|/" >> $FILE.transformed
-  echo $TEXT | fold --spaces --bytes --width=1500 |                              sed -e "s/^/M\|$AUTHOR\|/" >> $FILE.transformed
-  echo $TEXT | fold --spaces --bytes --width=1500 | tr '[:lower:]' '[:upper:]' | sed -e "s/^/U\|$AUTHOR\|/" >> $FILE.transformed
-  echo $TEXT | fold --spaces --bytes --width=1500 | tr '[:upper:]' '[:lower:]' | sed -e "s/^/D\|$AUTHOR\|/" >> $FILE.transformed
+  echo $TEXT | fold --spaces --width=3000 |                              sed -e "s/^/$AUTHOR\|M\|/" >> $FILE.transformed
+  echo $TEXT | fold --spaces --width=3000 | tr '[:lower:]' '[:upper:]' | sed -e "s/^/$AUTHOR\|U\|/" >> $FILE.transformed
+  echo $TEXT | fold --spaces --width=3000 | tr '[:upper:]' '[:lower:]' | sed -e "s/^/$AUTHOR\|D\|/" >> $FILE.transformed
+  echo $TEXT | fold --spaces --width=3000 |                              sed -e "s/^/M\|$AUTHOR\|/" >> $FILE.transformed
+  echo $TEXT | fold --spaces --width=3000 | tr '[:lower:]' '[:upper:]' | sed -e "s/^/U\|$AUTHOR\|/" >> $FILE.transformed
+  echo $TEXT | fold --spaces --width=3000 | tr '[:upper:]' '[:lower:]' | sed -e "s/^/D\|$AUTHOR\|/" >> $FILE.transformed
 done
 cat *.transformed | grep -v -e "JORDAN|U|" -e "M|BIBLE|" | shuf > input.txt
 ~~~
