@@ -1708,29 +1708,49 @@ powerExponential <- ldply(mclapply(sampleSizes,
    results
  }))
 powerExponential$Power <- powerExponential$P<0.05
-powers <- aggregate(Power ~ N, mean, data=powerExponential)
+powers <- aggregate(Power ~ N, mean, data=powerExponential); powers
+#       N        Power
+# 1  3000 0.5933333333
+# 2  3300 0.6533333333
+# 3  3600 0.7166666667
+# 4  3900 0.7366666667
+# 5  4200 0.7566666667
+# 6  4500 0.8033333333
+# 7  4800 0.7900000000
+# 8  5100 0.8433333333
+# 9  5400 0.8733333333
+# 10 5700 0.8766666667
+# 11 6000 0.8600000000
+# 12 6300 0.8866666667
+# 13 6600 0.9100000000
+# 14 6900 0.9133333333
 qplot(N, Power, data=powers)  + stat_smooth()
+# https://i.imgur.com/LWut7uw.png
 ~~~
 
-This is still too optimistic since we assumed the ideal scenario of only very old and very new genomes, while available genomes are more likely to be distributed fairly uniformly between 1950 and 2015.
-To get the effect size for each year, we simply split the frequency decrease over each year and generate hypothetical genomes with less of a frequency decrease, and do a linear regression to get a _p_-value for the year predictor:
+So for a well-powered two-group comparison of 1950 & 2015 genotypes using 75 SNPs, we would want ~4900 in each group for a total_n_=9800.
+
+This is still too optimistic since we assumed the optimal scenario of only very old and very new genomes, while available genomes are more likely to be distributed fairly uniformly between 1950 and 2015.
+To get the effect size for each year, we simply split the frequency decrease over each year and generate hypothetical genomes with less of a frequency decrease uniformly distributed 1950-2015, and do a linear regression to get a _p_-value for the year predictor:
 
 ~~~{.R}
-genome <- function(effects, hits) {
+genome <- function(effects) {
   t <- sample(c(1:(2015-1950)), 1)
   decreasedFrequency <- 0.5 - (((0.5-0.497)/(2015-1950)) * t)
+  geneFlips <- sample(c(FALSE,TRUE), prob=c(decreasedFrequency, 1-decreasedFrequency), replace = TRUE, length(effects))
+  geneValues <- ifelse(geneFlips, effects, 0)
   return(data.frame(Year=1950+t,
-                    PolygenicScore=sum(ifelse(sample(c(FALSE,TRUE), prob=c(decreasedFrequency, 1-decreasedFrequency), 10000, replace = TRUE), 0, effects)[hits])))
+                    PolygenicScore=sum(geneValues)))
   }
 hits <- 1:75
-sampleSizes <- seq(4000, 7000, by=500)
-iters <- 300
+sampleSizes <- seq(20000, 30000, by=1000)
+iters <- 100
 powerExponentialDistributed <- ldply(mclapply(sampleSizes,
    function(n) {
      results <- data.frame()
      for (i in 1:iters) {
-      effects <- sort(rexp(10000)/1, decreasing=TRUE)
-      d <- ldply(replicate(2*n, genome(effects, hits), simplify=FALSE))
+      effects <- sort(rexp(10000)/1, decreasing=TRUE)[hits]
+      d <- ldply(replicate(n, genome(effects), simplify=FALSE))
       l <- lm(PolygenicScore ~ Year, data=d)
       p <- anova(l)$`Pr(>F)`[1]
       results <- rbind(results, data.frame(N=n, P=p,
@@ -1741,10 +1761,24 @@ powerExponentialDistributed <- ldply(mclapply(sampleSizes,
    }
 ))
 powerExponentialDistributed$Power <- powerExponentialDistributed$P<0.05
-powers <- aggregate(Power ~ N, mean, data=powerExponentialDistributed)
+powers <- aggregate(Power ~ N, mean, data=powerExponentialDistributed); powers
+#    N        Power
+# 4000  0.2600000000
+# 4500  0.3366666667
+# 5000  0.3266666667
+# 5500  0.3466666667
+# 6000  0.3966666667
+# 6500  0.3866666667
+# 7000  0.3900000000
+# 10000 0.3125
+# 12000 0.3775
+# 14000 0.4600
+# 16000 0.4475
+# 18000 0.5250
+# 20000 0.5200
 qplot(N, Power, data=powers)  + stat_smooth()
+# https://i.imgur.com/9Zvn3hj.png
 ~~~
-
 
 -->
 
@@ -2295,8 +2329,36 @@ back to flat 1-layer 2600-nn rnn
 
 got down to 1.0414 before validation loss began increasing a bit
 
-question: how much do multiple authors penalize learning ability? let's try seeing what the flat rnn can do on solely the Robert Jordan corpus (but still formatted with prefixes etc).
-got down to 0.9638, which yields pretty good output!
-
 OK, let's try just Bible & Jordan, deleting everything else
-09:53 PM 56Mb$ rm churchill.txt  twain.txt wolfe.txt
+$ rm churchill.txt  twain.txt wolfe.txt
+got down to 0.9763
+
+question: how much do multiple authors penalize learning ability? let's try seeing what the flat rnn can do on solely the Robert Jordan corpus (but still formatted with prefixes etc).
+got down to 0.9638
+
+just Bible:
+0.9420
+
+so the penalty for the Bible for learning Jordan as well is 0.9763-0.9420=0.0343, and vice-versa is 0.9763-0.9638=0.0125.
+presumably the reason the Bible RNN is hurt 2.7x more is because the Jordan corpus is 4.3x larger and more learning capacity goes to its vocabulary & style.
+
+Can we learn multiple metadata prefixes? Like an author and then a transform of some sort - in music, a useful transform might be time signature or instrument set.
+
+A simple transform we could apply here is upcasing and downcasing every character, so we might have a set of 6 prefixes like Bible+upcase, Bible+downcase, Bible+mix, etc, written as `BIBLE|U|`, `BIBLE|D|`, `BIBLE|M|`, and to help enforce abstraction, also reverse ordering like `U|BIBLE|`, giving 12 total prefixes (3x2x2).
+The interesting question here is whether the RNN would be able to factor out the transformations and learn the up/mix/downcase transformation separately from the Bible/Jordan difference in styles. (If it thought that Jordan upcased was a different author, and to be learned differently, from Jordan downcased, then we would have to conclude that it was not seeing two pieces of metadata, Jordan+upcase, but seeing it as one JORDANUPCASE, and a failure of both learning and abstraction.)
+But if we included each of the 12 prefixes, then we wouldn't know if it had managed to do this, since it could have learned each of the 12 separately, which might or might not show up as much worse performance. So we should leave out two prefixes: one to test out generalization of casing, and one to test out swapping (dropping 1 from Bible and 1 from Jordan to be fair).
+At the end, we should get an RNN with a validation loss slightly worse than 0.9763 (the extra transformation & keyword must cost something), and one which will hopefully be able to yield the correct output for the prefixes `JORDAN|U|` and `C|BIBLE|`
+
+~~~{.BASH}
+for FILE in *.txt; do
+  AUTHOR=$(echo $FILE | sed -e 's/\.txt//' | tr '[:lower:]' '[:upper:]')
+  TEXT=$(cat $FILE | tail -n +80 | grep -i -v -e 'Gutenberg' -e 'http' -e 'file://' -e 'COPYRIGHT' -e 'ELECTRONIC VERSION' -e 'ISBN' | tr -d '\f' | tr -d '^M' | iconv -c -tascii | sed -e ':a;N;$!ba;s/\n/ /g' -e 's/  */ /g' -e 's/ \/ \/ //g')
+  echo $TEXT | fold --spaces --bytes --width=1500 |                              sed -e "s/^/$AUTHOR\|M\|/" >> $FILE.transformed
+  echo $TEXT | fold --spaces --bytes --width=1500 | tr '[:lower:]' '[:upper:]' | sed -e "s/^/$AUTHOR\|U\|/" >> $FILE.transformed
+  echo $TEXT | fold --spaces --bytes --width=1500 | tr '[:upper:]' '[:lower:]' | sed -e "s/^/$AUTHOR\|D\|/" >> $FILE.transformed
+  echo $TEXT | fold --spaces --bytes --width=1500 |                              sed -e "s/^/M\|$AUTHOR\|/" >> $FILE.transformed
+  echo $TEXT | fold --spaces --bytes --width=1500 | tr '[:lower:]' '[:upper:]' | sed -e "s/^/U\|$AUTHOR\|/" >> $FILE.transformed
+  echo $TEXT | fold --spaces --bytes --width=1500 | tr '[:upper:]' '[:lower:]' | sed -e "s/^/D\|$AUTHOR\|/" >> $FILE.transformed
+done
+cat *.transformed | grep -v -e "JORDAN|U|" -e "M|BIBLE|" | shuf > input.txt
+~~~
