@@ -1,0 +1,734 @@
+---
+title: Modafinil community survey
+description: 2015 survey of online modafinil users asking about dosages, consumption patterns, ratings, purchases, and demographics
+created: 1 June 2015
+tags: biology, psychology, nootropics, statistics
+status: in progress
+belief: highly likely
+...
+
+# Background
+
+In June 2015, I began developing a modafinil survey; I wanted a better picture of modafinil users, particularly the intercept rates and potential genetic moderator. After some months of occasional work and some feedback from ModafinilCat, who had also volunteered to offer a prize when I mentioned the draft, I [finished the 2015 survey]( https://docs.google.com/forms/d/1ZNyGHl6vnHD62spZyHIqyvNM_Ts_82GvZQVdAr2LrGs/viewform) on 26 September 2015, leaving it open for a month, and posting notifications to a variety of places online:
+
+- my [Twitter](https://twitter.com/gwern/status/647820940945043457) & [Google+](https://plus.google.com/103530621949492999968/posts/RAEu6MKyuaY)
+- [/r/nootropics](https://www.reddit.com/r/Nootropics/comments/3mhgkq/survey_of_modafinil_users/) & [/r/afinil](https://www.reddit.com/r/afinil/comments/3mhgbs/modafinil_usage_survey_2015/) (stickied)
+- [HN](https://news.ycombinator.com/item?id=10283720)
+- [LW](http://lesswrong.com/r/discussion/lw/mt2/link_2015_modafinil_user_survey/)
+- [Longecity](http://www.longecity.org/forum/topic/81946-2015-modafinil-user-survey/)
+- ModafinilCat mailing list
+
+The community response was enthusiastic. People pointed out in comments & the feedback part of the form issues with the survey which will hopefully be fixed for next year.
+
+# Data
+
+I closed the survey ~1:10PM 2015-10-27, having gotten 3960 total responses. (My hope was to get ~1k responses.)
+
+
+
+The data:
+
+- [archive of how the survey looked & question wording](https://www.dropbox.com/s/zgtbd6h9qlu93x5/2015-modafinil-questions.maff)
+- [raw data](https://www.dropbox.com/s/905cbhtjvem1p8x/2015-10-27-modafinilsurvey.csv) (deleted the email/address question for privacy, redacted a few of the feedback entries which included real names/addresses)
+- just [the user free-response/feedback](https://www.dropbox.com/s/gcjiswko7k1amyt/2015-10-27-modafinilsurvey-feedback.csv)
+
+## Results
+### Demographics
+
+1. Gender: 89% male, 11% female (interestingly, this is almost identical to the [arrest percentages for the darknet markets](http://www.gwern.net/Black-market%20arrests))
+2. Age: mean of 29 and most are in their 20s-early-30s, but there's a wide spread of ages past that, with respondents claiming to be as young as 16 to as old as 81. Histogram: https://i.imgur.com/WunTGiP.png
+3. Country: unsurprisingly given the websites involved, survey results are dominated by respondents from (in descending order), the USA (56%), Australia (18%), UK (11%), Canada (2%), France (1%), Germany (1%), Netherlands (0.8%), Singapore (0.7%), Poland (0.36%), Ireland (0.33%), and Thailand (0.33%), with a scattering of other countries.
+4. Ethnicity/race: predictable from the country data - 77% non-Hispanic whites, 9% East Asians, the rest fairly evenly distributed across South Asians, blacks, Hispanics, Middle Eastern, etc.
+4. Income: the median response is quite high, around \$45k (so somewhat above the annual US per-capita median income), mean=\$65k, but also with plenty of low earners, a fair number of people reporting zero income (presumably students or unemployed), and a few very high earners claiming as high as \$6m; this sort of skewing is common in income data, though, and the histogram of the log of reported income looks right, so the high incomes may be accurate.
+4. Job: the income data is striking given that 'student' is the most commonly reported occupation, and reported mean incomes do differ by work status:
+
+    - Student:                          34.31% (\$18,767)
+    - For-profit work (private sector): 31.01% (\$83,969)
+    - Self-employed:                    15.75% (\$91,616)
+    - Academic:                          4.08% (\$54,995)
+    - Government work:                   3.01% (\$67,813)
+    - Non-profit work:                   1.86% (\$77,422)
+    - Unemployed:                        1.96% (\$19,212)
+
+    So we see there is some truth to the stereotype that modafinil is used mostly by students and professionals - between those two categories, that's easily 80%. There is much less academia than expected, though.
+5. Education: I'll break this down by level:
+
+    - High school:                      18.23%
+    - Associate's degree:               10.94%
+    - Bachelor's:                       48.46%
+    - Masters:                          13.66%
+    - Professional degree (MD/JD/etc):   4.53%
+    - PhD:                               4.18%
+
+    So 82% of respondents have some sort of higher education.
+
+### Usage
+
+Experiences
+
+Which.type.of..afinil.do.you.use.the.most.
+How.effective.do.you.find.modafinil.
+Which.of.these.have.you.ever.used.
+In.general..do.you.find.brand.name..afinils.more.effective.than.generics.
+ [6] "How.primarily.do.you.use..afinils."
+ [7] "You.use.modafinil.every.N.days."
+ [8] "How.many.months.have.you.been.using.modafinil."
+ [9] "What.dosage.do.you.usually.use.per.24.hours."
+[10] "Some.users.report..tolerance..or.effects..wearing.off...how.much.have.you.experienced.this."
+[11] "How.much.do.you.depend.on.modafinil.for.normal.alertness...functioning."
+[12] "Have.you.found.it.helpful.for.any.of.the.following.issues."
+[13] "Have.you.experienced.any.significant.side.effects."
+[16] "Would.you.be.able.to.quit.cold.turkey.tomorrow."
+[64] "If.you.experienced.tolerance..how.many.weeks.did.it.take.to.develop."
+[67] "Do.you.still.use..afinil."
+[68] "Why.did.you.stop..afinil.usage."
+[69] "How.many.days.ago.did.you.last.use.modafinil."
+[72] "How.would.you.rate.your.main..afinil.for.those.uses...Day..energy..motivation."
+[73] "How.would.you.rate.your.main..afinil.for.those.uses...Night..skip.sleep."
+[74] "How.would.you.rate.your.main..afinil.for.those.uses...Cognitive.enhancement."
+[75] "How.would.you.rate.your.main..afinil.for.those.uses...Day..reduce.sleepiness."
+[77] "How.would.you.rate.your.main..afinil.for.those.uses...Medical."
+[79] "Which.type.of..afinil.do.you.use.the.most."
+[80] "Why.did.you.stop..afinil.usage..1"
+[81] "Helpful.issues.N"
+side effects bar plot
+
+Purchasing behavior
+
+[17] "How.many.times.have.you.purchased.modafinil."
+[19] "How.many.units...doses.is.your.usual.order...0.10.tablets."
+[20] "How.many.units...doses.is.your.usual.order...11.50."
+[21] "How.many.units...doses.is.your.usual.order...51.100."
+[22] "How.many.units...doses.is.your.usual.order...101.150."
+[23] "How.many.units...doses.is.your.usual.order...151.200."
+[24] "How.many.units...doses.is.your.usual.order...200.400."
+[25] "How.many.units...doses.is.your.usual.order...400.."
+[26] "How.much.does.your.usual.order.cost."
+[27] "How.much.do.you.spend.annually.on..afinils."
+[28] "Where.do.you.usually.buy."
+[70] "If.clearnet..which.of.the.following.have.you.ever.used."
+
+Risks
+
+1. Modafinil prescriptions: 12% report having a prescription for modafinil
+[30] "Do.you.use.any.of.the.following.precautions.when.ordering.online."
+[14] "Have.you.or.anyone.you.personally.know.had.legal.problems."
+[18] "How.many.times.have.your.orders.not.arrived.for.any.reason."
+[63] "If.you.ve.ever.used.a.DNM.for.modafinil..which.have.you.used."
+[29] "Have.you.ever.used.Bitcoin.to.purchase.modafinil."
+
+Origins
+
+[41] "How.did.you.hear.of.and.become.interested.in.modafinil."
+[71] "At.what.age.did.you.first.use.any..afinil."
+
+---
+
+- 2016 draft: https://docs.google.com/forms/d/1KVXumV8T1iyNYnYTKZr_aRjhrZSSfxSIJVuoRAUIluM/edit#
+
+TODO items for improving survey:
+
+- increase from 1 month to 2 months
+- 'A "reason for stopping modafinil" if applicable question could yield some interesting insight.' <-- don't I have that on the stopped-page?
+- '"If you experienced tolerance, how many weeks did it take to develop?" should be days' <-- is '1 week' common enough to switch to days?
+- 'Might be worth adding emotional instability or moodiness as an option under side-effects.' <-- and aggressiveness, impatience, and irritability
+- clarify dosage and frequency for each -afinil
+- remove free-response entry on Gender because of abuse like 'meat popsicle'
+- add a positivity constraint on this one to next survey: "How.much.does.your.usual.order.cost."
+- add a <120 constraint on At.what.age.did.you.first.use.any..afinil. and Current.age; reduce lower bound to ~10 due to someone claiming they started at 14
+- add a <600 constraint on Body.weight; loosen lower constraint to allow >60kg
+- add a <24h constraint on Sleep.duration..on.an.average.night..how.many.hours.do.you.sleep.
+- add a <1000 constraint on If.you.experienced.tolerance..how.many.weeks.did.it.take.to.develop. (modafinil has not been approved in the USA longer than that)
+- add a >=0 constraint on How.many.times.have.your.orders.not.arrived.for.any.reason.
+- How.did.you.hear.of.and.become.interested.in.modafinil.: add gwern.net, Dave Asprey/Bulletproof, unquote _Limitless_, drugsforum,bluelight, SlateStarCodex, Tim Ferriss, Doctor, LessWrong, Hacker News, Joe Rogan, IRC, Quora, NeoGAF, boldanddetermined.com
+- remove commas from side-effects entry "Swelling of your face, lips, tongue, or throat"
+- add clarifying help text to attention test question
+- Country: add Netherlands, Singapore, Ireland, Thailand, India, Norway, Spain, Belgium, Hungary, Sweden, Malaysia, Mexico, Switzerland, Denmark, New Zealand, Philippines, Vietnam, China, Columbia, Czech Republic, Italy, Romania, South Korea, Argentina, Austria, Brazil, Croatia, Estonia, Hong Kong, Slovakia, South Africa
+
+
+Analysis:
+
+demographics: students vs professionals?
+what kind of -afinil gets higher ratings?
+does the original modafinil SNP replicate?
+how common and severe is tolerance?
+if we take the nootropic grid's scores, the placebo SNP data, and estimate a 'placebo factor', does this predict either tolerance or higher modafinil ratings?
+does tolerance fit with close together use of modafinil to skip sleep? half-lives etc
+what fraction of respondents report legal entanglements?
+side-effects, of course, are of great interest
+rw <- function(x,a,b) { for(i in 1:length(a)) { x <- replace(x, x==a[i], b[i]); }; return(x) }
+
+
+~~~{.R}
+moda <- read.csv("2015-10-27-modafinilsurvey.csv")
+## duplicates found reading the feedback:
+modaC <- moda[-c(110, 293, 396, 459, 776, 1018, 1510, 2429, 3883),]
+## delete rows exactly duplicated aside from the first Timestamp column:
+modaC <- modaC[!duplicated(modaC[,-1]),]
+## clean the data using the trap questions and nonsense values like negative numbers of non-deliveries:
+modaC <- modaC[moda$Test.Question.To.See.If.You.re.Paying.Attention!="No",]
+modaC <- modaC[!grepl("beta-t-afinil", as.character(modaC$Which.of.these.have.you.ever.used.)),]
+modaC <- modaC[modaC$Current.age.<120,]
+modaC <- modaC[modaC$How.many.times.have.your.orders.not.arrived.for.any.reason.>=0,]
+## total deleted:
+nrow(moda) - nrow(modaC)
+# [1] 124
+modaC[modaC$Country=="The Netherlands" & !is.na(modaC$Country),]$Country <- "Netherlands"
+## recode:
+modaC[modaC==""] <- NA; modaC[modaC==" "] <- NA; modaC[modaC=="Not Available"] <- NA; modaC[modaC=="N/A"] <- NA
+
+## useful summary variable:
+modaC$Helpful.issues.N <- sapply(modaC$Have.you.found.it.helpful.for.any.of.the.following.issues., function(r) { if(!is.na(r)) { count <- 1; return(count + length(gregexpr(",", r)[[1]])); } else { return(0); }})
+library(FSA)
+Summarize(modaC$Gender)
+#                              freq  perc
+# 17                              0  0.00
+# agender                         1  0.03
+# Androgyne                       1  0.03
+# Female                        345 11.19
+# genderqueer                     1  0.03
+# Homongulous                     0  0.00
+# lol                             0  0.00
+# Male                         2729 88.55
+# Meat popsicle                   1  0.03
+# Neutrois                        0  0.00
+# Non-Binary                      1  0.03
+# nonconforming                   1  0.03
+# self-identified male penguin    1  0.03
+# Transgender MTF                 1  0.03
+# Total                        3082 99.98
+
+## parsing the side-effects data to get an idea of problems
+library(qdapTools)
+sideeffects <- mtabulate(lapply(strsplit(sub("Swelling of your face, lips, tongue, or throat", "Swelling face/lips/tongue/throat", as.character(modaC$Have.you.experienced.any.significant.side.effects.)), ","), function(s) { tolower(sub(" $", "", sub("^ ", "", s))); }))
+## convert everything to booleans
+for (i in 1:ncol(sideeffects)) { sideeffects[,i] <- as.logical(sideeffects[,i]); }
+## keep only side-effects with >4 entries, which filters out most of the custom ones
+keep <- c()
+for (i in 1:ncol(sideeffects)) { if (sum(sideeffects[,i], na.rm=TRUE) > 2) { keep <- c(keep, i); } }
+sideeffectsSubset <- sideeffects[,keep]
+
+longeffects <- stack(sideeffectsSubset)
+agside <- aggregate(values ~ ind, sum, data=longeffects)
+mp <- barplot(agside$values); text(mp,par("usr")[3],labels=agside$ind,srt=20,offset=1,adj=1,xpd=TRUE)
+
+
+Placebo effect factor analysis:
+
+
+
+"How.effective.do.you.find.modafinil."  1-5
+"Would.you.say.that.Modafinil.has.changed.your.life." yes/no logical
+"You.use.modafinil.every.N.days."
+"How.many.months.have.you.been.using.modafinil."
+"What.dosage.do.you.usually.use.per.24.hours."
+"Some.users.report..tolerance..or.effects..wearing.off...how.much.have.you.experienced.this." 1-5
+"How.much.do.you.depend.on.modafinil.for.normal.alertness...functioning."
+Helpful.issues.N
+"Would.you.be.able.to.quit.cold.turkey.tomorrow." yes/no
+"How.many.times.have.you.purchased.modafinil."
+"How.much.does.your.usual.order.cost."
+"How.much.do.you.spend.annually.on..afinils."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Aniracetam."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Adderall."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Bacopa."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Caffeine."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Coluracetam."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Creatine."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Gingko."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Ginseng."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Melatonin."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...MCT.Oil."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Nicotine..gum..patch..lozenge..vaping.."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Noopept."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Oxiracetam."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Phenylpiracetam."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Piracetam."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Pramiracetam."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Sulbutiamine."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Theanine."
+"How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Vitamin.D."
+
+"SNP.status.of.COMT.RS4680" factor: Levels:  "Met/Met (AA)" "Val/Met (AG)" "Val/Val (GG)"
+"SNP.status.of.COMT.RS4570625" factor: levels: "GG" "GT" "TT"
+"SNP.status.of.COMT.RS4633" factor: levels: "CC" "CT" "TT"
+
+## Rs4680 GG>AG>AA
+modaC$SNP.status.of.COMT.RS4680 <- factor(modaC$SNP.status.of.COMT.RS4680, c("Met/Met (AA)", "Val/Met (AG)", "Val/Val (GG)"), ordered=TRUE)
+## Rs4570625 GG>GT>TT
+modaC$SNP.status.of.COMT.RS4570625 <- factor(modaC$SNP.status.of.COMT.RS4570625, c("TT", "GT", "GG"), ordered=TRUE)
+## Rs4633 CC<CT<TT
+modaC$SNP.status.of.COMT.RS4633 <- factor(modaC$SNP.status.of.COMT.RS4633, c("CC", "CT", "TT"), ordered=TRUE)
+
+
+library(psych)
+library(GPArotation)
+mfa <- subset(modaC, select=c(How.effective.do.you.find.modafinil., Helpful.issues.N, How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Aniracetam., How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Adderall., How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Bacopa., How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Caffeine., How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Gingko., How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Ginseng., How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Melatonin., How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Nicotine..gum..patch..lozenge..vaping.., How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Noopept., How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Oxiracetam., How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Phenylpiracetam., How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Piracetam., How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Pramiracetam., How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Theanine., How.would.you.rate.the.effectiveness.of.other.nootropics.you.have.tried...Vitamin.D., SNP.status.of.COMT.RS4680, SNP.status.of.COMT.RS4570625, SNP.status.of.COMT.RS4633))
+mfa$Would.you.say.that.Modafinil.has.changed.your.life. <- unlist(sapply(mfa$Would.you.say.that.Modafinil.has.changed.your.life., function(r) { if(!is.na(r)) { if(r=="Yes") { 1; } else { 0; } } else { NA; } } ))
+for (colN in 3:17) { mfa[,colN] <- as.integer(substring(as.character(mfa[,colN]), 1, 1)); }
+colnames(mfa) <- c("modafinil", "modafinil.issues", "Aniracetam", "Adderall", "Bacopa", "Caffeine", "Gingko", "Ginseng", "Melatonin", "Nicotine", "Noopept", "Oxiracetam", "Phenylpiracetam", "Piracetam", "Pramiracetam", "Theanine", "Vitamin.D", "RS4680", "RS4570625", "RS4633")
+mfaI <- mi(mfa)
+
+
+
+fa.parallel(mfa)
+factorization <- fa(mfa, nfactors=9, missing=TRUE); factorization
+
+modaC$MR1 <- factorization$scores
+
+no loading of the g-factor on the modafinil responses...!
+
+nfactors(mfa[,13:31])
+factorization <- fa(mfa[,13:31], nfactors=1, missing=TRUE); factorization
+
+
+summary(lm((How.effective.do.you.find.modafinil. + modaC$Would.you.say.that.Modafinil.has.changed.your.life.) ~ as.integer(SNP.status.of.COMT.RS4680) + as.integer(SNP.status.of.COMT.RS4570625) + as.integer(SNP.status.of.COMT.RS4633), data=modaC))
+Residuals:
+       Min         1Q     Median         3Q        Max
+-3.3158705 -0.5775444 -0.1213482  0.7813907  2.0430646
+
+Coefficients:
+                                            Estimate  Std. Error  t value   Pr(>|t|)
+(Intercept)                               4.12099204  0.95476411  4.31624 2.6803e-05
+as.integer(SNP.status.of.COMT.RS4680)    -0.05780205  0.21398559 -0.27012   0.787393
+as.integer(SNP.status.of.COMT.RS4570625)  0.26167390  0.14651220  1.78602   0.075868
+as.integer(SNP.status.of.COMT.RS4633)    -0.15506319  0.21498316 -0.72128   0.471722
+
+Residual standard error: 1.136471 on 171 degrees of freedom
+  (2787 observations deleted due to missingness)
+Multiple R-squared:  0.02531565,    Adjusted R-squared:  0.008215928
+F-statistic: 1.480471 on 3 and 171 DF,  p-value: 0.2216194
+
+
+
+modaC$How.effective.do.you.find.modafinil. + modaC$Would.you.say.that.Modafinil.has.changed.your.life.
+
+library(MASS)
+pl <- polr(as.ordered(modaC$How.effective.do.you.find.modafinil. + modaC$Would.you.say.that.Modafinil.has.changed.your.life.) ~ SNP.status.of.COMT.RS4680, data=modaC)
+summary(pl)
+
+
+tried to verify g-factor against http://slatestarcodex.com/2014/02/16/nootropics-survey-results-and-analysis/ but the missingness is so massive that the results are garbage
+
+
+
+library(mi)
+mfaI <- mi(mfa)
+mfaI1 <- complete(mfaI, 1)
+
+summary(pool(modafinil ~ as.integer(RS4680) + as.integer(RS4570625) + as.integer(RS4633), data=mfaI))
+
+for (colN in 1:17) { mfaI1[,colN] <- as.integer(mfaI1[,colN]); }
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## https://www.dropbox.com/s/xyfkvuysogd8tvf/2015-10-07-modafinilsurvey-raw-preliminary.csv
+moda <- read.csv("2015-10-07-modafinilsurvey-raw-preliminary.csv")
+## clean trap or invalid responses:
+modaC <- moda[moda$Test.Question.To.See.If.You.re.Paying.Attention!="No",]
+modaC <- modaC[!grepl("beta-t-afinil", as.character(modaC$Which.of.these.have.you.ever.used.)),]
+modaC <- modaC[modaC$Current.age.<120,]
+modaC <- modaC[modaC$How.many.times.have.your.orders.not.arrived.for.any.reason.>0,]
+nrow(modaC)
+# [1] 2957
+summary(modaC$Highest.or.current.educational.level)
+#                                              Associate's degree                      Bachelor's
+#                               7                             277                            1159
+#                     High school                         Masters                             PhD
+#                             451                             340                             105
+# Professional degree (MD/JD/etc)                            NA's
+#                             114                             504
+summary(modaC$Work.Status)
+#                                                                                                        For-profit work (private sector)
+#                                                                                                                                     792
+#                                                                                                                                 Student
+#                                                                                                                                     772
+#                                                                                                                           Self-employed
+#                                                                                                                                     393
+#                                                                                                                                Academic
+#                                                                                                                                     103
+#                                                                                                                         Government work
+#                                                                                                                                      77
+#                                                                                                                         Non-profit work
+#                                                                                                                                      51
+#                                                                                                                              Unemployed
+#                                                                                                                                      49
+#
+#                                                                                                                                      28
+#                                                                                                                   Independently wealthy
+#                                                                                                                                      18
+#                                                                                                                               Homemaker
+#                                                                                                                                      16
+#                                                                                                                                Military
+#                                                                                                                                      13
+#                                                                                                                                 retired
+#                                                                                                                                       4
+#                                                                                                                                Disabled
+#                                                                                                                                       3
+#                                                                                                                                Engineer
+#                                                                                                                                       3
+#                                                                                                                               full time
+#                                                                                                                                       2
+#                                                                                                                                  retail
+#                                                                                                                                       2
+#                                                                                                                                   Sales
+#                                                                                                                                       2
+#                                                                                                                      Software Developer
+#                                                                                                                                       2
+#                                                                                                                            Truck driver
+#                                                                                                                                       2
+#                                                                                                                             Accounting
+#                                                                                                                                       1
+#                                                                                                                                  Amazon
+#                                                                                                                                       1
+#                                                                                                                          Apprenticeship
+#                                                                                                                                       1
+#                                                                                                                                  artist
+#                                                                                                                                       1
+#                                                                                                                               Bartender
+#                                                                                                                                       1
+#                                                                                                         Both student and private sector
+#                                                                                                                                       1
+#                                                                                                                          Business owner
+#                                                                                                                                       1
+#                                                                                                                       Casual Retail Job
+#                                                                                                                                       1
+#                                                                                                   CEMS, continuous emissions monitoring
+#                                                                                                                                       1
+#                                                                                                                                    chef
+#                                                                                                                                       1
+#                                                                                                                                    Chef
+#                                                                                                                                       1
+#                                                                                                                          Chemical plant
+#                                                                                                                                       1
+#                                                                                                                          Communications
+#                                                                                                                                       1
+#                                                                                                                     Computer Programmer
+#                                                                                                                                       1
+#                                                                                                                       contracted artist
+#                                                                                                                                       1
+#                                                                                                                                    cook
+#                                                                                                                                       1
+#                                                                                                                                    Cook
+#                                                                                                                                       1
+#                                                                                                                                 Curator
+#                                                                                                                                       1
+#                                                                                                                                Designer
+#                                                                                                                                       1
+#                                                                                                                                Director
+#                                                                                                                                       1
+#                                                                                                                              Disability
+#                                                                                                                                       1
+#                                                                                                                                disabled
+#                                                                                                                                       1
+#                                                                                                                     disabled  SLE Lupus
+#                                                                                                                                       1
+#                                                                                                         Disabled waiting on SSI Hearing
+#                                                                                                                                       1
+#                                                                                                                             Dissability
+#                                                                                                                                       1
+#                                                                                                                      Doctoral Candidate
+#                                                                                                                                       1
+#                                                                                                                               Education
+#                                                                                                                                       1
+#                                                                                                                             Electrician
+#                                                                                                                                       1
+#                                                                                                                                Employed
+#                                                                                                                                       1
+#                                                                                                                Employed: Crane Operator
+#                                                                                                                                       1
+#                                                                                                                                engineer
+#                                                                                                                                       1
+#                                                                                                                            Enterpreneur
+#                                                                                                                                       1
+#                                                                                                                                    FIFO
+#                                                                                                                                       1
+#                                                                                                             For-profit work and student
+#                                                                                                                                       1
+#                                                                                                       Free Lance Engineering Contractor
+#                                                                                                                                       1
+#                                                                                                                      full time employed
+#                                                                                                                                       1
+#                                                                                                  Full Time Employee / Part Time Student
+#                                                                                                                                       1
+#                                                                                                                    full time employment
+#                                                                                                                                       1
+#                                                                                                                      full-time fireman
+#                                                                                                                                       1
+#                                                                                                           Full-time sales and education
+#                                                                                                                                       1
+#                                                                                                       Full time student + full time job
+#                                                                                                                                       1
+#                                                                                          Full-time Student + Part-time Fast Food Worker
+#                                                                                                                                       1
+#                                                                                           Full time work and full time student workload
+#                                                                                                                                       1
+#                                                                                                                                Gap Year
+#                                                                                                                                       1
+#                                                                                                                   Greenhouse management
+#                                                                                                                                       1
+#                                                                                                                  health and social care
+#                                                                                                                                       1
+#                                                                                                                                hospital
+#                                                                                                                                       1
+#                                                                                                                    Information Security
+#                                                                                                                                       1
+#                                                                                                                               Insurance
+#                                                                                                                                       1
+# Internship - becoming full time employment 1 week from now after leaving my previous employer of 9 years due to bad working conditions.
+#                                                                                                                                       1
+#                                                                                                                              IT Manager
+#                                                                                                                                       1
+#                                                                                                                         IT Professional
+#                                                                                                                                       1
+#                                                               I work full time in for profit work aswell as doing post grad In medicine
+#                                                                                                                                       1
+#                                                            I work two jobs. One where I am self-employed and one where I'm an employee.
+#                                                                                                                                       1
+#                                                                                                                                 Laborer
+#                                                                                                                                       1
+#                                                                                                                                  lawyer
+#                                                                                                                                       1
+#                                                                                                                               Line-Cook
+#                                                                                                                                       1
+#                                                                                                                   Locally owned company
+#                                                                                                                                       1
+#                                                                                                                           longshoreman
+#                                                                                                                                       1
+#                                                                                                                                 Manager
+#                                                                                                                                       1
+#                                                                                        Marketing/Sales/Management of a fitness facility
+#                                                                                                                                       1
+#                                                                                                                                Medical
+#                                                                                                                                       1
+#                                                                                                                        Network Engineer
+#                                                                                                                                       1
+#                                                                                                                                   Nurse
+#                                                                                                                                       1
+#                                                                                              owner/operator General contracting company
+#                                                                                                                                       1
+#                                                                                                                               Paramedic
+#                                                                                                                                       1
+#                                            Part time 3 days per week in public sector, sometimes freelance work on other 2 working days
+#                                                                                                                                       1
+#                                                                                                                         pharmaceuticals
+#                                                                                                                                       1
+#                                                                                                                                   pilot
+#                                                                                                                                       1
+#                                                                                                                       Prefer not to say
+#                                                                                                                                       1
+#                                                                                                                            professional
+#                                                                                                                                       1
+#                                                                                                                            Professional
+#                                                                                                                                       1
+#                                                                                                                  Professional/executive
+#                                                                                                                                       1
+#                                                                                                                     professional worker
+#                                                                                                                                       1
+#                                                                                                                              programmer
+#                                                                                                                                       1
+#                                                                                                 Recently graduated, awaiting employment
+#                                                                                                                                       1
+#                                                                                                                            Receptionist
+#                                                                                                                                       1
+#                                                                                                                             Researcher
+#                                                                                                                                       1
+#                                                                                                                        Resident doctor
+#                                                                                                                                       1
+#                                                                                                                                 (Other)
+#                                                                                                                                      42
+#                                                                                                                                    NA's
+#                                                                                                                                     504
+summary(modaC$Annual.income)
+#       Min.    1st Qu.     Median       Mean    3rd Qu.       Max.       NA's
+#       0.00   20000.00   45000.00   65187.35   80000.00 6000000.00        817
+summary(modaC$Current.age.)
+#     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA's
+# 16.00000 23.00000 27.00000 29.58174 33.00000 81.00000      504
+hist(modaC$Current.age., xlab="Age", main="2015 modafinil survey")
+
+sort(table(toupper(sub("^ ", "", sub(" $", "", as.character(modaC$Country))))), decreasing=TRUE)
+            UNITED STATES                 AUSTRALIA            UNITED KINGDOM
+                     1730                       572                       350
+                   CANADA                    FRANCE                   GERMANY
+                       72                        38                        31
+              NETHERLANDS                 SINGAPORE                    POLAND
+                       25                        23                        11
+                  IRELAND                  THAILAND                     INDIA
+                       10                        10                         9
+                   NORWAY                     SPAIN                   BELGIUM
+                        9                         9                         8
+                  HUNGARY                    SWEDEN                  MALAYSIA
+                        8                         8                         7
+                   MEXICO               SWITZERLAND                   DENMARK
+                        7                         7                         6
+              NEW ZEALAND               PHILIPPINES                   VIETNAM
+                        6                         6                         6
+                    CHINA                  COLOMBIA            CZECH REPUBLIC
+                        5                         4                         4
+                  FINLAND                     ITALY                   ROMANIA
+                        4                         4                         4
+              SOUTH KOREA                 ARGENTINA                   AUSTRIA
+                        4                         3                         3
+                   BRAZIL                   CROATIA                   ESTONIA
+                        3                         3                         3
+                HONG KONG                    ISRAEL                  SLOVAKIA
+                        3                         3                         3
+             SOUTH AFRICA        DOMINICAN REPUBLIC                 INDONESIA
+                        3                         2                         2
+                    JAPAN                    JORDAN                 LITHUANIA
+                        2                         2                         2
+                 PORTUGAL                    SERBIA                        SG
+                        2                         2                         2
+                  UKRAINE                    AFRICA                  BULGARIA
+                        2                         1                         1
+                    CHILE                    CYPRUS                   ECUADOR
+                        1                         1                         1
+              EL SALVADOR                        EU     EUROPE/RATHER NOT SAY
+                        1                         1                         1
+                  GRENADA                   ICELAND                   JAMAICA
+                        1                         1                         1
+                    KOREA                    KOSOVO                    LATVIA
+                        1                         1                         1
+                    MALTA               MIDDLE EAST                   MOLDOVA
+                        1                         1                         1
+               MOZAMBIQUE                        MY NOT ANSWERING FOR PRIVACY
+                        1                         1                         1
+                 PAKISTAN          PAPUA NEW GUINEA                    RUSSIA
+                        1                         1                         1
+                   RWANDA                SANDINAVIA               SCANDINAVIA
+                        1                         1                         1
+                    SWISS           THE NETHERLANDS       TRINIDAD AND TOBAGO
+                        1                         1                         1
+                   TURKEY                  VIET NAM
+                        1                         1
+
+Summarize(modaC$Highest.or.current.educational.level)
+#                                 freq   perc
+# Associate's degree               338  10.94
+# Bachelor's                      1497  48.46
+# High school                      563  18.23
+# Masters                          422  13.66
+# PhD                              129   4.18
+# Professional degree (MD/JD/etc)  140   4.53
+# Total                           3089 100.00
+ibw <- aggregate(Annual.income ~ Work.Status, mean, data=modaC)
+ibw[ibw$Work.Status=="Student",]
+#    Work.Status Annual.income
+# 134     Student   18767.01647
+ibw[ibw$Work.Status=="For-profit work (private sector)",]
+#                         Work.Status Annual.income
+# 44 For-profit work (private sector)   83969.00852
+ibw[ibw$Work.Status=="Self-employed",]
+#       Work.Status Annual.income
+# 124 Self-employed   91616.59615
+ibw[ibw$Work.Status=="Academic",]
+#   Work.Status Annual.income
+# 1    Academic   54995.84821
+ibw[ibw$Work.Status=="Government work",]
+#        Work.Status Annual.income
+# 59 Government work   67813.33793
+ibw[ibw$Work.Status=="Non-profit work",]
+#        Work.Status Annual.income
+# 91 Non-profit work   77422.90909
+ibw[ibw$Work.Status=="Unemployed",]
+#     Work.Status Annual.income
+# 152  Unemployed   19212.76596
+
+summary(modaC$Race.ethnicity)
+#                                      Asian (East Asian) Asian (Indian subcontinent)
+#                          14                         217                          78
+#                       Black                    Hispanic              Middle Eastern
+#                          35                          98                          26
+#                       Other        White (non-Hispanic)                        NA's
+#                          92                        1893                         504
+## note that this is highly biased by sampling from recent modafinil users (and hence recent modafinil sellers given turnover), and by the heavy promotion of this survey on ModafinilCat's mailing list:
+library(qdapTools)
+clearnetSellers <- mtabulate(lapply(strsplit(as.character(modaC$If.clearnet..which.of.the.following.have.you.ever.used.), ","), function(s) { tolower(sub(" $", "", sub("^ ", "", s))); }))
+## convert everything to booleans
+for (i in 1:ncol(clearnetSellers)) { clearnetSellers[,i] <- as.logical(clearnetSellers[,i]); }
+## keep only side-effects with >=2 entries, which filters out most of the custom ones
+keep <- c()
+for (i in 1:ncol(clearnetSellers)) { if (sum(clearnetSellers[,i], na.rm=TRUE) >= 2) { keep <- c(keep, i); } }
+clearnetSellersSubset <- clearnetSellers[,keep]
+longclear <- stack(clearnetSellersSubset)
+agclear <- aggregate(values ~ ind, sum, data=longclear)
+agclear[order(agclear$values, decreasing=TRUE),]
+#                            ind values
+# 23                modafinilcat   1692
+# 29                       modup    226
+# 41                 powder city    108
+# 17              medsforbitcoin    102
+# 31         mymodafinil.com/net     95
+# 7                   ceretropic     79
+# 46                       rxrex     77
+# 38                 onemedstore     71
+# 49          sunmodalert.ru/com     56
+# 53           united pharmacies     50
+# 11                   edandmore     45
+# 33         new star nootropics     45
+# 37                     nubrain     29
+# 26             modafinil store     27
+# 52          thepharmacyexpress     26
+# 25 modafinilnow/armodafinilnow     25
+# 2                    airsealed     17
+# 39              pharmacy geoff     17
+# 18                medstore.biz     14
+# 45                 rechem labs     14
+# 47                   rxshop.md     14
+# 1                4nrx pharmacy     12
+# 9                  desiredmeds     12
+# 4         biogenesis antiaging     11
+# 15        good health pharmacy     11
+# 43                         qhi     11
+# 3                    aurapharm      7
+# 22                     modafin      7
+# 44                  quality-rx      6
+# 5                   bmpharmacy      5
+# 6                btcnootropics      5
+# 8      cheapestonlinedrugstore      4
+# 12               eurodrugstore      4
+# 28                   modafresh      4
+# 50            super drug saver      4
+# 20                modadropship      3
+# 21                  modafiendz      3
+# 27                  modafizone      3
+# 40                   pharmland      3
+# 54             worldpharmacare      3
+# 10              don't remember      2
+# 13           expresspharmacyrx      2
+# 14             getsmartnow.net      2
+# 16                    liftmode      2
+# 19                   modadeals      2
+# 24               modafinillabs      2
+# 30                 mymodafinil      2
+# 32                     newmind      2
+# 34            nootropics depot      2
+# 35            nootropicsmexico      2
+# 36           nootropics mexico      2
+# 42            provigilshop.com      2
+# 48            somatropinonline      2
+# 51                  tabsmarket      2
+
+## 240 may sound improbable, but the 240 orders guy says he uses 1000mg daily, and spends $2800/annually at $240/order over the past 24 years (age 40-64),
+## having bought from 'DesiredMeds, EdAndMore, ModUp, ModafinilCat, myModafinil.com/net'. so maybe he really has bought that many times. He leaves an interesting comment:
+## > I would prefer to use the ordinary capsule type amphetamines that were available in the 1960's and 1970's that were available in the U.S.A.
+summary(modaC$How.many.times.have.you.purchased.modafinil.)
+#       Min.    1st Qu.     Median       Mean    3rd Qu.       Max.       NA's
+#   1.000000   1.000000   2.000000   4.377049   4.000000 240.000000        517
+## not sure I believe 20-nondeliveries guy though:
+summary(modaC$How.many.times.have.your.orders.not.arrived.for.any.reason.)
+#       Min.    1st Qu.     Median       Mean    3rd Qu.       Max.       NA's
+#  0.0000000  0.0000000  0.0000000  0.1280065  0.0000000 20.0000000        504
+with(modaC[!is.na(modaC$How.many.times.have.your.orders.not.arrived.for.any.reason.) & !is.na(modaC$How.many.times.have.you.purchased.modafinil.),], sum(How.many.times.have.your.orders.not.arrived.for.any.reason.) / sum(How.many.times.have.you.purchased.modafinil.))
+# [1] 0.02640449438
+summary(modaC$Do.you.use.any.drugs.recreationally..excluding.modafinil..alcohol...tobacco..)
+#        No  Yes NA's
+#   26 1263 1164  504
+Summarize(modaC$Do.you.have.a.medical.prescription.for.modafinil.)
+#       freq  perc
+# No    2714  88.2
+# Yes    363  11.8
+# Total 3077 100.0
+
+~~~
