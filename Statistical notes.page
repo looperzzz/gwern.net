@@ -1541,15 +1541,37 @@ Woodley summarizes a number of estimates:
 
 All of these estimates are genetic selection estimates: indirect estimates inferred from IQ being a heritable trait and then treating it as a natural selection/breeding process, where a trait is selected against based on phenotype and how fast the trait decreases in each succeeding generation depends on how genetic the trait is and how harsh the selection is.
 So variation in these estimates (quoted estimates per generation range from .3 to 3+) is due to sampling error, differences in populations or time periods, expressing the effect by year or generation, the estimate used for heritability, reliability of IQ estimates, and whether additional genetic effects are taken into account - for example, Woodley et al 2015 http://www.sciencedirect.com/science/article/pii/S0191886915003712 finds -.262 points per decade from selection, but in another paper argues that paternal mutation load must be affecting intelligence http://www.sciencedirect.com/science/article/pii/S0191886914006278 by ~-0.84 in the general population given a total of -1 per decade.
+
+Dysgenics effects should be observable by looking at genomes & genotypes with known ages/birth-years and looking for increases in total mutations or decreases in intelligence-causing SNPs, respectively.
+
+## Mutation load
+
+The paternal mutation load should show up as a increase (70 new mutations per generation, 35 years per generation, so ~2 per year on average) over the past century, while the genetic selection will operate by reducing the frequency of variants which increase intelligence.
+
+If there are ~70 new mutations per generation and 2 harmful, and there is no longer any purifying selection so that all 70 will tend to remain present,  http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0090097 "The Effect of Paternal Age on Offspring Intelligence and Personality when Controlling for Parental Trait Levels", Arslan et al 2014
+mutation load review "Estimating the mutation load in human genomes", Henn et al 2015 /docs/2015-henn.pdf
+"The deleterious mutation load is insensitive to recent population history", Simons et al 2014 /docs/2014-simons.pdf wiki/docs/2014-simons-supplementary.pdf ,  using data from "Analysis of 6,515 exomes reveals the recent origin of most human protein-coding variants", Fu et al 2012 /docs/2012-fu.pdf ; figure 3, number of single-nucleotide variants per person over the European-American sample, split by estimates of harm from least to most likely: `21345 + 15231 + 5338 + 1682 + 1969 = 45565`.
+The supplementary tables gives a count of all observed SNVs by category, which sum to `300209 + 8355 + 220391 + 7001 + 351265 + 10293 = 897514`, so the average frequency must be `45565/897514=0.05`, and then the biomial SD will be `sqrt(897514*0.05*(1-0.05))=206.47`.
+Considering the two-sample case of 1950 vs 2015, that's an increase of 130 total SNVs (`65*2`), which is 0.63SDs,
+
+~~~{.R}
+power.t.test(d=(130/206), power=0.8)
+#
+#      Two-sample t test power calculation
+#
+#               n = 40.40035398
+# ...
+~~~
+
+A total of _n_=80.
+This particular set up for the two-sample test can be seen as a linear model with the optimum design of allocating half the sample to each extreme (see ["Optimal design in psychological research"](http://www2.psych.ubc.ca/~schaller/528Readings/McClelland1997.pdf), McClelland 1997).
+If samples were evenly allocated over all levels, then this suffers a penalty of requiring twice the sample size, so if the genomes were uniformly distributed 1950-2015, then we would require >160 genomes.
+
+> We first analyzed single-nucleotide variant (SNV) frequency data from a recent exome sequencing study of 2,217 African Americans (AAs) and 4,298 European Americans (EAs) sequenced at 15,336 protein-coding genes by Fu et al. 6 (the allele frequencies are available from the National Heart, Lung, and Blood Institute (NHLBI) Grand Opportunity (GO) Exome Variant Server). Additionally, we analyzed exome data from 88 Yoruba (YRI) and 81 European (CEU) individuals collected by the 1000 Genomes Project 21...Figure 3 summarizes the results from the data of Fu et al. 6 . The mean allele frequency declines with increasing functional severity 5 from 2.8% at noncoding SNVs to 0.6% at probably damaging SNVs, implying that there is selection against most SNVs with predicted damaging effects.
+
+## Selection on SNPs
+
 Without formally meta-analyzing all dysgenics studies, a good starting point seems like a genetic selection of 1 point per decade or 0.1 points per year or 0.007 standard deviations per year (or 0.7 standard deviations per century).
-
-Dysgenics effects should be observable by looking at longitudinal genome sequences. The paternal mutation load should show up as a increase (70 new mutations per generation) over the past century, while the genetic selection will operate by reducing the frequency of variants which increase intelligence.
-
-If there are ~70 new mutations per generation and 2 harmful, and there is no longer any purifying selection so that all 70 will tend to remain present,  http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0090097
-"The deleterious mutation load is insensitive to recent population history", Simons et al 2014,  using data from "Analysis of 6,515 exomes reveals the recent origin of most human protein-coding variants", Fu et al 2012; figure 3, number of single-nucleotide variants per person over the European-American sample, split by estimates of harm: 21345 + 15231 + 5338 + 1682 + 1969 = 45565.
-
-
-
 
 The most common available genetic data is genotyped SNPs, which sequence only the variants most common in the general population; SNP data can look at the effects of genetic selection but will not look at new mutations (since a new mutation would not be common enough to be worth putting onto a SNP chip).
 
@@ -1778,6 +1800,7 @@ qplot(N, Power, data=powers)  + stat_smooth()
 So for a well-powered two-group comparison of 1950 & 2015 genotypes using 86 SNPs, we would want ~4000 in each group for a total _n_=8000; we do have nontrivial power even at a total _n_=1000 (500 in each group means 21% power) but a non-statistically-significant result will be difficult to interpret and if one wanted to do that, reporting a Bayes factor from a Bayesian hypothesis test would make much more sense to express clearly whether the (non-definitive) data is evidence for or against dysgenics.
 
 This is still too optimistic since we assumed the optimal scenario of only very old and very new genomes, while available genomes are more likely to be distributed fairly uniformly between 1950 and 2015.
+Per McClelland 1997, we would expect our sample size requirement to double to around _n_=16000, but we can do a power simulation here as well.
 To get the effect size for each year, we simply split the frequency decrease over each year and generate hypothetical genomes with less of a frequency decrease uniformly distributed 1950-2015, and do a linear regression to get a _p_-value for the year predictor:
 
 ~~~{.R}
