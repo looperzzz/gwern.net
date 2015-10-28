@@ -88,6 +88,24 @@ How.effective.do.you.find.modafinil.
 [79] "Which.type.of..afinil.do.you.use.the.most."
 [80] "Why.did.you.stop..afinil.usage..1"
 
+###### Genetics
+####### Bodenmann et al 2009 nonreplication
+
+["Pharmacogenetics of modafinil after sleep loss: catechol-O-methyltransferase genotype modulates waking functions but not recovery sleep", Bodenmann et al 2009](http://www.pharma.uzh.ch/research/chronobiology/areas/psychopharmacology/publications/Bodenmann_2009_ClinPharmacolTher85.pdf) found that of n=22 subjects, the ones with Val/Val (GG) on the SNP Rs4680 had considerably better subjective experiences during sleep deprivation, while efficacy in Met/Met (AA) across various measures was much smaller and sometimes nonexistent.
+This is most intriguing as the effect sizes are large enough that Rs4680 could explain why people can differ so much in what they think the effect of modafinil on themselves is, and could potentially be useful in guiding decisions to try out modafinil given that SNP data like offered by 23andMe can be purchased for \$100-\$200 (ie the size of many single orders or copays for modafinil).
+The problem is that this is a candidate-gene experiment, whose results can reach statistical-significance only because they study a single SNP rather than all available SNPs (which would be a GWAS); candidate-gene studies have a fairly notorious reputation for results not replicating and followup GWAS studies showing that dozens or hundreds of candidate-gene results were bogus, and there have been no followups or replications of Bodenmann et al 2009.
+Since 23andMe has over a million customers as of 2015, and many of the measures in Bodenmann et al 2009 were subjective, it should be possible to test the claim using a survey asking people for both Rs4680 status and their subjective appraisal of modafinil efficacy; if the effect is real and anywhere as strong as indicated, it should be absolutely clear with a few hundred survey results.
+
+216 respondents included their Rs4680 status (26% AA, 42% AG, 32% GG).
+
+In regressing Rs4680 status on a sum of the 3 responses relating to subjective experience of modafinil (the 1-5 'how effective do you find modafinil', the binary 'would you say modafinil has changed your life', and the number of issues respondent indicated that modafinil helped with), the result is not statistically-significant and is in the opposite direction.
+(This is true whether Rs4680 is regressed as a linear or categorical predictor, and whether the 3 responses are summed or used as separate dependent variables.)
+
+####### Placebo SNPs
+
+I also asked about COMT Rs4570625 & COMT Rs4633, as they have been identified in a few interesting candidate-gene studies as possibly causing larger or smaller placebo effects; being able to adjust survey responses for placebo effects would be useful, and by explaining variation in responses might allow other relationships to emerge.
+Unfortunately, regressing those two along with Rs4680 shows likewise non-statistically-significant results.
+
 ##### Purchasing behavior
 
 [17] "How.many.times.have.you.purchased.modafinil."
@@ -187,11 +205,9 @@ Analysis:
 demographics: students vs professionals?
 what kind of -afinil gets higher ratings?
 does the original modafinil SNP replicate?
-how common and severe is tolerance?
 if we take the nootropic grid's scores, the placebo SNP data, and estimate a 'placebo factor', does this predict either tolerance or higher modafinil ratings?
 does tolerance fit with close together use of modafinil to skip sleep? half-lives etc
 what fraction of respondents report legal entanglements?
-side-effects, of course, are of great interest
 rw <- function(x,a,b) { for(i in 1:length(a)) { x <- replace(x, x==a[i], b[i]); }; return(x) }
 
 
@@ -247,29 +263,29 @@ sideeffectsSubset <- sideeffects[,keep]
 longeffects <- stack(sideeffectsSubset)
 agside <- aggregate(values ~ ind, sum, data=longeffects)
 mp <- barplot(agside$values); text(mp,par("usr")[3],labels=agside$ind,srt=20,offset=1,adj=1,xpd=TRUE)
- agside[order(agside$values, decreasing=TRUE),]
-                                        ind values
-8                                 headaches   1062
-17                             smelly urine   1053
-10       insomnia/difficulty falling asleep    973
-2  anxiety/hyperventilation/fast heart rate    637
-21                              weight loss    342
-16                           rash or itches    157
-1                            abdominal pain    156
-7              fever or cold or sore throat     99
-18                        sores or blisters     52
-19         swelling face/lips/tongue/throat     36
-15                                     none     17
-6                                 dry mouth     15
-13                                   nausea     12
-5                                  diarrhea     10
-12                         loss of appetite      8
-11                             irritability      5
-3                               dehydration      4
-9                       high blood pressure      4
-4                                depression      3
-14                                       no      3
-20                                   thirst      3
+agside[order(agside$values, decreasing=TRUE),]
+#                                         ind values
+# 8                                 headaches   1062
+# 17                             smelly urine   1053
+# 10       insomnia/difficulty falling asleep    973
+# 2  anxiety/hyperventilation/fast heart rate    637
+# 21                              weight loss    342
+# 16                           rash or itches    157
+# 1                            abdominal pain    156
+# 7              fever or cold or sore throat     99
+# 18                        sores or blisters     52
+# 19         swelling face/lips/tongue/throat     36
+# 15                                     none     17
+# 6                                 dry mouth     15
+# 13                                   nausea     12
+# 5                                  diarrhea     10
+# 12                         loss of appetite      8
+# 11                             irritability      5
+# 3                               dehydration      4
+# 9                       high blood pressure      4
+# 4                                depression      3
+# 14                                       no      3
+# 20                                   thirst      3
 
 
 Placebo effect factor analysis:
@@ -340,31 +356,42 @@ no loading of the g-factor on the modafinil responses...!
 nfactors(mfa[,13:31])
 factorization <- fa(mfa[,13:31], nfactors=1, missing=TRUE); factorization
 
+summary(lm(I(How.effective.do.you.find.modafinil. + as.integer(Would.you.say.that.Modafinil.has.changed.your.life.) + Helpful.issues.N) ~ SNP.status.of.COMT.RS4680, data=modaC))
+# Residuals:
+#        Min         1Q     Median         3Q        Max
+# -3.7159091 -1.6142857  0.2840909  1.3272727  5.3857143
+#
+# Coefficients:
+#                                Estimate  Std. Error  t value Pr(>|t|)
+# (Intercept)                  7.66764069  0.13420146 57.13530  < 2e-16
+# SNP.status.of.COMT.RS4680.L -0.04132442  0.24501722 -0.16866  0.86623
+# SNP.status.of.COMT.RS4680.Q -0.05911647  0.21915006 -0.26975  0.78761
+#
+# Residual standard error: 1.923034 on 210 degrees of freedom
+#   (3622 observations deleted due to missingness)
+# Multiple R-squared:  0.0005183721,    Adjusted R-squared:  -0.009000501
+# F-statistic: 0.0544573 on 2 and 210 DF,  p-value: 0.9470123
+summary(lm(I(How.effective.do.you.find.modafinil. + as.integer(Would.you.say.that.Modafinil.has.changed.your.life.) + Helpful.issues.N) ~ SNP.status.of.COMT.RS4680 + SNP.status.of.COMT.RS4570625 + SNP.status.of.COMT.RS4633, data=modaC))
+# Residuals:
+#        Min         1Q     Median         3Q        Max
+# -3.9535936 -1.6172844  0.0464064  1.3827156  5.0464064
+#
+# Coefficients:
+#                                   Estimate  Std. Error  t value Pr(>|t|)
+# (Intercept)                     7.72268872  0.19132819 40.36357  < 2e-16
+# SNP.status.of.COMT.RS4680.L    -0.12775491  0.42121973 -0.30330  0.76199
+# SNP.status.of.COMT.RS4680.Q     0.45040660  0.48705793  0.92475  0.35625
+# SNP.status.of.COMT.RS4570625.L -0.02293345  0.37926735 -0.06047  0.95185
+# SNP.status.of.COMT.RS4570625.Q  0.28783591  0.28352042  1.01522  0.31126
+# SNP.status.of.COMT.RS4633.L    -0.21861748  0.42769291 -0.51116  0.60982
+# SNP.status.of.COMT.RS4633.Q    -0.60914914  0.48573612 -1.25407  0.21132
+#
+# Residual standard error: 1.909355 on 194 degrees of freedom
+#   (3634 observations deleted due to missingness)
+# Multiple R-squared:  0.01763532,  Adjusted R-squared:  -0.01274709
+# F-statistic: 0.5804452 on 6 and 194 DF,  p-value: 0.745673
 
-summary(lm((How.effective.do.you.find.modafinil. + modaC$Would.you.say.that.Modafinil.has.changed.your.life.) ~ as.integer(SNP.status.of.COMT.RS4680) + as.integer(SNP.status.of.COMT.RS4570625) + as.integer(SNP.status.of.COMT.RS4633), data=modaC))
-Residuals:
-       Min         1Q     Median         3Q        Max
--3.3158705 -0.5775444 -0.1213482  0.7813907  2.0430646
 
-Coefficients:
-                                            Estimate  Std. Error  t value   Pr(>|t|)
-(Intercept)                               4.12099204  0.95476411  4.31624 2.6803e-05
-as.integer(SNP.status.of.COMT.RS4680)    -0.05780205  0.21398559 -0.27012   0.787393
-as.integer(SNP.status.of.COMT.RS4570625)  0.26167390  0.14651220  1.78602   0.075868
-as.integer(SNP.status.of.COMT.RS4633)    -0.15506319  0.21498316 -0.72128   0.471722
-
-Residual standard error: 1.136471 on 171 degrees of freedom
-  (2787 observations deleted due to missingness)
-Multiple R-squared:  0.02531565,    Adjusted R-squared:  0.008215928
-F-statistic: 1.480471 on 3 and 171 DF,  p-value: 0.2216194
-
-
-
-modaC$How.effective.do.you.find.modafinil. + modaC$Would.you.say.that.Modafinil.has.changed.your.life.
-
-library(MASS)
-pl <- polr(as.ordered(modaC$How.effective.do.you.find.modafinil. + modaC$Would.you.say.that.Modafinil.has.changed.your.life.) ~ SNP.status.of.COMT.RS4680, data=modaC)
-summary(pl)
 
 
 tried to verify g-factor against http://slatestarcodex.com/2014/02/16/nootropics-survey-results-and-analysis/ but the missingness is so massive that the results are garbage
