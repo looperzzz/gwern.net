@@ -7,7 +7,8 @@ status: in progress
 belief: highly likely
 ...
 
-# Background
+# 2015
+## Background
 
 In June 2015, I began developing a modafinil survey; I wanted a better picture of modafinil users, particularly the intercept rates and potential genetic moderator. After some months of occasional work and some feedback from ModafinilCat, who had also volunteered to offer a prize when I mentioned the draft, I [finished the 2015 survey]( https://docs.google.com/forms/d/1ZNyGHl6vnHD62spZyHIqyvNM_Ts_82GvZQVdAr2LrGs/viewform) on 26 September 2015, leaving it open for a month, and posting notifications to a variety of places online:
 
@@ -20,20 +21,18 @@ In June 2015, I began developing a modafinil survey; I wanted a better picture o
 
 The community response was enthusiastic. People pointed out in comments & the feedback part of the form issues with the survey which will hopefully be fixed for next year.
 
-# Data
+## Data
 
 I closed the survey ~1:10PM 2015-10-27, having gotten 3960 total responses. (My hope was to get ~1k responses.)
 
-
-
 The data:
 
-- [archive of how the survey looked & question wording](https://www.dropbox.com/s/zgtbd6h9qlu93x5/2015-modafinil-questions.maff)
-- [raw data](https://www.dropbox.com/s/905cbhtjvem1p8x/2015-10-27-modafinilsurvey.csv) (deleted the email/address question for privacy, redacted a few of the feedback entries which included real names/addresses)
-- just [the user free-response/feedback](https://www.dropbox.com/s/gcjiswko7k1amyt/2015-10-27-modafinilsurvey-feedback.csv)
+- [archive of how the survey looked & question wording](/docs/modafinil/survey/2015-10-27-modafinil-questions.maff)
+- [raw data](/docs/modafinil/survey/2015-10-27-modafinilsurvey.csv) (deleted the email/address question for privacy, redacted a few of the feedback entries which included real names/addresses)
+- [the user free-response/feedback](/docs/modafinil/survey/2015-10-27-modafinilsurvey-feedback.csv)
 
-## Results
-### Demographics
+### Results
+#### Demographics
 
 1. Gender: 89% male, 11% female (interestingly, this is almost identical to the [arrest percentages for the darknet markets](http://www.gwern.net/Black-market%20arrests))
 2. Age: mean of 29 and most are in their 20s-early-30s, but there's a wide spread of ages past that, with respondents claiming to be as young as 16 to as old as 81. Histogram: https://i.imgur.com/WunTGiP.png
@@ -62,27 +61,25 @@ The data:
 
     So 82% of respondents have some sort of higher education.
 
-### Usage
+#### Usage
+##### Experiences
 
-Experiences
+- Modafinil is the most popular of the 3 main -afinils, at 78%; followed by armodafinil at 19% and adrafinil at a bare 4%.
 
-Which.type.of..afinil.do.you.use.the.most.
+    Interestingly, many modafinil users have given armodafinil a try as well; about half of those who prefer modafinil have used armodafinil at least once. I wonder if this is related to the longer halflife of the armodafinil isomer? (~2% have ever tried hydrafinil.)
+- Generic vs name-brand is sometimes invoked to explain issues like rashes or no effect. Most respondents (65%) cannot compare them, but of the ones who can, there is no consensus about what the difference is - 60% say they seem about the same, with the remainder evenly split between better/worse.
 How.effective.do.you.find.modafinil.
-Which.of.these.have.you.ever.used.
-In.general..do.you.find.brand.name..afinils.more.effective.than.generics.
+
  [6] "How.primarily.do.you.use..afinils."
  [7] "You.use.modafinil.every.N.days."
  [8] "How.many.months.have.you.been.using.modafinil."
  [9] "What.dosage.do.you.usually.use.per.24.hours."
-[10] "Some.users.report..tolerance..or.effects..wearing.off...how.much.have.you.experienced.this."
-[11] "How.much.do.you.depend.on.modafinil.for.normal.alertness...functioning."
+
 [12] "Have.you.found.it.helpful.for.any.of.the.following.issues."
-[13] "Have.you.experienced.any.significant.side.effects."
-[16] "Would.you.be.able.to.quit.cold.turkey.tomorrow."
-[64] "If.you.experienced.tolerance..how.many.weeks.did.it.take.to.develop."
 [67] "Do.you.still.use..afinil."
 [68] "Why.did.you.stop..afinil.usage."
 [69] "How.many.days.ago.did.you.last.use.modafinil."
+[81] "Helpful.issues.N"
 [72] "How.would.you.rate.your.main..afinil.for.those.uses...Day..energy..motivation."
 [73] "How.would.you.rate.your.main..afinil.for.those.uses...Night..skip.sleep."
 [74] "How.would.you.rate.your.main..afinil.for.those.uses...Cognitive.enhancement."
@@ -90,10 +87,8 @@ In.general..do.you.find.brand.name..afinils.more.effective.than.generics.
 [77] "How.would.you.rate.your.main..afinil.for.those.uses...Medical."
 [79] "Which.type.of..afinil.do.you.use.the.most."
 [80] "Why.did.you.stop..afinil.usage..1"
-[81] "Helpful.issues.N"
-side effects bar plot
 
-Purchasing behavior
+##### Purchasing behavior
 
 [17] "How.many.times.have.you.purchased.modafinil."
 [19] "How.many.units...doses.is.your.usual.order...0.10.tablets."
@@ -108,7 +103,45 @@ Purchasing behavior
 [28] "Where.do.you.usually.buy."
 [70] "If.clearnet..which.of.the.following.have.you.ever.used."
 
-Risks
+##### Risks
+###### Side-effects, tolerance
+
+- Tolerance: on a Likert going from 'as effective as first time' to 'Became completely ineffective':
+
+    1. 22.61%
+    2. 31.18%
+    3. 33.82%
+    4. 11.08%
+    5. 1.31%
+
+    So it seems most users (2-4=76%) would endorse some small to substantial amount of tolerance developing, but very few (many fewer than claim to notice no tolerance at all) would say the tolerance is total. (On the other hand, perhaps the tolerant drop modafinil usage and aren't answering the survey.)
+- For those experiencing tolerance, it tends to set in fast, within weeks: the median is 2 weeks. (Consistent with placebo effect.)
+- Where there is tolerance, one must worry there may also be dependency or addiction; I asked two questions aimed at this, a Likert 1-5 (5=bad) and a yes/no about if they could quit modafinil use immediately. For the former, 15% answered 4/5, above average, with 3% indicating 5 and dependency; in the yes/no, 6% chose 'no', they could not quit.
+- A list of side-effects was provided. A graph of side-effects reported at least 3 times: https://i.imgur.com/iSJUUM9.png
+
+    1. headaches: 1062
+    1. smelly urine: 1053
+    1. insomnia/difficulty falling asleep: 973
+    1. anxiety/hyperventilation/fast heart rate: 637
+    1. weight loss: 342
+    1. rash or itches: 157
+    1. abdominal pain: 156
+    1. fever or cold or sore throat: 99
+    1. sores or blisters: 52
+    1. swelling face/lips/tongue/throat: 36
+    1. dry mouth: 15
+    1. nausea: 12
+    1. diarrhea: 10
+    1. loss of appetite: 8
+    1. irritability: 5
+    1. dehydration: 4
+    1. high blood pressure: 4
+    1. depression: 3
+    1. thirst: 3
+
+    I suspect the high frequency of headaches may be due to people not getting enough food & drink or not trying out smaller doses. Below a frequency of 3, there are a lot of free-response & idiosyncratic responses (eg "Massive black eyes from REM deprivation" or "I most times poop within an hour of taking it"), which you can read through [in the side-effects CSV](/docs/modafinil/survey/2015-10-27-survey-sideeffects.csv); no one reports [Stevens-Johnson Syndrome](!Wikipedia) (SJS), though.
+
+###### Legal
 
 1. Modafinil prescriptions: 12% report having a prescription for modafinil
 [30] "Do.you.use.any.of.the.following.precautions.when.ordering.online."
@@ -117,16 +150,18 @@ Risks
 [63] "If.you.ve.ever.used.a.DNM.for.modafinil..which.have.you.used."
 [29] "Have.you.ever.used.Bitcoin.to.purchase.modafinil."
 
-Origins
+##### Origins
 
 [41] "How.did.you.hear.of.and.become.interested.in.modafinil."
 [71] "At.what.age.did.you.first.use.any..afinil."
 
+# 2016
+
 ---
 
-- 2016 draft: https://docs.google.com/forms/d/1KVXumV8T1iyNYnYTKZr_aRjhrZSSfxSIJVuoRAUIluM/edit#
+- 2016 draft: https://docs.google.com/forms/d/1KVXumV8T1iyNYnYTKZr_aRjhrZSSfxSIJVuoRAUIluM/edit / live https://docs.google.com/forms/d/1KVXumV8T1iyNYnYTKZr_aRjhrZSSfxSIJVuoRAUIluM/viewform
 
-TODO items for improving survey:
+## Improvements
 
 - increase from 1 month to 2 months
 - 'A "reason for stopping modafinil" if applicable question could yield some interesting insight.' <-- don't I have that on the stopped-page?
@@ -145,6 +180,7 @@ TODO items for improving survey:
 - add clarifying help text to attention test question
 - Country: add Netherlands, Singapore, Ireland, Thailand, India, Norway, Spain, Belgium, Hungary, Sweden, Malaysia, Mexico, Switzerland, Denmark, New Zealand, Philippines, Vietnam, China, Columbia, Czech Republic, Italy, Romania, South Korea, Argentina, Austria, Brazil, Croatia, Estonia, Hong Kong, Slovakia, South Africa
 
+---
 
 Analysis:
 
@@ -160,7 +196,7 @@ rw <- function(x,a,b) { for(i in 1:length(a)) { x <- replace(x, x==a[i], b[i]); 
 
 
 ~~~{.R}
-moda <- read.csv("2015-10-27-modafinilsurvey.csv")
+moda <- read.csv("http://www.gwern.net/docs/modafinil/survey/2015-10-27-modafinilsurvey.csv")
 ## duplicates found reading the feedback:
 modaC <- moda[-c(110, 293, 396, 459, 776, 1018, 1510, 2429, 3883),]
 ## delete rows exactly duplicated aside from the first Timestamp column:
@@ -203,7 +239,7 @@ library(qdapTools)
 sideeffects <- mtabulate(lapply(strsplit(sub("Swelling of your face, lips, tongue, or throat", "Swelling face/lips/tongue/throat", as.character(modaC$Have.you.experienced.any.significant.side.effects.)), ","), function(s) { tolower(sub(" $", "", sub("^ ", "", s))); }))
 ## convert everything to booleans
 for (i in 1:ncol(sideeffects)) { sideeffects[,i] <- as.logical(sideeffects[,i]); }
-## keep only side-effects with >4 entries, which filters out most of the custom ones
+## keep only side-effects with >2 entries, which filters out most of the custom ones
 keep <- c()
 for (i in 1:ncol(sideeffects)) { if (sum(sideeffects[,i], na.rm=TRUE) > 2) { keep <- c(keep, i); } }
 sideeffectsSubset <- sideeffects[,keep]
@@ -211,6 +247,29 @@ sideeffectsSubset <- sideeffects[,keep]
 longeffects <- stack(sideeffectsSubset)
 agside <- aggregate(values ~ ind, sum, data=longeffects)
 mp <- barplot(agside$values); text(mp,par("usr")[3],labels=agside$ind,srt=20,offset=1,adj=1,xpd=TRUE)
+ agside[order(agside$values, decreasing=TRUE),]
+                                        ind values
+8                                 headaches   1062
+17                             smelly urine   1053
+10       insomnia/difficulty falling asleep    973
+2  anxiety/hyperventilation/fast heart rate    637
+21                              weight loss    342
+16                           rash or itches    157
+1                            abdominal pain    156
+7              fever or cold or sore throat     99
+18                        sores or blisters     52
+19         swelling face/lips/tongue/throat     36
+15                                     none     17
+6                                 dry mouth     15
+13                                   nausea     12
+5                                  diarrhea     10
+12                         loss of appetite      8
+11                             irritability      5
+3                               dehydration      4
+9                       high blood pressure      4
+4                                depression      3
+14                                       no      3
+20                                   thirst      3
 
 
 Placebo effect factor analysis:
@@ -730,5 +789,83 @@ Summarize(modaC$Do.you.have.a.medical.prescription.for.modafinil.)
 # No    2714  88.2
 # Yes    363  11.8
 # Total 3077 100.0
+R> Summarize(modaC$Which.type.of..afinil.do.you.use.the.most.)
+            freq   perc
+adrafinil    114   3.69
+armodafinil  579  18.72
+modafinil   2400  77.59
+Total       3093 100.00
+R> Summarize(modaC$Which.of.these.have.you.ever.used.)
+                                                             freq  perc
+adrafinil                                                      63  2.03
+adrafinil, hydrafinil                                           4  0.13
+adrafinil, hydrafinil, beta-t-afinil                            0  0.00
+armodafinil                                                   106  3.42
+armodafinil, adrafinil                                         17  0.55
+armodafinil, adrafinil, hydrafinil                              1  0.03
+armodafinil, adrafinil, hydrafinil, beta-t-afinil               0  0.00
+beta-t-afinil                                                   0  0.00
+hydrafinil                                                      2  0.06
+modafinil                                                    1573 50.74
+modafinil, adrafinil                                          197  6.35
+modafinil, adrafinil, hydrafinil                               12  0.39
+modafinil, armodafinil                                        853 27.52
+modafinil, armodafinil, adrafinil                             230  7.42
+modafinil, armodafinil, adrafinil, hydrafinil                  24  0.77
+modafinil, armodafinil, adrafinil, hydrafinil, beta-t-afinil    0  0.00
+modafinil, armodafinil, beta-t-afinil                           0  0.00
+modafinil, armodafinil, hydrafinil                             11  0.35
+modafinil, beta-t-afinil                                        0  0.00
+modafinil, hydrafinil                                           7  0.23
+Total                                                        3100 99.99
+R> 27.52  + 7.42 + 0.77 + 0.35
+[1] 36.06
+R> 36.06/0.78
+[1] 46.23076923
+R> Summarize(modaC$In.general..do.you.find.brand.name..afinils.more.effective.than.generics.)
+               freq   perc
+NA/don't know  2015  65.21
+No              197   6.38
+The same/equal  643  20.81
+Yes             235   7.61
+Total          3090 100.01
+R> 100-65
+[1] 35
+R> 20.81/(100-65.21)
+[1] 0.5981603909
+R> Summarize(as.factor(modaC$If.you.experienced.tolerance..how.many.weeks.did.it.take.to.develop.))
+      freq   perc
+0      120   6.99
+0.1      1   0.06
+0.5      6   0.35
+0.6      1   0.06
+0.7      1   0.06
+1      367  21.39
+1.5      3   0.17
+2      367  21.39
+3      255  14.86
+4      219  12.76
+5       35   2.04
+6       59   3.44
+7       10   0.58
+8       81   4.72
+9        3   0.17
+10      21   1.22
+11       1   0.06
+12      55   3.21
+...
+R> Summarize(as.factor(modaC$How.much.do.you.depend.on.modafinil.for.normal.alertness...functioning.))
+      freq   perc
+1      898  29.15
+2      860  27.91
+3      847  27.49
+4      372  12.07
+5      104   3.38
+Total 3081 100.00
+R> Summarize(as.factor(modaC$Would.you.be.able.to.quit.cold.turkey.tomorrow.))
+      freq   perc
+No     186   6.01
+Yes   2909  93.99
+Total 3095 100.00
 
 ~~~
