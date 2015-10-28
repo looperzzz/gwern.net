@@ -96,10 +96,16 @@ This is most intriguing as the effect sizes are large enough that Rs4680 could e
 The problem is that this is a candidate-gene experiment, whose results can reach statistical-significance only because they study a single SNP rather than all available SNPs (which would be a GWAS); candidate-gene studies have a fairly notorious reputation for results not replicating and followup GWAS studies showing that dozens or hundreds of candidate-gene results were bogus, and there have been no followups or replications of Bodenmann et al 2009.
 Since 23andMe has over a million customers as of 2015, and many of the measures in Bodenmann et al 2009 were subjective, it should be possible to test the claim using a survey asking people for both Rs4680 status and their subjective appraisal of modafinil efficacy; if the effect is real and anywhere as strong as indicated, it should be absolutely clear with a few hundred survey results.
 
-216 respondents included their Rs4680 status (26% AA, 42% AG, 32% GG).
+216 respondents included their Rs4680 status; the percentage were 26% AA / 42% AG / 32% GG, giving an almost exactly balanced number of AAs vs GGs, just as in the Bodenmann et al 2009 European sample.
+[dbSNP](http://www.ncbi.nlm.nih.gov/projects/SNP/snp_ref.cgi?rs=4680) reports that of a general population of 1507 samples, the corresponding percentages were 12%/44%/43%
 
 In regressing Rs4680 status on a sum of the 3 responses relating to subjective experience of modafinil (the 1-5 'how effective do you find modafinil', the binary 'would you say modafinil has changed your life', and the number of issues respondent indicated that modafinil helped with), the result is not statistically-significant and is in the opposite direction.
 (This is true whether Rs4680 is regressed as a linear or categorical predictor, and whether the 3 responses are summed or used as separate dependent variables.)
+
+One might think that sample selection accounts for the lack of effect, as people for whom modafinil does not work will be much less likely to participate in the survey; this selection effect predicts that there would be a large excess of GGs (for whom modafinil works well) and a corresponding lack of AAs (most of whom it does not work and will not bother to participate, leaving only the luckier AAs who think modafinil works for other reasons), large enough to make the effects disappear, but in comparing to the population frequencies we see not just insufficient imbalance to explain the lack of effect, but quite the *opposite* - there's an excess of AAs and a corresponding reduction in GGs.
+(The excess of AAs compared to the dbSNP population frequencies may be due to racial differences, since respondents are mostly Caucasian or East Asian.)
+
+<!-- TODO: remove Bodenmann et al 2009 from its prominent place in Modafinil.page; I no longer believe it -->
 
 ####### Placebo SNPs
 
