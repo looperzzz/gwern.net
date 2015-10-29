@@ -1422,472 +1422,6 @@ By taking the posterior of the test and integrating all the estimated costs and 
 
 So to sum up: there are no hard thresholds in decision-making and imposing them can cost us better decision-making, so to claim additional information is worthless, more analysis needed, and this analysis must be done with respect to the available actions & their consequences, which even under the somewhat extreme conditions here of very weak interventions & low base-rates, suggests that the value of this information is positive.
 
-<!--
-# Dysgenics
-
-"Estimating the genotypic intelligence of populations and assessing the impact of socioeconomic factors and migrations.", Piffer https://thewinnower.com/papers/estimating-the-genotypic-intelligence-of-populations-and-assessing-the-impact-of-socioeconomic-factors-and-migrations
-
-http://openpsych.net/forum/showthread.php?tid=127
-http://openpsych.net/forum/showthread.php?tid=224
-
-http://www.unz.com/akarlin/genetics-iq-and-convergence/
-
-http://humanvarieties.org/2014/10/03/is-there-no-population-genetic-support-for-a-racial-hereditarian-hypothesis/
-
-Piffer, Davide (2015): "A review of intelligence GWAS hits: their relationship to country IQ and the issue of spatial autocorrelation", _Intelligence_
-http://dx.doi.org/10.6084/m9.figshare.1393160
-
-Factor Analysis of Population Allele Frequencies as a Simple, Novel Method of Detecting Signals of Recent Polygenic Selection: The Example of Educational Attainment and IQ. D Piffer
-D Piffer
-Mankind Quarterly 54 (2), 168-200
-
-Statistical associations between genetic polymorphisms modulating executive function and intelligence suggest recent selective pressure on cognitive abilities.
-D Piffer
-Mankind Quarterly 54 (1), 3-25
-
-Opposite selection pressures on stature and intelligence across human populations
-D Piffer
-Open Behavioral Genetics
-
-The genetic correlation between educational attainment, intracranial volume and IQ is due to recent polygenic selection on general cognitive ability
-D Piffer, E Kirkegaard
-Open Behavioral Genetics
-
-
-Piffer, D. (2014). Estimating strength of polygenic selection with principal components analysis of spatial genetic variation. bioRxiv, 008011.
-
-https://www.google.com/search?num=100&q=%22Date%20of%20Birth%22%20site%3Amy.pgp-hms.org%2Fprofile%2F eg https://my.pgp-hms.org/profile/hu594129 https://workbench.su92l.arvadosapi.com/collections/22d61dd43786c65cd175b04ad6954af0+3119/html/index.html 1252 people with registered birthdates according to `demographics.tsv`? but how many with genetics...
-https://opensnp.org/phenotypes/148#users eg https://opensnp.org/users/3866
-http://www.snpedia.com/index.php/Genomes
-http://genomesunzipped.org/data
-
-Rietveld et al 2013
-
-0.1 = +1 month of schooling
-SNP Allele freq Beta
---- ----   ---- ----
-rs9320913  A 0.483 0.101
-rs3783006  C 0.454 0.088
-rs8049439 T 0.581 0.086
-rs13188378 A 0.878 -0.097
-
-> On average, subjects have 13.3 years of schooling
-
-> For EduYears, the strongest effect identified (rs9320913) explains 0.022% of phenotypic variance in the replication sample. This R^2 corresponds to a difference of ~1 months of schooling per allele.
-
-the 4 alleles have almost the same effect size (betas of 0.1), so the top 4 then have an R^2 of (0.0022*3)=0.0066?
-then to get pearson's r:
-r=sqrt(0.0022*3)=0.08124038405
-
-so the r of the 4 rietveld hits with years of education is r=0.08.
-Years of education, while g-loaded, is not IQ.
-
-http://differentialclub.wdfiles.com/local--files/definitions-structure-and-measurement/Intelligence-Knowns-and-unknowns.pdf
-> Correlations between IQ scores and total years of education are about .55, implying that differences in psychometric intelligence account for about 30% of the outcome variance.
-
-so years of education and IQ are r=0.55 (this is not r^2 since we can see it's bigger than the other number: 0.55^2=0.30).
-this makes years of education a decent but imperfect measure of IQ
-if we assume a path model of genes->education->IQ with no other arrows, then the correlation of genes/IQ would be:
-
-0.081 * 0.55 = 0.04455
-
-We might ask about power in a _t_-test:
-
-r->d = sqrt((4*r^2) / (1 - r^2))
-sqrt((4*0.04455^2) / (1 - 0.04455^2))
-d=0.08918855033
-R> power.t.test(power=0.8, d=0.08918855033)
-
-     Two-sample t test power calculation
-
-              n = 1974.380528
-
-for polygenic score predicting 2%:
-
-r^2=0.02
-r=sqrt(0.02)
-r=0.1414213562
-0.14*0.55=0.077
-d=sqrt((4*0.077^2) / (1 - 0.077^2))=0.154
-
-     Two-sample t test power calculation
-
-              n = 659.4424804
-
-
-
-rbivariate <- function(r, mean.x = 0, sd.x=1, mean.y=0, sd.y=1, n=1) {
- z1 <- rnorm(n)
- z2 <- rnorm(n)
- x <- sqrt(1-r^2)*sd.x*z1 + r*sd.x*z2 + mean.x
- y <- sd.y*z2 + mean.y
- return(list(x,y))
-}
-
-> To evaluate the combined explanatory power, we constructed a linear polygenic score (5) for each of our two education measures using the meta-analysis results (combining discovery and replication), excluding one cohort. We tested these scores for association with educational attainment in the excluded cohort. We constructed the scores using SNPs whose nominal p-values fall below a certain threshold, ranging from 5x10^-8 (only the genome-wide significant SNPs were included) to 1 (all SNPs were included)....To explore one of the many potential mediating endophenotypes, we examined how much the same polygenic scores (constructed to explain EduYears or College) could explain individual differences in cognitive function. While it would have been preferable to explore a richer set of mediators, this variable was available in STR, a dataset where we had access to the individual-level genotypic data. Cognitive function had been measured in a subset of males using the Swedish Enlistment Battery (used for conscription) (5, 17). The estimated R^2 ≈ 2.5% (p < 1.0x10^−8 ) for cognitive function is actually slightly larger than the fraction of variance in educational attainment captured by the score in the STR sample. One possible interpretation is that some of the SNPs used to construct the score matter for education through their stronger, more direct effects on cognitive function (5). A mediation analysis (table S24) provides tentative evidence consistent with this interpretation.
-
-r^2=0.025
-r=sqrt(0.025)=0.158113883
-d=sqrt((4*0.158^2) / (1 - 0.158^2))=0.32
-R> power.t.test(power=0.8, d=0.32)
-     Two-sample t test power calculation
-
-              n = 154.2646926
-
-The dysgenics hypothesis argues that due to observed reproductive patterns where the highly educated or intelligent tend to have fewer offspring, genotypic IQ (the upper bound on phenotypic IQs set by genes and the sort of thing measured by a polygenic score).
-Woodley summarizes a number of estimates:
-
-> Early in the 20th century, negative correlations were observed between intelligence and fertility, which were taken to indicate a dysgenic fertility trend (e.g. Cattell, 1936; Lentz, 1927; Maller, 1933; Sutherland, 1929). Early predictions of the rate of dysgenesis were as high as between 1 and 1.5 IQ points per decade (Cattell, 1937, 1936)...In their study of the relationship between intelligence and both completed and partially completed fertility, van Court and Bean (1985) reported that the relationships were predominantly negative in cohorts born between the years 1912 and 1982...Vining (1982) was the first to have attempted an estimation of the rate of genotypic IQ decline due to dysgenesis with reference to a large national probability cohort of US women aged between 24 and 34 years in 1978. He identified significant negative correlations between fertility and IQ ranging from −.104 to −.221 across categories of sex, age and race, with an estimated genotypic IQ decline of one point a generation. In a 10year follow-up study using the same cohort, Vining (1995) re-examined the relationship between IQ and fertility, now that fertility was complete, finding evidence for a genotypic IQ decline of .5 points per generation. Retherford and Sewell (1988) examined the association between fertility and IQ amongst a sample of 9000 Wisconsin high-school graduates (graduated 1957). They found a selection differential that would have reduced the phenotypic IQ by .81 points per generation under the assumption of equal IQs for parents and children. With an estimate of .4 for the additive heritability of IQ, they calculated a more modest genotypic decline of approximately .33 points. The study of Ree and Earles (1991), which employed the NLSY suggests that once the differential fertility of immigrant groups is taken into consideration, the phenotypic IQ loss amongst the American population may be greater than .8 of a point per generation. Similarly, in summarizing various studies, Herrnstein & Murray (1994) suggest that "it would be nearly impossible to make the total [phenotypic IQ decline] come out to less than one point per generation. It might be twice that." (p. 364). Loehlin (1997) found a negative relationship between the fertility of American women aged 35–44 in 1992 and their educational level. By assigning IQ scores to each of six educational levels, Loehlin estimated a dysgenesis rate of .8 points in one generation. Significant contributions to the study of dysgenesis have been made by Lynn, 1996 (see also: 2011) whose book Dysgenics: Genetic deterioration in modern populations provided the first estimates of the magnitude of dysgenesis in Britain over a 90 year period, putting the phenotypic loss at .069 points per year (about 1.7 points a generation assuming a generational length of 25 years). In the same study, Lynn estimated that the genotypic IQ loss was 1.64 points per generation between 1920 and 1940, which reduced to .66 points between 1950 and the present. Subsequent work by Lynn has investigated dysgenesis in other populations. For example Lynn (1999) found evidence for dysgenic fertility amongst those surveyed in the 1994 National Opinion Research Center survey, which encompassed a representative sample of American adults, in the form of negative correlations between the intelligence of adults aged 40+ and the number of children and siblings. Lynn estimates the rate of dysgenesis amongst this cohort at .48 points per generation. In a more recent study, Lynn and van Court (2004) estimated that amongst the most recent US cohort for which fertility can be considered complete (i.e. those born in the years 1940–1949), IQ has declined by .9 points per generation. At the country level, Lynn and Harvey (2008) have found evidence of a global dysgenesis of around .86 points between 1950 and 2000, which is projected to increase to 1.28 points in the period from 2000 to 2050. This projection includes the assumption that 35% of the varience in cross-country IQ differences is due to the influence of genetic factors. A subsequent study by Meisenberg (2009), found that the fertility differential between developed and developing nations has the potential to reduce the phenotypic world population IQ mean by 1.34 points per decade (amounting to a genotypic decline of .47 points per decade assuming Lynn & Harvey's 35% estimate). This assumes present rates of fertility and pre-reproductive mortality within countries. Meisenberg (2010) and Meisenberg and Kaul (2010) have examined the factors through which intelligence influences reproductive outcomes. They found that amongst the NLSY79 cohort in the United States, the negative correlation between intelligence and fertility is primarily associated with g and is mediated in part by education and income, and to a lesser extent by more “liberal” gender attitudes. From this Meisenberg has suggested that in the absence of migration and with a constant environment, selection has the potential to reduce the average genotypic IQ of the US population by between .4, .8 and 1.2 points per generation.
-
-All of these estimates are genetic selection estimates: indirect estimates inferred from IQ being a heritable trait and then treating it as a natural selection/breeding process, where a trait is selected against based on phenotype and how fast the trait decreases in each succeeding generation depends on how genetic the trait is and how harsh the selection is.
-So variation in these estimates (quoted estimates per generation range from .3 to 3+) is due to sampling error, differences in populations or time periods, expressing the effect by year or generation, the estimate used for heritability, reliability of IQ estimates, and whether additional genetic effects are taken into account - for example, Woodley et al 2015 http://www.sciencedirect.com/science/article/pii/S0191886915003712 finds -.262 points per decade from selection, but in another paper argues that paternal mutation load must be affecting intelligence http://www.sciencedirect.com/science/article/pii/S0191886914006278 by ~-0.84 in the general population given a total of -1 per decade.
-
-Dysgenics effects should be observable by looking at genomes & genotypes with known ages/birth-years and looking for increases in total mutations or decreases in intelligence-causing SNPs, respectively.
-
-## Mutation load
-
-The paternal mutation load should show up as a increase (70 new mutations per generation, 35 years per generation, so ~2 per year on average) over the past century, while the genetic selection will operate by reducing the frequency of variants which increase intelligence.
-
-If there are ~70 new mutations per generation and 2 harmful, and there is no longer any purifying selection so that all 70 will tend to remain present,  http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0090097 "The Effect of Paternal Age on Offspring Intelligence and Personality when Controlling for Parental Trait Levels", Arslan et al 2014
-mutation load review "Estimating the mutation load in human genomes", Henn et al 2015 /docs/2015-henn.pdf
-"The deleterious mutation load is insensitive to recent population history", Simons et al 2014 /docs/2014-simons.pdf wiki/docs/2014-simons-supplementary.pdf ,  using data from "Analysis of 6,515 exomes reveals the recent origin of most human protein-coding variants", Fu et al 2012 /docs/2012-fu.pdf ; figure 3, number of single-nucleotide variants per person over the European-American sample, split by estimates of harm from least to most likely: `21345 + 15231 + 5338 + 1682 + 1969 = 45565`.
-The supplementary tables gives a count of all observed SNVs by category, which sum to `300209 + 8355 + 220391 + 7001 + 351265 + 10293 = 897514`, so the average frequency must be `45565/897514=0.05`, and then the biomial SD will be `sqrt(897514*0.05*(1-0.05))=206.47`.
-Considering the two-sample case of 1950 vs 2015, that's an increase of 130 total SNVs (`65*2`), which is 0.63SDs,
-
-~~~{.R}
-power.t.test(d=(130/206), power=0.8)
-#
-#      Two-sample t test power calculation
-#
-#               n = 40.40035398
-# ...
-~~~
-
-A total of _n_=80.
-This particular set up for the two-sample test can be seen as a linear model with the optimum design of allocating half the sample to each extreme (see ["Optimal design in psychological research"](http://www2.psych.ubc.ca/~schaller/528Readings/McClelland1997.pdf), McClelland 1997).
-If samples were evenly allocated over all levels, then this suffers a penalty of requiring twice the sample size, so if the genomes were uniformly distributed 1950-2015, then we would require >160 genomes.
-
-> We first analyzed single-nucleotide variant (SNV) frequency data from a recent exome sequencing study of 2,217 African Americans (AAs) and 4,298 European Americans (EAs) sequenced at 15,336 protein-coding genes by Fu et al. 6 (the allele frequencies are available from the National Heart, Lung, and Blood Institute (NHLBI) Grand Opportunity (GO) Exome Variant Server). Additionally, we analyzed exome data from 88 Yoruba (YRI) and 81 European (CEU) individuals collected by the 1000 Genomes Project 21...Figure 3 summarizes the results from the data of Fu et al. 6 . The mean allele frequency declines with increasing functional severity 5 from 2.8% at noncoding SNVs to 0.6% at probably damaging SNVs, implying that there is selection against most SNVs with predicted damaging effects.
-
-## Selection on SNPs
-
-Without formally meta-analyzing all dysgenics studies, a good starting point seems like a genetic selection of 1 point per decade or 0.1 points per year or 0.007 standard deviations per year (or 0.7 standard deviations per century).
-
-The most common available genetic data is genotyped SNPs, which sequence only the variants most common in the general population; SNP data can look at the effects of genetic selection but will not look at new mutations (since a new mutation would not be common enough to be worth putting onto a SNP chip).
-
-Given a large sample of SNP data, a birth year (or age), and a set of binary SNP variables which cause intelligence (coded as 1 for the good variant, 0 for the others), we could formulate this as a multivariate regression: glm(cbind(SNP1, SNP2, ... SNPN) ~ Year, family=binomial) and see if the year variable has a negative sign (increasing passage of time predicts lower levels of the good genes); if it does, this is evidence for dysgenics.
-Better yet, given information about the effect size of the SNPs, we could for each person's SNP sum the net effects and then regress on a single variable, giving more precision rather than looking for independent effects on each SNP: lm(Polygenic_score ~ Year). Again a negative sign on the year variable is evidence for dysgenics.
-
-Directional predictions are weak, and in this case we have quantitative predictions of how big the effects should be.
-Most of the public genomes I looked at seem to have the earliest birthdates in the 1950s or so; genomes can come from any age person (parents can give permission, and sequencing has been done prenatally) so the maximum effect is the difference between 1950 and 2015, which is 65*0.007=0.455 standard deviations (but most genomes will come from intermediate birth-dates, which are less informative about the tempoeral trend - in the optimal experimental design for measuring a linear trend, half the samples would be from 1950 and the other half from 2015).
-If the genetic total is going down by 0.455sd, how much do the frequencies of all the good genes go down?
-
-One simple model of genotypic IQ would be to treat it as a large number of alleles of equal binary effect: a binomial sum of n=10,000 1/0 variables with p=50% (population frequency) is reasonable. In such a model, the average value of the sum is of course n*p=5000, and the sd is sqrt(n*p*(1-p)) or sqrt(10000*0.5*0.5) or 50. Applying our estimate of dysgenic effect, we would expect the sum to fall by 0.455*50=22.75, so we would be comparing two populations, one with a mean of 5000 and a dysgenic mean of 4977.25.
-If we were given access to all alleles from a sample of 1950 and 2015 genomes and so we could construct the sum, how hard would it be able to tell the difference? In this case, the sum is normally distributed as there are more than enough alleles to create normality, so we can just treat this as a two-sample normally-distributed comparison of means (a _t_-test), and we already have a directional effect size in mind, -0.445sd, so:
-
-~~~{.R}
-power.t.test(delta=0.455, power=0.8, alternative="one.sided")
-#
-#      Two-sample t test power calculation
-#
-#               n = 60.4155602
-# ...
-~~~
-
-A total n=120 is doable, but it is unlikely that we will know all intelligence genes anytime soon; instead, we know a few.
-A new mean of 4977 implies that since total number of alleles is the same but the mean has fallen, the frequencies must also fall and the average frequency falls from 0.5 to 4977.25/10000=0.497725.
-To go to the other extreme, if we know only a single gene and we want to test a fall from a frequency of 0.50 to 0.4977, we need infeasibly more samples:
-
-~~~{.R}
-power.prop.test(p1=0.5, p2=0.497725, power=0.8, alternative="one.sided")
-#
-#      Two-sample comparison of proportions power calculation
-#
-#               n = 597272.2524
-# ...
-~~~
-
-We know a number of genes, though. Rietveld gives 4 good hits, so we can look at a polygenic score from that. They are all of similar effect size and frequency, so we'll continue under the same assumptions of 1/0 and p=50%. The non-dysgenic average score is 4*0.5=2, sd=sqrt(4*0.5*0.5)=1. (Naturally, the SD is *much* larger than before because with so few random variables...) The predicted shift is from frequencies of 0.5 to 0.497, so the dysgenic scores should be 4*0.497=1.988, sd=sqrt(4*0.497*0.503)=0.999. The difference of 0.012 on the reduced polygenic score is d=((2-1.988) / 0.999)=0.012, giving a necessary power of:
-
-~~~{.R}
-power.t.test(delta=0.012006003, power=0.8)
-#
-#      Two-sample t test power calculation
-#
-#               n = 108904.194
-# ...
-~~~
-
-So the 4 hits do reduce the necessary sample size to detect a decrease, but it's still not feasible to require 200k genotypes (unless you are 23andMe or SSGAC or an entity like that).
-
-In the current GWAS literature, there are ~9 hits we could use, but the [upcoming SSGAC paper promises: "We identified 86 independent SNPs associated with EA (p < 5E-8)."](http://drjamesthompson.blogspot.com/2015/09/scholar-in-86-snps.html "'86 genomic sites associated with educational attainment provide insight into the biology of cognitive performance', James J Lee, (at least 200 co-authors)").
-So how much would 86 improve over 4?
-
-- mean old: 86*0.5=43
-- sd old=sqrt(86*0.5*0.5)=4.6368;
-- mean new: 86*0.497=42.742
-- sd new=sqrt(86*0.497*(1-0.497))=4.6367
-- so d=(43-42.742)/4.63675=0.0556
-
-~~~{.R}
-power.t.test(delta=((43-42.742)/4.63675), power=0.8)
-#
-#      Two-sample t test power calculation
-#
-#               n = 5071.166739
-# ...
-~~~
-
-so with 75, it drops from 200k to 10.1k.
-
-To work backwards: we know with 1 hit, we need almost a million genomes (infeasible for any but the largest databanks, who have no interest in studying this hypothesis), and with all hits we need more like 200 genomes (entirely doable with just publicly available datasets like PGP), but how many hits do we need to work with an in-between amount of data like the ~2k genomes with ages I guess may be publicly available now or in the near future?
-
-~~~{.R}
-power.t.test(n=1000, power=0.8)
-#     Two-sample t test power calculation
-#
-#              n = 1000
-#          delta = 0.1253508704
-hits=437; mean1=hits*0.5; sd1=sqrt(hits*0.5*0.5); mean2=hits*0.497; sd2=sqrt(hits*0.497*(1-0.497)); d=(mean1-mean2)/mean(c(sd1,sd2)); d
-# [1] 0.1254283986
-~~~
-
-With a polygenic score drawing on 437 hits, then a sample of 2k suffices to detect the maximum decrease.
-
-This is pessimistic because the 10k alleles are not all the same effect size and GWAS studies inherently will tend to find the largest effects first. So the first 4 (or 86) hits are worth the most.
-The distribution of effects is probably something like an inverse exponential distribution: many small near-zero effects and a few large ones.
-Rietveld 2013 released the betas for all SNPs, and [the beta estimates can be plotted](http://emilkirkegaard.dk/en/?p=5574 "Polygenic traits and the distribution of effect sizes: years of education from Rietveld et al (2013)"); each estimate is imprecise and there are some artifacts in beta sizes (probably due to rounding somewhere in the analysis pipeline), but the distribution looks like a radioactive half-life graph, an inverse exponential distribution.
-With a mean of 1, we can simulate creating a set of 10k effect sizes which are exponentially distributed and have mean 5000 and SD close to (but larger than) 50 and mimicks closely the binomial model:
-
-~~~{.R}
-effects <- sort(rexp(10000)/1, decreasing=TRUE)
-genomeOld <- function() { ifelse(sample(c(FALSE,TRUE), prob=c(0.5, 0.5), 10000, replace = TRUE), 0, effects) }
-mean(replicate(10000, sum(genomeOld())))
-# [1] 5000.270218
-sd(replicate(10000, sum(genomeOld())))
-# [1] 69.82652816
-genomeNew <- function() { ifelse(sample(c(FALSE,TRUE), prob=c(0.497, 1-0.497), 10000, replace = TRUE), 0, effects) }
-~~~
-
-With a dysgenic effect of -0.445sds, that's a fall of the sum of random exponentials of ~31, which agrees closely with the difference in polygenic genome scores:
-
-~~~{.R}
-mean(replicate(10000, sum(genomeOld() - genomeNew())))
-# [1] 29.75354558
-~~~
-
-For each draw from the old and new populations, we can take the first 4 alleles, which were the ones assigned the largest effects, and build a weak polygenic score and compare means
-For example:
-
-~~~{.R}
-polyNew <- replicate(1000, sum(genomeNew()[1:4]))
-polyOld <- replicate(1000, sum(genomeOld()[1:4]))
-t.test(polyOld, polyNew, alternative="greater")
-#
-#   Welch Two Sample t-test
-#
-# data:  polyOld and polyNew
-# t = 0.12808985, df = 1995.8371, p-value = 0.8980908
-# alternative hypothesis: true difference in means is not equal to 0
-# 95 percent confidence interval:
-#  -0.7044731204  0.8029267301
-# sample estimates:
-#   mean of x   mean of y
-# 17.72741040 17.67818359
-~~~
-
-Or to mimic 86 hits:
-
-~~~{.R}
-t.test(replicate(1000, sum(genomeOld()[1:86])), replicate(1000, sum(genomeNew()[1:86])))
-#
-#     Welch Two Sample t-test
-#
-# t = 1.2268929, df = 1997.6307, p-value = 0.2200074
-# alternative hypothesis: true difference in means is not equal to 0
-# 95% confidence interval:
-#  -0.8642674547  3.7525210076
-# sample estimates:
-#   mean of x   mean of y
-# 244.5471658 243.1030390
-~~~
-
-Using the exponential simulation, we can do a parallelized power analysis: simulate draws (i=200) & tests for a variety of sample sizes to get an idea of what sample size we need to get decent power with 86 hits.
-
-~~~{.R}
-library(ggplot2)
-library(parallel)
-library(plyr)
-hits <- 86
-sampleSizes <- seq(500, 5000, by=100)
-iters <- 300
-genomeOld <- function(efft) { ifelse(sample(c(FALSE,TRUE), prob=c(0.5, 0.5), length(efft), replace = TRUE), 0, efft) }
-genomeNew <- function(efft) { ifelse(sample(c(FALSE,TRUE), prob=c(0.497, 1-0.497), length(efft), replace = TRUE), 0, efft) }
-simulateStudy <- function(n, hits) {
-        effects <- sort(rexp(10000)/1, decreasing=TRUE)[1:hits]
-        polyOld <- replicate(n, sum(genomeOld(effects)))
-        polyNew <- replicate(n, sum(genomeNew(effects)))
-        t <- t.test(polyOld, polyNew, alternative="greater")
-        return(data.frame(N=n, P=t$p.value, PO.mean=mean(polyOld), PO.sd=sd(polyOld), PN.mean=mean(polyNew), PN.sd=sd(polyNew))) }
-parallelStudies <- function(n, itr) { ldply(mclapply(1:itr, function(x) { simulateStudy(n, hits); })); }
-powerExponential <- ldply(lapply(sampleSizes, function(n) { parallelStudies(n, iters) })); summary(powerExponential)
-#        N              P                  PO.mean             PO.sd             PN.mean
-#  Min.   : 500   Min.   :0.000000000   Min.   :222.5525   Min.   :23.84966   Min.   :221.2894
-#  1st Qu.:1600   1st Qu.:0.002991554   1st Qu.:242.8170   1st Qu.:26.46606   1st Qu.:241.3242
-#  Median :2750   Median :0.023639517   Median :247.2059   Median :27.04467   Median :245.7044
-#  Mean   :2750   Mean   :0.093184735   Mean   :247.3352   Mean   :27.06300   Mean   :245.8298
-#  3rd Qu.:3900   3rd Qu.:0.107997575   3rd Qu.:251.7787   3rd Qu.:27.64103   3rd Qu.:250.2157
-#  Max.   :5000   Max.   :0.997322161   Max.   :276.2614   Max.   :30.67000   Max.   :275.7741
-#      PN.sd
-#  Min.   :23.04527
-#  1st Qu.:26.45508
-#  Median :27.04299
-#  Mean   :27.05750
-#  3rd Qu.:27.63241
-#  Max.   :30.85065
-powerExponential$Power <- powerExponential$P<0.05
-powers <- aggregate(Power ~ N, mean, data=powerExponential); powers
-# 1   500 0.2133333333
-# 2   600 0.2833333333
-# 3   700 0.2833333333
-# 4   800 0.3133333333
-# 5   900 0.3033333333
-# 6  1000 0.3400000000
-# 7  1100 0.4066666667
-# 8  1200 0.3833333333
-# 9  1300 0.4133333333
-# 10 1400 0.4166666667
-# 11 1500 0.4700000000
-# 12 1600 0.4600000000
-# 13 1700 0.4666666667
-# 14 1800 0.4733333333
-# 15 1900 0.5233333333
-# 16 2000 0.5366666667
-# 17 2100 0.6000000000
-# 18 2200 0.5900000000
-# 19 2300 0.5600000000
-# 20 2400 0.6066666667
-# 21 2500 0.6066666667
-# 22 2600 0.6700000000
-# 23 2700 0.6566666667
-# 24 2800 0.7133333333
-# 25 2900 0.7200000000
-# 26 3000 0.7300000000
-# 27 3100 0.7300000000
-# 28 3200 0.7066666667
-# 29 3300 0.7433333333
-# 30 3400 0.7133333333
-# 31 3500 0.7233333333
-# 32 3600 0.7200000000
-# 33 3700 0.7766666667
-# 34 3800 0.7933333333
-# 35 3900 0.7700000000
-# 36 4000 0.8100000000
-# 37 4100 0.7766666667
-# 38 4200 0.8000000000
-# 39 4300 0.8333333333
-# 40 4400 0.8466666667
-# 41 4500 0.8700000000
-# 42 4600 0.8633333333
-# 43 4700 0.8166666667
-# 44 4800 0.8366666667
-# 45 4900 0.8666666667
-# 46 5000 0.8800000000
-qplot(N, Power, data=powers)  + stat_smooth()
-# https://i.imgur.com/Fpj8iKN.png
-~~~
-
-So for a well-powered two-group comparison of 1950 & 2015 genotypes using 86 SNPs, we would want ~4000 in each group for a total _n_=8000; we do have nontrivial power even at a total _n_=1000 (500 in each group means 21% power) but a non-statistically-significant result will be difficult to interpret and if one wanted to do that, reporting a Bayes factor from a Bayesian hypothesis test would make much more sense to express clearly whether the (non-definitive) data is evidence for or against dysgenics.
-
-This is still too optimistic since we assumed the optimal scenario of only very old and very new genomes, while available genomes are more likely to be distributed fairly uniformly between 1950 and 2015.
-Per McClelland 1997, we would expect our sample size requirement to at least double to around _n_=16000, but we can do a power simulation here as well.
-To get the effect size for each year, we simply split the frequency decrease over each year and generate hypothetical genomes with less of a frequency decrease uniformly distributed 1950-2015, and do a linear regression to get a _p_-value for the year predictor:
-
-~~~{.R}
-library(ggplot2)
-library(parallel)
-library(plyr)
-hits <- 86
-sampleSizes <- seq(8000, 30000, by=1000)
-iters <- 100
-genome <- function(effects) {
-  t <- sample(c(1:(2015-1950)), 1)
-  decreasedFrequency <- 0.5 - (((0.5-0.497)/(2015-1950)) * t)
-  geneFlips <- sample(c(FALSE,TRUE), prob=c(decreasedFrequency, 1-decreasedFrequency), replace = TRUE, length(effects))
-  geneValues <- ifelse(geneFlips, effects, 0)
-  return(data.frame(Year=1950+t,
-                    PolygenicScore=sum(geneValues)))
-  }
-simulateStudy <- function(n, hits) {
-        effects <- sort(rexp(10000)/1, decreasing=TRUE)[1:hits]
-        d <- ldply(replicate(n, genome(effects), simplify=FALSE))
-        l <- lm(PolygenicScore ~ Year, data=d)
-        p <- anova(l)$`Pr(>F)`[1]
-        return(data.frame(N=n, P=p, PO.mean=predict(l, newdata=data.frame(Year=1950)),
-                                           PN.mean=predict(l, newdata=data.frame(Year=2015)))) }
-parallelStudies <- function(n, itr) { ldply(mclapply(1:itr, function(x) { simulateStudy(n, hits); })); }
-powerExponentialDistributed <- ldply(lapply(sampleSizes, function(n) { parallelStudies(n, iters) })); summary(powerExponential)
-powerExponentialDistributed$Power <- powerExponentialDistributed$P<0.05
-powers <- aggregate(Power ~ N, mean, data=powerExponentialDistributed); powers
-#        N Power
-# 1   8000  0.27
-# 2   9000  0.32
-# 3  10000  0.35
-# 4  11000  0.33
-# 5  12000  0.41
-# 6  13000  0.34
-# 7  14000  0.41
-# 8  15000  0.48
-# 9  16000  0.55
-# 10 17000  0.62
-# 11 18000  0.55
-# 12 19000  0.60
-# 13 20000  0.69
-# 14 21000  0.61
-# 15 22000  0.65
-# 16 23000  0.63
-# 17 24000  0.71
-# 18 25000  0.67
-# 19 26000  0.71
-# 20 27000  0.74
-# 21 28000  0.70
-# 22 29000  0.79
-# 23 30000  0.83
-qplot(N, Power, data=powers)  + stat_smooth()
-# https://i.imgur.com/BYG9qds.png
-~~~
-
-In this case, the power simulation suggestions the need for triple rather than double the data, a total of _n_=30,000 to be well-powered.
-
-## Genetic data availability
-
-https://my.pgp-hms.org/public_genetic_data/statistics includes genotyping though
-https://my.pgp-hms.org/users sort by 'Whole genome datasets', total of ~222?
-looked at the first and last 22 entries; 34 had ages/birth-years, so  ~75%, indicating ~166 usable genomes
-
-how fast is PGP genome dataset increasing? ~0.25 genomes per day:
-https://my.pgp-hms.org/public_genetic_data?utf8=%E2%9C%93&data_type=Complete+Genomics&commit=Search
-xclip -o|g '^hu'|g 'Complete Genomics'|cut -f 2
-dates <- as.Date(c("2015-10-12","2015-10-11","2015-10-09","2015-10-03","2015-10-03","2015-10-01","2015-10-01","2015-10-01","2015-10-01","2015-10-01","2015-10-01","2015-09-29","2015-09-01","2015-08-31","2015-08-29","2015-08-10","2015-05-07","2015-05-07","2015-05-07","2015-04-07","2015-04-07","2015-04-07","2015-04-06","2015-04-06","2015-04-06","2015-04-06","2015-04-06","2015-04-06","2015-04-06","2015-03-18","2015-02-17","2014-04-19","2014-04-17","2014-04-17","2014-03-16","2014-03-07","2014-03-07","2014-03-07","2014-03-07","2014-03-02","2014-02-25","2014-02-24","2014-02-17","2014-02-12","2014-02-06","2014-02-04","2014-02-04","2014-02-04","2014-02-04","2014-01-24","2014-01-24","2014-01-23","2014-01-23","2014-01-23","2014-01-19","2013-09-07","2013-08-29","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-12","2013-08-11","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09","2013-08-09",
-    "2013-08-09","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-08-07","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-25","2013-04-18","2013-04-06","2013-03-27","2013-03-27","2013-02-28","2013-02-26","2013-02-12","2013-02-10","2013-02-09","2013-02-08","2013-02-08","2013-02-08","2013-02-08","2013-02-04","2013-02-04","2013-01-29","2013-01-19","2013-01-15","2013-01-13","2013-01-10","2013-01-10","2013-01-10","2013-01-09","2013-01-09","2013-01-09","2012-12-14","2012-12-14","2012-12-14","2012-12-14","2012-12-14","2012-12-14","2012-12-14","2012-12-06","2012-11-13","2012-11-12","2012-11-09","2012-11-09","2012-11-09","2012-11-09","2012-10-30","2012-10-25","2012-10-22","2012-10-19","2012-10-19","2012-10-19","2012-10-19","2012-10-17","2012-10-16","2012-10-16","2012-10-15","2012-10-15","2012-09-18","2012-08-08","2012-08-08","2012-08-08","2012-08-08","2012-08-08","2012-07-17","2012-07-09","2012-07-08","2012-07-08","2012-07-07","2012-07-07","2012-07-07","2012-07-07","2012-07-01","2012-06-27","2012-02-03","2012-02-03","2011-09-16","2011-09-16","2011-09-16","2011-09-16","2011-09-16","2011-09-16","2011-09-16","2011-09-16","2011-09-16","2011-09-16","2011-09-16"))
-length(dates) / (as.integer(max(dates)) - as.integer(min(dates)))
-[1] 0.2528581036
-
-So to let the birth-date set double, we need to wait 166=x*0.25*0.75=885 more days
-
-What about SNPs? well, looking at the 23andMe sourced data:
-https://my.pgp-hms.org/public_genetic_data?utf8=%E2%9C%93&data_type=23andMe&commit=Search
-total of 656
-between 2015-10-21 2011-01-06
- 656 / (as.integer(as.Date("2015-10-21")) - as.integer(as.Date("2011-01-06")))
-0.37 per day
-for 30k, we will be waiting
-(30000-(656*0.75))=x
-(30000-(656*0.75))/(0.37*0.75)=x
-106,335 days or 291 years
-
--->
-
 # Bayesian Model Averaging
 
 ~~~{.R}
@@ -2160,6 +1694,379 @@ b2 <- bayes.binom.test(sum(oldData3$Yes), sum(oldData3$N)); b2
 Unfortunately, this doesn't work because it doesn't preserve the bimodal aspect of the posterior, and we get a unimodal distribution ever concentrating on its mean, wiping out the existence of the 0.90 peak. If our untrustworthy poll had instead, say, reported 750,000 out of 1 million, that should only make the peak at 0.75 look like a needle - it should be unable to affect the mass around 0.9, because it doesn't matter if the data is 100 or 1 million or 1 billion, it still only has a 50% chance of being true.
 It's a little hard to see this since the mean frequency of 0.75 is fairly close to the mean of 0.78 from the ABC and we might write this off as approximation error in either the ABC estimate or BFA's MCMC, but if we look at the 95% CI and note that 0.9 is not inside it or if we plot the posterior (`plot(b2)`), then the absence of bimodality jumps out.
 So this trick doesn't work.
+
+# Dysgenics power analysis
+
+> Current dysgenic estimates predict that genotypic IQ in the West are falling at a substantial rate, amounting to around half a standard deviation or more over the past century, by 1. reducing the frequency at which intelligence-increasing genetic variants occur (through natural selection against such variants) and 2. by increasing the number of new and potentially harmful genetic mutations (increasing mutation load).
+> Estimates are produced indirectly by surveying reproductive rates or by trying to show decreases in phenotypic traits associated with intelligence; it would obviously be preferable to examine dysgenic effects directly, by observing decreases in frequencies or increases in mutation load in a large sample of Western genetic information such as SNP arrays or whole-genomes (respectively).
+> Such direct testing of dysgenics hypotheses are becoming increasingly feasible due to the exponential decrease in SNP & whole-genome sequencing costs creating large datasets (some publicly available) and the recent identification of some intelligence genes.
+> It remains unclear how large these datasets must be to overcome sampling error and yield informative estimates of changes in frequencies or mutation load, however; datasets like PGP or SSGAC may still be too small to investigate dysgenics.
+> I considered the effect size estimates and under some simple models derive power calculations & power simulations of how large a dataset would be required to have an 80% chance of detecting a dysgenic effect: to detect the decrease in intelligence SNPs using SNP data, _n_≥30,000; to detect the increase in mutation load in whole genomes, _n_≥160
+> I then compare to available datasets: the effect on SNPs can be detected by a large number of existing proprietary databases, but there are no public databases which will be large enough in the foreseeable future; the effect on mutation load, on the other hand, can be detected using solely the currently publicly available dataset from PGP.
+> So I conclude that while only the proprietary databases can directly test dysgenic theories of selection for the foreseeable future, there *is* an opportunity to analyze PGP genomes to directly test the dysgenic theory of mutation load.
+
+The dysgenics hypothesis argues that due to observed reproductive patterns where the highly educated or intelligent tend to have fewer offspring, genotypic IQ (the upper bound on phenotypic IQs set by genes and the sort of thing measured by a polygenic score).
+[Woodley 2012](/docs/algernon/2012-woodley.pdf "The social and scientific temporal correlates of genotypic intelligence and the Flynn effect") summarizes a number of estimates:
+
+> Early in the 20th century, negative correlations were observed between intelligence and fertility, which were taken to indicate a dysgenic fertility trend (e.g. Cattell, 1936; Lentz, 1927; Maller, 1933; Sutherland, 1929). Early predictions of the rate of dysgenesis were as high as between 1 and 1.5 IQ points per decade (Cattell, 1937, 1936)...In their study of the relationship between intelligence and both completed and partially completed fertility, van Court and Bean (1985) reported that the relationships were predominantly negative in cohorts born between the years 1912 and 1982...Vining (1982) was the first to have attempted an estimation of the rate of genotypic IQ decline due to dysgenesis with reference to a large national probability cohort of US women aged between 24 and 34 years in 1978. He identified significant negative correlations between fertility and IQ ranging from −.104 to −.221 across categories of sex, age and race, with an estimated genotypic IQ decline of one point a generation. In a 10year follow-up study using the same cohort, Vining (1995) re-examined the relationship between IQ and fertility, now that fertility was complete, finding evidence for a genotypic IQ decline of .5 points per generation. Retherford and Sewell (1988) examined the association between fertility and IQ amongst a sample of 9000 Wisconsin high-school graduates (graduated 1957). They found a selection differential that would have reduced the phenotypic IQ by .81 points per generation under the assumption of equal IQs for parents and children. With an estimate of .4 for the additive heritability of IQ, they calculated a more modest genotypic decline of approximately .33 points. The study of Ree and Earles (1991), which employed the NLSY suggests that once the differential fertility of immigrant groups is taken into consideration, the phenotypic IQ loss amongst the American population may be greater than .8 of a point per generation. Similarly, in summarizing various studies, Herrnstein & Murray (1994) suggest that "it would be nearly impossible to make the total [phenotypic IQ decline] come out to less than one point per generation. It might be twice that." (p. 364). Loehlin (1997) found a negative relationship between the fertility of American women aged 35–44 in 1992 and their educational level. By assigning IQ scores to each of six educational levels, Loehlin estimated a dysgenesis rate of .8 points in one generation. Significant contributions to the study of dysgenesis have been made by Lynn, 1996 (see also: 2011) whose book Dysgenics: Genetic deterioration in modern populations provided the first estimates of the magnitude of dysgenesis in Britain over a 90 year period, putting the phenotypic loss at .069 points per year (about 1.7 points a generation assuming a generational length of 25 years). In the same study, Lynn estimated that the genotypic IQ loss was 1.64 points per generation between 1920 and 1940, which reduced to .66 points between 1950 and the present. Subsequent work by Lynn has investigated dysgenesis in other populations. For example Lynn (1999) found evidence for dysgenic fertility amongst those surveyed in the 1994 National Opinion Research Center survey, which encompassed a representative sample of American adults, in the form of negative correlations between the intelligence of adults aged 40+ and the number of children and siblings. Lynn estimates the rate of dysgenesis amongst this cohort at .48 points per generation. In a more recent study, Lynn and van Court (2004) estimated that amongst the most recent US cohort for which fertility can be considered complete (i.e. those born in the years 1940–1949), IQ has declined by .9 points per generation. At the country level, Lynn and Harvey (2008) have found evidence of a global dysgenesis of around .86 points between 1950 and 2000, which is projected to increase to 1.28 points in the period from 2000 to 2050. This projection includes the assumption that 35% of the variance in cross-country IQ differences is due to the influence of genetic factors. A subsequent study by Meisenberg (2009), found that the fertility differential between developed and developing nations has the potential to reduce the phenotypic world population IQ mean by 1.34 points per decade (amounting to a genotypic decline of .47 points per decade assuming Lynn & Harvey's 35% estimate). This assumes present rates of fertility and pre-reproductive mortality within countries. Meisenberg (2010) and Meisenberg and Kaul (2010) have examined the factors through which intelligence influences reproductive outcomes. They found that amongst the NLSY79 cohort in the United States, the negative correlation between intelligence and fertility is primarily associated with g and is mediated in part by education and income, and to a lesser extent by more “liberal” gender attitudes. From this Meisenberg has suggested that in the absence of migration and with a constant environment, selection has the potential to reduce the average genotypic IQ of the US population by between .4, .8 and 1.2 points per generation.
+
+All of these estimates are genetic selection estimates: indirect estimates inferred from IQ being a heritable trait and then treating it as a natural selection/breeding process, where a trait is selected against based on phenotype and how fast the trait decreases in each succeeding generation depends on how genetic the trait is and how harsh the selection is.
+So variation in these estimates (quoted estimates per generation range from .3 to 3+) is due to sampling error, differences in populations or time periods, expressing the effect by year or generation, the estimate used for heritability, reliability of IQ estimates, and whether additional genetic effects are taken into account - for example, [Woodley et al 2015](http://www.sciencedirect.com/science/article/pii/S0191886915003712) finds -.262 points per decade from selection, but [in another paper](http://www.sciencedirect.com/science/article/pii/S0191886914006278) argues that paternal mutation load must be affecting intelligence by ~-0.84 in the general population, giving a total of -1 per decade.
+
+Dysgenics effects should be observable by looking at genomes & SNP data with known ages/birth-years and looking for increases in total mutations or decreases in intelligence-causing SNPs, respectively.
+
+## Selection on SNPs
+
+Without formally meta-analyzing all dysgenics studies, a good starting point on the selection effect seems like a genetic selection of 1 point per decade or 0.1 points per year or 0.007 standard deviations per year (or 0.7 standard deviations per century).
+
+The most common available genetic data is SNP data, which sequence only the variants most common in the general population; SNP data can look at the effects of genetic selection but will not look at new mutations (since a new mutation would not be common enough to be worth putting onto a SNP chip).
+
+Given a large sample of SNP data, a birth year (or age), and a set of binary SNP variables which cause intelligence (coded as 1 for the good variant, 0 for the others), we could formulate this as a multivariate regression: `glm(cbind(SNP1, SNP2, ... SNP_N) ~ Year, family=binomial)` and see if the year variable has a negative sign (increasing passage of time predicts lower levels of the good genes); if it does, this is evidence for dysgenics.
+Better yet, given information about the effect size of the SNPs, we could for each person's SNP sum the net effects and then regress on a single variable, giving more precision rather than looking for independent effects on each SNP: `lm(Polygenic_score ~ Year)`. Again a negative sign on the year variable is evidence for dysgenics.
+
+Directional predictions are weak, and in this case we have quantitative predictions of how big the effects should be.
+Most of the public genomes I looked at seem to have the earliest birthdates in the 1950s or so; genomes can come from any age person (parents can give permission, and sequencing has been done prenatally) so the maximum effect is the difference between 1950 and 2015, which is `65*0.007=0.455` standard deviations (but most genomes will come from intermediate birth-dates, which are less informative about the temporal trend - in the optimal experimental design for measuring a linear trend, half the samples would be from 1950 and the other half from 2015).
+If the genetic total is going down by 0.455SDs, how much do the frequencies of all the good genes go down?
+
+One simple model of genotypic IQ would be to treat it as a large number of alleles of equal binary effect: a binomial sum of _n_=10,000 1/0 variables with _P_=50% (population frequency) is reasonable. (For example, GIANT has found a large number of variants for height, and the GCTAs indicate that SNPs explain much more of variance than the top Rietveld hits currently account for; this specific model is loosely inspired by [Hsu 2014](http://arxiv.org/abs/1408.3421 "On the genetic architecture of intelligence and other quantitative traits").)
+In such a model, the average value of the sum is of course `n*p=5000`, and the SD is `sqrt(n*p*(1-p))` or `sqrt(10000*0.5*0.5)` or 50.
+Applying our estimate of dysgenic effect, we would expect the sum to fall by `0.455*50=22.75`, so we would be comparing two populations, one with a mean of 5000 and a dysgenic mean of 4977.25.
+If we were given access to all alleles from a sample of 1950 and 2015 genomes and so we could construct the sum, how hard would it be able to tell the difference? In this case, the sum is normally distributed as there are more than enough alleles to create normality, so we can just treat this as a two-sample normally-distributed comparison of means (a _t_-test), and we already have a directional effect size in mind, -0.445SDs, so:
+
+~~~{.R}
+power.t.test(delta=0.455, power=0.8, alternative="one.sided")
+#      Two-sample t test power calculation
+#
+#               n = 60.4155602
+# ...
+~~~
+
+A total _n_=120 is doable, but it is unlikely that we will know all intelligence genes anytime soon; instead, we know a few.
+A new mean of 4977 implies that since total number of alleles is the same but the mean has fallen, the frequencies must also fall and the average frequency falls from 0.5 to `4977.25/10000=0.497725`.
+To go to the other extreme, if we know only a single gene and we want to test a fall from a frequency of 0.50 to 0.4977, we need infeasibly more samples:
+
+~~~{.R}
+power.prop.test(p1=0.5, p2=0.497725, power=0.8, alternative="one.sided")
+#      Two-sample comparison of proportions power calculation
+#
+#               n = 597,272.2524
+# ...
+~~~
+
+1.2m datapoints would be difficult to get, and so a single gene test would be unhelpful; further, a single gene could change frequencies solely through genetic drift without the change being due to dysgenic pressures.
+
+We know a number of genes, though: Rietveld gives 4 good hits, so we can look at a polygenic score from that.
+They are all of similar effect size and frequency, so we'll continue under the same assumptions of 1/0 and _P_=50%.
+The non-dysgenic average score is `4*0.5=2`, sd=`sqrt(4*0.5*0.5)=1`. (Naturally, the SD is *much* larger than before because with so few random variables...)
+The predicted shift is from frequencies of 0.5 to 0.497, so the dysgenic scores should be `4*0.497=1.988`, sd=`sqrt(4*0.497*0.503)=0.999`.
+The difference of 0.012 on the reduced polygenic score is _d_=`((2-1.988) / 0.999)=0.012`, giving a necessary power of:
+
+~~~{.R}
+power.t.test(delta=0.012006003, power=0.8)
+#      Two-sample t test power calculation
+#
+#               n = 108904.194
+# ...
+~~~
+
+So the 4 hits do reduce the necessary sample size, but it's still not feasible to require 218k SNP datasets (unless you are 23andMe or SSGAC or an entity like that).
+
+In the current GWAS literature, there are ~9 hits we could use, but the [upcoming SSGAC paper promises: "We identified 86 independent SNPs associated with EA (_p_<5E-8)."](http://drjamesthompson.blogspot.com/2015/09/scholar-in-86-snps.html "'86 genomic sites associated with educational attainment provide insight into the biology of cognitive performance', James J Lee, (at least 200 co-authors)").
+So how much would 86 improve over 4?
+
+- mean old: `86*0.5=43`
+- sd old: `sqrt(86*0.5*0.5)=4.6368`
+- mean new: `86*0.497=42.742`
+- sd new: `sqrt(86*0.497*(1-0.497))=4.6367`
+- so _d_=`(43-42.742)/4.63675=0.0556`
+
+~~~{.R}
+power.t.test(delta=((43-42.742)/4.63675), power=0.8)
+#      Two-sample t test power calculation
+#
+#               n = 5071.166739
+# ...
+~~~
+
+So with 75, it drops from 200k to 10.1k.
+
+To work backwards: we know with 1 hit, we need a million SNP datasets (infeasible for any but the largest proprietary databases, who have no interest in studying this hypothesis), and with all hits we need more like 200 genomes (entirely doable with just publicly available datasets like PGP), but how many hits do we need to work with an in-between amount of data like the ~2k genomes with ages I guess may be publicly available now or in the near future?
+
+~~~{.R}
+power.t.test(n=1000, power=0.8)
+#     Two-sample t test power calculation
+#
+#              n = 1000
+#          delta = 0.1253508704
+hits=437;
+mean1=hits*0.5; sd1=sqrt(hits*0.5*0.5);
+mean2=hits*0.497; sd2=sqrt(hits*0.497*(1-0.497));
+d=(mean1-mean2)/mean(c(sd1,sd2)); d
+# [1] 0.1254283986
+~~~
+
+With a polygenic score drawing on 437 hits, then a sample of 2k suffices to detect the maximum decrease.
+
+This is pessimistic because the 10k alleles are not all the same effect size and GWAS studies inherently will tend to find the largest effects first. So the first 4 (or 86) hits are worth the most.
+The distribution of effects is probably something like an inverse exponential distribution: many small near-zero effects and a few large ones.
+Rietveld 2013 released the betas for all SNPs, and [the beta estimates can be plotted](http://emilkirkegaard.dk/en/?p=5574 "Polygenic traits and the distribution of effect sizes: years of education from Rietveld et al (2013)"); each estimate is imprecise and there are some artifacts in beta sizes (probably due to rounding somewhere in the analysis pipeline), but the distribution looks like a radioactive half-life graph, an inverse exponential distribution.
+With a mean of 1, we can simulate creating a set of 10k effect sizes which are exponentially distributed and have mean 5000 and SD close to (but larger than) 50 and mimics closely the binomial model:
+
+~~~{.R}
+effects <- sort(rexp(10000)/1, decreasing=TRUE)
+genomeOld <- function() { ifelse(sample(c(FALSE,TRUE), prob=c(0.5, 0.5), 10000, replace = TRUE), 0, effects) }
+mean(replicate(10000, sum(genomeOld())))
+# [1] 5000.270218
+sd(replicate(10000, sum(genomeOld())))
+# [1] 69.82652816
+genomeNew <- function() { ifelse(sample(c(FALSE,TRUE), prob=c(0.497, 1-0.497), 10000, replace = TRUE), 0, effects) }
+~~~
+
+With a dysgenic effect of -0.445SDs, that's a fall of the sum of random exponentials of ~31, which agrees closely with the difference in polygenic genome scores:
+
+~~~{.R}
+mean(replicate(10000, sum(genomeOld() - genomeNew())))
+# [1] 29.75354558
+~~~
+
+For each draw from the old and new populations, we can take the first 4 alleles, which were the ones assigned the largest effects, and build a weak polygenic score and compare means.
+For example:
+
+~~~{.R}
+polyNew <- replicate(1000, sum(genomeNew()[1:4]))
+polyOld <- replicate(1000, sum(genomeOld()[1:4]))
+t.test(polyOld, polyNew, alternative="greater")
+#   Welch Two Sample t-test
+#
+# data:  polyOld and polyNew
+# t = 0.12808985, df = 1995.8371, p-value = 0.8980908
+# alternative hypothesis: true difference in means is not equal to 0
+# 95 percent confidence interval:
+#  -0.7044731204  0.8029267301
+# sample estimates:
+#   mean of x   mean of y
+# 17.72741040 17.67818359
+~~~
+
+Or to mimic 86 hits:
+
+~~~{.R}
+t.test(replicate(1000, sum(genomeOld()[1:86])), replicate(1000, sum(genomeNew()[1:86])))
+#
+#     Welch Two Sample t-test
+#
+# t = 1.2268929, df = 1997.6307, p-value = 0.2200074
+# alternative hypothesis: true difference in means is not equal to 0
+# 95% confidence interval:
+#  -0.8642674547  3.7525210076
+# sample estimates:
+#   mean of x   mean of y
+# 244.5471658 243.1030390
+~~~
+
+Using the exponential simulation, we can do a parallelized power analysis: simulate draws (_i_=300) & tests for a variety of sample sizes to get an idea of what sample size we need to get decent power with 86 hits.
+
+~~~{.R}
+library(ggplot2)
+library(parallel) # warning, Windows users
+library(plyr)
+
+genomeOld <- function(efft) { ifelse(sample(c(FALSE,TRUE), prob=c(0.5, 0.5), length(efft), replace = TRUE), 0, efft) }
+genomeNew <- function(efft) { ifelse(sample(c(FALSE,TRUE), prob=c(0.497, 1-0.497), length(efft), replace = TRUE), 0, efft) }
+
+simulateStudy <- function(n, hits) {
+        effects <- sort(rexp(10000)/1, decreasing=TRUE)[1:hits]
+        polyOld <- replicate(n, sum(genomeOld(effects)))
+        polyNew <- replicate(n, sum(genomeNew(effects)))
+        t <- t.test(polyOld, polyNew, alternative="greater")
+        return(data.frame(N=n, P=t$p.value, PO.mean=mean(polyOld), PO.sd=sd(polyOld), PN.mean=mean(polyNew), PN.sd=sd(polyNew))) }
+
+hits <- 86
+parallelStudies <- function(n, itr) { ldply(mclapply(1:itr, function(x) { simulateStudy(n, hits); })); }
+
+sampleSizes <- seq(500, 5000, by=100)
+iters <- 300
+powerExponential <- ldply(lapply(sampleSizes, function(n) { parallelStudies(n, iters) })); summary(powerExponential)
+#        N              P                  PO.mean             PO.sd             PN.mean
+#  Min.   : 500   Min.   :0.000000000   Min.   :222.5525   Min.   :23.84966   Min.   :221.2894
+#  1st Qu.:1600   1st Qu.:0.002991554   1st Qu.:242.8170   1st Qu.:26.46606   1st Qu.:241.3242
+#  Median :2750   Median :0.023639517   Median :247.2059   Median :27.04467   Median :245.7044
+#  Mean   :2750   Mean   :0.093184735   Mean   :247.3352   Mean   :27.06300   Mean   :245.8298
+#  3rd Qu.:3900   3rd Qu.:0.107997575   3rd Qu.:251.7787   3rd Qu.:27.64103   3rd Qu.:250.2157
+#  Max.   :5000   Max.   :0.997322161   Max.   :276.2614   Max.   :30.67000   Max.   :275.7741
+#      PN.sd
+#  Min.   :23.04527
+#  1st Qu.:26.45508
+#  Median :27.04299
+#  Mean   :27.05750
+#  3rd Qu.:27.63241
+#  Max.   :30.85065
+powerExponential$Power <- powerExponential$P<0.05
+powers <- aggregate(Power ~ N, mean, data=powerExponential); powers
+# 1   500 0.2133333333
+# 2   600 0.2833333333
+# 3   700 0.2833333333
+# 4   800 0.3133333333
+# 5   900 0.3033333333
+# 6  1000 0.3400000000
+# 7  1100 0.4066666667
+# 8  1200 0.3833333333
+# 9  1300 0.4133333333
+# 10 1400 0.4166666667
+# 11 1500 0.4700000000
+# 12 1600 0.4600000000
+# 13 1700 0.4666666667
+# 14 1800 0.4733333333
+# 15 1900 0.5233333333
+# 16 2000 0.5366666667
+# 17 2100 0.6000000000
+# 18 2200 0.5900000000
+# 19 2300 0.5600000000
+# 20 2400 0.6066666667
+# 21 2500 0.6066666667
+# 22 2600 0.6700000000
+# 23 2700 0.6566666667
+# 24 2800 0.7133333333
+# 25 2900 0.7200000000
+# 26 3000 0.7300000000
+# 27 3100 0.7300000000
+# 28 3200 0.7066666667
+# 29 3300 0.7433333333
+# 30 3400 0.7133333333
+# 31 3500 0.7233333333
+# 32 3600 0.7200000000
+# 33 3700 0.7766666667
+# 34 3800 0.7933333333
+# 35 3900 0.7700000000
+# 36 4000 0.8100000000
+# 37 4100 0.7766666667
+# 38 4200 0.8000000000
+# 39 4300 0.8333333333
+# 40 4400 0.8466666667
+# 41 4500 0.8700000000
+# 42 4600 0.8633333333
+# 43 4700 0.8166666667
+# 44 4800 0.8366666667
+# 45 4900 0.8666666667
+# 46 5000 0.8800000000
+qplot(N, Power, data=powers)  + stat_smooth()
+~~~
+
+![Power for a two-group comparison of old and new SNP datasets for testing a hypothesis of dysgenics](/images/dysgenics-snps-exponential-optimal.png)
+
+So for a well-powered two-group comparison of 1950 & 2015 SNP datasets using 86 SNPs, we would want ~4000 in each group for a total _n_=8000; we do have nontrivial power even at a total _n_=1000 (500 in each group means 21% power) but a non-statistically-significant result will be difficult to interpret and if one wanted to do that, reporting a Bayes factor from a Bayesian hypothesis test would make much more sense to express clearly whether the (non-definitive) data is evidence for or against dysgenics.
+
+This is still too optimistic since we assumed the optimal scenario of only very old and very new genomes, while available genomes are more likely to be distributed fairly uniformly between 1950 and 2015.
+Per ["Optimal design in psychological research"](http://www2.psych.ubc.ca/~schaller/528Readings/McClelland1997.pdf), McClelland 1997, we expect a penalty of ~2x in sample size efficiency in going from the optimal two-group extreme endpoints design to samples being uniformly distributed (due to much of our sample size being wasted on estimating small effects) and so we would expect our sample size requirement to at least double to around _n_=16000, but we can do a power simulation here as well.
+To get the effect size for each year, we simply split the frequency decrease over each year and generate hypothetical genomes with less of a frequency decrease uniformly distributed 1950-2015, and do a linear regression to get a _p_-value for the year predictor:
+
+~~~{.R}
+hits <- 86
+sampleSizes <- seq(8000, 30000, by=1000)
+iters <- 100
+genome <- function(effects) {
+  t <- sample(c(1:(2015-1950)), 1)
+  decreasedFrequency <- 0.5 - (((0.5-0.497)/(2015-1950)) * t)
+  geneFlips <- sample(c(FALSE,TRUE), prob=c(decreasedFrequency, 1-decreasedFrequency), replace = TRUE, length(effects))
+  geneValues <- ifelse(geneFlips, effects, 0)
+  return(data.frame(Year=1950+t,
+                    PolygenicScore=sum(geneValues)))
+  }
+simulateStudy <- function(n, hits) {
+        effects <- sort(rexp(10000)/1, decreasing=TRUE)[1:hits]
+        d <- ldply(replicate(n, genome(effects), simplify=FALSE))
+        l <- lm(PolygenicScore ~ Year, data=d)
+        p <- anova(l)$`Pr(>F)`[1]
+        return(data.frame(N=n, P=p, PO.mean=predict(l, newdata=data.frame(Year=1950)),
+                                           PN.mean=predict(l, newdata=data.frame(Year=2015)))) }
+parallelStudies <- function(n, itr) { ldply(mclapply(1:itr, function(x) { simulateStudy(n, hits); })); }
+powerExponentialDistributed <- ldply(lapply(sampleSizes, function(n) { parallelStudies(n, iters) })); summary(powerExponential)
+powerExponentialDistributed$Power <- powerExponentialDistributed$P<0.05
+powers <- aggregate(Power ~ N, mean, data=powerExponentialDistributed); powers
+#        N Power
+# 1   8000  0.27
+# 2   9000  0.32
+# 3  10000  0.35
+# 4  11000  0.33
+# 5  12000  0.41
+# 6  13000  0.34
+# 7  14000  0.41
+# 8  15000  0.48
+# 9  16000  0.55
+# 10 17000  0.62
+# 11 18000  0.55
+# 12 19000  0.60
+# 13 20000  0.69
+# 14 21000  0.61
+# 15 22000  0.65
+# 16 23000  0.63
+# 17 24000  0.71
+# 18 25000  0.67
+# 19 26000  0.71
+# 20 27000  0.74
+# 21 28000  0.70
+# 22 29000  0.79
+# 23 30000  0.83
+qplot(N, Power, data=powers)  + stat_smooth()
+~~~
+
+![Power to detect dysgenics effect with SNP samples spread over time](/images/dysgenics-snps-exponential-realistic.png)
+
+In this case, the power simulation suggestions the need for triple rather than double the data, and so a total of _n_=30,000 to be well-powered.
+
+## Mutation load
+
+The paternal mutation load should show up as a increase (70 new mutations per generation, 35 years per generation, so ~2 per year on average) over the past century, while the genetic selection will operate by reducing the frequency of variants which increase intelligence.
+If there are ~70 new mutations per generation and 2 harmful, and there is no longer any purifying selection so that all 70 will tend to remain present, how much does that compare to existing mutation load averages and, more importantly, standard deviations?
+
+A [mutation load review](/docs/2015-henn.pdf "'Estimating the mutation load in human genomes', Henn et al 2015")  leads me to some hard figures from [Simons et al 2014](/docs/2014-simons.pdf "The deleterious mutation load is insensitive to recent population history") ([supplement](/docs/2014-simons-supplementary.pdf)) using data from [Fu et al 2012](/docs/2012-fu.pdf "Analysis of 6,515 exomes reveals the recent origin of most human protein-coding variants"); particularly relevant is figure 3, the number of single-nucleotide variants per person over the European-American sample, split by estimates of harm from least to most likely: `21345 + 15231 + 5338 + 1682 + 1969 = 45565`.
+The supplementary tables gives a count of all observed SNVs by category, which sum to `300209 + 8355 + 220391 + 7001 + 351265 + 10293 = 897514`, so the average frequency must be `45565/897514=0.05`, and then the binomial SD will be `sqrt(897514*0.05*(1-0.05))=206.47`.
+Considering the two-sample case of 1950 vs 2015, that's an increase of 130 total SNVs (`65*2`), which is 0.63SDs, hence:
+
+~~~{.R}
+power.t.test(d=(130/206), power=0.8)
+#      Two-sample t test power calculation
+#
+#               n = 40.40035398
+# ...
+~~~
+
+A total of _n_=80.
+
+This particular set up for the two-sample test can be seen as a linear model with the optimum design of allocating half the sample to each extreme (see again McClelland 1997); but more realistically, there is an even distribution across years, in which case the penalty is 2x and _n_=160.
+
+## Genetic data availability
+### Proprietary
+
+The known proprietary databases have long been large enough to carry out either analysis:
+
+1. The mutation load analysis requires a sample size small enough to have been carried out by innumerable groups post-2009.
+2. For genotyping, an incomplete list of examples of publications based on or groups with _n_>30k:
+
+    - 23andMe reached [1 million customers in July 2015](http://blog.23andme.com/news/one-in-a-million/), of whom ~80% opt-in to research; the first questions 23andMe asks all customers are age and education, so they likely have at least 700,000 usable SNPs for both discovering educational associations & dysgenic tests. In [June 2010](http://blog.23andme.com/23andme-research/23andme-and-a-new-paradigm-for-research/), they claimed to have 29k opt-ins out of 50k customers, implying they were well-powered for a dysgenic test in 2010 if they had access to a polygenic score, and that in the absence of the score, they could have found the 85 SSGAC hits (using _n_=305k) themselves somewhere around mid-2011 or 2012 and then done a dysgenic test.
+    - the SSGAC collaboration has _n_=305k as of late 2015
+    - [GIANT: height](http://www.nature.com/ng/journal/v46/n11/full/ng.3097.html "'Defining the role of common variation in the genomic and biological architecture of adult human height', Wood et al 2015"): _n_=253,288
+    - [cholesterol](http://www.nature.com/nm/journal/vaop/ncurrent/full/nm.3980.html "'Genome-wide identification of microRNAs regulating cholesterol and triglyceride homeostasis', Wagschal et al 2015"): _n_=188,000
+    - [diabetes](http://www.nature.com/ng/journal/v44/n9/full/ng.2383.html "'Large-scale association analysis provides insights into the genetic architecture and pathophysiology of type 2 diabetes', Morris et al 2012"): _n_=114,981
+    - [Psychiatric Genomics Consortium](http://www.med.unc.edu/pgc/results): has run multiple studies of varying sizes, the second-largest (a bipolar study) peaking at a total control group of _n_=51672, and the largest (schizophrenia) at a control group of _n_=113,075
+    - [Parkinson's](http://www.nature.com/ng/journal/v46/n9/full/ng.3043.html "'Large-scale meta-analysis of genome-wide association data identifies six new risk loci for Parkinson's disease', Nalls et al 2014"): _n_=100,833 (may overlap with 23andMe and some others)
+    - [eczema](http://www.nature.com/ng/journal/vaop/ncurrent/full/ng.3424.html "'Multi-ancestry genome-wide association study of 21,000 cases and 95,000 controls identifies new risk loci for atopic dermatitis', Paternoster et al 2015"): _n_=95,464
+    - [Genetics of Personality Consortium](http://www.tweelingenregister.org/GPC/): eg [Neuroticism](http://palmerlab.org/neuroticism-and-depression-gwas-consortium-paper-accepted-for-publication-in-jama-psychiatry-abraham-palmer-harriet-de-wit-and-amy-hart-are-co-authors/ "Genome-wide association study identifies novel locus for neuroticism and shows polygenic association with Major Depressive Disorder"): _n_=63k
+
+The existing private groups do not seem to have any interest in testing dysgenics, however.
+
+### Public
+
+There are a few sources of data, primarily SNP data, which are freely available to all users:
+
+1. 1000 Genomes: unusable due to a deliberate policy decision by 1000 Genomes to delete all phenotype data, including age; likely would be unusable due to the diversity of the global sample (there is no reason to think that dysgenics pressures are operating in every population at the same strength)
+2. [OpenSNP](https://opensnp.org): hosting for user-provided SNP & phenotype data with [dumps available](https://opensnp.org/genotypes); hosts ~2k SNP datasets, but only [270 users have birth-years](https://opensnp.org/phenotypes/148)
+3. [SNPedia](http://www.snpedia.com/index.php/Genomes) likewise hosts SNP data (overlapping with OpenSNP) and genome data, but a very small number
+4. [Genomes unzipped](http://genomesunzipped.org/data) provides a small amount of data
+5. [Personal Genome Project](!Wikipedia) (PGP):  probably the single largest source of open SNP & genome data. ~1252 participants have registered birthdates according to `demographics.tsv`, and their [statistics page](https://my.pgp-hms.org/public_genetic_data/statistics)'s graphs indicates <300 whole genomes and <1k SNPs.
+
+- Genomes: browsing the [user lists for 'Whole genome datasets'](https://my.pgp-hms.org/users), I estimate a total of ~222; looking at the first and last 22 entries, 34 had ages/birth-years, so ~75% of the whole genomes come with the necessary birth-year data, indicating ~166 usable genomes for the purpose of testing dysgenics. With the most recent one uploaded on 2015-10-12, and the earliest recorded being 2011-09-16, that suggests the available genome number increases by ~0.25/day. 166 is uncomfortably close to the requirement for a well-powered test, and there may not be enough data to account for glitches in the data or allow for more complicated statistical testing, but if we wanted to double the available data, we'd only need to wait around 885 days or 2.5 years (or less, depending on whether the collapse in genome sequencing prices continue and prices drop below even the current \$1k genomes).
+- SNPs: PGP has [~656 23andMe SNP datasets](https://my.pgp-hms.org/public_genetic_data?utf8=%E2%9C%93&data_type=23andMe&commit=Search) (the number of SNP datasets sourced from other providers is quite small so I didn't include them), dated 2015-10-21-2011-01-06, so assuming same birth-date percentage, 0.37 per day. Unfortunately, to get 30k SNP datasets through PGP, we would have to wait (linearly extrapolating) 291 years. (Making matters worse, in October 2015, 23andMe doubled its price and reduced the quality of SNP coverage, which will discourage many users and push other users to purchase whole-genome sequencing instead.)
 
 # RNN metadata for mimicking individual author style
 
@@ -2469,3 +2376,6 @@ for FILE in *.txt; do
 done
 cat *.transformed | grep -v -e "JORDAN|U|" -e "M|BIBLE|" | shuf > input.txt
 ~~~
+
+First version sans dropout got to a loss of 0.7969 (!); contamination or leakage of the validation test set? But since the versions in the validation set could be only different-cased versions, then wouldn't've the RNN'd't've learned the transformation and it's not really leakage at all?
+After it hit a limit at 0.79 and started turning in losses of 0.8+ for hours, tried retraining it with some dropout and the loss exploded, not shrinking even after training it all night, so I restarted with a fresh RNN and some dropout.
