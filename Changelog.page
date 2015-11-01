@@ -48,7 +48,7 @@ So periodically I write up interesting changes in a human-readable format and [s
 
 - [LLLT self-experiment finished](http://www.gwern.net/Nootropics#experiment-1): no effect (so earlier correlative results were grossly overestimated; I'm starting to expect this from anything non-randomized...)
 - an [ICE subpoena on my Reddit account](https://www.reddit.com/r/DarkNetMarkets/comments/30tudk/psa_5_reddit_accounts_subpoenaed_by_ice/) caused me a good deal of trouble
-- playing with inferring Bayesian networks for my [Zeo](http://www.gwern.net/Notes#zeo-sleep-data) & [body weight](http://www.gwern.net/Notes#daily-weight-data-graph) data (powerful generalization of SEMs, but requires a lot of data before networks stabilize)
+- playing with inferring Bayesian networks for my [Zeo](http://www.gwern.net/Statistical%20notes#zeo-sleep-data) & [body weight](http://www.gwern.net/Statistical%20notes#daily-weight-data-graph) data (powerful generalization of SEMs, but requires a lot of data before networks stabilize)
 
 ## February
 
@@ -91,7 +91,7 @@ QS:
 Stats:
 
 - anthology on how ["everything is correlated"](http://www.gwern.net/Causality#everything-correlates-with-everything)
-- probability/gerontology problem: can one visit 566 centenarians before any die? [No.](http://www.gwern.net/Notes#the-traveling-gerontologist-problem)
+- probability/gerontology problem: can one visit 566 centenarians before any die? [No.](http://www.gwern.net/Statistical%20notes#the-traveling-gerontologist-problem)
 
 Technology:
 
@@ -121,7 +121,7 @@ QS/self-experiments:
 Statistics:
 
 - [do causal networks explain why correlation≠causation is so often true?](Causality)
-- a little example of estimating [scores from censored data](Notes#estimating-censored-test-scores)
+- a little example of estimating [scores from censored data](Statistical notes#estimating-censored-test-scores)
 
 Debunking:
 
