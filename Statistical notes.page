@@ -2041,6 +2041,17 @@ A total of _n_=80.
 
 This particular set up for the two-sample test can be seen as a linear model with the optimum design of allocating half the sample to each extreme (see again McClelland 1997); but more realistically, there is an even distribution across years, in which case the penalty is 2x and _n_=160.
 
+## Weaknesses
+
+There are some potential problems:
+
+1. Range restriction: in many IQ-related studies, failure to account for selection effects yielding a limited range of IQs may [seriously understate the true correlation](https://en.wikipedia.org/wiki/Statistical_conclusion_validity#Restriction_of_range); this is true in general but particularly common in IQ studies because selection on IQ (eg samples of convenience using only college students) is so universal in human society
+
+    This may not be such a large issue when dealing with polygenic scores; even severe IQ selection effects will increase polygenic scores only somewhat because the polygenic scores explain so little of IQ variance in the first place.
+2. Self-selection by age: if people providing genetic data are not random samples, then there may be pseudo-trends which can mask a real dysgenic trend or create a pseudo-dysgenic trend where there is none. For example, if young people buying genome or SNP data tend to be above-average in intelligence and scientific interest (which anecdotally they certainly do seem to be), while old people tend to get genomes or SNP data due to health problems (and otherwise have average levels of intelligence and thus polygenic score), then in comparing young vs old, one might find not a dysgenic but a pseudo-eugenic trend instead! Conversely, it could be the other way around, if much fewer elderly get genetic data and younger people are more concerned about future health or are going along with a fad, producing a pseudo-dysgenic effect instead (eg in the PGP genome data, there seem to be disproportionately more PhDs who are quite elderly, while younger participants are a more scattershot sample from the general population; probably relating to the circumstances of PGP's founding & Harvard home).
+
+    This is probably an issue with databases that rely on voluntary individual contributions, such as PGP, where selection effects have free play. It would be much less of an issue with longitudinal studies where motivations and participation rates will not differ much by age. Since most dysgenic theories accept that recorded IQ scores have remained stable over the 20th century and the decreases in genetic potential either have not manifested yet or have been masked by the Flynn effect & greater familiarity with tests & loss of some g-loading, one might reason that proxies like educational achievement should be increasing throughout one's sample (since they are known to have increased), and a lack of such a trend indicates selection bias.
+
 ## Genetic data availability
 ### Proprietary
 
@@ -2058,7 +2069,7 @@ The known proprietary databases have long been large enough to carry out either 
     - [Parkinson's](http://www.nature.com/ng/journal/v46/n9/full/ng.3043.html "'Large-scale meta-analysis of genome-wide association data identifies six new risk loci for Parkinson's disease', Nalls et al 2014"): _n_=100,833 (may overlap with 23andMe and some others)
     - [eczema](http://www.nature.com/ng/journal/vaop/ncurrent/full/ng.3424.html "'Multi-ancestry genome-wide association study of 21,000 cases and 95,000 controls identifies new risk loci for atopic dermatitis', Paternoster et al 2015"): _n_=95,464
     - [Genetics of Personality Consortium](http://www.tweelingenregister.org/GPC/): eg [Neuroticism](http://palmerlab.org/neuroticism-and-depression-gwas-consortium-paper-accepted-for-publication-in-jama-psychiatry-abraham-palmer-harriet-de-wit-and-amy-hart-are-co-authors/ "Genome-wide association study identifies novel locus for neuroticism and shows polygenic association with Major Depressive Disorder"): _n_=63k
-    - Dutch LifeLines Biobank and Cohort: _n_<13,000
+    - Dutch LifeLines Biobank and Cohort: _n_>13,000
     - Health and Retirement Survey: _n_=12,500
     - TwinsUK registry: _n_=4,905
 
@@ -2077,6 +2088,7 @@ There are a few sources of data, primarily SNP data, which are freely available 
 2. [OpenSNP](https://opensnp.org): hosting for user-provided SNP & phenotype data with [dumps available](https://opensnp.org/genotypes); hosts ~2k SNP datasets, but only [270 users have birth-years](https://opensnp.org/phenotypes/148)
 3. [SNPedia](http://www.snpedia.com/index.php/Genomes) likewise hosts SNP data (overlapping with OpenSNP) and genome data, but a very small number
 4. [Genomes unzipped](http://genomesunzipped.org/data) provides a small amount of data
+4. [DNA.LAND](https://dna.land/): claims _n_=8k based on public participation & input, but seems to then restrict access to a small set of researchers
 5. [Personal Genome Project](!Wikipedia) (PGP):  probably the single largest source of open SNP & genome data. ~1252 participants have registered birthdates according to `demographics.tsv`, and their [statistics page](https://my.pgp-hms.org/public_genetic_data/statistics)'s graphs indicates <300 whole genomes and <1k SNPs.
 
     - Genomes: browsing the [user lists for 'Whole genome datasets'](https://my.pgp-hms.org/users), I estimate a total of ~222; looking at the first and last 22 entries, 34 had ages/birth-years, so ~75% of the whole genomes come with the necessary birth-year data, indicating ~166 usable genomes for the purpose of testing dysgenics. With the most recent one uploaded on 2015-10-12, and the earliest recorded being 2011-09-16, that suggests the available genome number increases by ~0.25/day. 166 is uncomfortably close to the requirement for a well-powered test, and there may not be enough data to account for glitches in the data or allow for more complicated statistical testing, but if we wanted to double the available data, we'd only need to wait around 885 days or 2.5 years (or less, depending on whether the collapse in genome sequencing prices continue and prices drop below even the current \$1k genomes).
