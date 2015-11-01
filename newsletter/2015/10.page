@@ -2,19 +2,17 @@
 title: October news
 created: 23 Sep 2015
 tags: newsletter
-status: in progress
+status: finished
 belief: log
 ...
 
-This is the October 2015 edition of [the `gwern.net` newsletter](http://eepurl.com/Kc155); previous, [September 2015](http://www.gwern.net/newsletter/2015/08).
+This is the October 2015 edition of [the `gwern.net` newsletter](http://eepurl.com/Kc155); previous, [September 2015](http://www.gwern.net/newsletter/2015/09).
 This is a summary of the revision-history RSS feed, overlapping with [Changelog](http://gwern.net/Changelog) & [Google+](https://plus.google.com/103530621949492999968) & [LW media threads](http://lesswrong.com/r/discussion/tag/media_thread/); brought to you by my donors on [Patreon](https://www.patreon.com/gwern).
 
 # Writings
 
-- modafinil survey results?
-- [mail?](http://gwern.net/Mail%20delivery)
-- [RNN author failure?](http://www.gwern.net/Statistical%20notes#rnn-metadata-for-mimicking-individual-author-style)
-- dysgenics power estimate?
+- [When Does The Mail Come? A subjective Bayesian decision-theoretic analysis of local mail delivery times](http://gwern.net/Mail%20delivery)
+- [Dysgenics power analysis: how much genetic data would it take to falsify such claims?](http://www.gwern.net/Statistical%20notes#dysgenics-power-analysis)
 
 # Media
 ## Links
@@ -42,6 +40,7 @@ Psychology/biology:
 - ["Synchronizing education to adolescent biology: 'let teens sleep, start school later'"](http://www.researchgate.net/profile/Paul_Kelley5/publication/271991912_Synchronizing_education_to_adolescent_biology_let_teens_sleep_start_school_later/links/5527fc7a0cf2779ab78b5e8f.pdf), Kelley et al 2014:
 - ["Evolution of the human brain: when bigger is better"](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3973910/), Hofman 2014
 - ["When Evolution Is Infectious"](http://nautil.us/issue/29/scaling/when-evolution-is-infectious)
+- [Charles Bonnet syndrome](https://en.wikipedia.org/wiki/Visual_release_hallucinations) (10-40% of blind people can experience vivid complex visual hallucinations; they just don't ever talk about it.﻿)
 - ["The Dubious Quick Kill, part 1: Sword wounds and the circulatory system"](http://www.classicalfencing.com/articles/bloody.php)
 - [Dealing with a mercury spill](http://www.jefftk.com/p/mercury-spill)
 
@@ -51,20 +50,28 @@ Technology:
 
 Economics:
 
+- ["Ghost Babies"](http://boingboing.net/2011/03/25/ghost-babies.html)
+- ["Does Academic Research Destroy Stock Return Predictability?"](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2156623), McLean & Pontiff 2015
+
 Philosophy:
+
+- ["The Reversal Test and Status Quo Bias"](http://philosophicaldisquisitions.blogspot.com/2012/11/the-reversal-test-and-status-quo-bias.html)
+- ["Growing a Language"](http://www.cs.virginia.edu/~evans/cs655/readings/steele.pdf), Steele 1998
 
 Fiction:
 
+- [_Friendship is Optimal_](http://www.fimfiction.net/story/62074/Friendship-is-Optimal)
 - ["It Was You Who Made My Eyes Blue"](http://slatestarcodex.com/2015/10/15/it-was-you-who-made-my-blue-eyes-blue/)
+- ["Tryfon Tolides: an almost pure empty poetry"](http://unqualified-reservations.blogspot.com/2007/11/tryfon-tolides-almost-pure-empty-poetry.html)
 
-<!-- Back to 28 Nov 2012 -->
+<!-- Back to 20 Nov 2012 -->
 
 ## Books
 
 Fiction:
 
 - _The Wind-up Girl_ ([review](https://www.goodreads.com/review/show/1411687919))
-- [_The Great Gatsby_](https://en.wikipedia.org/wiki/The_Great_Gatsby)
+- [_The Great Gatsby_](https://en.wikipedia.org/wiki/The_Great_Gatsby) ([review](https://www.goodreads.com/review/show/369880911))
 
 Nonfiction:
 
@@ -76,14 +83,13 @@ Nonfiction:
 
 Live-action:
 
-- _The Martian_
-- [_The Great Gatsby_](https://en.wikipedia.org/wiki/The_Great_Gatsby_%282013_film%29)
-- _Back to the Future II_
+- [_The Martian_](https://en.wikipedia.org/wiki/The_Martian_%28film%29) (a faithful but very Hollywood depiction of the novel; it is exactly what one would expect upon hearing that _The Martian_ was being turned into a big-budget film starring Matt Damon & Sigourney Weaver, glossy special effects and overwrought soundtrack and all. What is cut from the novel was of no importance.)
+- [_The Great Gatsby_](https://en.wikipedia.org/wiki/The_Great_Gatsby_%282013_film%29) (another glossy big-budget Hollywood adaptation; marred by the, thankfully brief, frame story in which Tobey Maguire ascends to heretofore unseen levels of schmarm and schmaltz as the narrator. The novel is so short that it's almost a scene by scene adaptation, and the main directorial choice seems to be to put a heavy emphasis on it happening to be set during the 'Roaring Twenties', so every scene or party is punched up as much as feasible. The narrator doesn't encounter Gatsby when the two are calmly sitting down at a party, but encounters him in the crush of a giant uproariously drunk crowd backlit by fireworks; the narrator cannot lunch with Gatsby at a dusty obscure roadside cafe, but they must lunch in a giant speakeasy with strippers/chorus-line dancers; in spending an afternoon with Tom's mistress & friends, he does not get tipsy on whiskey but he gets falling-down drunk with the half-naked women & popping up champagne bottles to bath in; women are not properly 20's flat-chested but all bare cleavage with pushup bras; Gatsby is not shot offscreen, but rather onscreen shortly after parting from the narrator while rushing to a phonecall he thinks is from Daisy; and so on. This damages the original atmosphere of the book, which conveys the sense of dusty dog days on rural LI in a way the movie does not at all, but I don't think it's a loss; the book is still the book, and it's fine for a movie adaptation to make more of a spectacle of itself and revel in audiovisuals. The party scene makes full use of its latitude. What is more annoying, or perhaps amusing, is noting the hamfisted touches of modernity. For example, the movie chooses to keep the part of the dinner where Tom alludes to Lothrop Stoddard; Fitzgerald brings this up not for being racist, but as part of his character study showing Tom to be pitiable as his athletic career is over & he's starting to realize his lack of worth, and the movie omits any hint of this in order, obviously, to simplify things by casting Tom as The Bad Guy, since of course bad guys must be racist - an edit which reflects the crudity & narrowness of the writers and also really does do harm to the literary qualities of the movie. A less significant, but much more amusing, example would be the attempt to whitewash the Meyers Wolfsheim character; never mind that he is repeatedly identified as Jewish, and that Jews at the time were deeply involved in NY organized crime & the numbers racket and the Wolfsheim character pretty much has to be Jewish or Italian, no, the movie determinedly edits out all uses of the word 'Jewish' from dialogue and goes so far as to cast Wolfsheim using an Indian actor! Because apparently there are no Jewish actors in Hollywood they could use.)
+- [_Back to the Future II_](https://en.wikipedia.org/wiki/Back_to_the_Future_Part_II)
 
 Anime:
 
-- _Nekomonogatari Shiro_
-- _Nekomonogatari Kuro_
+- _Monogatari Second Season_: _Nekomonogatari_+_Kabukimongatari_+_Otorimonogatari_+_Onimonogatari_+_Koimonogatari_ (the long-awaited real followup to _Bakemonogatari_; the original sequel anime, _Nisemonogatari_, was more than a little disappointing in focusing too much on fanservice, fanservice which aside from the famous toothbrush scene was mostly a waste of time. _Second Season_, on the other hand, begins with followups on each of the main characters whose problems were solved in _Bakemonogatari_, but it turns out their problems were really only postponed to a more final reckoning. Beginning with Hanekawa, each sub-arc follows a fresh character's crisis while slowly shedding light on the larger story they are part of, a lengthy war between a mysteriously destructive interloper and a clairvoyant self-proclaimed to know everything in which they successively manipulate the main characters to create and resolve crises, respectively, with each arc getting closer and closer to involving Kanbaru Suruga in some way. The return of Senjougahara & her dialogue in _Nekomonogatari_ is most welcome to this long-time viewer, and the final _Koimonogatari_ likewise returns the fan favorite con-man Kaiki Deshuu to not just appearances but as protagonist for several episodes, which I especially enjoyed as an antidote to Araragi. I wouldn't say that it's better than _Bakemonogatari_, if only because I don't think any episode in _Second Season_ has the same impact as episode 12, the overall plot can't be fairly judged just on the basis of _Second Season_ as it ends right before the Kanbaru arc which seems to be the final arc, and I find the character Nadeko Sengoku impossible to understand or sympathasize with in the least so the _Otorimonogatari_ arc was a pain to sit through.)
 - [_A Letter To Momo_](https://en.wikipedia.org/wiki/A_Letter_to_Momo) ([review](http://myanimelist.net/reviews.php?id=201877))
 
 ## Music
@@ -92,6 +98,10 @@ Touhou:
 
 - ["Fairy Dance"](https://www.youtube.com/watch?v=17p6ufiPFzQ) (Pine Tree feat. Mii; _Shinsoku_ {C86}) [rock]
 - ["Shanghai Teahouse ~ Chinese Tea"](https://www.youtube.com/watch?v=sKqoPP4cydA) (Ex-calibur; _Knights of Round_ {C73}) [instrumental rock]
+
+Kantai Collection:
+
+- ["昼戦・砲雷撃戦、初め! -ピアノ協奏曲-"](https://www.youtube.com/watch?v=AKIkY9OdO8A) (TAM; _KanColle Piano Concerto_ {C88}) [orchestral]
 
 Doujin:
 
@@ -103,10 +113,6 @@ Doujin:
 - ["IVY"](https://www.dropbox.com/s/pp7ltuw7fsine7g/fullkawapfeatutaukitchen-girlfriendfromkyoto-ivy.ogg) (Fullkawa-P feat. Utau Kitchen; _Girlfriend from Kyoto_ {2012}) [Jpop]
 - ["Purl"](https://www.youtube.com/watch?v=nlbWRAMMKc8) (ITM; _Bayside Dreamer_ {C88}) [house]
 - ["Fresh Air"](https://www.dropbox.com/s/mzxxlsnc97rdswn/lumina-baysidedreamer-freshair.ogg) (Lumina; _Bayside Dreamer_ {C88}) [house]
-
-Kantai Collection:
-
-- ["昼戦・砲雷撃戦、初め! -ピアノ協奏曲-"](https://www.youtube.com/watch?v=AKIkY9OdO8A) (TAM; _KanColle Piano Concerto_ {C88}) [orchestral]
 
 Vocaloid:
 
