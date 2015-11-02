@@ -1815,7 +1815,7 @@ With a polygenic score drawing on 437 hits, then a sample of 2k suffices to dete
 
 This is pessimistic because the 10k alleles are not all the same effect size and GWAS studies inherently will tend to find the largest effects first. So the first 4 (or 86) hits are worth the most.
 The distribution of effects is probably something like an inverse exponential distribution: many small near-zero effects and a few large ones.
-Rietveld 2013 released the betas for all SNPs, and [the beta estimates can be plotted](http://emilkirkegaard.dk/en/?p=5574 "Polygenic traits and the distribution of effect sizes: years of education from Rietveld et al (2013)"); each estimate is imprecise and there are some artifacts in beta sizes (probably due to rounding somewhere in the analysis pipeline), but the distribution looks like a radioactive half-life graph, an inverse exponential distribution.
+Rietveld 2013 released the betas for all SNPs, and [the beta estimates can be plotted](http://emilkirkegaard.dk/en/?p=5574 "Polygenic traits and the distribution of effect sizes: years of education from Rietveld et al (2013)"); each estimate is imprecise and there are artifacts in the beta sizes (SSGAC confirms that they were rounded to 3 decimals), but the distribution looks like a radioactive half-life graph, an inverse exponential distribution.
 With a mean of 1, we can simulate creating a set of 10k effect sizes which are exponentially distributed and have mean 5000 and SD close to (but larger than) 50 and mimics closely the binomial model:
 
 ~~~{.R}
