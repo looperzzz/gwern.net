@@ -2405,3 +2405,52 @@ cat *.transformed | grep -v -e "JORDAN|U|" -e "M|BIBLE|" | shuf > input.txt
 
 First version sans dropout got to a loss of 0.7969 (!); contamination or leakage of the validation test set? But since the versions in the validation set could be only different-cased versions, then wouldn't've the RNN'd't've learned the transformation and it's not really leakage at all?
 After it hit a limit at 0.79 and started turning in losses of 0.8+ for hours, tried retraining it with some dropout and the loss exploded, not shrinking even after training it all night, so I restarted with a fresh RNN and some dropout.
+
+# Operating on an aneurysm
+
+In the excellent neurosurgeon memoir [_Do No Harm: Stories of Life, Death, and Brain Surgery_](http://www.amazon.com/Do-No-Harm-Stories-Surgery/dp/125006581X) ([Henry Marsh](!Wikipedia "Henry Marsh (neurosurgeon)") 2014), chapter 2 "[Aneurysm](!Wikipedia)", there is a passage on weighing the costs of action and inaction:
+
+> "A thirty-two-year-old woman," he said tersely. "For surgery today. Had some headaches and had a brain scan." As he talked a brain scan flashed up on the wall.
+>
+> ..."It's an unruptured aneurysm, seven millimetres in size," Fiona - the most experienced of the registrars - said. "So there's a point zero five per cent risk of rupture per year according to the international study published in 1998." "And if it ruptures?" "Fifteen per cent of people die immediately and another thirty per cent die within the next few weeks, usually from a further bleed and then there's a compound interest rate of four per cent per year."
+>
+> ...If we did nothing the patient might eventually suffer a haemorrhage which would probably cause a catastrophic stroke or kill her. But then she might die years away from something else without the aneurysm ever having burst. She was perfectly well at the moment, the headaches for which she had had the scan were irrelevant and had got better. The aneurysm had been discovered by chance. If I operated I could cause a stroke and wreck her - the risk of that would probably be about four or five per cent. So the acute risk of operating was roughly similar to the life-time risk of doing nothing. Yet if we did nothing she would have to live with the knowledge that the aneurysm was sitting there in her brain and might kill her any moment.
+
+Reading this, I was a little surprised. Intuitively, it did not seem to me that a single risk of 5% was anywhere near as bad as a lifelong risk of 0.5% for a 32 year old woman who would probably live another 50 years - the one number is 10x bigger than the other, but the other number is 50x bigger, and a quick heuristic for the total probability of many independent small probabilities is to just sum them up, suggesting that the risk of the untreated aneurysm was much worse (`50*0.05=0.25`, and 0.25>0.05).
+So I thought after I finished reading the book, I would work it out a little more accurately.
+
+32yo woman; UK female life expectancy ~80yo in 2015 (http://www.nhs.uk/news/2015/09September/Pages/UK-womens-life-expectancy-second-worst-in-Western-Europe.aspx), so she had ~48 years left
+what is the probability of the aneurysm never bursting in all 48 years? `(1-0.005)^48` = 0.786, or a probability of bursting of 21%. 21% is 4x larger.
+Since 21% is 4x larger and the consequences are similar, this would suggest that the risks are not "roughly similar" and it looks much worse to not operate.
+
+But that's just the risk of an event, not the expected loss:
+
+1. In the case of doing surgery immediately, the expected loss, with years treated equally and a 5% instant risk from operation, is simply `48 * 0.005 = 0.24` years of life; all 48 years are risked on a single throw of the surgical dice, but after that she is safe.
+2. In the case of doing nothing and letting the aneurysm stay with a 0.5% annual risk from non-operation, it's not as simple as `48 * 0.21 = 10.1` years, because you cannot die of an aneurysm if you died in a previous year.
+    The risk will instead follow a negative binomial distribution (number of years until 1 failure), and then the loss is the 48 years minus however many she actually got.
+    That's not the same as the expectation of the negative binomial, which in this case is 200 years (the expectation of a negative binomial with 1 failure and a success rate of 1-0.005 is `1/(1-(1-0.005))=200`) and she will die of other causes before then, in which case the aneurysm turned out to be harmless.
+
+    We can simulate many draws from the negative binomial, ignore as 0 any time where the aneurysm struck after her life expectancy of 48 more years is past, hold onto the losses, and calculate the mean loss: `mean(sapply(rnbinom(10e4, 1, 0.005), function(years) { if(years>48) { 0; } else { 48-years; }}))` ~> 5.43.
+
+So the expected loss from surgery looks even better than the risk did, as it is 22.6x smaller.
+
+What about adjusting for older years being less valuable?
+We might say that the surgery look unfairly good because we are ignoring how its losses are front-loaded in the 30s, some of the best years of one's life, and treating a loss of her 33rd year as being as bad as a loss of her 48th year.
+In terms of age weighting, DALYs usually use a 3% annual discounting http://www.who.int/healthinfo/global_burden_disease/daly_disability_weight/en/
+So we can redo the two expected losses including such a discounting.
+
+1. Surgery:  `0.05 * sum((1-0.03)^(0:48))` ~> 1.291
+2. No surgery: `mean(unlist(sapply(sapply(rnbinom(10e4, 1, 0.005), function(years) { if(years>48) { 0; } else { 48-years; }}), function(yr) { sum((1-0.03)^(0:yr)); })))` ~> 4.415
+
+By appropriately penalizing the surgery's loss of high-quality early years as compared to the aneurysm's loss of just some elderly years, the surgery's superiority falls to 3.4x.
+(And if we include the mental wellbeing of the woman as a final touch, the surgery looks even better.)
+
+How sensitive is the surgical superiority to the chosen parameters?
+
+- Surgical risk: a 4x increase in risk to 20% would create parity
+- Aneurysm risk: if the annual risk of aneurysm were as low as 0.04% rather than 0.5%, then there would be parity
+- Life expectancy & discount rate: no change will reverse the ordering
+
+After calculating the loss of years and differing values of years, the surgery still comes out as substantially better than not operating.
+
+TODO: consider the financial cost?
