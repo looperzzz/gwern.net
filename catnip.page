@@ -1,0 +1,99 @@
+CATNIP, VALERIAN, HONEYSUCKLE AND OTHER CAT-ATTRACTANT PLANTS http://messybeast.com/catnip-valerian.htm Hartwell
+
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1480656/
+Not all cats will respond to catnip. The heredity of the response has been shown to be an autosomal dominant trait (1,6,14). There is no correlation with breed or color (14).
+
+1. Hatch RC. "Effect of drugs on catnip (Nepeta cataria) induced pleasure behavior in cats". _American Journal of Veterinary Research_ 1972; 33: 143-155. TODO
+6. Palen GF, Goddard GV. ["Catnip and oestrous behavior in the cat"](/docs/catnip/1966-palen.pdf). _Anim Behav_ 1966; 14: 372-377. (reactions: 23 responders, 20 non-responders, so 47% immunity rate)
+14. Todd NB. Inheritance of the catnip response in domestic cats. Journal of Heredity 1962; 53: 54-56. TODO (pedigree chart reproduced in https://www.hoddereducation.co.uk/media/Documents/magazine-extras/Biological%20Sciences%20Review/BSR%20Vol%2025%20No%204/BiolRev-25_4-cat-genetics.pdf ; 14 responders, 12 non-responders, so 46% immunity rate in this sample. But Hill et al 1976 seems to imply Todd 1962 actually found a 35% immunity rate: "Todd (1962) attributed the predisposition to respond to catnip to a dominant autosomal gene occurring in 65% of domestic cats" )
+- Todd, N.B. 1963. "The catnip response". Doctoral dissertation, Harvard. TODO
+- Hill et al 1976, ["Species-characteristic Responses to Catnip by Undomesticated Felids"](/docs/catnip/1976-hill.pdf) TODO: extract data
+
+Wells, D.L., Egli, J.M., 2004. The influence of olfactory enrichment on the behaviour of captive black-footed cats, Felis nigripes. Appl. Anim. Behav. Sci. 85, 107–119.
+DeLuca, A.M., Kranda, K.C., 1992. Environmental enrichment. Lab. Anim. 21, 38–44.
+
+Holmes, R.J., 1993. Environmental enrichment for confined dogs and cats. The TG Hungerford Refresher Course for Veterinarians. In: Proceedings from the Postgraduate Committee in Veterinary Science, University of Sydney, vol. 214. pp. 191–197.
+Barry, D., 2005. "Catnip". Chem. Eng. News 83, 39.
+Hart, B.L., 1977. "Feline behaviour: olfaction and feline behaviour". Feline Pract. 7, 8–10.
+McElvain, P. M. Walters, and R. D. Bright. 1942. "The constituents of the volatile oil of catnip. II. The neutral components. Nepetalic anhydride." J. Amer. Chem. Soc. 64:1828-1831.
+Hayashi, T. 1968. "Motor reflexes of cats to _Actinidia polygama_ (Japan) and to catnip (U.S.A.)". Pages 351-358 in N. N. Tanyolag, ed., _Theories of odor and odor measurement_. N. N. Tanyolac, Istanbul.
+Sakan S. Isoe, S. B. Hyeon, R. Katsumura, T. Maeda, J. Wolinsky, D. Dickerson, M. Slabaugh, and D. Nelson. 1965. "The exact nature of matatabilactone and the terpenes of Nepeta cataria. Tetrahedron Lett." 1965:4097-4102
+
+- Nepeta cataria (catnip) https://en.wikipedia.org/wiki/Catnip#Effect_on_cats : active ingredient nepetalactone
+- Lonicera Tatarica (Tatarian Honeysuckle) https://en.wikipedia.org/wiki/Lonicera_tatarica :  nepetalactone
+- Actinidia Polygama (Japanese Catnip or Matatabi or Silvervine or silver vine or cat powder) https://en.wikipedia.org/wiki/Actinidia_polygama#Pets : active ingredient Actinidine and dihydroactinidiolide
+- valerian https://en.wikipedia.org/wiki/Valerian_%28herb%29#Effect_on_other_organisms : active ingredient actinidine
+- Acalypha indica (Indian acalypha/Indian nettle) https://en.wikipedia.org/wiki/Acalypha_indica#Effect_on_domestic_cats active ingredient TODO
+- cat thyme (teucrium marum) : active ingredient TODO
+- Buckbean (Menyanthes trifoliata): mitsugashiwalactone
+
+- Northern groundcone (Boschniakia rossica): boschniakine and boschnialactone
+- Yellowbells (Tecoma stans): boschniakine and actinidine
+- Trumpet Creeper (Campsis radicans):  may boschniakine
+- Guelder Rose (Viburnum opulus, sometimes called Cranberry Bush and most commonly found in cultivation as the Snowball Tree)
+- the perennial Dittany of Crete (Origanum dictamnus/Hop Marjoram)
+- the spring-flowering annual Baby Blue-eyes (Nemophila menziesii)
+- the Zimbabwean plant Zinziba (Lippia javanica aka Verbena javanica).
+
+- Arata Silvervine 0.5gx12pk, Cat's Favorite, Best Value https://www.amazon.com/dp/B008PNNMHW/ \$10.95 + \$6.82 (S&H from Japan for the silvervine)
+- Valerian Root Extract https://www.amazon.com/dp/B002H2VYNG/ \$11.86
+- Honeysuckle Spray for Cats (2 oz.) https://www.amazon.com/dp/B000788TP8/ \$7.99
+
+Notes on efficacy:
+
+- Oolong: catnip: 0
+- Percy: catnip: 0
+- Kiki: catnip: 1
+- Stormy: catnip: 0?
+- Sara Tiger: catnip: 1
+
+Cat             Sex Fixed Color Kind                Catnip Valerian Honeysuckle Silvervine
+-------------   --- ----- -----  ----                ------ -------- ----------- ----------
+Oolong          M   1     black Domestic longhair   0               0
+Percy           M   1     brown Tabby               0               1
+Kiki            M   1     grey  Tabby               1
+Stormy          M   1     grey  Russian Blue
+Sara            F   1     brown Tabby               1
+
+Once I get the valerian/silvervine/honeysuckle, begin testing it on cats:
+
+- Oolong & Percy are already available
+- test at Christmas
+- Stormy & Kiki: test whenever I go home
+
+Survey: Mechanical Turk & Surveymonkey on gwern.net?
+
+MT calculator: https://morninj.github.io/Mechanical-Turk-Cost-Calculator/ 1000 responses at \$0.10 reward = \$120
+
+demographics:
+
+- gender
+- age
+- country
+
+For _n_ cats, ask:
+
+- specify should be at least >6 months old
+- sex (M/F)
+- spayed/neutered
+- breed: free response? maybe ask long vs short haired, mutt vs purebred
+- fur color
+- general activity level (1-5)
+- personality: "The personality and emotional factors were found to be the most important: withdrawn cats react poorly while friendly, outgoing cats react best"
+- stimulants: catnip response (0/1), valerian response (0/1), honeysuckle response (0/1), silvervine response (0/1) Zinziba (trap option)
+- age at administration of each?
+- form: home-grown, leaf, liquid extract
+
+Catnip:
+
+- has the person ever consumed catnip in the form of: tea / leaves or an herb / roots / smoked / juice, tincture, infusion or poultice
+- if so, what was the purpose? relaxation / stimulation / euphoria or intoxication / hallucination or visual distortion / dreams / insomnia / stomach aches / mosquito repellent/ insomnia / headaches / colds or flu or fever / hives / arthritis / increasing urination / treatment of worms / hemorrhoids / other
+- efficacy: 1-5
+
+https://www.erowid.org/herbs/catnip/
+
+Valerian:
+
+- has the person ever consumed valerian in the form of: roots / extract
+- if so, what was the purpose? relaxation / dreams / stomach aches / depression / Restlessness / Menstrual disorders / Convulsions / tremors / epilepsy / ADHD / Chronic fatigue syndrome  / Muscle and joint pain / Headache / Menopausal symptoms
+- efficacy: 1-5
