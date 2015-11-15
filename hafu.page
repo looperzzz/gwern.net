@@ -1149,6 +1149,89 @@ M0        659  563.7  785.2
 ~~~
 
 # Appendix
+## Genetics of skin, hair, and eye color
+
+As the phenotype data indicates, it is almost stereotypical for hafu characters to have blond or red hair and blue eyes and the choices follow national stereotypes (Scandinavian characters are blue-eyed and blond, Irish or Scottish are red-haired, etc).
+Aside from the character design choices' role in providing visual variety or (literally) color-coding nationality, is that empirically or genetically plausible?
+
+### Real hafus
+
+First, we could simply look at prominent hafus, like Wikipedia's [list of 50 hafus with WP entries](!Wikipedia "H%C4%81fu#List_of_notable_h.C4.81fus")
+Some quick guesses about the first 20 or so:
+
+- Kusumoto Ine: eye color unclear, hair black
+- Ariana Miyamoto: brown, black
+- Roxana Saberi: black, black
+- Ryō Kurusu: black, black
+- Renhō: black, black
+- May J.: black, brown?
+- Sayaka Akimoto: black, black
+- Murashige_Anna: brown, brown?
+- Patty: ?
+- Aya Sugimoto: black, black?
+- Saori Hara: brown, black?
+- Luna Takamura: ?
+- Rola: brown, brown?
+- Maggy: ?
+- Erika Sawajiri: black, black
+- Eiji Wentz: green, brown
+- Marius Yo: black, black
+- Ryan Potter: black, black
+- Ureo Egawa: ?, black
+- Gōtoku Sakai: ?, black
+- Noriyoshi Sakai: ?, brown
+- Yu Darvish: black, black
+
+While it's hard to tell eye color from small or old photos, and hair color is easily changed, looking closely at these 20 and skimming the remaining 30 shows considerable consistency: hair color is universally brown to black, and eyes are usually light or dark brown (with an occasional exception for one of the less rare eye colors are like hazel).
+Some hafu look remarkably Caucasian (Ryō Kurusu looks incredibly Russian), but from my American perspective, I would say that skin color-wise, they look the same but most look much more Japanese in hair & appearance than their other half.
+What I do not see anywhere in those 50 is someone who is blond (as an adult) or red-haired, nor are there any blue eyes.
+
+### Skin color
+
+Most hafu characters are drawn light colored or with white skin just like the regular Japanese characters, but the ones with Brazilian or African parentage are depicted as much darker-toned.
+Is this racist or realistic?
+
+[Skin color](!Wikipedia "Human skin color#Genetics of skin color variation") [seems to be no more than a few dozen genes combining mostly additively](http://www.unz.com/gnxp/the-genetic-architecture-natural-history-of-pigmentation/ "The Genetic Architecture & Natural History of Pigmentation")  in order to yield the human spectrum of skin color from chalk-white to deep-black, implying that any cross will be roughly the average of the two parents' skin colors.
+Japanese and Caucasians are far out on the extreme of paleness, which predicts that Caucasian/Japanese hafus will have almost identical skin colors (since the two populations are so similar in the first place that averaging them doesn't produce a noticeable difference) and also that Caucasian/Japanese crosses with Africans or other dark-skinned populations will 'look' more like the darker parent than the lighter - because splitting the absolute color difference still results in pushing the hafu way outside the Japanese skin color norm.
+It's not that the blackness is 'stronger' or the 'one drop rule' is true (the child is equally in-between), it's that the reference population is *so* extreme & homogeneous that small absolute differences stand out, especially when dichotomized.
+Both these trends are reflected in the character database:
+
+So when it comes to skin color, it appears the hafu characters are realistic.
+
+### Hair color
+#### Red hair
+
+[Red hair](!Wikipedia) is primarily caused by a single simple recessive mutation in the gene for MC1R which arose in northern Europe, and so is Mendelian - you must have two copies of the recessive to have red hair, otherwise your hair will be whatever other color.
+So in the case of red hair, we can be certain that real hafus are extremely unlikely to have red hair: even if the other parent is red-haired and hence guaranteed to have two copies, the Japanese parent will be carrying no copies of the MC1R mutation and so all children will be recessive by Mendel/Punnet-squares.
+If the children again out-married, then the grandchildren could hypothetically have red hair but it still would not be particularly likely (all the children will be carrying 1 copy of MC1R; if one then married a redhead ie someone with two copies, then only half of the grandchildren will have double-recessives and be red-haired, while the other half will still have the dominant brown/black; if one then married a red carrier, then only a quarter of the grandchildren would be red and the remainder dominant again).
+And we can rule out the hypothesis that perhaps MC1R somehow got introduced into the Japanese population through, say, the famous [Ainu](!Wikipedia), and so the Japanese parent might be a carrier anyway - if there were a background rate of, say, 1% MC1R carriers, then there'd be $0.01^2 \cdot 127000000 = 12700$ native Japanese who have red hair for no apparent reason, somewhat like the [Afro-Caribbean redheads](http://www.huffingtonpost.com/entry/photographs-redheads-of-color_55db9929e4b0a40aa3abf017 "Photographer Explores The Beautiful Diversity Of Redheads Of Color: Michelle Marshall captures the more unusual manifestations of the MC1R gene"), where the recessive lurks in the population (possibly from an [earlier Scottish admixture?](http://www.express.co.uk/news/uk/44940/Caribbean-island-where-red-haired-locals-speak-with-Scottish-accent "Caribbean island where red-haired locals speak with Scottish accent: a historian hopes to solve one of the Caribbean’s most enduring mysteries of how a small island community came to have red hair and speak with a Scots dialect")) and occasionally throws up a hit.
+
+For red hair, the hafu characters are extremely unrealistic.
+
+#### Blond hair
+
+The situation is similar with blond hair: variants in MC1R are implicated, but a few other genes may be involved. So the end result is less extreme, but the recessives and lack of any reason for them to be in the Japanese population means that blond hair should still be quite rare in hafus.
+
+For blond hair, the hafu characters are unrealistic.
+
+### Eye color
+
+[The color of eyes is determined by 6-16 genes](!Wikipedia "Eye color#Genetic determination") which are not solely additive, and so the full spectrum of eye colors can be possible; for example, in an [African-European admixed group](http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1003372 "'Genetic Architecture of Skin and Eye Color in an African-European Admixed Population', Beleza et al 2013"), eye colors ran the full range from blue to black:
+
+![Figure 2. Quantitative assessment of eye color. Plotted are the normalized median values of green (x-axis) and blue (y-axis) levels of each individual's irises. We fitted a principal curve that explains most of the variation in the data (red dashed curve). The T-index is defined by the arc-length from the projection of each point on the curve to the end of the curve that corresponds to the lightest eye color. In the figure are examples of eye photos at their respective position in the T-index curve. `doi:10.1371/journal.pgen.1003372.g002`](http://journals.plos.org/plosgenetics/article/figure/image?size=large&id=info:doi/10.1371/journal.pgen.1003372.g002)
+
+But here we need to note the issue of recessives: for example, [blue eyes](!Wikipedia "Eye color#Blue") are recessive and so have the same problem as red & blond hair for ever appearing on a first-generation hafu.
+In that European-African mixed population, there is a chance for two blue-eye recessives on OCA2 to find each other and so throw up blue eyes even in someone who otherwise looks very African, but would any Japanese parents be carrying those OCA2 variants?
+Probably not.
+
+So it seems that it would be much more likely for a hafu to instead have green, brown, or black eyes, but a variety of those colors is indeed possible.
+
+### Overall
+
+From the genetics, we would predict that blue eyes, blond hair, and red hair will rarely or ever appear in a real hafu, and they are much more likely to have skin intermediate their parents' coloring, brown or black hair, and green to black eyes. (This is consistent with the few real hafus whose photos I looked over.)
+
+So we can say that overall, the hafu characters are unrealistic.
+
 ## _Savage Continent_
 
 [_Savage Continent: Europe in the Aftermath of World War II_](http://www.amazon.com/Savage-Continent-Europe-Aftermath-World/dp/1250000203/), Lowe 2013; chapter 14, "Revenge on Women and Children":
