@@ -3973,8 +3973,8 @@ downloadCSS () {
        UNCSS_PID=$!
        echo $UNCSS_PID
        (sleep 4m ; kill -9 $UNCSS_PID) &
-       killall --quiet --older-than 1h phantomjs &
-       killall --quiet --older-than 1h uncss &
+       killall --quiet --older-than 20m phantomjs &
+       killall --quiet --older-than 20m uncss &
        wait $UNCSS_PID
        fi
 }
@@ -3994,7 +3994,7 @@ page = WebPage.create();
 page.open(url);
 page.onLoadFinished = function() {
    page.render(filename);
-   phantom.exit();}
+   phantom.exit(); }
 ~~~
 
 ~~~{.Bash}
@@ -4006,12 +4006,13 @@ downloadScreenshot() {
        SCREENSHOT_PID=$!
        echo $SCREENSHOT_PID
        (sleep 4m ; kill -9 $SCREENSHOT_PID) &
-       (killall --quiet --older-than 1h phantomjs) &
+       (killall --quiet --older-than 20m phantomjs) &
+       (killall --quiet --older-than 20m optipng) &
        wait $SCREENSHOT_PID
     fi
 }
 export -f downloadScreenshot
-cat urls.txt | parallel downloadScreenshot
+cat urls.txt | nice parallel downloadScreenshot
 ~~~
 
 After finish, find and delete duplicates with `fdupes`; and delete any stray HTML/CSS:
@@ -4086,6 +4087,7 @@ https://github.com/arctic-nmt/nmt
 https://github.com/joschu/cgt/blob/master/examples/demo_neural_turing_machine.py
 http://smerity.com/articles/2015/keras_qa.html
 "Neural Transformation Machine: A New Architecture for Sequence-to-Sequence Learning", Meng et al 2015 http://arxiv.org/abs/1506.06442
+"On End-to-End Program Generation from User Intention by Deep Neural Networks", Mou et al 2015 (almost too limited and simple, though)
 -->
 
 # Appendix
