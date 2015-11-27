@@ -9,29 +9,78 @@ belief: likely
 
 CATNIP, VALERIAN, HONEYSUCKLE AND OTHER CAT-ATTRACTANT PLANTS http://messybeast.com/catnip-valerian.htm Hartwell
 
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1480656/
-Not all cats will respond to catnip. The heredity of the response has been shown to be an autosomal dominant trait (1,6,14). There is no correlation with breed or color (14).
+# Population frequencies
 
-1. Hatch RC. "Effect of drugs on catnip (Nepeta cataria) induced pleasure behavior in cats". _American Journal of Veterinary Research_ 1972; 33: 143-155. TODO
-6. Palen GF, Goddard GV. ["Catnip and oestrous behavior in the cat"](/docs/catnip/1966-palen.pdf). _Anim Behav_ 1966; 14: 372-377. (reactions: 23 responders, 20 non-responders, so 47% immunity rate)
-14. Todd NB. ["Inheritance of the catnip response in domestic cats"](/docs/catnip/1962-todd.pdf). _Journal of Heredity_ 1962; 53: 54-56. (pedigree chart reproduced in https://www.hoddereducation.co.uk/media/Documents/magazine-extras/Biological%20Sciences%20Review/BSR%20Vol%2025%20No%204/BiolRev-25_4-cat-genetics.pdf ; 14 responders, 12 non-responders, so 46% immunity rate in this sample. Todd also surveyed cats in local pounds and animal hospitals, finding <=26 of 84 were non-responders or a <=30% immunity.)
-- Todd, N.B. 1963. "The catnip response". Doctoral dissertation, Harvard. TODO
-- Hill et al 1976, ["Species-characteristic Responses to Catnip by Undomesticated Felids"](/docs/catnip/1976-hill.pdf) TODO: extract data
+- Palen GF, Goddard GV. ["Catnip and oestrous behavior in the cat"](/docs/catnip/1966-palen.pdf). _Anim Behav_ 1966; 14: 372-377
 
-Wells, D.L., Egli, J.M., 2004. The influence of olfactory enrichment on the behaviour of captive black-footed cats, Felis nigripes. Appl. Anim. Behav. Sci. 85, 107–119.
-DeLuca, A.M., Kranda, K.C., 1992. Environmental enrichment. Lab. Anim. 21, 38–44.
+    Reactions: 23 responders, 20 non-responders, so 47% immunity rate
+- Todd NB. ["Inheritance of the catnip response in domestic cats"](/docs/catnip/1962-todd.pdf). _Journal of Heredity_ 1962; 53: 54-56
 
-Holmes, R.J., 1993. Environmental enrichment for confined dogs and cats. The TG Hungerford Refresher Course for Veterinarians. In: Proceedings from the Postgraduate Committee in Veterinary Science, University of Sydney, vol. 214. pp. 191–197.
-Barry, D., 2005. "Catnip". Chem. Eng. News 83, 39.
-Hart, B.L., 1977. "Feline behaviour: olfaction and feline behaviour". Feline Pract. 7, 8–10.
-McElvain, P. M. Walters, and R. D. Bright. 1942. "The constituents of the volatile oil of catnip. II. The neutral components. Nepetalic anhydride." J. Amer. Chem. Soc. 64:1828-1831.
-Hayashi, T. 1968. "Motor reflexes of cats to _Actinidia polygama_ (Japan) and to catnip (U.S.A.)". Pages 351-358 in N. N. Tanyolag, ed., _Theories of odor and odor measurement_. N. N. Tanyolac, Istanbul.
-Sakan S. Isoe, S. B. Hyeon, R. Katsumura, T. Maeda, J. Wolinsky, D. Dickerson, M. Slabaugh, and D. Nelson. 1965. "The exact nature of matatabilactone and the terpenes of Nepeta cataria. Tetrahedron Lett." 1965:4097-4102
+    Pedigree chart reproduced in https://www.hoddereducation.co.uk/media/Documents/magazine-extras/Biological%20Sciences%20Review/BSR%20Vol%2025%20No%204/BiolRev-25_4-cat-genetics.pdf ; 14 responders, 12 non-responders, so 46% immunity rate in this sample. Todd also surveyed cats in local pounds and animal hospitals, finding <=26 of 84 were non-responders or a <=30% immunity.
+- Wells, D.L., Egli, J.M., 2004. ["The influence of olfactory enrichment on the behaviour of captive black-footed cats, _Felis nigripes_"](/docs/catnip/2004-wells.pdf):
+
+    6 black-footed cats, catnip did interest them but paper doesn't break down by cat. Not useful unless want to contact authors.
+- McElvain, P. M. Walters, and R. D. Bright. 1942. ["The constituents of the volatile oil of catnip. II. The neutral components. Nepetalic anhydride"](/docs/catnip/1942-mcelvain.pdf):
+
+    tested extracted nepetalactone and caryophyllene on 10 lions; the 7 adults all responded to the nepetalactone and not the caryophyllene (the 3 cubs responded to nothing)
+
+- Hatch RC. "Effect of drugs on catnip (_Nepeta cataria_) induced pleasure behavior in cats". _American Journal of Veterinary Research_ 1972; 33: 143-155. TODO: requested RS/LW
+- Todd, N.B. 1963. "The catnip response". Doctoral dissertation, Harvard. TODO: requested RS/LW; [Tucker & Tucker 1987](/docs/catnip/1987-tucker.pdf "Catnip and the Catnip Response") summary:
+
+    > Within the subfamily Pantherinae of the Felidae, Todd (1963) found the typical catnip response in 16 lions (Panthera leo) (14 positive responders, 2 negative responders), 23 tigers (Panthera tigris) (8 incomplete responders, 13 negative responders, 2 inconclusive responders), 18 leopards (Panthera pardus) (14 positive responders, 4 negative responders), 8 jaguars (Panthera onca) (7 positive responders, 1 negative responder), 4 snow leopards (Panthera uncia) (4 positive responders), and 1 clouded leopard (Neofelis [Panthera] nebulosa). Within the subfamily Acynonychinae of the Felidae, he found that 3 cheetahs (Acinonyx jubatus) did not respond to catnip. Within the subfamily Felinae of the Felidae, he found the typical catnip response in the 2 bobcats (Felis [Lynx] rufus) (1 positive responder, 1 negative responder), 1 European lynx (Felis [Lynx] lynx), 5 pumas (Felis [Puma] concolor) (2 positive responders, 2 negative responders, 1 inconclusive responder), 1 Asiatic golden cat (Felis [Profelis] temmincki), 5 ocelots (Felis [Leopardus] pardalis) (4 positive responders, 1 negative responder), and 6 margay cats (Felis [Leopardus] wiedii) (4 positive responders, 2 negative responders); no catnip response was observed in 2 servals (Felis [Leptailurus] serval), 1 swamp cat or jungle cat (Felis chaus), 1 Pallas' cat (Felis [Octocolobus] manul), 1 leopard cat (Felis [Prionailurus] bengalensis), 1 African golden cat (Felis [Profelis] aurata), 2 fishing cats (Felis [Prionailurus] viverrina), 4 jaguarundis (Felis [Herpailurus] yagouaroundi), and 1 pampas cat (Felis [Lynchailurus] pajeros).
+- Hill et al 1976, ["Species-characteristic Responses to Catnip by Undomesticated Felids"](/docs/catnip/1976-hill.pdf) TODO: extract data; Tucker & Tucker summary:
+
+    > Hill et al. (1976) found that lions (5 positive responders,  partial responders, 1 negative responder) and jaguars (3 positive responders) are extremely sensitive to catnip, while tigers (5 negative responders), pumas (4 negative responders), leopards (4 partial responders, 4 negative responders), and bobcats (2 negative responders) gave little or no response. They also found that both males and females of the same species test alike, while reproductive-age adults are more sensitive than either aged or immature animals.
+- DeLuca, A.M., Kranda, K.C., 1992. "Environmental enrichment in a large animal facility". Lab. Anim. 21, 38–44 TODO: requested RS https://www.reddit.com/r/Scholar/comments/3uetoq/article_environmental_enrichment_in_a_large/
+
+- Holmes, R.J., 1993. Environmental enrichment for confined dogs and cats. The TG Hungerford Refresher Course for Veterinarians. In: Proceedings from the Postgraduate Committee in Veterinary Science, University of Sydney, vol. 214. pp. 191–197.
+- Barry, D., 2005. "Catnip". Chem. Eng. News 83, 39.
+- Hart, B.L., 1977. "Feline behaviour: olfaction and feline behaviour". Feline Practice 7, 8–10.
+
+- Hayashi, T. 1968. "Motor reflexes of cats to _Actinidia polygama_ (Japan) and to catnip (U.S.A.)". Pages 351-358 in N. N. Tanyolag, ed., _Theories of odor and odor measurement_. N. N. Tanyolac, Istanbul.
+("Hayashi (1968), who tested a wide range of animals (dogs, rabbits, mice, rats, guinea pigs, fowls, and cats) with powders ofActinidia polygama and N. cataria, found that the catnip response is induced in cats alone.")
+
+- Baslas, R.K. 1970. Chemistry of Indian essential oils--Part IX. Flavour Industr. 1:475--478.
+- Bates and C. W. Siegel. 1963. Terpenoids. Cis-trans- and Trans-cis-nepetalactones. Experientia 19:564-565.
+- Bicchi, Sandra, M. Schelfaut, and M. Verzele. 1983. Studies on the essential oil of Valeriana celtica L. J. High Resolution Chromatogr. & Chromatogr. Commun. 6:213-215.
+- Campbell, J. F., D. Bindra, H. Krebs, and R. P. Ferenchak. 1969. Responses of single units of the hypothalamic ventromedial nucleus to environmental stimuli. Physiol. & Behav. 4:183-187.
+- Cionga, E., V. Popesco, O. Contz, and L. Boniforti. 1976. The alkaloids from Valeriana officinalis: identification of actinidine. Pages 299-302 in A. Frigerio and N. Castagnoli, eds., Advances in mass spectrometry in biochemistry and medicine, vol. 1. Spectrum Publ., New York.
+- Grieve, M. 1967. A modern herbal. Hafner Publ. Co., New York.
+- Gupta, Y. N., K. K. Baslas, and R. N. S. Chauhan. 1971. Chemical examination of essential oil from the plant Nepeta leucophylla. Indian Oil Soap J. 36(9):257-267.
+- Hano, K. 1967. Actinidia polygama--its pharmacological studies on the effective components [in Japanese]. Tampakushitsu, Kakusan, Koso 12(1): 10-16.
+- Hottes, A.C. 1947. Climbers and ground covers. A. T. de la Mare Co., New York.
+- Janot et al. (1979)
+- Janot, M.-M., J. Guilhem, O. Contz, G. Venera, and E. Cionga. 1979. Contribution a l'etude alcaloides de la valrriane (Valeriana officinalis L.): Actinidine et naphtyridylmethylcetone, nouvel alcaloide. Ann. Pharm. Franc. 37:4i3-420.
+- Johnson, R. D., and G. R. Waller. 1971. Isolation of actinidine from Valeriana offtcinalis. Phytochemistry 10:3334-3335
+- Katahira, K., and E. Iwai. 1975. Effect of unilateral lesion of amygdala on unmanifested response to matatabi (Actinidia polygama) in cats. Tohoku J. Exp. Med. 115:137-143.
+- Liberty Hyde Bailey Hortorium 1976, _Hortus Third: A Concise Dictionary of Plants Cultivated in the United States and Canada_
+- Meikle, R . D . 1963. Garden flowers. Lyre and Spottiswoode, London.
+- Niebuhr, A. D. 1970. Herbs of Greece. New England Unit, Herb Soc. Amer., Boston.
+- Ockendon, D . J . 1976. Valeriana. Pages 52-55 in T. G. Tutin, V. H. Heywood, N. A. Burges, D. M. Moore, D. H. Valentine, S. M. Walters, and D. A. Webb, eds., Flora Europaea. Vol. 4. Univ. Press, Cambridge.
+- Ohwi, J. 1965. Flora of Japan. Smithsonian Inst., Washington, DC.
+- Perry, F. 1972. Flowers of the world. Crown Publ., New York.
+- Purohit, R. M., and S. S. Nigam. 1959. Chemical examination of the essential oil derived from the leaves of Nepeta hindostana Roth. Saugar, India (City) Univ. J. Pt. II, Sect. A 8:46-49
+- Sakan et al. 1959a A. Fujino, F. Murai, Y. Butsugan, and A. Suzui. 1959a. On the structure ofactinidine and matatabilactone, the effect components ofActinidia polygarna. Bull. Chem. Soc. Japan 32:315-316.
+- Sakan et al. 1960a Chemical components in matatabi. I. The isolation of the physiologically active principles, matatabilactone and actinidine [in Japanese]. J. Chem. Soc. Japan, Pure Chem. Sect. 81:1320-1324.
+- Sakan et al. 1965 S. Isoe, S. B. Hyeon, R. Katsumura, T. Maeda, J. Wolinsky, D. Dickerson, M. Slabaugh,  D. Nelson. 1965. The exact nature of matatabilactone and the terpenes of Nepeta cataria. Tetrahedron Lett. 1965:4097--4102.
+- Slate, G.L. 1954. Dual-purpose vines for edible fruits and ornamental value. P1. & Gard. 10(1):72-75.
+- Stearn, W . R . 1950. Nepeta mussinii and N. x Faassenii. J. Roy. Hort. Soc. 75:403-406.
+- Torssel and Wahlberg 1966 The structure of the principal alkaloid from Valeriana officinalis (L.). Tetrahedron Lett. 1966:445-448.
+- Torssel and Wahlberg 1967 Isolation, structure and synthesis of alkaloids from Valeriana offtcinalis. Acta Chem. Scand. 21:53-62.
+- Waller, G. R., G. H. Price, and E. D. Mitchell. 1969. Feline attractant, cis, trans-nepetalactone: Metabolism in the domestic cat. Science 164:1281-1282.
+- Wilder, L.B. 1936. The fragrant path: A book about sweet scented flowers and leaves. Macmillan Co., New York.
+- Wilkinson, A. E. 1946. The encyclopedia of trees, shrubs, vines and lawns for the home garden. Blakiston Co., Philadelphia
+- Wood, J . G . 1854. Sketches and anecdotes of animal life. George Routledge & Sons, London.
+- Yoshii et al. 1963
+- Yoshii, N., K. Hano, and Y. Suzuki. 1963. Effect of certain substances isolated from 'matatabi' on the EEG of cat. Folia Psychiat. & Neurol. Jap. 17:335-350
+- Ellis SLH. Sensory enrichment for cats (Felis silvestris catus) housed in an animal rescue shelter. PhD Thesis; Queen’s University Belfast, UK, 2007. http://ethos.bl.uk/OrderDetails.do?uin=uk.bl.ethos.486142
+
+# Known cat stimulants
 
 - Nepeta cataria (catnip) https://en.wikipedia.org/wiki/Catnip#Effect_on_cats : active ingredient nepetalactone
 - Lonicera Tatarica (Tatarian Honeysuckle) https://en.wikipedia.org/wiki/Lonicera_tatarica :  nepetalactone
-- Actinidia Polygama (Japanese Catnip or Matatabi or Silvervine or silver vine or cat powder) https://en.wikipedia.org/wiki/Actinidia_polygama#Pets : active ingredient Actinidine and dihydroactinidiolide
 - valerian https://en.wikipedia.org/wiki/Valerian_%28herb%29#Effect_on_other_organisms : active ingredient actinidine
+- Actinidia Polygama (Japanese Catnip or Matatabi or Silvervine or silver vine or cat powder) https://en.wikipedia.org/wiki/Actinidia_polygama#Pets : active ingredient Actinidine and dihydroactinidiolide
 - Acalypha indica (Indian acalypha/Indian nettle) https://en.wikipedia.org/wiki/Acalypha_indica#Effect_on_domestic_cats active ingredient TODO
 - cat thyme (teucrium marum) : active ingredient TODO
 - Buckbean (Menyanthes trifoliata): mitsugashiwalactone
@@ -44,9 +93,13 @@ Sakan S. Isoe, S. B. Hyeon, R. Katsumura, T. Maeda, J. Wolinsky, D. Dickerson, M
 - the spring-flowering annual Baby Blue-eyes (Nemophila menziesii)
 - the Zimbabwean plant Zinziba (Lippia javanica aka Verbena javanica).
 
+## Purchasing
+
 - Arata Silvervine 0.5gx12pk, Cat's Favorite, Best Value https://www.amazon.com/dp/B008PNNMHW/ \$10.95 + \$6.82 (S&H from Japan for the silvervine)
 - Valerian Root Extract https://www.amazon.com/dp/B002H2VYNG/ \$11.86
 - Honeysuckle Spray for Cats (2 oz.) https://www.amazon.com/dp/B000788TP8/ \$7.99
+
+# Local cats
 
 Notes on efficacy:
 
@@ -56,10 +109,10 @@ Notes on efficacy:
 - Stormy: catnip: 0?
 - Sara Tiger: catnip: 1
 
-Cat             Sex Fixed Color Kind                Catnip Valerian Honeysuckle Silvervine
+Cat             Sex Fixed Color Kind                Catnip  Valerian Honeysuckle Silvervine
 -------------   --- ----- -----  ----                ------ -------- ----------- ----------
-Oolong          M   1     black Domestic longhair   0               0
-Percy           M   1     brown Tabby               0               1
+Oolong          M   1     black Domestic longhair   0       1        0
+Percy           M   1     brown Tabby               0       0        1
 Kiki            M   1     grey  Tabby               1
 Stormy          M   1     grey  Russian Blue
 Sara            F   1     brown Tabby               1
@@ -69,6 +122,8 @@ Once I get the valerian/silvervine/honeysuckle, begin testing it on cats:
 - Oolong & Percy are already available
 - test at Christmas
 - Stormy & Kiki: test whenever I go home
+
+# Survey
 
 Survey: Mechanical Turk & Surveymonkey on gwern.net?
 
