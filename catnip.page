@@ -123,6 +123,26 @@ Once I get the valerian/silvervine/honeysuckle, begin testing it on cats:
 - test at Christmas
 - Stormy & Kiki: test whenever I go home
 
+Curious that with the first 2 cats I tested, they both responded to exactly 1 of 3 stimulants I tried (Oolong ignored catnip & honeysuckle while responding to Valerian, and Percy ignored catnip & Valerian to respond to honeysuckle). Honeysuckle and catnip supposedly have the same active ingredient while Valerian differs, so this is an odd pattern. Could there be something at play like a single mechanism which responds to only one chemical and so every cat responds to one-and-only-one-kind of catnip/substitute? Existing literature doesn't seem to describe any tests of multiple stimulants on the same cat...
+Is this much evidence?
+Assume binary responses, that the default or null hypothesis theory here is that each stimulant has a 50% chance of working (I only know the population frequency for catnip, which *is* somewhat close to 50%), and they are independent; then the exact probability of drawing 1 of 3 is a binomial with 1 success of 3 trials with 50% chance of success or ~0.375 (through some combinatorics and can be checked by simulation), and then the probability of two such events is their conjunction of 0.375^2=0.141.
+0.141 can be interpreted as a _p_-value here (the frequency with which the null hypothesis generates this particular set of stimulant responses if we sampled two cats).
+If we didn't believe the probability of 0.375 pulled out of combinatorics, we could do a simulation-based hypothesis test by twice generating a possible value from a binomial distribution and seeing in how many simulations both datapoints (cats) yielded exactly 1 of 3, which matches our 0.141 _p_-value:
+
+~~~{.R}
+simulates <- 100000; matches <- sum(rbinom(simulates, 3, p=0.5)==1 & rbinom(simulates, 3, p=0.5)==1); matches / simulates
+# [1] 0.14012
+~~~
+
+OK, so we know under a plausible alternative model, our data from 2 cats occurs fairly often, but what does that mean?
+A Bayesian model-comparison would be more meaningful.
+In this case, we compare the binomial model with a model in which each cat responds to one-and-only-one stimulant. We can use ABC to continue the theme.
+One might object, don't we already know the result of an ABC? If we write a generative model for the one-response theory, it will yield the data every time, and we already know the binomial theory yields the data only 14% of the time, so we get a ratio of 1/0.14=7, which is an interesting level of evidence (keeping in mind that we must have a low prior on the idea of only one stimulant, since it didn't come to mind before we saw the data).
+I would say that's not quite right, because here we have the twist that we still don't have the *silvervine* data - if it's true cats respond to only one stimulant, then silvervine could have been either cat's special stimulant and so they would appear to have no responses in our current data. The one-and-only-one theory is that it would be out of the major stimulants, which are catnip, honeysuckle, Valerian *and* silvervine. So we need to account for the penalty that it predicts data other than we saw (like data in which neither cat responds to any of the 3 stimulants), which makes a BF of 7 to be an overestimate.
+Here for ABC we could simulate this, but again the exact answer is easy: If there's 4 stimulants and we sample 3, and there is exactly 1 hit, the chance of observing it is 3/4 (since the chance of *not* observing it, of it lurking in the last stimulant, #4, is 1/4 and 1-1/4=3/4); and the probability of observing this twice is 3/4^2 or 0.5625.
+So the probability of the data under the null hypothesis is 0.141 and the probability under this alternative one-and-only-one model is 0.5625, giving a ratio of 4 in favor of it (substantially less than the 7 before).
+Since I find the one-and-only-one theory to be weird - why would Percy react to honeysuckle and not catnip given that the active ingredient supposedly is nepetalactone in both? - I would give it a fairly negligible probability like 1%, in which case a BF of 4 would increase only to around 4%.
+
 # Survey
 
 Survey: Mechanical Turk & Surveymonkey on gwern.net?
